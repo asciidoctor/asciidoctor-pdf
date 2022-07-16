@@ -19,6 +19,7 @@ require 'pathname' unless defined? Pathname
 require 'pdf/inspector'
 require 'socket'
 require 'tmpdir'
+require_relative 'spec_helper/matchers'
 
 # NOTE: fix warning in Prawn::Font:TTF
 Prawn::Font::TTF.prepend (Module.new do
@@ -436,6 +437,10 @@ RSpec.configure do |config|
     File.join output_dir, path
   end
 
+  def spec_dir
+    __dir__
+  end
+
   def tmp_dir
     File.join __dir__, 'tmp'
   end
@@ -720,155 +725,4 @@ RSpec.configure do |config|
 
     diff.length
   end
-end
-
-RSpec::Matchers.define_negated_matcher :not_raise_exception, :raise_exception
-
-RSpec::Matchers.define :have_size do |expected|
-  match {|actual| actual.size == expected }
-  failure_message {|actual| %(expected #{actual} to have size #{expected}, but was #{actual.size}) }
-end
-
-RSpec::Matchers.define :have_background do |expected|
-  match do |actual|
-    color = ((expected[:color].scan %r/../).map {|it| ((it.to_i 16) / 255.0).round 5 }.join ' ') + ' scn'
-    # FIXME: shave off lines before this line
-    (expect actual).to include color
-    x1, y1 = expected[:top_left]
-    x2, y2 = expected[:bottom_right]
-    (expect actual).to include %(#{x2} #{y1} #{x2} #{y1} #{x2} #{y1} c)
-    (expect actual).to include %(#{x1} #{y2} #{x1} #{y2} #{x1} #{y2} c)
-  end
-  failure_message {|actual| %(expected #{actual} to have background #{expected}, but was \n#{actual.join ?\n}) }
-end
-
-RSpec::Matchers.define :annotate do |text|
-  match do |subject|
-    left, bottom, right, top = subject[:Rect]
-    left == text[:x] && ((text[:x] + text[:width]) - right).abs < 0.25 && bottom < text[:y] && top > (text[:y] + text[:font_size])
-  end
-  failure_message {|subject| %(expected #{subject} to annotate #{text}) }
-end
-
-RSpec::Matchers.define :have_message do |expected|
-  actual = nil
-  match notify_expectation_failures: true do |logger|
-    result = false
-    messages = logger.messages
-    expected_index = expected[:index] || 0
-    if (message = messages[expected_index])
-      if message[:severity] == expected[:severity]
-        message_text = Hash === (message_data = message[:message]) ? message_data[:text] : message_data
-        if Regexp === (expected_message = expected[:message])
-          result = true if expected_message.match? message_text
-        elsif expected_message.start_with? '~'
-          result = true if message_text.include? expected_message[1..-1]
-        elsif message_text === expected_message
-          result = true
-        end
-        result = false if (file = expected[:file]) && !(Hash === message_data && file == message_data[:source_location].file)
-        result = false if (lineno = expected[:lineno]) && !(Hash === message_data && lineno == message_data[:source_location].lineno)
-      end
-      actual = message
-    end
-    (expect messages).to have_size expected_index + 1 if result && expected[:last]
-    result
-  end
-
-  failure_message do
-    %(expected #{expected[:severity]} message#{expected[:message].to_s.chr == '~' ? ' containing ' : ' matching '}`#{expected[:message]}' to have been logged) + (actual ? %(, but got #{actual[:severity]}: #{actual[:message]}) : '')
-  end
-end
-
-RSpec::Matchers.define :log_message do |expected|
-  match notify_expectation_failures: true do |actual|
-    if expected
-      log_level_override = expected.delete :using_log_level
-      expected = nil if expected.empty?
-    end
-    with_memory_logger log_level_override do |logger|
-      actual.call
-      if expected
-        (expect logger).to have_message expected
-      else
-        (expect logger).not_to be_empty
-      end
-      true
-    end
-  end
-
-  #match_when_negated notify_expectation_failures: true do |actual|
-  #  with_memory_logger expected.to_h[:using_log_level] do |logger|
-  #    actual.call
-  #    logger ? logger.empty? : true
-  #  end
-  #end
-
-  supports_block_expectations
-end
-
-RSpec::Matchers.define :log_messages do |expecteds|
-  match notify_expectation_failures: true do |actual|
-    with_memory_logger do |logger|
-      actual.call
-      expecteds.each_with_index do |it, idx|
-        (expect logger).to have_message (it.merge index: idx)
-      end if logger
-      true
-    end
-  end
-
-  supports_block_expectations
-end
-
-# define matcher to replace `.not_to log_message` until notify_expectation_failures is supported for negated match
-# see https://github.com/rspec/rspec-expectations/issues/1124
-RSpec::Matchers.define :not_log_message do |expected|
-  match notify_expectation_failures: true do |actual|
-    with_memory_logger expected.to_h[:using_log_level] do |logger|
-      actual.call
-      logger ? logger.empty? : true
-    end
-  end
-
-  supports_block_expectations
-end
-
-RSpec::Matchers.define :visually_match do |reference_filename|
-  reference_path = (Pathname.new reference_filename).absolute? ? reference_filename : (File.join __dir__, 'reference', reference_filename)
-  match do |actual_path|
-    warn %(#{RSpec.current_example.location} uses visual comparison but is not tagged with visual: true) unless RSpec.current_example.metadata[:visual]
-    return false unless File.exist? reference_path
-    images_output_dir = output_file 'visual-comparison-workdir'
-    Dir.mkdir images_output_dir unless Dir.exist? images_output_dir
-    output_basename = File.join images_output_dir, (File.basename actual_path, '.pdf')
-    pdftocairo_result = system 'pdftocairo', '-png', actual_path, %(#{output_basename}-actual)
-    raise Errno::ENOENT, 'pdftocairo' if pdftocairo_result.nil?
-    system 'pdftocairo', '-png', reference_path, %(#{output_basename}-reference)
-
-    pixels = 0
-    tmp_files = [actual_path]
-
-    files = Dir[%(#{output_basename}-{actual,reference}-*.png)].map {|filename| (/-(?:actual|reference)-(\d+)\.png$/.match filename)[1] }.sort.uniq
-    return false if files.empty?
-    files.each do |idx|
-      reference_page_filename = %(#{output_basename}-reference-#{idx}.png)
-      reference_page_filename = nil unless File.exist? reference_page_filename
-      tmp_files << reference_page_filename if reference_page_filename
-      actual_page_filename = %(#{output_basename}-actual-#{idx}.png)
-      actual_page_filename = nil unless File.exist? actual_page_filename
-      tmp_files << actual_page_filename if actual_page_filename
-      next if reference_page_filename && actual_page_filename && (FileUtils.compare_file reference_page_filename, actual_page_filename)
-      pixels += compute_image_differences reference_page_filename, actual_page_filename, %(#{output_basename}-diff-#{idx}.png)
-    end
-
-    if pixels > 0
-      false
-    else
-      tmp_files.each {|it| File.unlink it } unless ENV.key? 'DEBUG'
-      true
-    end
-  end
-
-  failure_message {|actual_path| %(expected #{actual_path} to be visually identical to #{reference_path}) }
 end
