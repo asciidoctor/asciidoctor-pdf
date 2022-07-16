@@ -871,7 +871,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect main_pdf_text[0][:string]).to eql 'puts'
       (expect main_pdf_text[0][:font_color]).not_to eql '333333'
       scratch_pdf_output = scratch_pdf.render
-      scratch_pdf_text = (EnhancedPDFTextInspector.analyze scratch_pdf_output).text
+      scratch_pdf_text = (TextInspector.analyze scratch_pdf_output).text
       (expect scratch_pdf_text[0][:string]).to eql 'puts "Hello, World!"'
       (expect scratch_pdf_text[0][:font_color]).to eql '333333'
       scratch_pdf_lines = (LineInspector.analyze scratch_pdf_output).lines
@@ -1643,7 +1643,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       --
       EOS
 
-      [pdf.text, (EnhancedPDFTextInspector.analyze scratch_pdf.render).text].each do |text|
+      [pdf.text, (TextInspector.analyze scratch_pdf.render).text].each do |text|
         (expect text[0][:string]).to eql 'puts "Hello, World!"'
         (expect text[0][:font_color]).to eql '333333'
       end

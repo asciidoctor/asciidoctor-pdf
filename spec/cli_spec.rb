@@ -61,7 +61,7 @@ describe 'asciidoctor-pdf' do
       (expect err).to be_empty
       to_file = Pathname.new output_file 'hello.pdf'
       (expect to_file).to exist
-      pdf = EnhancedPDFTextInspector.analyze to_file
+      pdf = TextInspector.analyze to_file
       hello_text = pdf.find_unique_text 'hello'
       (expect hello_text[:font_name]).to eql 'Times-Roman'
     end
@@ -82,7 +82,7 @@ describe 'asciidoctor-pdf' do
         (expect err).to be_empty
         to_file = Pathname.new output_file 'hello.pdf'
         (expect to_file).to exist
-        pdf = EnhancedPDFTextInspector.analyze to_file
+        pdf = TextInspector.analyze to_file
         hello_text = pdf.find_unique_text 'hello'
         (expect hello_text[:font_name]).to eql 'Times-Roman'
       end

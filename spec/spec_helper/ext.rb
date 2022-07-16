@@ -29,14 +29,3 @@ PDF::Reader.prepend (Module.new do
     objects[catalog[:Outlines]]
   end
 end)
-
-PDF::Inspector::Text.prepend (Module.new do
-  def page= page
-    @page_number = page.number
-    super
-  end
-
-  def move_text_position tx, ty
-    @positions << [tx, ty, @page_number]
-  end
-end)

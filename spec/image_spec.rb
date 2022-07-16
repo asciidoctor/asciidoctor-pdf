@@ -2755,7 +2755,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image (fixture_file 'square.svg'), fit: [150, 150], width: 50
         text 'after'
       end
-      pdf = EnhancedPDFTextInspector.analyze StringIO.new doc.render
+      pdf = TextInspector.analyze StringIO.new doc.render
       text = pdf.text
       tare = text[0][:y] - text[1][:y]
       (expect (text[1][:y] - pdf.text[2][:y] - tare).round 2).to eql 50.0
@@ -2768,7 +2768,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image (fixture_file 'square.svg'), fit: [150, 150], height: 25
         text 'after'
       end
-      pdf = EnhancedPDFTextInspector.analyze StringIO.new doc.render
+      pdf = TextInspector.analyze StringIO.new doc.render
       text = pdf.text
       tare = text[0][:y] - text[1][:y]
       (expect (text[1][:y] - pdf.text[2][:y] - tare).round 2).to eql 25.0
@@ -2781,7 +2781,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image (fixture_file 'square.svg'), fit: [150, 150]
         text 'after'
       end
-      pdf = EnhancedPDFTextInspector.analyze StringIO.new doc.render
+      pdf = TextInspector.analyze StringIO.new doc.render
       text = pdf.text
       tare = text[0][:y] - text[1][:y]
       (expect (text[1][:y] - pdf.text[2][:y] - tare).round 2).to eql 150.0

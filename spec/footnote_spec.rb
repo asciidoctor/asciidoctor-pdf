@@ -105,7 +105,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     doc = Asciidoctor.convert input, backend: 'pdf', safe: :safe, to_file: (pdf_io = StringIO.new), standalone: true
     pdf_io.truncate 0
     doc.converter.write doc.convert, pdf_io
-    pdf = EnhancedPDFTextInspector.analyze pdf_io
+    pdf = TextInspector.analyze pdf_io
     lines = pdf.lines pdf.find_text page_number: 2
     (expect lines.join ?\n).to include '[1 - Chapter A]'
     (expect warnings).to be_empty

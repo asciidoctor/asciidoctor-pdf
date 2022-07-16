@@ -64,7 +64,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
     end
     to_pdf input, pdf_theme: pdf_theme, extensions: extensions
     scratch_pdf_output = scratch_pdf.render
-    scratch_pdf = (EnhancedPDFTextInspector.analyze scratch_pdf_output)
+    scratch_pdf = (TextInspector.analyze scratch_pdf_output)
     (expect (scratch_pdf.extract_graphic_states scratch_pdf.pages[0][:raw_content])).to be_empty
     scratch_pdf_lines = (LineInspector.analyze scratch_pdf_output).lines
     (expect scratch_pdf_lines).to be_empty
@@ -97,7 +97,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
     end
     to_pdf input, pdf_theme: pdf_theme, extensions: extensions
     scratch_pdf_output = scratch_pdf.render
-    scratch_pdf = (EnhancedPDFTextInspector.analyze scratch_pdf_output)
+    scratch_pdf = (TextInspector.analyze scratch_pdf_output)
     (expect scratch_pdf.pages[0][:raw_content]).to include %(/DeviceRGB cs\n0.8 0.8 0.8 scn\n0.0 0.0 612.0 792.0 re)
   end
 
