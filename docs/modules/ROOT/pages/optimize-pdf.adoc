@@ -20,16 +20,27 @@ You can enable this feature by setting the `compress` attribute on the document:
 For a more thorough optimization, you can use the <<rghost,integrated optimizer>> or <<hexapdf>>.
 
 [#rghost]
-== rghost
+== RGhost
 
-Asciidoctor PDF also provides a flag (and bin script) that uses Ghostscript (via rghost) to optimize and compress the generated PDF with minimal impact on its quality.
-You must have Ghostscript (command: `gs`) and the `rghost` gem installed to use it.
+Asciidoctor PDF also provides a flag (and bin script) that uses Ghostscript (via Ruby Ghostscript aka RGhost) to optimize and compress the generated PDF with minimal impact on its quality.
+You must have Ghostscript (command: `gs`) and RGhost (gem: *rghost*) installed to use it.
 
-=== Install rghost
+=== Install RGhost
 
-To install the rghost gem, open a terminal and type the following command.
+First, install the rghost gem.
+Refer to the table below for instructions on how to install RGhost.
+If you use Bundler to manage your gems in a [.path]_Gemfile_, add the entry listed in the *Bundler* column.
+Otherwise, run the command in the *gem command* column.
 
- $ gem install rghost
+[%autowidth,cols=1h;1h;1l;1l]
+|===
+|Library |gem name |Bundler |gem command
+
+|RGhost
+|rghost
+|gem 'rghost'
+|gem install rghost
+|===
 
 === Convert and optimize
 
@@ -88,20 +99,31 @@ IMPORTANT: The `asciidoctor-pdf-optimize` is not guaranteed to reduce the size o
 It may actually make the PDF larger.
 You should probably only consider using it if the file size of the original PDF is several megabytes.
 
-If you have difficulty getting the `rghost` gem installed, or you aren't getting the results you expect, you can try the optimizer provided by hexapdf instead.
+If you have difficulty getting the *rghost* gem installed, or you aren't getting the results you expect, you can try the optimizer provided by HexaPDF instead.
 
 [#hexapdf]
-== hexapdf
+== HexaPDF
 
-Another option to optimize the PDF is {url-hexapdf}[hexapdf^] (gem: hexapdf, command: hexapdf).
-Before introducing it, though, it's important to point out that its license is AGPL.
+Another option to optimize the PDF is {url-hexapdf}[HexaPDF^] (gem: *hexapdf*, command: `hexapdf`).
+Before introducing it into your stack, it's important to emphasize that its license is AGPL.
 If that's okay with you, read on to learn how to use it.
 
-=== Install hexapdf
+=== Install HexaPDF
 
-First, install the hexapdf gem using the following command:
+First, install the hexapdf gem.
+Refer to the table below for instructions on how to install HexaPDF.
+If you use Bundler to manage your gems in a [.path]_Gemfile_, add the entry listed in the *Bundler* column.
+Otherwise, run the command in the *gem command* column.
 
- $ gem install hexapdf
+[%autowidth,cols=1h;1h;1l;1l]
+|===
+|Library |gem name |Bundler |gem command
+
+|HexaPDF
+|hexapdf
+|gem 'hexapdf'
+|gem install hexapdf
+|===
 
 === Compress a PDF
 
