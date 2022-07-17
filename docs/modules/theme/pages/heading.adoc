@@ -69,7 +69,7 @@ heading:
   margin-top: 6
 
 |min-height-after
-|xref:measurement-units.adoc[Measurement] +
+|xref:measurement-units.adoc[Measurement] {vbar} auto +
 (default: `20`)
 |[source]
 heading:

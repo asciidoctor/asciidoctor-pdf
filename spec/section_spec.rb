@@ -1099,12 +1099,36 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should keep section with first block of content if breakable option is set on section' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~EOS, pdf_theme: { heading_min_height_after: nil }, analyze: true
     == Section A
 
     image::tall.svg[pdfwidth=70mm]
 
     [%breakable]
+    == Section B
+
+    [%unbreakable]
+    --
+    keep
+
+    this
+
+    together
+    --
+    EOS
+
+    section_b_text = pdf.find_unique_text 'Section B'
+    (expect section_b_text[:page_number]).to be 2
+    content_text = pdf.find_unique_text 'keep'
+    (expect content_text[:page_number]).to be 2
+  end
+
+  it 'should keep section with first block of content if heading_min_height_after key is auto' do
+    pdf = to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 'auto' }, analyze: true
+    == Section A
+
+    image::tall.svg[pdfwidth=70mm]
+
     == Section B
 
     [%unbreakable]

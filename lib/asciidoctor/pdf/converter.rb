@@ -2792,12 +2792,12 @@ module Asciidoctor
 
       # Position the cursor for where to ink the specified section title or discrete heading node.
       #
-      # This method computes whether there is enough room on the page to prevent the specified node
-      # from being orphaned. If there is not enough room, the method will advance the cursor to
+      # This method computes whether there's enough room on the page to prevent the specified node
+      # from being orphaned. If there's not enough room, the method will advance the cursor to
       # the next page. This method is not called if the cursor is already at the top of the page or
       # whether this node has no node that follows it in document order.
       def arrange_heading node, title, opts
-        if node.option? 'breakable'
+        if (min_height_after = @theme.heading_min_height_after) == 'auto' || (node.option? 'breakable')
           orphaned = nil
           dry_run single_page: true do
             start_page = page
@@ -2824,9 +2824,7 @@ module Asciidoctor
               heading_h = (height_of_typeset_text title) +
                 (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top) +
                 (@theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom) + h_padding_t + h_padding_b
-              if (min_height_after = @theme.heading_min_height_after) && (node.context == :section ? node.blocks? : !node.last_child?)
-                heading_h += min_height_after
-              end
+              heading_h += min_height_after if min_height_after && (node.context == :section ? node.blocks? : !node.last_child?)
               cursor >= heading_h
             end
             advance_page unless h_fits

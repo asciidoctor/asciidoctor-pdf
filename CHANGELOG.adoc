@@ -11,6 +11,7 @@ Enhancements::
 
 * allow page background image to be specified per layout using `+{page-layout}+` attribute reference in path (#1739)
 * allow page margin for rotated page to be configured independently using `page-margin-rotated` theme key or `pdf-page-margin-rotated` document attribute (#1719)
+* allow orphan detection to be enabled for all section titles and discrete headings by setting `heading-min-height-after` to `auto` in theme (#2268)
 * set `docimagesdir` attribute when attribute substitutions are applied to value from theme (#2278)
 * start page numbering and running content on empty verso page before first chapter of prepress book if `start-at` value is 0 (#2252)
 * don't force page break after TOC with automatic placement in article if `title-page` attribute is set and value of `toc-break-after` theme key is `auto` (#1768)
