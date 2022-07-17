@@ -21,12 +21,6 @@ require_relative 'spec_helper/ext'
 require_relative 'spec_helper/inspectors'
 require_relative 'spec_helper/matchers'
 
-module TareFirstPageContentStreamNoop
-  def tare_first_page_content_stream
-    yield
-  end
-end
-
 RSpec.configure do |config|
   config.before :suite do
     FileUtils.rm_r output_dir, force: true, secure: true
@@ -38,6 +32,12 @@ RSpec.configure do |config|
   config.after :suite do
     FileUtils.rm_r output_dir, force: true, secure: true unless (ENV.key? 'DEBUG') || config.reporter.failed_examples.any? {|it| it.metadata[:visual] }
     FileUtils.rm_r tmp_dir, force: true, secure: true
+  end
+
+  module TareFirstPageContentStreamNoop
+    def tare_first_page_content_stream
+      yield
+    end
   end
 
   def bin_script name, opts = {}
