@@ -2,7 +2,7 @@
 
 require_relative 'spec_helper'
 
-describe 'Asciidoctor::PDF::Optimizer', if: (gem_available? 'rghost'), &(proc do
+describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_available? 'rghost'), &(proc do
   it 'should optimize output file if optimize attribute is set' do
     input_file = Pathname.new example_file 'basic-example.adoc'
     to_file = to_pdf_file input_file, 'optimizer-not-optimized.pdf'

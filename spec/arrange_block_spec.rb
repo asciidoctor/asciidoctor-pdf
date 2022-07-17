@@ -1407,7 +1407,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         extensions = proc do
           tree_processor do
             process do |doc|
-              doc.converter.extend TareFirstPageContentStreamNoop
+              doc.converter.extend RSpec::ExampleGroupHelpers::TareFirstPageContentStreamNoop
               nil
             end
           end

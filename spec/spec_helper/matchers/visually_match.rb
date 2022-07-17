@@ -3,6 +3,8 @@
 require 'chunky_png'
 
 module RSpec::Matchers
+  REFERENCE_DIR = File.absolute_path (File.join '..', '..', 'reference'), __dir__
+
   def compute_image_differences reference, actual, difference = nil
     diff = []
     if reference
@@ -35,7 +37,9 @@ module RSpec::Matchers
 end
 
 RSpec::Matchers.define :visually_match do |reference_filename|
-  reference_path = (Pathname.new reference_filename).absolute? ? reference_filename : (File.join spec_dir, 'reference', reference_filename)
+  reference_path = (Pathname.new reference_filename).absolute? ?
+    reference_filename :
+    (File.join RSpec::Matchers::REFERENCE_DIR, reference_filename)
   match do |actual_path|
     warn %(#{RSpec.current_example.location} uses visual comparison but is not tagged with visual: true) unless RSpec.current_example.metadata[:visual]
     return false unless File.exist? reference_path

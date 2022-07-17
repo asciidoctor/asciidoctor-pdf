@@ -1,5 +1,14 @@
 # frozen_string_literal: true
 
+unless (Pathname.instance_method :rmtree).arity > 0
+  Pathname.prepend (Module.new do
+    def rmtree **kwargs
+      FileUtils.rm_rf @path, **kwargs
+      nil
+    end
+  end)
+end
+
 # NOTE: fix warning in Prawn::Font:TTF
 Prawn::Font::TTF.prepend (Module.new do
   def initialize *args

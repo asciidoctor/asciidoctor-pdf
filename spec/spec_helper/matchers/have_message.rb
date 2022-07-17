@@ -1,5 +1,16 @@
 # frozen_string_literal: true
 
+module RSpec::Matchers
+  def with_memory_logger level = nil
+    old_logger, logger = Asciidoctor::LoggerManager.logger, Asciidoctor::MemoryLogger.new
+    logger.level = level if level
+    Asciidoctor::LoggerManager.logger = logger
+    yield logger
+  ensure
+    Asciidoctor::LoggerManager.logger = old_logger
+  end
+end
+
 RSpec::Matchers.define :have_message do |expected|
   actual = nil
   match notify_expectation_failures: true do |logger|

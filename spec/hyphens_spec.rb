@@ -3,7 +3,7 @@
 require_relative 'spec_helper'
 
 # NOTE: text-hyphen may not be available when building RPM, so check for it
-describe 'Asciidoctor::PDF::Converter - Hyphens', if: (gem_available? 'text-hyphen'), &(proc do
+describe 'Asciidoctor::PDF::Converter - Hyphens', if: (RSpec::ExampleGroupHelpers.gem_available? 'text-hyphen'), &(proc do
   it 'should hyphenate text in paragraph if hyphens attribute is set' do
     pdf = to_pdf <<~'EOS', analyze: true
     :hyphens:

@@ -2,7 +2,7 @@
 
 require_relative 'spec_helper'
 
-describe 'Asciidoctor Diagram Integration', if: (gem_available? 'asciidoctor-diagram'), &(proc do
+describe 'Asciidoctor Diagram Integration', if: (RSpec::ExampleGroupHelpers.gem_available? 'asciidoctor-diagram'), &(proc do
   it 'should locate generated diagram when :to_dir is set and imagesdir is not set' do
     require 'asciidoctor-diagram'
     input_file = Pathname.new fixture_file 'diagrams.adoc'
@@ -35,7 +35,7 @@ describe 'Asciidoctor Diagram Integration', if: (gem_available? 'asciidoctor-dia
   end
 end)
 
-describe 'Asciidoctor Kroki Integration', if: (gem_available? 'asciidoctor-kroki'), &(proc do
+describe 'Asciidoctor Kroki Integration', if: (RSpec::ExampleGroupHelpers.gem_available? 'asciidoctor-kroki'), &(proc do
   # NOTE: asciidoctor-kroki not honoring :to_dir option; see https://github.com/Mogztter/asciidoctor-kroki/issues/371
   it 'should locate generated diagram in output directory' do
     require 'asciidoctor-kroki'

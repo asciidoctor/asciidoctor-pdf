@@ -1889,7 +1889,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: %(~image file is an unrecognised format)
     end
 
-    context 'Cache', if: (gem_available? 'open-uri-cached'), &(proc do
+    context 'Cache', if: (RSpec::ExampleGroupHelpers.gem_available? 'open-uri-cached'), &(proc do
       before :context do # rubocop:disable RSpec/BeforeAfterAll
         (expect defined? OpenURI::Cache).to be_falsy # rubocop:disable RSpec/ExpectInHook
         with_local_webserver do |base_url|
@@ -2749,10 +2749,11 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should ignore :fit option for SVG image if :width is set' do
+      image_path = fixture_file 'square.svg'
       doc = Prawn::Document.new do
         text 'start'
         text 'before'
-        image (fixture_file 'square.svg'), fit: [150, 150], width: 50
+        image image_path, fit: [150, 150], width: 50
         text 'after'
       end
       pdf = TextInspector.analyze StringIO.new doc.render
@@ -2762,10 +2763,11 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should ignore :fit option for SVG image if :height is set' do
+      image_path = fixture_file 'square.svg'
       doc = Prawn::Document.new do
         text 'start'
         text 'before'
-        image (fixture_file 'square.svg'), fit: [150, 150], height: 25
+        image image_path, fit: [150, 150], height: 25
         text 'after'
       end
       pdf = TextInspector.analyze StringIO.new doc.render
@@ -2775,10 +2777,11 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should honor :fit option for SVG image if :width and :height are not set' do
+      image_path = fixture_file 'square.svg'
       doc = Prawn::Document.new do
         text 'start'
         text 'before'
-        image (fixture_file 'square.svg'), fit: [150, 150]
+        image image_path, fit: [150, 150]
         text 'after'
       end
       pdf = TextInspector.analyze StringIO.new doc.render
