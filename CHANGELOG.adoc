@@ -23,7 +23,7 @@ Enhancements::
 
 Improvements::
 
-* add internal `Document#attr_unspecified?` method to simplify check for an attribute which as not be set or unset
+* add internal `Document#attr_unspecified?` method to simplify check for an attribute which has not been set or unset
 
 Bug Fixes::
 

@@ -15,7 +15,7 @@ Once you feel comfortable with Prawn, you're ready to extend the converter.
 
 == Going beyond theming
 
-While creating the PDF document, there are thousands of small decisions the converter must make about how to instruct Prawn to layout the content elements on the page (so-called "`hackable typesetting`").
+While creating the PDF document, there are thousands of small decisions the converter must make about how to instruct Prawn to lay out the content elements on the page (so-called "`hackable typesetting`").
 But once these elements are written, they can't be moved or styled (as is the case with HTML and CSS).
 To help influence those decisions--and thus prevent the converter from becoming too opinionated, a theming system was introduced.
 

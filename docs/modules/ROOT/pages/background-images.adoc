@@ -133,6 +133,7 @@ If a background image is assigned to the recto pages (right-hand, odd-numbered p
 If a background image isn't specified for a side, the converter will use the default page background image (`page-background-image`), if specified.
 To turn off the background image for a side, assign the value `none`.
 
+[#page-layout]
 == Per page layout
 
 You can configure any background image to be selected per page layout by including the _escaped_ `+{page-layout}+` attribute reference in the image path.

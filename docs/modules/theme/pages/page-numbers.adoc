@@ -52,7 +52,7 @@ The `toc` value only applies if the TOC is in the default location (before the f
 If the value is `toc`, and the toc macro is used to position the TOC, the `start-at` behavior is the same as if the TOC is not enabled.
 The `toc` value is only recognized if the title page is implicitly or explicitly enabled.
 Integer:: The page numbering starts at the specified page of the body (i.e., 1 is the first body page, 2 is the second body page).
-For a prepress book (doctype=book and media=prepress), the page numbering starts on the empty verso page before the body if the value is 0.
+For a prepress book (`doctype=book` and `media=prepress`), the page numbering starts on the empty verso page before the body if the value is `0`.
 An integer value is recognized by all doctypes and the title page doesn't need to be enabled.
 
 Let's start the integer page number on the title page of a document.

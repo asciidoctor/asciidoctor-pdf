@@ -128,7 +128,7 @@ For example:
 
 == License page
 
-Let's so you want to insert a license page into your documents, but you don't want to have to put a block macro for it in the document source.
+Let's say you want to insert a license page into your documents, but you don't want to have to put a block macro for it in the document source.
 You can use an extended converter to add new pages to the body of the document.
 
 Let's consider the case of reading the license text from a file and inserting it into the first page of the body.
@@ -146,7 +146,7 @@ You may want to take this a bit further and allow the location of the license fi
 
 == Paragraph numbering
 
-To help with content auditing or coorelation, you may want to add a number in front of each paragraph.
+To help with content auditing or correlation, you may want to add a number in front of each paragraph.
 You can do this first by assigning a number to each paragraph in the document in the `init_pdf` method.
 Then, you can add this number in the left margin at the start of each paragraph by overriding the `convert_paragraph` method.
 
@@ -214,7 +214,7 @@ Once this limit is reached, the converter will not call `get_entries_for_toc` fo
 == Narrow TOC
 
 Let's say you want to make the content on the TOC page(s) really narrow.
-You can do so by overridding the `ink_toc` method and squeezing the margins by applying extra indentation.
+You can do so by overriding the `ink_toc` method and squeezing the margins by applying extra indentation.
 
 .Extended converter with narrow TOC
 [,ruby]
@@ -270,6 +270,7 @@ You're free to customize where the label is placed.
 The float method allows you to move the cursor around in absolute space without impacting the flow of the content.
 The extent gives you the information about the location of the code block.
 
+[#wrap-code-blocks-around-image]
 == Wrap code blocks around an image float
 
 Asciidoctor PDF provides basic support for image floats.
@@ -361,7 +362,7 @@ The columns get applied to the body of the document, which excludes the document
 
 The Asciidoctor PDF converter also provides the framework for making multi-column layouts in an extended converter.
 This framework is accessible via the helper method `column_box`.
-To make a muti-column layout, you put statements that ink content inside a code block and pass it to the `column_box` method as follows:
+To make a multi-column layout, you put statements that ink content inside a code block and pass it to the `column_box` method as follows:
 
 [,ruby]
 ----

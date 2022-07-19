@@ -54,7 +54,8 @@ The `breakable` option can be applied to a table to ensure the anchor and title 
 ----
 <.> Assign the `breakable` option to a table, using the shorthand percent symbol (`%`) for the `option` attribute name, to indicate that the table's title and anchor should be kept with the table.
 
-=== Section or Discrete Heading
+[#section-or-discrete-heading]
+=== Section or discrete heading
 
 The `breakable` option can be applied to a section to ensure the section title is kept with the first child block if that block gets advanced to the following page.
 
