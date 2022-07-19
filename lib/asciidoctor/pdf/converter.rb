@@ -1605,6 +1605,9 @@ module Asciidoctor
               marker = node.parent.style == 'decimal' && index.abs < 10 ? %(#{index < 0 ? '-' : ''}0#{index.abs}.) : %(#{index}.)
               dir = (node.parent.option? 'reversed') ? :pred : :next
               @list_numerals << (index.public_send dir)
+              [:font_color, :font_family, :font_size, :font_style, :line_height].each do |prop|
+                marker_style[prop] = @theme[%(olist_marker_#{prop})] || marker_style[prop]
+              end
             end
           end
         else # :ulist
@@ -1630,8 +1633,9 @@ module Asciidoctor
             log :info, 'deprecated fa icon set found in theme; use fas, far, or fab instead'
             marker_style[:font_family] = FontAwesomeIconSets.find {|candidate| (icon_font_data candidate).yaml[candidate].value? marker } || 'fas'
           end
+          marker_style[:font_style] &&= marker_style[:font_style].to_sym
           marker_gap = rendered_width_of_char 'x'
-          font marker_style[:font_family], marker_style[:font_size] do
+          font marker_style[:font_family], size: marker_style[:font_size], style: marker_style[:font_style] do
             marker_width = rendered_width_of_string marker
             # NOTE: compensate if character_spacing is not applied to first character
             # see https://github.com/prawnpdf/prawn/commit/c61c5d48841910aa11b9e3d6f0e01b68ce435329
@@ -1650,6 +1654,7 @@ module Asciidoctor
                   color: marker_style[:font_color],
                   inline_format: false,
                   line_height: marker_style[:line_height],
+                  style: marker_style[:font_style],
                   margin: 0,
                   normalize: false,
                   single_line: true

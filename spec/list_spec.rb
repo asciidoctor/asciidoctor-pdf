@@ -248,6 +248,27 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect olist_marker_colors).to eql ['00FF00']
     end
 
+    it 'should allow theme to change marker font size, font family, and line height for ulist' do
+      pdf_theme = {
+        extends: 'default-with-font-fallbacks',
+        ulist_marker_font_family: 'M+ 1p Fallback',
+        ulist_marker_font_size: 21,
+        ulist_marker_line_height: 0.625,
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      * all
+      * the
+      * things
+      EOS
+
+      marker = (pdf.find_text %(\u2022))[0]
+      text = pdf.find_unique_text 'all'
+      (expect marker[:font_name]).to eql 'mplus-1p-regular'
+      (expect marker[:font_size]).to eql 21
+      (expect marker[:y]).to be < text[:y]
+    end
+
     it 'should reserve enough space for marker that is not found in any font' do
       pdf_theme = {
         extends: 'default-with-font-fallbacks',
@@ -608,6 +629,52 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect lines).to have_size 26
       (expect lines[0]).to eql '10. a'
       (expect lines[-1]).to eql '35. z'
+    end
+
+    it 'should allow theme to change marker color for olist' do
+      pdf_theme = { olist_marker_font_color: '00FF00' }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      . one
+      . two
+      . three
+      EOS
+
+      marker_colors = (pdf.find_text %r/\d\./).map {|it| it[:font_color] }.uniq
+      (expect marker_colors).to eql ['00FF00']
+    end
+
+    it 'should allow theme to change marker font size, font family, and line height for olist' do
+      pdf_theme = {
+        olist_marker_font_family: 'M+ 1mn',
+        olist_marker_font_size: 12.75,
+        olist_marker_line_height: 0.976,
+      }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      . one
+      . two
+      . three
+      EOS
+
+      marker = pdf.find_unique_text '1.'
+      text = pdf.find_unique_text 'one'
+      (expect marker[:font_name]).to eql 'mplus1mn-regular'
+      (expect marker[:font_size]).to eql 12.75
+      (expect marker[:y].round 2).to eql (text[:y].round 2)
+    end
+
+    it 'should allow theme to change marker font style for olist' do
+      pdf_theme = { olist_marker_font_style: 'bold' }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      . one
+      . two
+      . three
+      EOS
+
+      marker = pdf.find_unique_text '1.'
+      (expect marker[:font_name]).to eql 'NotoSerif-Bold'
     end
 
     it 'should use consistent line height even if list item is entirely monospace' do

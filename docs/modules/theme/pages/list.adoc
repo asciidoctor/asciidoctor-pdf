@@ -44,6 +44,48 @@ list:
   text-align: right
 |===
 
+[#olist-marker]
+== olist-marker
+
+The keys in the `olist-marker` category control the arrangement and style of the ordered list markers.
+
+[cols="3,4,6a"]
+|===
+|Key |Value Type |Example
+
+|font-family
+|xref:font-support.adoc[Font family name] +
+(default: _inherit_)
+|[source]
+olist:
+  marker:
+    font-family: Noto Serif
+
+|font-size
+|xref:text.adoc#font-size[Font size] +
+(default: _inherit_)
+|[source]
+olist:
+  marker:
+    font-size: 9
+
+|font-color
+|xref:color.adoc[Color] +
+(default: `$list-marker-font-color`)
+|[source]
+olist:
+  marker:
+    font-color: #CCCCCC
+
+|line-height
+|xref:language.adoc#values[Number] +
+(default: `$base-line-height`)
+|[source]
+olist:
+  marker:
+    line-height: 1.5
+|===
+
 [#ulist-marker]
 == ulist-marker
 

@@ -18,6 +18,7 @@ Enhancements::
 * add `--theme` option to CLI as shorthand for `-a pdf-theme` (#2250)
 * add `--sourcemap` option to CLI to enable `:sourcemap` option on processor (#2265)
 * broaden support for relative font sizes in theme to more than just inline elements; document support for relative font sizes
+* allow theme to control font properties of marker for ordered list using `olist-marker` category (#2279)
 
 Improvements::
 
