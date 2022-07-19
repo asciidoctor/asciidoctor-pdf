@@ -4,46 +4,36 @@
 :doctype: book
 :leveloffset: 1
 :page-toclevels: 2
-:url-milestone-2-1-0: {url-project-issues}?q=is%3Aissue+milestone%3Av2.1.0+is%3Aclosed
-:url-milestone-2-1-1: {url-project-issues}?q=is%3Aissue+milestone%3Av2.1.1+is%3Aclosed
+:url-milestone-2-2-0: {url-project-issues}?q=is%3Aissue+milestone%3Av2.2.0+is%3Aclosed
+//:url-milestone-2-2-1: {url-project-issues}?q=is%3Aissue+milestone%3Av2.2.1+is%3Aclosed
 
 This page presents the changes made in each of the patch releases in the Asciidoctor PDF {page-component-version} release line.
 The releases are ordered from newest to oldest.
 
-= Asciidoctor PDF {page-component-version}.1
-
-_**Release date:** 2022.06.14 | *Release notes:* {url-project-repo}/releases/tag/v2.1.1[v{page-component-version}.1^] | *Issue label:* {url-milestone-2-1-1}[{page-component-version}.1^]_
-
-== Improvements
-
-* Store zero-based column on `Extent` for extensions to use to position cursor at start of extent.
-
-== Bug fixes
-
-* Place block image in SVG format in correct column when `align` is `left` and page columns are enabled.
-* Accurately trap LoadError from CodeRay if source language is not recognized on code block.
-* Only draw rounded rectangle around phrase if `border-radius` is > 0.
-* Use `base-border-color` value if border width is set on role for inline phrase but not border color.
-
 = Asciidoctor PDF {page-component-version}.0
 
-_**Release date:** 2022.06.10 | *Release notes:* {url-project-repo}/releases/tag/v2.1.0[v{page-component-version}.0^] | *Issue label:* {url-milestone-2-1-0}[{page-component-version}.0^]_
+_**Release date:** 2022.07.00 | *Release notes:* {url-project-repo}/releases/tag/v2.2.0[v{page-component-version}.0^] | *Issue label:* {url-milestone-2-2-0}[{page-component-version}.0^]_
 
 Asciidoctor PDF {page-component-version} introduces several enhancements.
 For a complete list of changes, see the {url-project-repo}/blob/main/CHANGELOG.adoc[CHANGELOG^].
 
-== Page columns
+== Enhancements
 
-The body of an article or manpage document can now be arranged into columns when the `page-columns` key is set in the theme.
-The width of the gap between the columns can be adjusted with the `page-column-gap` key.
-See xref:theme:page.adoc#columns[Columns] for more information.
+* Allow page background image to be specified per layout using `+{page-layout}+` attribute reference in path.
+* Allow page margin for rotated page to be configured independently using `page-margin-rotated` theme key or `pdf-page-margin-rotated` document attribute.
+* Allow orphan detection to be enabled for all section titles and discrete headings by setting `heading-min-height-after` to `auto` in the theme.
+* Set `docimagesdir` attribute when attribute substitutions are applied to a value from the theme.
+* Start page numbering and running content on empty verso page before first chapter of prepress book if `start-at` value is `0`.
+* Don't force page break after TOC with automatic placement in article if `title-page` attribute is set and value of `toc-break-after` theme key is `auto`.
+* Add `--theme` option to CLI as shorthand for `-a pdf-theme`.
+* Add `--sourcemap` option to CLI to enable `:sourcemap` option on processor.
+* Broaden support for relative font sizes in theme to more than just inline elements; document support for relative font sizes.
 
-== Other enhancements
+== Bug fixes
 
-* When `avoid` is assigned to the xref:theme:heading.adoc#part[heading-part-break-after key] in theme, a page break isn't inserted between a part and its first chapter.
-* Support for the xref:image-scaling.adoc#width-attributes[scale attribute] was added to image macros.
-* Support for the `iw` unit value was added to the xref:image-scaling.adoc#pdfwidth[pdfwidth attribute] on image macros.
-* A backlink is created from a bibref on a bibliography entry to the first reference to that entry in the document.
-* The text formatting on index terms is preserved when displayed in the index section.
+* Always set `imagesdir` attribute to value of `themesdir` when resolving images from theme.
 
-NOTE: Refer to xref:2.0@whats-new.adoc[What's New in Asciidoctor PDF 2.0] to learn about all the new features, improvements, and fixes introduced in 2.0.
+== Previous releases
+
+* See xref:2.1@whats-new.adoc[What's New in Asciidoctor PDF 2.1] to learn about the improvements added in Asciidoctor 2.1.
+* Refer to xref:2.0@whats-new.adoc[What's New in Asciidoctor PDF 2.0] to learn about all the new features, improvements, and fixes introduced in 2.0.
