@@ -281,12 +281,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should allow theme to customize bottom border of table head row', visual: true do
-      theme_overrides = {
+      pdf_theme = {
         table_head_border_bottom_width: 0.5,
         table_head_border_bottom_style: 'dashed',
         table_head_border_bottom_color: 'a9a9a9',
       }
-      to_file = to_pdf_file <<~'EOS', 'table-head-border-bottom.pdf', pdf_theme: theme_overrides
+      to_file = to_pdf_file <<~'EOS', 'table-head-border-bottom.pdf', pdf_theme: pdf_theme
       [frame=none,grid=rows]
       |===
       | Col A | Col B
@@ -330,12 +330,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should allow theme to set table border color to transparent' do
-      theme_overrides = {
+      pdf_theme = {
         table_border_color: 'transparent',
         table_head_border_bottom_color: 'transparent',
       }
 
-      pdf = to_pdf <<~'EOS', analyze: :line, pdf_theme: theme_overrides
+      pdf = to_pdf <<~'EOS', analyze: :line, pdf_theme: pdf_theme
       [frame=none,grid=rows]
       |===
       | Col A | Col B
@@ -357,13 +357,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should allow theme to specify table border color as CMYK array' do
       cmyk_color = [19, 9, 0, 60].extend Asciidoctor::PDF::ThemeLoader::CMYKColorValue
-      theme_overrides = {
+      pdf_theme = {
         table_border_color: cmyk_color,
         table_head_border_bottom_color: cmyk_color,
         table_grid_color: cmyk_color,
       }
 
-      pdf = to_pdf <<~'EOS', analyze: :line, pdf_theme: theme_overrides
+      pdf = to_pdf <<~'EOS', analyze: :line, pdf_theme: pdf_theme
       [frame=none,grid=rows]
       |===
       | Col A | Col B

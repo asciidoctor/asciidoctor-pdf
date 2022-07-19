@@ -983,19 +983,19 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       body
       EOS
 
-      theme_overrides = { title_page_text_align: 'left' }
+      pdf_theme = { title_page_text_align: 'left' }
 
-      pdf = to_pdf input, doctype: :book, pdf_theme: theme_overrides, analyze: true
+      pdf = to_pdf input, doctype: :book, pdf_theme: pdf_theme, analyze: true
 
       expected_x = (pdf.find_text page_number: 1).map {|it| it[:x] + 10 }
 
-      theme_overrides.update \
+      pdf_theme.update \
         title_page_title_margin_left: 10,
         title_page_subtitle_margin_left: 10,
         title_page_authors_margin_left: 10,
         title_page_revision_margin_left: 10
 
-      pdf = to_pdf input, doctype: :book, pdf_theme: theme_overrides, analyze: true
+      pdf = to_pdf input, doctype: :book, pdf_theme: pdf_theme, analyze: true
 
       actual_x = (pdf.find_text page_number: 1).map {|it| it[:x] }
       (expect actual_x).to eql expected_x
@@ -1014,27 +1014,27 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
 
       expected_x = (pdf.find_text page_number: 1).map {|it| it[:x] - 10 }
 
-      theme_overrides = {
+      pdf_theme = {
         title_page_title_margin_right: 10,
         title_page_subtitle_margin_right: 10,
         title_page_authors_margin_right: 10,
         title_page_revision_margin_right: 10,
       }
 
-      pdf = to_pdf input, doctype: :book, pdf_theme: theme_overrides, analyze: true
+      pdf = to_pdf input, doctype: :book, pdf_theme: pdf_theme, analyze: true
 
       actual_x = (pdf.find_text page_number: 1).map {|it| it[:x] }
       (expect actual_x).to eql expected_x
     end
 
     it 'should be able to set background color of title page', visual: true do
-      theme_overrides = {
+      pdf_theme = {
         title_page_background_color: '000000',
         title_page_title_font_color: 'EFEFEF',
         title_page_authors_font_color: 'DBDBDB',
       }
 
-      to_file = to_pdf_file <<~'EOS', 'title-page-background-color.pdf', pdf_theme: theme_overrides
+      to_file = to_pdf_file <<~'EOS', 'title-page-background-color.pdf', pdf_theme: pdf_theme
       = Dark and Stormy
       Author Name
       :doctype: book

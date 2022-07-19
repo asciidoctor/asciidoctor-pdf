@@ -157,12 +157,13 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
   end
 
   it 'should apply specified border and background color', visual: true do
-    pdf_theme = build_pdf_theme \
+    pdf_theme = {
       verse_border_left_width: 0,
       verse_border_width: 0.5,
       verse_border_color: 'aa0000',
-      verse_background_color: 'dddddd'
-    pdf_theme.quote_padding = pdf_theme.sidebar_padding
+      verse_background_color: 'dddddd',
+      quote_padding: [12, 15],
+    }
     to_file = to_pdf_file <<~'EOS', 'verse-border-and-background-color.pdf', pdf_theme: pdf_theme
     [verse,Paul McCartney]
     ____

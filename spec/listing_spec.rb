@@ -231,7 +231,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should resize font to prevent wrapping if autofit option is set' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'EOS', pdf_theme: { code_font_size: 12 }, analyze: true
     [%autofit]
     ----
     @themesdir = ::File.expand_path theme.__dir__ || (doc.attr 'pdf-themesdir') || ::Dir.pwd
@@ -239,7 +239,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     EOS
 
     (expect pdf.text).to have_size 1
-    (expect pdf.text[0][:font_size]).to be < build_pdf_theme.code_font_size
+    (expect pdf.text[0][:font_size]).to be < 12
   end
 
   it 'should not resize font if not necessary' do

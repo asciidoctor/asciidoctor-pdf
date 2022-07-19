@@ -179,12 +179,13 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
   end
 
   it 'should apply specified border and background color', visual: true do
-    pdf_theme = build_pdf_theme \
+    pdf_theme = {
       quote_border_left_width: 0,
       quote_border_width: 0.5,
       quote_border_color: 'aa0000',
-      quote_background_color: 'dddddd'
-    pdf_theme.quote_padding = pdf_theme.sidebar_padding
+      quote_background_color: 'dddddd',
+      quote_padding: [12, 15],
+    }
     to_file = to_pdf_file <<~'EOS', 'quote-border-and-background-color.pdf', pdf_theme: pdf_theme
     [,Paul McCartney]
     ____

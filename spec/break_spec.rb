@@ -165,8 +165,8 @@ describe 'Asciidoctor::PDF::Converter - Break' do
         {},
         { page_background_color: 'eeeeee' },
         { page_background_image: %(image:#{fixture_file 'square.svg'}[]) },
-      ].each do |theme_overrides|
-        pdf = to_pdf input, pdf_theme: theme_overrides, analyze: :page
+      ].each do |pdf_theme|
+        pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :page
         (expect pdf.pages).to have_size 1
       end
     end

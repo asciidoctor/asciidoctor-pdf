@@ -329,7 +329,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should ignore vw unit used in fallback if not supported' do
       converter = subject
-      converter.instance_variable_set :@theme, build_pdf_theme({ image_width: '50vw' })
+      converter.instance_variable_set :@theme, (build_pdf_theme image_width: '50vw')
       attrs = {}
       result = subject.resolve_explicit_width attrs, bounds_width: 1000, use_fallback: true
       (expect result.to_f).to eql 50.0

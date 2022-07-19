@@ -1275,7 +1275,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
   end
 
   it 'should apply consistent font color to running content when base font color is unset', visual: true do
-    theme_overrides = {
+    pdf_theme = {
       extends: 'base',
       base_font_color: nil,
       header_height: 36,
@@ -1286,7 +1286,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       toc_dot_leader_font_color: 'CCCCCC',
       running_content_start_at: 'toc',
     }
-    to_file = to_pdf_file <<~'EOS', 'toc-running-content-font-color.pdf', pdf_theme: theme_overrides
+    to_file = to_pdf_file <<~'EOS', 'toc-running-content-font-color.pdf', pdf_theme: pdf_theme
     = Document Title
     Author Name
     :doctype: book

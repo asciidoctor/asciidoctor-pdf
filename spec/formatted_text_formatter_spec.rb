@@ -333,29 +333,29 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should add background and border to code as defined in theme', visual: true do
-      theme_overrides = {
+      pdf_theme = {
         codespan_background_color: 'f5f5f5',
         codespan_border_color: 'dddddd',
         codespan_border_width: 0.25,
         codespan_border_offset: 2.5,
       }
-      to_file = to_pdf_file 'All your `code` belongs to us.', 'text-formatter-code.pdf', pdf_theme: theme_overrides
+      to_file = to_pdf_file 'All your `code` belongs to us.', 'text-formatter-code.pdf', pdf_theme: pdf_theme
       (expect to_file).to visually_match 'text-formatter-code.pdf'
     end
 
     it 'should use base border color if theme does not define border color for code', visual: true do
-      theme_overrides = {
+      pdf_theme = {
         base_border_color: 'dddddd',
         codespan_background_color: 'f5f5f5',
         codespan_border_width: 0.25,
         codespan_border_offset: 2.5,
       }
-      to_file = to_pdf_file 'All your `code` belongs to us.', 'text-formatter-code.pdf', pdf_theme: theme_overrides
+      to_file = to_pdf_file 'All your `code` belongs to us.', 'text-formatter-code.pdf', pdf_theme: pdf_theme
       (expect to_file).to visually_match 'text-formatter-code.pdf'
     end
 
     it 'should add border to phrase even when no background color is set', visual: true do
-      theme_overrides = {
+      pdf_theme = {
         codespan_font_color: '444444',
         codespan_font_size: '0.75em',
         codespan_border_color: 'E83E8C',
@@ -363,12 +363,12 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         codespan_border_offset: 2.5,
         codespan_border_radius: 3,
       }
-      to_file = to_pdf_file 'Type `bundle install` to install dependencies', 'text-formatter-border-only.pdf', pdf_theme: theme_overrides
+      to_file = to_pdf_file 'Type `bundle install` to install dependencies', 'text-formatter-border-only.pdf', pdf_theme: pdf_theme
       (expect to_file).to visually_match 'text-formatter-border-only.pdf'
     end
 
     it 'should add background and border to button as defined in theme', visual: true do
-      theme_overrides = {
+      pdf_theme = {
         button_content: '%s',
         button_background_color: '007BFF',
         button_border_offset: 2.5,
@@ -377,12 +377,12 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         button_border_color: '333333',
         button_font_color: 'ffffff',
       }
-      to_file = to_pdf_file 'Click btn:[Save] to save your work.', 'text-formatter-button.pdf', pdf_theme: theme_overrides, attribute_overrides: { 'experimental' => '' }
+      to_file = to_pdf_file 'Click btn:[Save] to save your work.', 'text-formatter-button.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'experimental' => '' }
       (expect to_file).to visually_match 'text-formatter-button.pdf'
     end
 
     it 'should use base border color if theme does not defined border color for button', visual: true do
-      theme_overrides = {
+      pdf_theme = {
         base_border_color: '333333',
         button_content: '%s',
         button_background_color: '007BFF',
@@ -391,12 +391,12 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         button_border_width: 0.5,
         button_font_color: 'ffffff',
       }
-      to_file = to_pdf_file 'Click btn:[Save] to save your work.', 'text-formatter-button.pdf', pdf_theme: theme_overrides, attribute_overrides: { 'experimental' => '' }
+      to_file = to_pdf_file 'Click btn:[Save] to save your work.', 'text-formatter-button.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'experimental' => '' }
       (expect to_file).to visually_match 'text-formatter-button.pdf'
     end
 
     it 'should use label as default button content', visual: true do
-      theme_overrides = {
+      pdf_theme = {
         button_content: nil,
         button_background_color: '007BFF',
         button_border_offset: 2.5,
@@ -405,16 +405,16 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         button_border_color: '333333',
         button_font_color: 'ffffff',
       }
-      to_file = to_pdf_file 'Click btn:[Save] to save your work.', 'text-formatter-button-default.pdf', pdf_theme: theme_overrides, attribute_overrides: { 'experimental' => '' }
+      to_file = to_pdf_file 'Click btn:[Save] to save your work.', 'text-formatter-button-default.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'experimental' => '' }
       (expect to_file).to visually_match 'text-formatter-button.pdf'
     end
 
     it 'should replace %s with button label in button content defined in theme' do
-      theme_overrides = {
+      pdf_theme = {
         button_content: '[%s]',
         button_font_color: '333333',
       }
-      pdf = to_pdf 'Click btn:[Save] to save your work.', analyze: true, pdf_theme: theme_overrides, attribute_overrides: { 'experimental' => '' }
+      pdf = to_pdf 'Click btn:[Save] to save your work.', analyze: true, pdf_theme: pdf_theme, attribute_overrides: { 'experimental' => '' }
       (expect pdf.lines).to eql ['Click [Save] to save your work.']
     end
 
@@ -707,10 +707,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should support size roles (big and small) in default theme' do
-      pdf_theme = build_pdf_theme
+      pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: (pdf_theme = build_pdf_theme), analyze: true
       (expect pdf_theme.role_big_font_size).to be 13
       (expect pdf_theme.role_small_font_size).to be 9
-      pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: (pdf_theme = build_pdf_theme), analyze: true
       text = pdf.text
       (expect text).to have_size 3
       (expect text[0][:font_size].to_f.round 2).to eql pdf_theme.base_font_size_large.to_f
@@ -735,7 +734,10 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should support font size roles (big and small) using fallback values if not specified in theme' do
-      pdf_theme = build_pdf_theme({ base_font_size: 12 }, (fixture_file 'bare-theme.yml'))
+      pdf_theme = {
+        extends: (fixture_file 'bare-theme.yml'),
+        base_font_size: 12,
+      }
       pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: pdf_theme, analyze: true
       text = pdf.text
       (expect text).to have_size 3
@@ -745,7 +747,12 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should base font size roles on large and small theme keys if not specified in theme' do
-      pdf_theme = build_pdf_theme({ base_font_size: 12, base_font_size_large: 18, base_font_size_small: 9 }, (fixture_file 'bare-theme.yml'))
+      pdf_theme = {
+        extends: (fixture_file 'bare-theme.yml'),
+        base_font_size: 12,
+        base_font_size_large: 18,
+        base_font_size_small: 9,
+      }
       pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: pdf_theme, analyze: true
       text = pdf.text
       (expect text).to have_size 3

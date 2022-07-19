@@ -266,7 +266,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
   context 'Header' do
     it 'should add running header starting at body if header key is set in theme' do
-      theme_overrides = {
+      pdf_theme = {
         header_font_size: 9,
         header_height: 30,
         header_line_height: 1,
@@ -275,7 +275,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         header_verso_right_content: '({document-title})',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
 
@@ -300,7 +300,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should not add running header if noheader attribute is set' do
-      theme_overrides = {
+      pdf_theme = {
         header_font_size: 9,
         header_height: 30,
         header_line_height: 1,
@@ -309,7 +309,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         header_verso_right_content: '({document-title})',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, attribute_overrides: { 'noheader' => '' }, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, attribute_overrides: { 'noheader' => '' }, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
 
@@ -453,9 +453,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at title page if running_content_start_at key is title' do
-      theme_overrides = { running_content_start_at: 'title' }
-
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'title' }, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -474,9 +472,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at title page if running_content_start_at key is title and document has front cover' do
-      theme_overrides = { running_content_start_at: 'title' }
-
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'title' }, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -497,9 +493,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at toc page if running_content_start_at key is title and title page is disabled' do
-      theme_overrides = { running_content_start_at: 'title' }
-
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'title' }, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -519,9 +513,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at body if running_content_start_at key is title and title page and toc are disabled' do
-      theme_overrides = { running_content_start_at: 'title' }
-
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'title' }, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -540,9 +532,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at toc page if running_content_start_at key is toc' do
-      theme_overrides = { running_content_start_at: 'toc' }
-
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'toc' }, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -561,9 +551,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at toc page if running_content_start_at key is toc and title page is disabled' do
-      theme_overrides = { running_content_start_at: 'toc' }
-
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'toc' }, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -583,9 +571,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at body if running_content_start_at key is toc and toc is disabled' do
-      theme_overrides = { running_content_start_at: 'toc' }
-
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'toc' }, analyze: true
       = Document Title
       :doctype: book
 
@@ -603,9 +589,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at body if running_content_start_at key is after-toc and toc is disabled' do
-      theme_overrides = { running_content_start_at: 'after-toc' }
-
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'after-toc' }, analyze: true
       = Document Title
       :doctype: book
 
@@ -976,9 +960,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering at cover page of article if page_numbering_start_at is cover' do
-      theme_overrides = { page_numbering_start_at: 'cover' }
-
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides)
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: 'cover' }
       = Document Title
       :front-cover-image: image:tux.png[]
 
@@ -994,9 +976,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering at cover page of book if page_numbering_start_at is cover' do
-      theme_overrides = { page_numbering_start_at: 'cover' }
-
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides)
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: 'cover' }
       = Document Title
       :doctype: book
       :front-cover-image: image:tux.png[]
@@ -1014,9 +994,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering at title page of book if page_numbering_start_at is cover and document has no cover' do
-      theme_overrides = { page_numbering_start_at: 'cover' }
-
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides)
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: 'cover' }
       = Document Title
       :doctype: book
       :toc:
@@ -1033,9 +1011,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering at body of article if page_numbering_start_at is cover and document has no cover' do
-      theme_overrides = { page_numbering_start_at: 'cover' }
-
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides)
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: 'cover' }
       = Document Title
 
       == First Section
@@ -1050,9 +1026,9 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering at title page if page_numbering_start_at is title' do
-      theme_overrides = { page_numbering_start_at: 'title', running_content_start_at: 'title' }
+      pdf_theme = { page_numbering_start_at: 'title', running_content_start_at: 'title' }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -1071,9 +1047,9 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering at toc page if page_numbering_start_at is title and title page is disabled' do
-      theme_overrides = { page_numbering_start_at: 'title', running_content_start_at: 'title' }
+      pdf_theme = { page_numbering_start_at: 'title', running_content_start_at: 'title' }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -1093,9 +1069,9 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering at body if page_numbering_start_at is title and title page and toc are disabled' do
-      theme_overrides = { page_numbering_start_at: 'title', running_content_start_at: 'title' }
+      pdf_theme = { page_numbering_start_at: 'title', running_content_start_at: 'title' }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -1114,9 +1090,9 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering at toc page if page_numbering_start_at is toc' do
-      theme_overrides = { page_numbering_start_at: 'toc', running_content_start_at: 'title' }
+      pdf_theme = { page_numbering_start_at: 'toc', running_content_start_at: 'title' }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -1135,9 +1111,9 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering at body if page_numbering_start_at is toc and toc is disabled' do
-      theme_overrides = { page_numbering_start_at: 'toc', running_content_start_at: 'title' }
+      pdf_theme = { page_numbering_start_at: 'toc', running_content_start_at: 'title' }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
 
@@ -1155,9 +1131,9 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering at toc page if page_numbering_start_at is toc and title page is disabled' do
-      theme_overrides = { page_numbering_start_at: 'toc', running_content_start_at: 'title' }
+      pdf_theme = { page_numbering_start_at: 'toc', running_content_start_at: 'title' }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -1292,7 +1268,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
   context 'Theming' do
     it 'should be able to set font styles per position of periphery and side in theme' do
-      pdf_theme = build_pdf_theme \
+      pdf_theme = {
         footer_font_size: 7.5,
         footer_recto_left_content: '{section-title}',
         footer_recto_left_font_style: 'bold',
@@ -1302,7 +1278,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_left_content: '{page-number}',
         footer_verso_left_font_color: 'ff0000',
         footer_verso_right_content: '{section-title}',
-        footer_verso_right_text_transform: 'uppercase'
+        footer_verso_right_text_transform: 'uppercase',
+      }
 
       pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
@@ -1348,7 +1325,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should expand header padding from single value' do
-      theme_overrides = {
+      pdf_theme = {
         header_font_size: 9,
         header_height: 30,
         header_line_height: 1,
@@ -1357,7 +1334,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         header_verso_left_content: '{page-number}',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
       = Document Title
 
       first page
@@ -1398,7 +1375,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should coerce non-array value to a string' do
-      theme_overrides = {
+      pdf_theme = {
         header_font_size: 9,
         header_height: 30,
         header_line_height: 1,
@@ -1407,7 +1384,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         header_verso_left_content: 99,
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
       = Document Title
 
       first page
@@ -1634,7 +1611,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should not draw background color across whole periphery region', visual: true do
-      pdf_theme = build_pdf_theme \
+      pdf_theme = {
         header_background_color: '009246',
         header_border_width: 0,
         header_height: 160,
@@ -1642,7 +1619,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_border_width: 0,
         footer_height: 160,
         footer_padding: [6, 49, 0, 49],
-        page_margin: [160, 48, 160, 48]
+        page_margin: [160, 48, 160, 48],
+      }
 
       to_file = to_pdf_file 'Hello world', 'running-content-background-color.pdf', enable_footer: true, pdf_theme: pdf_theme
 
@@ -1650,7 +1628,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should not draw background color across whole periphery region if margin is 0', visual: true do
-      pdf_theme = build_pdf_theme \
+      pdf_theme = {
         header_background_color: '009246',
         header_border_width: 0,
         header_height: 160,
@@ -1663,7 +1641,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_padding: [6, 1, 0, 1],
         footer_margin: 0,
         footer_content_margin: [0, 'inherit'],
-        page_margin: [160, 48, 160, 48]
+        page_margin: [160, 48, 160, 48],
+      }
 
       to_file = to_pdf_file 'Hello world', 'running-content-background-color-full.pdf', enable_footer: true, pdf_theme: pdf_theme
 
@@ -1671,7 +1650,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should not draw background image across whole periphery region', visual: true do
-      pdf_theme = build_pdf_theme \
+      pdf_theme = {
         header_background_image: %(image:#{fixture_file 'header-bg-letter.svg'}[fit=contain]),
         header_border_width: 0,
         header_height: 30,
@@ -1681,7 +1660,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_border_width: 0,
         footer_height: 30,
         footer_padding: 0,
-        footer_vertical_align: 'middle'
+        footer_vertical_align: 'middle',
+      }
 
       to_file = to_pdf_file <<~'EOS', 'running-content-background-image.pdf', enable_footer: true, pdf_theme: pdf_theme
       :pdf-page-size: Letter
@@ -1693,7 +1673,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should not draw background image across whole periphery region if margin is 0', visual: true do
-      pdf_theme = build_pdf_theme \
+      pdf_theme = {
         header_background_image: %(image:#{fixture_file 'header-bg-letter.svg'}[fit=contain]),
         header_border_width: 0,
         header_height: 30,
@@ -1707,7 +1687,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_padding: 0,
         footer_margin: 0,
         footer_content_margin: [0, 'inherit'],
-        footer_vertical_align: 'middle'
+        footer_vertical_align: 'middle',
+      }
 
       to_file = to_pdf_file <<~'EOS', 'running-content-background-image-full.pdf', enable_footer: true, pdf_theme: pdf_theme
       :pdf-page-size: Letter
@@ -1719,12 +1700,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should warn if background image cannot be resolved' do
-      pdf_theme = build_pdf_theme \
+      pdf_theme = {
         footer_background_image: 'no-such-image.png',
         footer_border_width: 0,
         footer_height: 30,
         footer_padding: 0,
-        footer_vertical_align: 'middle'
+        footer_vertical_align: 'middle',
+      }
 
       (expect do
         pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme
@@ -1990,7 +1972,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should draw column rule between columns using specified width and spacing', visual: true do
-      pdf_theme = build_pdf_theme \
+      pdf_theme = {
         header_height: 36,
         header_padding: [8, 0],
         header_columns: '>40% =10% <40%',
@@ -2008,7 +1990,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_column_rule_spacing: 8,
         footer_recto_left_content: 'left',
         footer_recto_center_content: 'center',
-        footer_recto_right_content: 'right'
+        footer_recto_right_content: 'right',
+      }
 
       to_file = to_pdf_file <<~'EOS', 'running-content-column-rule.pdf', enable_footer: true, pdf_theme: pdf_theme
       = Document Title
@@ -2090,7 +2073,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should not draw column rule if there is only one column', visual: true do
-      pdf_theme = build_pdf_theme \
+      pdf_theme = {
         header_height: 36,
         header_padding: [8, 0],
         header_columns: '<25% =50% >25%',
@@ -2104,7 +2087,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_column_rule_width: 0.5,
         footer_column_rule_color: '333333',
         footer_column_rule_spacing: 8,
-        footer_recto_right_content: 'right'
+        footer_recto_right_content: 'right',
+      }
 
       to_file = to_pdf_file <<~'EOS', 'running-content-no-column-rule.pdf', enable_footer: true, pdf_theme: pdf_theme
       = Document Title
@@ -2235,7 +2219,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
   context 'Page layout' do
     it 'should place footer text correctly if page layout changes' do
-      theme_overrides = {
+      pdf_theme = {
         footer_padding: 0,
         footer_verso_left_content: 'verso',
         footer_verso_right_content: nil,
@@ -2243,7 +2227,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: nil,
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       portrait
 
       [.landscape]
@@ -2264,14 +2248,14 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     it 'should adjust dimensions of running content to fit page layout', visual: true do
       filler = lorem_ipsum '2-sentences-2-paragraphs'
-      theme_overrides = {
+      pdf_theme = {
         footer_recto_left_content: '{section-title}',
         footer_recto_right_content: '{page-number}',
         footer_verso_left_content: '{page-number}',
         footer_verso_right_content: '{section-title}',
       }
 
-      to_file = to_pdf_file <<~EOS, 'running-content-alt-layouts.pdf', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides)
+      to_file = to_pdf_file <<~EOS, 'running-content-alt-layouts.pdf', enable_footer: true, pdf_theme: pdf_theme
       = Alternating Page Layouts
 
       This document demonstrates that the running content is adjusted to fit the page layout as the page layout alternates.
@@ -2299,13 +2283,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
   context 'Implicit attributes' do
     it 'should escape text of doctitle attribute' do
-      theme_overrides = {
+      pdf_theme = {
         footer_recto_right_content: '({doctitle})',
         footer_verso_left_content: '({doctitle})',
       }
 
       (expect do
-        pdf = to_pdf <<~'EOS', enable_footer: true, attribute_overrides: { 'doctitle' => 'The Chronicles of <Foo> & &#166;' }, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+        pdf = to_pdf <<~'EOS', enable_footer: true, attribute_overrides: { 'doctitle' => 'The Chronicles of <Foo> & &#166;' }, pdf_theme: pdf_theme, analyze: true
         :doctype: book
 
         == Chapter 1
@@ -2812,27 +2796,27 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         3 => ['A', 'Level 2', 'Level 3', 'Level 3', 'B'],
         4 => ['A', 'Level 2', 'Level 3', 'Level 4', 'B'],
       }.each do |sectlevels, expected|
-        theme_overrides = {
+        pdf_theme = {
           footer_sectlevels: sectlevels,
           footer_font_family: 'Helvetica',
           footer_recto_right_content: '{section-or-chapter-title}',
           footer_verso_left_content: '{section-or-chapter-title}',
         }
-        pdf = to_pdf input, enable_footer: true, pdf_theme: theme_overrides, analyze: true
+        pdf = to_pdf input, enable_footer: true, pdf_theme: pdf_theme, analyze: true
         titles = (pdf.find_text font_name: 'Helvetica').map {|it| it[:string] }
         (expect titles).to eql expected
       end
     end
 
     it 'should use doctitle, toc-title, and preface-title as chapter-title before first chapter' do
-      theme_overrides = {
+      pdf_theme = {
         running_content_start_at: 'title',
         page_numbering_start_at: 'title',
         footer_recto_right_content: '{chapter-title}',
         footer_verso_left_content: '{chapter-title}',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: (build_pdf_theme theme_overrides), analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -2983,12 +2967,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     it 'should scale image up to width when fit=contain', visual: true do
       %w(pdfwidth=99.76 fit=contain pdfwidth=0.5in,fit=contain pdfwidth=15in,fit=contain).each_with_index do |image_attrlist, idx|
-        pdf_theme = build_pdf_theme \
+        pdf_theme = {
           header_height: 36,
           header_columns: '>40% =20% <40%',
           header_recto_left_content: 'text',
           header_recto_center_content: %(image:#{fixture_file 'green-bar.svg'}[#{image_attrlist}]),
-          header_recto_right_content: 'text'
+          header_recto_right_content: 'text',
+        }
 
         to_file = to_pdf_file %([.text-center]\ncontent), %(running-content-image-contain-#{idx}.pdf), pdf_theme: pdf_theme
 
@@ -2997,7 +2982,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should not overlap border when scaling image to fit content area', visual: true do
-      pdf_theme = build_pdf_theme \
+      pdf_theme = {
         header_height: 36,
         header_border_width: 5,
         header_border_color: 'dddddd',
@@ -3013,7 +2998,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_columns: '>40% =20% <40%',
         footer_recto_left_content: 'text',
         footer_recto_center_content: %(image:#{fixture_file 'square.png'}[fit=contain]),
-        footer_recto_right_content: 'text'
+        footer_recto_right_content: 'text',
+      }
 
       to_file = to_pdf_file %([.text-center]\ncontent), 'running-content-image-contain-border.pdf', enable_footer: true, pdf_theme: pdf_theme
 
@@ -3022,12 +3008,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     it 'should scale image down to width when fit=scale-down', visual: true do
       %w(pdfwidth=99.76 pdfwidth=15in,fit=scale-down).each_with_index do |image_attrlist, idx|
-        pdf_theme = build_pdf_theme \
+        pdf_theme = {
           header_height: 36,
           header_columns: '>40% =20% <40%',
           header_recto_left_content: 'text',
           header_recto_center_content: %(image:#{fixture_file 'green-bar.svg'}[#{image_attrlist}]),
-          header_recto_right_content: 'text'
+          header_recto_right_content: 'text',
+        }
 
         to_file = to_pdf_file %([.text-center]\ncontent), %(running-content-image-scale-down-width-#{idx}.pdf), pdf_theme: pdf_theme
 
@@ -3037,12 +3024,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     it 'should scale image down to height when fit=scale-down', visual: true do
       %w(pdfwidth=30.60 fit=scale-down).each_with_index do |image_attrlist, idx|
-        pdf_theme = build_pdf_theme \
+        pdf_theme = {
           header_height: 36,
           header_columns: '>40% =20% <40%',
           header_recto_left_content: 'text',
           header_recto_center_content: %(image:#{fixture_file 'tux.png'}[#{image_attrlist}]),
-          header_recto_right_content: 'text'
+          header_recto_right_content: 'text',
+        }
 
         to_file = to_pdf_file %([.text-center]\ncontent), %(running-content-image-scale-down-height-#{idx}.pdf), pdf_theme: pdf_theme
 
@@ -3051,24 +3039,26 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should scale image down to minimum dimension when fit=scale-down', visual: true do
-      pdf_theme = build_pdf_theme \
+      pdf_theme = {
         header_height: 24,
         header_columns: '>25% =50% <25%',
         header_recto_left_content: 'text',
         header_recto_center_content: %(image:#{fixture_file 'square-viewbox-only.svg'}[fit=scale-down]),
-        header_recto_right_content: 'text'
+        header_recto_right_content: 'text',
+      }
       to_file = to_pdf_file %([.text-center]\ncontent), 'running-content-image-scale-down-min.pdf', pdf_theme: pdf_theme
       (expect to_file).to visually_match 'running-content-image-scale-down-min.pdf'
     end
 
     it 'should not modify image dimensions when fit=scale-down if image already fits', visual: true do
       %w(pdfwidth=0.5in pdfwidth=0.5in,fit=scale-down).each_with_index do |image_attrlist, idx|
-        pdf_theme = build_pdf_theme \
+        pdf_theme = {
           header_height: 36,
           header_columns: '>40% =20% <40%',
           header_recto_left_content: 'text',
           header_recto_center_content: %(image:#{fixture_file 'green-bar.svg'}[#{image_attrlist}]),
-          header_recto_right_content: 'text'
+          header_recto_right_content: 'text',
+        }
 
         to_file = to_pdf_file %([.text-center]\ncontent), %(running-content-image-#{idx}.pdf), pdf_theme: pdf_theme
 
@@ -3077,10 +3067,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should size image based on width attribute value if no other dimension attribute is specified', visual: true do
-      pdf_theme = build_pdf_theme \
+      pdf_theme = {
         header_height: 36,
         header_columns: '<25% =50% >25%',
-        header_recto_center_content: %(image:#{fixture_file 'square-viewbox-only.svg'}[square,24])
+        header_recto_center_content: %(image:#{fixture_file 'square-viewbox-only.svg'}[square,24]),
+      }
 
       to_file = to_pdf_file %([.text-center]\ncontent), 'running-content-image-width.pdf', pdf_theme: pdf_theme
 
@@ -3201,10 +3192,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     it 'should warn and replace image with alt text if image is not found' do
       [true, false].each do |block|
         (expect do
-          pdf_theme = build_pdf_theme \
+          pdf_theme = {
             header_height: 36,
             header_columns: '=100%',
-            header_recto_center_content: %(image:#{block ? ':' : ''}no-such-image.png[alt text])
+            header_recto_center_content: %(image:#{block ? ':' : ''}no-such-image.png[alt text]),
+          }
 
           pdf = to_pdf 'content', pdf_theme: pdf_theme, analyze: true
 
@@ -3215,14 +3207,14 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should add link to raster image if link attribute is set' do
-      theme_overrides = {
+      pdf_theme = {
         __dir__: fixtures_dir,
         header_height: 36,
         header_columns: '0% =100% 0%',
         header_recto_center_content: 'image:tux.png[link=https://www.linuxfoundation.org/projects/linux/]',
         header_verso_center_content: 'image:tux.png[link=https://www.linuxfoundation.org/projects/linux/]',
       }
-      pdf = to_pdf 'body', pdf_theme: theme_overrides
+      pdf = to_pdf 'body', pdf_theme: pdf_theme
 
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
@@ -3235,14 +3227,14 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should add link to SVG image if link attribute is set' do
-      theme_overrides = {
+      pdf_theme = {
         __dir__: fixtures_dir,
         header_height: 36,
         header_columns: '0% =100% 0%',
         header_recto_center_content: 'image:square.svg[link=https://example.org]',
         header_verso_center_content: 'image:square.svg[link=https://example.org]',
       }
-      pdf = to_pdf 'body', pdf_theme: theme_overrides
+      pdf = to_pdf 'body', pdf_theme: pdf_theme
 
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
@@ -3333,7 +3325,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should replace unrecognized font family in SVG with SVG fallback font family specified in theme' do
-      theme_overrides = {
+      pdf_theme = {
         __dir__: fixtures_dir,
         header_height: 36,
         header_columns: '0% =100% 0%',
@@ -3341,7 +3333,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         header_verso_center_content: 'image:svg-with-unknown-font.svg[]',
         svg_fallback_font_family: 'Times-Roman',
       }
-      pdf = to_pdf 'body', pdf_theme: theme_overrides, analyze: true
+      pdf = to_pdf 'body', pdf_theme: pdf_theme, analyze: true
 
       text = pdf.find_text 'This text uses the default SVG font.'
       (expect text).to have_size 1
