@@ -174,7 +174,7 @@ describe Asciidoctor::PDF::Converter do
         doc.write pdf_doc, (pdf_io = StringIO.new)
         pdf = PDF::Reader.new pdf_io
         (expect get_images pdf).to have_size 1
-        tmp_file_paths.each {|path| FileUtils.rm_r path, force: true, secure: true }
+        tmp_file_paths.each {|path| (Pathname.new path).rmtree secure: true }
       end).to log_message severity: :WARN, message: '~could not delete temporary file'
     end
 

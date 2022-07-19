@@ -228,14 +228,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should warn instead of crash if block image is unreadable', unless: (windows? || Process.euid == 0) do
+      image_file = Pathname.new fixture_file 'logo.png'
       (expect do
-        image_file = fixture_file 'logo.png'
-        old_mode = (File.stat image_file).mode
-        FileUtils.chmod 0o000, image_file
+        old_mode = image_file.stat.mode
+        image_file.chmod 0o000
         pdf = to_pdf 'image::logo.png[Unreadable Image]', analyze: true
         (expect pdf.lines).to eql ['[Unreadable Image] | logo.png']
       ensure
-        FileUtils.chmod old_mode, image_file
+        image_file.chmod old_mode
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
@@ -1905,7 +1905,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end
 
       before do
-        FileUtils.rm_r OpenURI::Cache.cache_path, force: true, secure: true
+        (Pathname.new OpenURI::Cache.cache_path).rmtree secure: true
       end
 
       it 'should cache remote image if cache-uri document attribute is set' do
@@ -1961,14 +1961,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should warn instead of crash if inline image is unreadable', unless: (windows? || Process.euid == 0) do
+      image_file = Pathname.new fixture_file 'logo.png'
       (expect do
-        image_file = fixture_file 'logo.png'
-        old_mode = (File.stat image_file).mode
-        FileUtils.chmod 0o000, image_file
+        old_mode = image_file.stat.mode
+        image_file.chmod 0o000
         pdf = to_pdf 'image:logo.png[Unreadable Image,16] Company Name', analyze: true
         (expect pdf.lines).to eql ['[Unreadable Image] Company Name']
       ensure
-        FileUtils.chmod old_mode, image_file
+        image_file.chmod old_mode
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
