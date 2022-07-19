@@ -10,9 +10,18 @@
 :url-milestone-2-1-3: {url-project-issues}?q=is%3Aissue+milestone%3Av2.1.3+is%3Aclosed
 :url-milestone-2-1-4: {url-project-issues}?q=is%3Aissue+milestone%3Av2.1.4+is%3Aclosed
 :url-milestone-2-1-5: {url-project-issues}?q=is%3Aissue+milestone%3Av2.1.5+is%3Aclosed
+:url-milestone-2-1-6: {url-project-issues}?q=is%3Aissue+milestone%3Av2.1.6+is%3Aclosed
 
 This page presents the changes made in each of the patch releases in the Asciidoctor PDF {page-component-version} release line.
 The releases are ordered from newest to oldest.
+
+= Asciidoctor PDF {page-component-version}.6
+
+_**Release date:** 2022.07.19 | *Release notes:* {url-project-repo}/releases/tag/v2.1.6[v{page-component-version}.6^] | *Issue label:* {url-milestone-2-1-6}[{page-component-version}.6^]_
+
+== Bug fixes
+
+* Resolve font size for monospaced cell when font size value on `codespan` key in theme is relative.
 
 = Asciidoctor PDF {page-component-version}.5
 
