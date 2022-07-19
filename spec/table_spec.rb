@@ -1540,7 +1540,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect monospaced_text[:font_size]).to eql 10.25
     end
 
-    it '.only should apply codespan style with relative font size to text in a monospaced table cell' do
+    it 'should apply codespan style with relative font size to text in a monospaced table cell' do
       ['0.8em', 0.8].each do |font_size|
         pdf = to_pdf <<~'EOS', pdf_theme: { codespan_font_size: font_size }, analyze: true
         [cols=2*,width=50%]
