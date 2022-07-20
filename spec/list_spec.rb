@@ -215,37 +215,16 @@ describe 'Asciidoctor::PDF::Converter - List' do
     end
 
     it 'should allow theme to change marker color for ulist' do
-      pdf_theme = { ulist_marker_font_color: '00FF00' }
+      [:list_marker_font_color, :ulist_marker_font_color].each do |key|
+        pdf = to_pdf <<~'EOS', pdf_theme: { key => '00FF00' }, analyze: true
+        * all
+        * the
+        * things
+        EOS
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
-      * all
-      * the
-      * things
-      EOS
-
-      marker_colors = (pdf.find_text ?\u2022).map {|it| it[:font_color] }.uniq
-      (expect marker_colors).to eql ['00FF00']
-    end
-
-    it 'should allow theme to change marker color for any list' do
-      pdf_theme = { list_marker_font_color: '00FF00' }
-
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
-      * all
-      * the
-      * things
-
-      //
-
-      . pencil
-      . paper
-      . thoughts
-      EOS
-
-      ulist_marker_colors = (pdf.find_text ?\u2022).map {|it| it[:font_color] }.uniq
-      olist_marker_colors = (pdf.find_text %r/[1-3]\./).map {|it| it[:font_color] }.uniq
-      (expect ulist_marker_colors).to eql ['00FF00']
-      (expect olist_marker_colors).to eql ['00FF00']
+        marker_colors = (pdf.find_text ?\u2022).map {|it| it[:font_color] }.uniq
+        (expect marker_colors).to eql ['00FF00']
+      end
     end
 
     it 'should allow theme to change marker font size, font family, and line height for ulist' do
@@ -267,6 +246,33 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect marker[:font_name]).to eql 'mplus-1p-regular'
       (expect marker[:font_size]).to eql 21
       (expect marker[:y]).to be < text[:y]
+    end
+
+    it 'should allow theme to change marker font style for ulist' do
+      pdf_theme = { ulist_marker_font_style: 'bold' }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      * one
+      * two
+      * three
+      EOS
+
+      marker = (pdf.find_text ?\u2022)[0]
+      (expect marker[:font_name]).to eql 'NotoSerif-Bold'
+    end
+
+    it 'should allow theme to change specific marker font style for ulist' do
+      pdf_theme = { ulist_marker_circle_font_style: 'bold' }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      [circle]
+      * one
+      * two
+      * three
+      EOS
+
+      marker = (pdf.find_text ?\u25e6)[0]
+      (expect marker[:font_name]).to eql 'NotoSerif-Bold'
     end
 
     it 'should reserve enough space for marker that is not found in any font' do
@@ -632,16 +638,16 @@ describe 'Asciidoctor::PDF::Converter - List' do
     end
 
     it 'should allow theme to change marker color for olist' do
-      pdf_theme = { olist_marker_font_color: '00FF00' }
+      [:list_marker_font_color, :olist_marker_font_color].each do |key|
+        pdf = to_pdf <<~'EOS', pdf_theme: { key => '00FF00' }, analyze: true
+        . one
+        . two
+        . three
+        EOS
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
-      . one
-      . two
-      . three
-      EOS
-
-      marker_colors = (pdf.find_text %r/\d\./).map {|it| it[:font_color] }.uniq
-      (expect marker_colors).to eql ['00FF00']
+        marker_colors = (pdf.find_text %r/\d\./).map {|it| it[:font_color] }.uniq
+        (expect marker_colors).to eql ['00FF00']
+      end
     end
 
     it 'should allow theme to change marker font size, font family, and line height for olist' do

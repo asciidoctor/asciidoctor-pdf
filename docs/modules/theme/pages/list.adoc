@@ -77,6 +77,14 @@ olist:
   marker:
     font-color: #CCCCCC
 
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: `$base-font-style`)
+|[source]
+olist:
+  marker:
+    font-style: bold
+
 |line-height
 |xref:language.adoc#values[Number] +
 (default: `$base-line-height`)
@@ -118,6 +126,14 @@ ulist:
 ulist:
   marker:
     font-color: #CCCCCC
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: `$base-font-style`)
+|[source]
+ulist:
+  marker:
+    font-style: bold
 
 |line-height
 |xref:language.adoc#values[Number] +
@@ -170,8 +186,17 @@ ulist:
 |[source]
 ulist:
   marker:
-    disc:
+    square:
       font-color: #FF0000
+
+|font-style
+|xref:text.adoc#font-style[Font style] +
+(default: _inherit_)
+|[source]
+ulist:
+  marker:
+    circle:
+      font-style: bold
 
 |line-height
 |xref:language.adoc#values[Number] +
