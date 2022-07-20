@@ -5040,7 +5040,9 @@ module Asciidoctor
       end
 
       def resolve_top val
-        if val.end_with? 'vh'
+        if ::Numeric === val
+          @y - val
+        elsif val.end_with? 'vh'
           page_height * (1 - (val.to_f / 100))
         elsif val.end_with? '%'
           @y - effective_page_height * (val.to_f / 100)
