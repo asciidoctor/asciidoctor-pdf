@@ -273,7 +273,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       end).to log_message severity: :ERROR, message: '~PDF format not supported for title page logo image'
     end
 
-    it 'should position logo using value of top attribute on image macro in title-logo-image attribute' do
+    it 'should position logo using value of top attribute with vh units on image macro in title-logo-image attribute' do
       pdf = to_pdf <<~'EOS', analyze: :image
       = Document Title
       :doctype: book
@@ -286,9 +286,44 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       images = pdf.images
       (expect images).to have_size 1
       title_page_image = images[0]
-      (expect title_page_image[:page_number]).to be 1
       (expect title_page_image[:x]).to eql left_margin
       (expect title_page_image[:y]).to eql page_height
+    end
+
+    it 'should position logo using value of top attribute with in units on image macro in title-logo-image attribute' do
+      pdf = to_pdf <<~'EOS', analyze: :image
+      = Document Title
+      :doctype: book
+      :title-logo-image: image:tux.png[align=left,top=1in]
+      EOS
+
+      left_margin = 0.67 * 72
+      top_margin = 0.5 * 72
+      page_height = 841.89 # ~11.69in
+
+      images = pdf.images
+      (expect images).to have_size 1
+      title_page_image = images[0]
+      (expect title_page_image[:x]).to eql left_margin
+      (expect title_page_image[:y]).to eql (page_height - top_margin - 72)
+    end
+
+    it 'should position logo using value of top attribute with unrecognized units on image macro in title-logo-image attribute' do
+      pdf = to_pdf <<~'EOS', analyze: :image
+      = Document Title
+      :doctype: book
+      :title-logo-image: image:tux.png[align=left,top=1ft]
+      EOS
+
+      left_margin = 0.67 * 72
+      top_margin = 0.5 * 72
+      page_height = 841.89 # ~11.69in
+
+      images = pdf.images
+      (expect images).to have_size 1
+      title_page_image = images[0]
+      (expect title_page_image[:x]).to eql left_margin
+      (expect title_page_image[:y]).to eql (page_height - top_margin - 1)
     end
 
     it 'should align logo using value of align attribute specified on image macro', visual: true do
@@ -861,6 +896,31 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       end
     end
 
+    it 'should move logo down from top margin of page by numeric value of title_page_logo_top key' do
+      pdf_theme = { title_page_logo_top: 20 }
+
+      pdf = to_pdf <<~'EOS', analyze: :image, pdf_theme: pdf_theme
+      = Document Title
+      :doctype: book
+      :title-logo-image: image:tux.png[align=left]
+
+      image::tux.png[]
+      EOS
+
+      left_margin = 0.67 * 72
+
+      images = pdf.images
+      (expect images).to have_size 2
+      title_page_image = images[0]
+      reference_image = images[1]
+      (expect title_page_image[:page_number]).to be 1
+      (expect reference_image[:page_number]).to be 2
+      (expect title_page_image[:x]).to eql left_margin
+      (expect title_page_image[:x]).to eql reference_image[:x]
+      expected_top = reference_image[:y] - 20
+      (expect title_page_image[:y]).to eql expected_top
+    end
+
     it 'should move logo down from top margin of page by pt value of title_page_logo_top key' do
       pdf_theme = {
         title_page_logo_top: '20pt',
@@ -931,6 +991,25 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect doctitle_text[:page_number]).to be 1
       effective_page_height = page_height - top_margin - bottom_margin
       expected_top = page_height - top_margin - (effective_page_height * 0.10)
+      (expect doctitle_text[:y] + doctitle_text[:font_size]).to be_within(0.5).of(expected_top)
+    end
+
+    it 'should move title down from top margin by numeric value of title_page_title_top key' do
+      pdf_theme = { title_page_title_top: 20 }
+
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      :doctype: book
+
+      content
+      EOS
+
+      page_height = 841.89 # ~11.69in
+      top_margin = 0.5 * 72
+
+      doctitle_text = (pdf.find_text 'Document Title')[0]
+      (expect doctitle_text[:page_number]).to be 1
+      expected_top = page_height - top_margin - 20
       (expect doctitle_text[:y] + doctitle_text[:font_size]).to be_within(0.5).of(expected_top)
     end
 

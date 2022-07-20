@@ -26,6 +26,7 @@ Improvements::
 Bug Fixes::
 
 * always set `imagesdir` attribute to value of `themesdir` when resolving images from theme
+* allow `top` keys in `title-page` theme category to accept a fixed value (e.g., `1in`) (#2269)
 
 Compliance::
 
