@@ -9,7 +9,8 @@ These page numbers are available as metadata and determine the folio placement o
 
 // tag::default[]
 The `pagenums` document attribute is set by default when Asciidoctor PDF runs.
-In turn, `pagenums` implicitly sets the `page-number` attribute.
+In turn, `pagenums` implicitly sets the `page-number` attribute in running content.
+To complement the current page number, the virtual page count is assigned to the `page-count` attribute.
 
 The converter assigns the page number 1 to the first body page of the document and then increments the page number for each page thereafter.
 All front matter pages, including the cover page, title page, and TOC pages, that precede the first body page when the doctype is `book` or when the `title-page` attribute is set are numbered using roman numerals (e.g., i, ii, iii).
@@ -102,13 +103,34 @@ This is controlled by the xref:add-running-content.adoc#start-at[running-content
 For example, to start the running content on the title page, assuming the title page is enabled, set `running-content-start-at: title` in your theme file.
 To learn more about customizing the running content, see xref:add-running-content.adoc[].
 
-If you're not extending one of the built-in themes and starting with a blank theme, you can add the page number to the running content by using the `\{page-number}` attribute reference in the `content` key.
+If you're not extending one of the built-in themes, you can add the page number to the running content by using the `\{page-number}` attribute reference in the `content` key.
 
 .Add page number to footer in blank theme
 [,yaml]
 ----
 footer:
+  height: 30
   recto:
     right:
-      content: '\{page-number}'
+      content: '{page-number}'
+  verso:
+    left:
+      content: $footer-recto-right-content
 ----
+
+You can also reference the virtual page count (i.e, the final page number) using the `page-count` attribute.
+
+.Add page number and page count to footer
+[,yaml]
+----
+footer:
+  height: 30
+  recto:
+    right:
+      content: '{page-number} of {page-count}'
+  verso:
+    left:
+      content: $footer-recto-right-content
+----
+
+You can use this same content value to add page numbering to the running content of any custom theme.
