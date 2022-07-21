@@ -92,7 +92,7 @@ To learn more about the default page numbering and how to customize the numberin
 You can use any attribute defined in your AsciiDoc document (such as `doctitle`) in the content of the running header and footer.
 In addition, the following attributes are also available when defining the content keys in the footer:
 
-* `page-count`
+* `page-count` - the highest page number in the document (not necessarily the number of physical pages)
 * `page-number` (only set if the `pagenums` attribute is set on the document, which it is by default)
 * `page-layout`
 * `document-title`
@@ -113,7 +113,7 @@ If you unset the `pagenums` attribute on the document, any line in the running c
 
 You can also use built-in AsciiDoc text replacements like `+(C)+`, numeric character references like `+&#169;+`, hexadecimal character references like `+&#x20ac;+`, and inline formatting (e.g., bold, italic, monospace).
 
-Here's an example that shows how attributes and replacements can be used in the running footer:
+Here's an example that shows how attributes and replacements can be used in the running content:
 
 [,yaml]
 ----
@@ -132,10 +132,10 @@ footer:
   line-height: 1
   recto:
     right:
-      content: '{section-or-chapter-title} | *{page-number}*'
+      content: '{section-or-chapter-title} | {page-number} of {page-count}'
   verso:
     left:
-      content: '*{page-number}* | {chapter-title}'
+      content: '{page-number} of {page-count} | *{chapter-title}*'
 ----
 
 == Multi-line values
