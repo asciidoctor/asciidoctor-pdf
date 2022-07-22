@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.2.0 (2022-07-22) - @mojavelinux
 
 Enhancements::
 
@@ -35,6 +35,10 @@ Compliance::
 
 * configure table borders in way that is compatible with prawn-table > 0.2.2
 * don't coerce font size < 1 to relative font size; relative font size should be specified in units
+
+=== Details
+
+{url-repo}/releases/tag/v2.2.0[git tag] | {url-repo}/compare/v2.1.6\...v2.2.0[full diff]
 
 == 2.1.6 (2022-07-19) - @mojavelinux
 
