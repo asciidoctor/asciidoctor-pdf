@@ -2804,7 +2804,9 @@ module Asciidoctor
       def arrange_heading node, title, opts
         if (min_height_after = @theme.heading_min_height_after) == 'auto' || (node.option? 'breakable')
           orphaned = nil
+          doc = node.document
           dry_run single_page: true do
+            push_scratch doc
             start_page = page
             theme_font :heading, level: opts[:level] do
               if opts[:part]
@@ -2819,6 +2821,8 @@ module Asciidoctor
               page.tare_content_stream
               orphaned = stop_if_first_page_empty { node.context == :section ? (traverse node) : (convert node.next_sibling) }
             end
+          ensure
+            pop_scratch doc
           end
           advance_page if orphaned
         else
