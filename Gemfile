@@ -27,7 +27,7 @@ group :lint do
     gem 'rubocop-rake', '~> 0.6.0', require: false
     gem 'rubocop-rspec', '~> 2.10.0', require: false
   else
-    gem 'rubocop', '~> 1.31.0', require: false
+    gem 'rubocop', '~> 1.32.0', require: false
     gem 'rubocop-rake', '~> 0.6.0', require: false
     gem 'rubocop-rspec', '~> 2.12.0', require: false
   end

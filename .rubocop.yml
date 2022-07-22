@@ -128,6 +128,8 @@ Lint/RedundantDirGlobSort:
   Enabled: true
 Lint/RefinementImportMethods:
   Enabled: true
+Lint/RequireRangeParentheses:
+  Enabled: true
 Lint/RequireRelativeSelfPath:
   Enabled: true
 Lint/SelfAssignment:
@@ -305,6 +307,8 @@ Style/DocumentDynamicEvalDefinition:
 Style/Documentation:
   Enabled: false # FIXME reenable
 Style/DoubleNegation:
+  Enabled: true
+Style/EmptyHeredoc:
   Enabled: true
 Style/EmptyLiteral:
   Enabled: true
