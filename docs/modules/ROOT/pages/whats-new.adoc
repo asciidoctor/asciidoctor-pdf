@@ -12,28 +12,37 @@ The releases are ordered from newest to oldest.
 
 = Asciidoctor PDF {page-component-version}.0
 
-_**Release date:** 2022.07.00 | *Release notes:* {url-project-repo}/releases/tag/v2.2.0[v{page-component-version}.0^] | *Issue label:* {url-milestone-2-2-0}[{page-component-version}.0^]_
+_**Release date:** 2022.07.22 | *Release notes:* {url-project-repo}/releases/tag/v2.2.0[v{page-component-version}.0^] | *Issue label:* {url-milestone-2-2-0}[{page-component-version}.0^]_
 
-Asciidoctor PDF {page-component-version} introduces several enhancements.
+Asciidoctor PDF {page-component-version}.0 introduces several enhancements.
 For a complete list of changes, see the {url-project-repo}/blob/main/CHANGELOG.adoc[CHANGELOG^].
 
 == Enhancements
 
-* Allow page background image to be specified per layout using `+{page-layout}+` attribute reference in path.
-* Allow page margin for rotated page to be configured independently using `page-margin-rotated` theme key or `pdf-page-margin-rotated` document attribute.
-* Allow orphan detection to be enabled for all section titles and discrete headings by setting `heading-min-height-after` to `auto` in the theme.
-* Set `docimagesdir` attribute when attribute substitutions are applied to a value from the theme.
-* Start page numbering and running content on empty verso page before first chapter of prepress book if `start-at` value is `0`.
-* Don't force page break after TOC with automatic placement in article if `title-page` attribute is set and value of `toc-break-after` theme key is `auto`.
+* Allow a xref:background-images.adoc#page-layout[page background image to be specified per layout] using the `+{page-layout}+` attribute reference in the target path.
+* Allow the page margins for rotated pages to be configured independently using the xref:theme:page.adoc#rotated-margin[page-margin-rotated theme key] or xref:asciidoc-attributes.adoc[pdf-page-margin-rotated document attribute].
+* Allow xref:breakable-and-unbreakable.adoc#section-or-discrete-heading[orphan detection to be enabled for all section titles and discrete headings] by setting xref:theme:heading.adoc#min-height-after[heading-min-height-after] to `auto` in the theme.
+* Set the xref:theme:images.adoc#specify[docimagesdir attribute] when attribute substitutions are applied to a value from the theme.
+* Start xref:theme:page-numbers.adoc[page numbering] and xref:theme:add-running-content.adoc#page[running content] on empty verso page before first chapter of prepress book if `start-at` value is `0`.
+* Don't force a page break after a TOC with automatic placement in an article if the `title-page` attribute is set and the xref:theme:toc.adoc[value of toc-break-after theme key is auto].
 * Add `--theme` option to CLI as shorthand for `-a pdf-theme`.
-* Add `--sourcemap` option to CLI to enable `:sourcemap` option on processor.
-* Broaden support for relative font sizes in theme to more than just inline elements; document support for relative font sizes.
+* Add `--sourcemap` option to CLI to enable `:sourcemap` option.
+* Broaden support for xref:theme:text.adoc#font-size[relative font sizes in the theme] to more than just inline elements.
+* Allow the theme to control the font properties of ordered list markers using the xref:theme:list.adoc#olist-marker[olist-marker category].
+* Allow the theme to control the xref:theme:list.adoc#ulist-marker[font style of unordered list markers] per marker or all markers.
 
 == Bug fixes
 
-* Always set `imagesdir` attribute to value of `themesdir` when resolving images from theme.
+* Always set the `imagesdir` attribute to the value of `themesdir` when resolving images from theme.
+* Allow the `top` keys in the `title-page` theme category to accept a fixed value (e.g., `1in`).
+* Prevent orphan detection for headings (section title or discrete heading) from modifying the document state.
+
+== Compliance
+
+* Configure table borders to be compatible with prawn-table > 0.2.2.
+* Don't coerce a font size < 1 to a relative font size; relative font size should be specified in units.
 
 == Previous releases
 
-* See xref:2.1@whats-new.adoc[What's New in Asciidoctor PDF 2.1] to learn about the improvements added in Asciidoctor 2.1.
-* Refer to xref:2.0@whats-new.adoc[What's New in Asciidoctor PDF 2.0] to learn about all the new features, improvements, and fixes introduced in 2.0.
+* See xref:2.1@whats-new.adoc[What's New in Asciidoctor PDF 2.1] to learn about the improvements added in Asciidoctor PDF 2.1.
+* Refer to xref:2.0@whats-new.adoc[What's New in Asciidoctor PDF 2.0] to learn about the new features, improvements, and fixes introduced in 2.0.

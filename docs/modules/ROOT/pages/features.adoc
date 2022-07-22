@@ -35,7 +35,7 @@
 == Known limitations
 
 * Copying text from a PDF in a way that preserves the original line wrapping is not reliable, particularly in code blocks.
-To achieve proper rendering, non-visible characters may either be interpretted, inserted, or dropped.
+To achieve proper rendering, non-visible characters may either be interpreted, inserted, or dropped.
 This is primarily a limitation of the PDF format, in which text is broken into fragments and positioned at absolute coordinates on the canvas.
 * Footnotes are always displayed as endnotes (at the bottom of the last page of a chapter for books; at the bottom of the last page of the document for all other doctypes).
 *Footnotes cannot be displayed at the current bottom of the page because the PDF generator does not support content reflows* (see {url-project-issues}/85#issuecomment-577412975[#85^] for reasoning).
@@ -56,7 +56,7 @@ This matches the behavior of HTML.
 * If a no-break hyphen is surrounded by formatted text on both sides (or is formatted individually), it will not prevent a line break.
 * The `float` attribute on an image (i.e., an image float) is only supported for block images, not inline images.
 The converter will clear the float at the next non-paragraph or when the paragraph content clears the bottom of the image.
-See xref:extend:use-cases.adoc#wrap-code-blocks-around-an-image-float[Wrap code blocks around an image float] to learn how to wrap non-paragraph blocks around an image float.
+See xref:extend:use-cases.adoc#wrap-code-blocks-around-image[Wrap code blocks around an image float] to learn how to wrap non-paragraph blocks around an image float.
 * Multiple columns are not supported in the book doctype.
 * You cannot use inline HTML (like a link or emphasized text) in a source block that also uses syntax highlighting.
 These two technologies don't mix in the PDF generation process due to how the syntax highlighters work.

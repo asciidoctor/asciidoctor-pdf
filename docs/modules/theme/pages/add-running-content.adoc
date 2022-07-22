@@ -45,7 +45,7 @@ The `toc` value only applies if the TOC is in the default location (before the f
 If the value is `toc`, and the toc macro is used to position the TOC, the `start-at` behavior is the same as if the TOC is not enabled.
 The `toc` value is only recognized if the title page is implicitly or explicitly enabled.
 [[page]]Integer:: The running content starts on the page that matches the number assigned to `start-at` (i.e., 1 is the first body page, 2 is the second body page).
-For a prepress book (doctype=book and media=prepress), the running content starts on the empty verso page before the body if the value is 0.
+For a prepress book (`doctype=book` and `media=prepress`), the running content starts on the empty verso page before the body if the value is `0`.
 When an integer is assigned to `start-at`, the title page doesn't need to be enabled.
 
 TIP: To turn off the running content on TOC pages inserted by the toc macro, set the `noheader` or `nofooter` options on the macro (e.g., `toc::[opts=nofooter]`).

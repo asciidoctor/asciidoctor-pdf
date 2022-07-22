@@ -1,5 +1,5 @@
 = Text Styles
-:description: The theming language provides keys for aligning, decorating, styling, and transforming text.
+:description: The theming language provides keys for aligning, decorating, sizing, styling, and transforming text.
 
 [#text-align]
 == Text alignment

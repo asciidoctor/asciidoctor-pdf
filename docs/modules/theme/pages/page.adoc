@@ -132,7 +132,7 @@ If the initial page layout is portrait, then the rotated margin applies to lands
 The `margin` key applies to the initial page layout.
 
 The rotated margin does not honor <<prepress-margins>>.
-Rather, it's the same margin regardless of whether the page side is recto or verso..
+Rather, it's the same margin regardless of whether the page side is recto or verso.
 
 [#prepress-margins]
 === Inner and outer margins
