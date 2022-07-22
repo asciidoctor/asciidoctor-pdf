@@ -2321,6 +2321,27 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect caption_text[:y]).to be > image_top
     end
 
+    it 'should not duplicate footnote in a caption' do
+      input = <<~'EOS'
+      .Tux, the Linux mascotfootnote:[The one and only.]
+      image::tux.png[tux]
+      EOS
+
+      pdf = to_pdf input, analyze: true
+      expected_lines = ['Figure 1. Tux, the Linux mascot[1]', '[1] The one and only.']
+      (expect pdf.lines pdf.text).to eql expected_lines
+
+      pdf = to_pdf input
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 2
+      footnote_label_y = annotations[0][:Rect][3]
+      footnote_item_y = annotations[1][:Rect][3]
+      (expect (footnoteref_dest = get_dest pdf, '_footnoteref_1')).not_to be_nil
+      (expect footnote_label_y - footnoteref_dest[:y]).to be < 1
+      (expect (footnotedef_dest = get_dest pdf, '_footnotedef_1')).not_to be_nil
+      (expect footnotedef_dest[:y]).to eql footnote_item_y
+    end
+
     it 'should show caption for missing image' do
       (expect do
         pdf = to_pdf <<~'EOS', analyze: true

@@ -29,6 +29,7 @@ Bug Fixes::
 
 * always set `imagesdir` attribute to value of `themesdir` when resolving images from theme
 * allow `top` keys in `title-page` theme category to accept a fixed value (e.g., `1in`) (#2269)
+* prevent orphan detection for heading (section title or discrete heading) from modifying document state (#2288)
 
 Compliance::
 

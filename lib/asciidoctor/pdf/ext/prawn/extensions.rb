@@ -1123,6 +1123,10 @@ module Asciidoctor
       # Note that if the block has content that itself requires a dry run, that nested dry run will
       # be performed in a separate scratch document.
       #
+      # The block passed to dry run should take steps to avoid leaving the document state modified.
+      # This can be done by calling `push_scratch doc` at the start of the block and `pop_scratch`
+      # in the ensure clause of the block.
+      #
       # options - A Hash of options that configure the dry run computation:
       #           :keep_together - A Boolean indicating whether an attempt should be made to keep
       #           the content on the same page (optional, default: false).

@@ -1147,6 +1147,37 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect content_text[:page_number]).to be 2
   end
 
+  it 'should not alter document state when arranging heading' do
+    input = <<~'EOS'
+    == Section A
+
+    image::tall.svg[pdfwidth=75mm]
+
+    [%breakable]
+    == Section B
+
+    This is the first paragraph of Section B.footnote:[This paragraph falls on the first page.]
+
+    This paragraph falls on the second page.
+    EOS
+
+    pdf = to_pdf input, analyze: true
+    (expect (pdf.find_unique_text 'This is the first paragraph of Section B.')[:page_number]).to eql 1
+    (expect (pdf.find_unique_text %r/This paragraph falls on the first page\.$/)[:page_number]).to eql 2
+    (expect (pdf.find_unique_text 'This paragraph falls on the second page.')[:page_number]).to eql 2
+    pdf = to_pdf input
+    p1_annotations = get_annotations pdf, 1
+    (expect p1_annotations).to have_size 1
+    p2_annotations = get_annotations pdf, 2
+    (expect p2_annotations).to have_size 1
+    footnote_label_y = p1_annotations[0][:Rect][3]
+    footnote_item_y = p2_annotations[0][:Rect][3]
+    (expect (footnoteref_dest = get_dest pdf, '_footnoteref_1')).not_to be_nil
+    (expect footnote_label_y - footnoteref_dest[:y]).to be < 1
+    (expect (footnotedef_dest = get_dest pdf, '_footnotedef_1')).not_to be_nil
+    (expect footnotedef_dest[:y]).to eql footnote_item_y
+  end
+
   it 'should not add break before chapter if heading-chapter-break-before key in theme is auto' do
     pdf = to_pdf <<~'EOS', pdf_theme: { heading_chapter_break_before: 'auto' }, analyze: true
     = Document Title
