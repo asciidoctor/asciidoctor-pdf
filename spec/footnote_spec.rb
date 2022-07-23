@@ -372,6 +372,25 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect footnotes_title_text[:y]).to be < (pdf.find_text 'main content.')[0][:y]
   end
 
+  it 'should allow theme to control style of footnotes title' do
+    pdf_theme = {
+      footnotes_caption_font_style: 'bold',
+      footnotes_caption_font_size: '24',
+      footnotes_caption_font_color: '222222',
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    :footnotes-title: Footnotes
+
+    main content.footnote:[This is a footnote, just so you know.]
+    EOS
+
+    footnotes_title_text = (pdf.find_text 'Footnotes')[0]
+    (expect footnotes_title_text).not_to be_nil
+    (expect footnotes_title_text[:font_name]).to eql 'NotoSerif-Bold'
+    (expect footnotes_title_text[:font_size]).to eql 24
+    (expect footnotes_title_text[:font_color]).to eql '222222'
+  end
+
   it 'should create bidirectional links between footnote ref and def' do
     pdf = to_pdf <<~'EOS', doctype: :book, attribute_overrides: { 'notitle' => '' }
     = Document Title
