@@ -30,6 +30,13 @@ caption:
 caption:
   background-color: #DDDDDD
 
+|end
+|top {vbar} bottom +
+(default: _varies by block_)
+|[source]
+caption:
+  end: bottom
+
 |font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)
