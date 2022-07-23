@@ -1,7 +1,7 @@
 = AsciiDoc Attributes for PDF
-//Theme-Related AsciiDoc Attributes
 
-There are AsciiDoc document attributes you can set in your document to control the PDF media, mode, and outline, as well as theme-related attributes for the covers, title page, and background images, and more.
+Asciidoctor PDF supports additional built-in document attributes that impact PDF conversion.
+You can use these attributes to control the PDF media, launch mode, and outline, PDF optimization, text hyphenation, and various document-specific theme settings such as the front and back cover images, the background images, the title page logo and background images, page dimensions, and more.
 
 == AsciiDoc document attributes
 
