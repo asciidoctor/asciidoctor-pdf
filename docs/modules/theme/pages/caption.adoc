@@ -4,9 +4,12 @@
 :source-language: yaml
 
 The keys in the `caption` category control the arrangement and style of block captions globally.
-In addition to this global `caption` category, each of the keys listed below, except for the `text-decoration` keys, can be set on the caption key nested inside the following block categories: `code`, `example`, `footnotes`, `image`, `quote`, `table`, and `verse`.
+Many of these keys can be customized <<per-block,per block>>.
 
-TIP: The `caption-align` and `caption-text-align` keys, when nested on the `image` or `table` category, also accept the value `inherit`.
+[#caption]
+== caption
+
+TIP: The `caption-align` and `caption-text-align` keys on the `image` and `table` categories also accept the value `inherit`.
 See xref:block-images.adoc[] and xref:tables.adoc[] for more information about setting `inherit` on their captions.
 
 [cols="3,4,5a"]
@@ -111,3 +114,30 @@ caption:
 caption:
   text-transform: uppercase
 |===
+
+[#per-block]
+== Caption per block
+
+In addition to the global `caption` category, each of the keys listed in <<caption>>, except for the `text-decoration` keys, can be set on the caption key nested inside the following block categories:
+
+* `code`
+* `example`
+* `footnotes`
+* `image`
+* `quote`
+* `table`
+* `verse`
+
+For example, to configure the caption just for code blocks, use the following declaration:
+
+[,yaml]
+----
+code:
+  caption:
+    background-color: #FF0000
+    font-color: #FFFFFF
+    font-size: 1em
+    font-style: bold
+----
+
+If a key is not specified on a block category, the key from the global `caption` category will be used as a fallback.

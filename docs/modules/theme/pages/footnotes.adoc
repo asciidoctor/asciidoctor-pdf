@@ -4,8 +4,9 @@
 :source-language: yaml
 
 The keys in the `footnotes` category control the style of the footnotes list at the end of a chapter (`book` doctype) or document (other doctypes).
-If the `footnotes-title` attribute is specified in a document, it's styled as a xref:caption.adoc[block caption].
 The styling of the links is controlled by the xref:link.adoc[global link styles].
+If the `footnotes-title` attribute is set in the document, its value will be used as the caption of the footnotes list.
+As such, it will be styled as a xref:caption.adoc[block caption] and can also be configured independently of other captions.
 
 [cols="3,4,5a"]
 |===
