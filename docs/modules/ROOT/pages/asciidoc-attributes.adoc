@@ -33,6 +33,11 @@ If an attribute matches a key in the theme file, the document attribute takes pr
 |No
 |`:icons: font`
 
+|`footnotes-title`
+|String
+|Yes
+|`:footnotes-title: Endnotes`
+
 |`index-pagenum-sequence-style`
 |`term` {vbar} `page` {vbar} `range` (default: `term`)
 |No
