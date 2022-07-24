@@ -17,7 +17,7 @@ Once you have downloaded the fonts, place the files into the directory where you
 For the purpose of this guide, we'll assume you are working with the following font files:
 
 * https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/TTF/NotoSansCJKsc-VF.ttf[NotoSansCJKsc-VF.ttf^]
-* https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/TTF/NotoSansCJKsc-VF.ttf[NotoSansMonoCJKsc-VF.ttf^]
+* https://github.com/googlefonts/noto-cjk/raw/main/Sans/Variable/TTF/Mono/NotoSansMonoCJKsc-VF.ttf[NotoSansMonoCJKsc-VF.ttf^]
 
 If you'd like to use different fonts, refer to the https://en.wikipedia.org/wiki/List_of_CJK_fonts[list of notable CJK fonts on Wikipedia^].
 With that information, you can search for the TTF font on any font service.
