@@ -41,11 +41,11 @@ footnotes:
   item-spacing: 5
 
 |margin-top
-|xref:measurement-units.adoc[Measurement] +
-(default: `0`)
+|xref:measurement-units.adoc[Measurement] {vbar} `auto` +
+(default: `auto`)
 |[source]
 footnotes:
-  margin-top: 2
+  margin-top: 0
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +

@@ -577,6 +577,7 @@ module Asciidoctor
         theme.code_linenum_font_color ||= '999999'
         theme.callout_list_margin_top_after_code ||= 0
         theme.role_unresolved_font_color ||= 'FF0000'
+        theme.footnotes_margin_top ||= 'auto'
         theme.footnotes_item_spacing ||= 0
         theme.index_columns ||= 2
         theme.index_column_gap ||= theme.base_font_size
@@ -3157,9 +3158,9 @@ module Asciidoctor
       def ink_footnotes node
         return if (fns = (doc = node.document).footnotes - @rendered_footnotes).empty?
         theme_margin :block, :bottom if node.context == :document || node == node.document.last_child
-        theme_margin :footnotes, :top
+        theme_margin :footnotes, :top unless (valign_bottom = @theme.footnotes_margin_top == 'auto')
         with_dry_run do |extent|
-          if (single_page_height = extent&.single_page_height) && (delta = cursor - single_page_height - 0.0001) > 0
+          if valign_bottom && (single_page_height = extent&.single_page_height) && (delta = cursor - single_page_height - 0.0001) > 0
             move_down delta
           end
           theme_font :footnotes do

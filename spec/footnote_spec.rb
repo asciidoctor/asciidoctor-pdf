@@ -165,6 +165,40 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect first_footnote[:y]).to be < (footnotes_height + 50)
   end
 
+  it 'should put footnotes directly below last block if footnotes_margin_top is 0' do
+    pdf_theme = { footnotes_margin_top: 0 }
+    input = <<~'EOS'
+    About this thing.footnote:[More about this thing.]
+
+    ****
+    sidebar
+    ****
+    EOS
+
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+    horizontal_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+      .select {|it| it[:from][:y] == it[:to][:y] }.sort_by {|it| -it[:from][:y] }
+    (expect pdf.pages).to have_size 1
+    footnote_text = pdf.find_unique_text %r/More about /
+    footnote_text_top = footnote_text[:y] + footnote_text[:font_size]
+    content_bottom_y = horizontal_lines[-1][:from][:y]
+    (expect content_bottom_y - footnote_text_top).to be > 12.0
+    (expect content_bottom_y - footnote_text_top).to be < 14.0
+  end
+
+  it 'should push footnotes to bottom of page if footnotes_margin_top is auto' do
+    pdf_theme = { page_margin: 36, footnotes_margin_top: 'auto', footnotes_item_spacing: 0 }
+    input = <<~'EOS'
+    About this thing.footnote:[More about this thing.]
+
+    more content
+    EOS
+
+    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+    footnote_text = pdf.find_unique_text %r/More about /
+    (expect footnote_text[:y]).to (be_within 3).of 36
+  end
+
   it 'should put footnotes beyond margin below last block of content' do
     pdf_theme = { sidebar_background_color: 'transparent' }
     input = <<~'EOS'
