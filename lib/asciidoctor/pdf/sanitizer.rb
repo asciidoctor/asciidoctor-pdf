@@ -8,7 +8,6 @@ module Asciidoctor
         '&gt;' => '>',
         '&amp;' => '&',
       }
-      XMLSpecialCharsRx = /(?:#{XMLSpecialChars.keys.join '|'})/
       InverseXMLSpecialChars = XMLSpecialChars.invert
       InverseXMLSpecialCharsRx = /[#{InverseXMLSpecialChars.keys.join}]/
       (BuiltInNamedEntities = {
