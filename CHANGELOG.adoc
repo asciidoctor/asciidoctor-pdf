@@ -23,6 +23,7 @@ Bug Fixes::
 * only indent text that starts at left margin (i.e., when text align is left or justify) (#2298)
 * prevent footnote label from wrapping (#2297)
 * keep footnote label with preceding text if adjacent (#2297)
+* strip formatting added to source block by custom subs when syntax highlighter is enabled (#2086)
 
 Compliance::
 

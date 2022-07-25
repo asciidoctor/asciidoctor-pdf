@@ -1648,6 +1648,44 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         (expect text[0][:font_color]).to eql '333333'
       end
     end
+
+    it 'should remove bare HTML tags added by substitutions' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [,ruby,subs="+quotes,+macros"]
+      ----
+      require 'https://asciidoctor.org[asciidoctor]'
+
+      Asciidoctor._convert_file_ 'README.adoc', *safe: :safe*
+      ----
+      EOS
+
+      lines = pdf.lines pdf.text
+      (expect lines).to eql [%(require 'asciidoctor'), %(Asciidoctor.convert_file 'README.adoc', safe: :safe)]
+      require_text = pdf.find_unique_text 'require'
+      (expect require_text[:font_color]).not_to eql '333333'
+    end
+
+    it 'should substitute attribute references if attributes substitution is enabled' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+      :converter-library: asciidoctor-pdf
+      :backend-value: :pdf
+
+      [,ruby,subs=attributes+]
+      ----
+      require '{converter-library}'
+
+      Asciidoctor.convert_file 'README.adoc', safe: :safe, backend: {backend-value}
+      ----
+      EOS
+
+      lines = pdf.lines pdf.text
+      (expect lines).to eql [%(require 'asciidoctor-pdf'), %(Asciidoctor.convert_file 'README.adoc', safe: :safe, backend: :pdf)]
+      require_text = pdf.find_unique_text 'require'
+      (expect require_text[:font_color]).not_to eql '333333'
+    end
   end
 
   context 'Callouts' do
@@ -1849,6 +1887,25 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       none_text = (pdf.find_text 'None')[0]
       (expect none_text).not_to be_nil
       (expect none_text[:font_color]).to eql 'AA6600'
+    end
+
+    it 'should preserve callouts if custom subs are used on code block when source highlighter is enabled' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [,ruby,subs=+quotes]
+      ----
+      puts "*Hello, World!*" <1>
+      ----
+      <1> Welcome the world to the show.
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to have_size 2
+      (expect lines[0]).to eql 'puts "Hello, World!" ①'
+      (expect lines[1]).to eql '① Welcome the world to the show.'
+      msg = pdf.find_unique_text '"Hello, World!"'
+      (expect msg[:font_name]).to eql 'mplus1mn-regular'
     end
   end
 
