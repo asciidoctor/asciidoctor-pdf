@@ -1,12 +1,16 @@
 = Extend the PDF Converter
 :url-typeset-with-prawn: https://www.sitepoint.com/hackable-pdf-typesetting-in-ruby-with-prawn/
 
+This page gives you a crash course in how to extend the PDF converter.
+It begins by introducing the technology the converter uses to generate the PDF and links you to a tutorial covering how to use it.
+Then it briefly explains how the theming system influences the converter.
+Finally, it gives you an overview of how to extend the converter.
+
+== Prawn
+
 Asciidoctor PDF uses {url-prawn}[Prawn^] under the covers to generate the PDF.
 Prawn is a low-level PDF writer that can load fonts, ink text, embed images, add graphics, and draw lines.
 With those operations alone, this converter manages to produce a PDF from an AsciiDoc document.
-This page explains the role of theming in this process and how to extend the converter to take it further.
-
-== Prawn
 
 Before you dive into extending this converter, you'll need to understand how to use Prawn.
 The article {url-typeset-with-prawn}[Hackable PDF Typesetting in Ruby with Prawn^] gives a crash course in how to create your first PDF document containing text, graphics, and images with Prawn.
