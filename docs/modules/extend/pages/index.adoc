@@ -29,10 +29,17 @@ At some point, it becomes necessary to extend the converter to meet advanced des
 
 == Tailoring the conversion
 
-The methods on a converter class that handle conversion follow the pattern `convert_<name>` for block elements (e.g., `convert_example`) and `convert_inline_<name>` for inline elements (e.g., `convert_inline_anchor`), where `<name>` is the name of the element.
+The pages xref:create-converter.adoc[] and xref:use-converter.adoc[] provide step-by-step instructions about how to create and use your first extended converter.
+If you have those steps under your belt, browse the xref:use-cases.adoc[] page to see examples of how to extend the converter and give you ideas about the kinds of customizations you can make in an extended converter.
+
+=== Convert methods
+
+The methods on a converter class that handle conversion of elements follow the pattern `convert_<name>` for block elements (e.g., `convert_example`) and `convert_inline_<name>` for inline elements (e.g., `convert_inline_anchor`), where `<name>` is the name of the element.
 
 When you override a block element, you write PDF objects directly to the Prawn Document (the current context).
 When you override an inline element, you return pseudo-HTML, which is then parsed and converted into PDF objects.
+
+=== Pseudo-HTML
 
 The pseudo-HTML in Asciidoctor PDF evolved from the inline formatting in Prawn, now supporting the following elements: a, br, button, code, color, del, em, font, img, key, mark, span, strong, sub, sup.
 All decimal and hexadecimal character references are supported, as well as the named entities amp, apos, gt, lt, nbsp, and quot (e.g., `\&apos;`).
