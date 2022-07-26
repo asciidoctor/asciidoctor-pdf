@@ -160,7 +160,7 @@ module Asciidoctor
           data[key] = {}.tap do |accum|
             val.each do |key2, val2|
               key2 = key2.tr '-', '_' if key2.include? '-'
-              accum[key2.to_sym] = (key2.end_with? '_color') ? (to_color evaluate val2, data) : (evaluate val2, data)
+              accum[key2.to_sym] = (key2.end_with? '_color') ? (to_color evaluate val2, data, math: false) : (evaluate val2, data)
             end
           end if val
         elsif ::Hash === val
@@ -173,20 +173,19 @@ module Asciidoctor
           end
         elsif (rekey = DeprecatedKeys[key]) ||
             ((key.start_with? 'role_') && (key.end_with? '_align') && (rekey = key.sub RoleAlignKeyRx, '_text_align'))
-          data[rekey] = evaluate val, data
+          data[rekey] = evaluate val, data, math: false
         elsif PaddingBottomHackKeys.include? key
           val = evaluate val, data
           # normalize padding hacks for themes designed before the converter had smart margins
           val[2] = val[0] if ::Array === val && val[0].to_f >= 0 && val[2].to_f <= 0
           data[key] = val
-        # QUESTION: do we really need to evaluate_math in this case?
         elsif key.end_with? '_color'
           if key == 'table_border_color'
-            data[key] = ::Array === val ? val.map {|it| to_color evaluate it, data } : (to_color evaluate val, data)
+            data[key] = ::Array === val ? val.map {|it| to_color evaluate it, data, math: false } : (to_color evaluate val, data, math: false)
           elsif key == 'table_grid_color' && ::Array === val && val.size == 2 # backwards compat
-            data[key] = val.map {|it| to_color evaluate it, data }
+            data[key] = val.map {|it| to_color evaluate it, data, math: false }
           else
-            data[key] = to_color evaluate val, data
+            data[key] = to_color evaluate val, data, math: false
           end
         elsif key.end_with? '_content'
           data[key] = (expand_vars val.to_s, data).to_s
@@ -196,12 +195,12 @@ module Asciidoctor
         data
       end
 
-      def evaluate expr, vars
+      def evaluate expr, vars, math: true
         case expr
         when ::String
-          evaluate_math expand_vars expr, vars
+          math ? (evaluate_math expand_vars expr, vars) : (expand_vars expr, vars)
         when ::Array
-          expr.map {|e| evaluate e, vars }
+          expr.map {|e| evaluate e, vars, math: math }
         else
           expr
         end
