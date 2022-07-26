@@ -180,9 +180,8 @@ module Asciidoctor
           val[2] = val[0] if ::Array === val && val[0].to_f >= 0 && val[2].to_f <= 0
           data[key] = val
         elsif key.end_with? '_color'
-          if key == 'table_border_color'
-            data[key] = ::Array === val ? val.map {|it| to_color evaluate it, data, math: false } : (to_color evaluate val, data, math: false)
-          elsif key == 'table_grid_color' && ::Array === val && val.size == 2 # backwards compat
+          # assume table_grid_color is a single color unless the value is a 2-element array for backwards compatibility
+          if key == 'table_border_color' ? ::Array === val : (key == 'table_grid_color' && ::Array === val && val.size == 2)
             data[key] = val.map {|it| to_color evaluate it, data, math: false }
           else
             data[key] = to_color evaluate val, data, math: false
