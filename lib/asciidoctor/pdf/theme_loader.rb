@@ -183,7 +183,7 @@ module Asciidoctor
         elsif key.end_with? '_color'
           if key == 'table_border_color'
             data[key] = ::Array === val ? val.map {|it| to_color evaluate it, data } : (to_color evaluate val, data)
-          elsif key == 'table_grid_color' && ::Array === val && val.size == 2
+          elsif key == 'table_grid_color' && ::Array === val && val.size == 2 # backwards compat
             data[key] = val.map {|it| to_color evaluate it, data }
           else
             data[key] = to_color evaluate val, data
