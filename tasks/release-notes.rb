@@ -10,7 +10,7 @@ spec = Gem::Specification.load Dir['*.gemspec'].first
 gem_name = spec.name
 gem_version = spec.version
 gem_dist_url = %(https://rubygems.org/gems/#{gem_name})
-release_actor = ENV['GITHUB_ACTOR'] || 'mojavelinux'
+release_user = ENV['RELEASE_USER'] || 'mojavelinux'
 release_beer = ENV['RELEASE_BEER'] || 'TBD'
 release_tag = %(v#{gem_version})
 previous_tag = (`git -c versionsort.suffix=. -c versionsort.suffix=- ls-remote --tags --refs --sort -v:refname origin`.each_line chomp: true)
@@ -25,7 +25,11 @@ changelog = (File.readlines 'CHANGELOG.adoc', chomp: true, mode: 'r:UTF-8').redu
     accum.pop
     break accum.join ?\n
   elsif accum
-    line = %(### #{line.slice 0, line.length - 2}) if line.end_with? '::'
+    if line.end_with? '::'
+      line = %(### #{line.slice 0, line.length - 2})
+    elsif line.start_with? '  * '
+      line = line.lstrip
+    end
     accum << line unless accum.empty? && line.empty?
   elsif line.start_with? %(== #{gem_version} )
     accum = []
@@ -47,10 +51,10 @@ Write summary...
 ## Release meta
 
 Released on: #{release_date}
-Released by: @#{release_actor}
+Released by: @#{release_user}
 Release beer: #{release_beer}
 
-Logs: [resolved issues](#{issues_url}?q=is%3Aissue+label%3A#{release_tag}+is%3Aclosed) | [full diff](#{repo_url}/compare/#{previous_tag}...#{release_tag})
+Logs: [resolved issues](#{issues_url}?q=is%3Aissue+label%3A#{release_tag}+is%3Aclosed)#{previous_tag ? %( | [source diff](#{repo_url}/compare/#{previous_tag}...#{release_tag}) | [gem diff](https://my.diffend.io/gems/asciidoctor/#{previous_tag}/#{release_tag})) : ''}
 
 ## Credits
 
