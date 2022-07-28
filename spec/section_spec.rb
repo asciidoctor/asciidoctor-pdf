@@ -1050,6 +1050,21 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect content_text[:page_number]).to be 2
   end
 
+  it 'should force section title with text transform to next page to keep with first line of section content' do
+    pdf = to_pdf <<~EOS, pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
+    image::tall.svg[pdfwidth=80mm]
+
+    == A long heading with uppercase characters
+
+    content
+    EOS
+
+    section_text = pdf.find_unique_text %r/^A LONG HEADING/
+    (expect section_text[:page_number]).to be 2
+    content_text = pdf.find_unique_text 'content'
+    (expect content_text[:page_number]).to be 2
+  end
+
   it 'should not force section title to next page to keep with content if heading_min_height_after is zero' do
     pdf = to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 0 }, analyze: true
     == Section A
