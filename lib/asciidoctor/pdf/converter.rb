@@ -2830,7 +2830,7 @@ module Asciidoctor
             title = transform_text title, @text_transform if @text_transform
             h_padding_t, h_padding_r, h_padding_b, h_padding_l = expand_padding_value @theme[%(heading_h#{hlevel}_padding)]
             h_fits = indent h_padding_l, h_padding_r do
-              # FIXME: this height doesn't account for impact of text transform or inline formatting
+              # FIXME: height calculation doesn't account for impact of inline formatting
               heading_h = (height_of_typeset_text title) +
                 (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top) +
                 (@theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom) + h_padding_t + h_padding_b
