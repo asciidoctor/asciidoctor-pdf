@@ -7,7 +7,9 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Bug Fixes::
+
+* apply text transformation when checking height of heading for orphan prevention
 
 == 2.2.0 (2022-07-22) - @mojavelinux
 
