@@ -2479,7 +2479,7 @@ module Asciidoctor
           end
           %(#{anchor}<sup>[<a anchor="_footnotedef_#{index}">#{label}</a>]</sup>)
         elsif node.type == :xref
-          %(<sup>[<font color="#{theme.role_unresolved_font_color}">#{node.text}</font>]</sup>)
+          %(<sup><font color="#{theme.role_unresolved_font_color}">[#{node.text}]</font></sup>)
         else
           log :warn, %(unknown footnote type: #{node.type.inspect})
           nil
