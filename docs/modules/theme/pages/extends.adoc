@@ -5,17 +5,19 @@
 
 A theme can extend another theme using the `extends` key.
 
-The `extends` key accepts either a single value or an array of values.
-Each value is interpreted as a filename.
-If the filename equals `default`, it resolves to the location of the default (built-in) theme.
-If the filename is absolute, it's used as is.
-If the filename begins with `./`, it's resolved as a theme file relative to the current theme file.
-Otherwise, the filename is resolved as a theme file in the normal way (relative to the value of the `pdf-themesdir` attribute).
+The `extends` key should always be the first key in the theme file.
+The key accepts either a single value or an array of values.
+Each value is interpreted as a filename with an implicit `-theme.yml` suffix if not already present.
+
+If the value is `default`, it resolves to the filename of the default (built-in) theme.
+If the value is an absolute path, it's used as is.
+If the value begins with `./`, it's always resolved to a theme file relative to the current theme file.
+Otherwise, the filename is resolved relative to the value of the `pdf-themesdir` attribute.
 
 Currently, the theme starts out empty.
 Then, the files referenced by the extends key are loaded in order.
 Finally, the keys in the current file are loaded.
-Each time a theme is loaded, the keys are overlaid onto the keys from the previous theme.
+Each time a theme is loaded, the flattened keys are overlaid onto the keys from the previous theme.
 
 [cols="4,4,6a"]
 |===
