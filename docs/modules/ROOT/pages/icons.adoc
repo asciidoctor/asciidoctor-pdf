@@ -97,3 +97,25 @@ In addition to the sizes supported in the HTML backend (lg, 1x, 2x, etc.), you c
 
 icon:android[set=fab,size=40em]
 ----
+
+== Customize an admonition icon
+
+When icon fonts are enabled, Asciidoctor PDF will replace the label of an admonition with a predefined icon.
+You can customize the icon per admonition type using a custom theme.
+
+Here's an example of a theme that shows how to customize the icon for a tip.
+
+.custom-theme.yml
+[,yaml]
+----
+extends: default
+admonition:
+  icon:
+    tip:
+      name: fas-lightbulb
+      stroke_color: 111111
+      size: 18
+----
+
+The name consists of an icon prefix (e.g., `fas-`) followed by the name of the icon in that icon set (e.g., `lightbulb`).
+If a category key is not specified for a particular admonition type, Asciidoctor PDF will use the predefined icon for that type.
