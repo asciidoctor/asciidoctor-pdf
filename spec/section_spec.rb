@@ -1065,6 +1065,21 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect content_text[:page_number]).to be 2
   end
 
+  it 'should not force section title with inline formatting to next page if text formatting does not affect height' do
+    pdf = to_pdf <<~EOS, analyze: true
+    image::tall.svg[pdfwidth=80mm]
+
+    == A long heading with some inline #markup#
+
+    content
+    EOS
+
+    section_text = pdf.find_unique_text %r/^A long heading/
+    (expect section_text[:page_number]).to be 1
+    content_text = pdf.find_unique_text 'content'
+    (expect content_text[:page_number]).to be 1
+  end
+
   it 'should not force section title to next page to keep with content if heading_min_height_after is zero' do
     pdf = to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 0 }, analyze: true
     == Section A

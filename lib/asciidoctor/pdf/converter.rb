@@ -102,6 +102,7 @@ module Asciidoctor
         'filled' => (?\u2776..?\u277f).to_a + (?\u24eb..?\u24f4).to_a,
       }
       TypographicQuotes = %w(&#8220; &#8221; &#8216; &#8217;)
+      InlineFormatSniffRx = /[<&]/
       SimpleAttributeRefRx = /(?<!\\)\{\w+(?:-\w+)*\}/
       MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|p[txc])?'
       MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|p[txc])?$/
@@ -2827,11 +2828,9 @@ module Asciidoctor
           advance_page if orphaned
         else
           theme_font :heading, level: (hlevel = opts[:level]) do
-            title = transform_text title, @text_transform if @text_transform
             h_padding_t, h_padding_r, h_padding_b, h_padding_l = expand_padding_value @theme[%(heading_h#{hlevel}_padding)]
             h_fits = indent h_padding_l, h_padding_r do
-              # FIXME: height calculation doesn't account for impact of inline formatting
-              heading_h = (height_of_typeset_text title) +
+              heading_h = (height_of_typeset_text title, inline_format: true, text_transform: @text_transform) +
                 (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top) +
                 (@theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom) + h_padding_t + h_padding_b
               heading_h += min_height_after if min_height_after && (node.context == :section ? node.blocks? : !node.last_child?)
@@ -3003,8 +3002,16 @@ module Asciidoctor
       end
 
       def height_of_typeset_text string, opts = {}
+        if (transform = opts[:text_transform])
+          string = transform_text string, transform
+        end
+        if (inline_format = opts[:inline_format]) && (InlineFormatSniffRx.match? string)
+          fragments = parse_text string, inline_format: inline_format
+        else
+          fragments = [{ text: string }]
+        end
         line_metrics = (calc_line_metrics opts[:line_height] || @base_line_height)
-        (height_of string, leading: line_metrics.leading, final_gap: line_metrics.final_gap) + line_metrics.padding_top + (opts[:single_line] ? 0 : line_metrics.padding_bottom)
+        (height_of_formatted fragments, leading: line_metrics.leading, final_gap: line_metrics.final_gap) + line_metrics.padding_top + (opts[:single_line] ? 0 : line_metrics.padding_bottom)
       end
 
       # Render the caption in the current document. If the dry_run option is true, return the height.
