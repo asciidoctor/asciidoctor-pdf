@@ -156,11 +156,6 @@ admonition:
   column_rule_color: $base_border_color
   column_rule_width: $base_border_width
   padding: [$vertical_rhythm / 3.0, $horizontal_rhythm, $vertical_rhythm / 3.0, $horizontal_rhythm]
-  #icon:
-  #  tip:
-  #    name: far-lightbulb
-  #    stroke_color: 111111
-  #    size: 24
   label:
     text_transform: uppercase
     font_style: bold
