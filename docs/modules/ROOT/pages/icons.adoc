@@ -40,7 +40,7 @@ If you want to override the font set globally, also set the `icon-set` attribute
 
 You can use font-based icons from any of the following icon sets in your PDF document:
 
-* *fa* - https://fontawesome.com/v4.7.0/icons (default, deprecated)
+* *fa* - https://fontawesome.com/v4.7.0/icons[Font Awesome 4] (default, deprecated)
 * *fas* - https://fontawesome.com/icons?d=gallery&s=solid[Font Awesome - Solid^]
 * *fab* - https://fontawesome.com/icons?d=gallery&s=brands[Font Awesome - Brands^]
 * *far* - https://fontawesome.com/icons?d=gallery&s=regular[Font Awesome - Regular^]
