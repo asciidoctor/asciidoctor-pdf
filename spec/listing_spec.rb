@@ -541,6 +541,56 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect title_text[:font_size].round).to eql 10
   end
 
+  it 'should apply text transform when computing height of background on caption' do
+    pdf_theme = {
+      code_caption_font_color: 'ffffff',
+      code_caption_font_style: 'normal',
+      code_caption_background_color: '3399FF',
+      code_caption_text_transform: 'uppercase',
+      code_caption_margin_outside: 10,
+    }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    .Caption with background color that spans multiple lines because of the text transform
+    ----
+    content
+    ----
+    EOS
+
+    title_text = pdf.find_unique_text %r/^CAPTION WITH BACKGROUND COLOR/
+    (expect title_text[:font_color]).to eql 'FFFFFF'
+    (expect title_text[:font_name]).to eql 'NotoSerif'
+    (expect pdf.pages[0][:raw_content]).to include %(/DeviceRGB cs\n0.2 0.6 1.0 scn\n48.24 775.908 498.8 29.982 re)
+    (expect title_text[:y]).to be > 790.899
+    (expect title_text[:y]).to (be_within 5).of 790.899
+    (expect title_text[:font_size].round).to eql 10
+  end
+
+  it 'should apply text formatting when computing height of background on caption' do
+    pdf_theme = {
+      code_caption_font_color: 'ffffff',
+      code_caption_font_style: 'normal',
+      code_caption_background_color: '3399FF',
+      code_caption_margin_outside: 10,
+    }
+
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    .Caption with background color that contains _inline formatting_ but does not wrap
+    ----
+    content
+    ----
+    EOS
+
+    title_text = pdf.find_unique_text %r/^Caption with background color/
+    (expect title_text[:font_color]).to eql 'FFFFFF'
+    (expect title_text[:font_name]).to eql 'NotoSerif'
+    (expect (pdf.find_unique_text 'inline formatting')[:font_name]).to eql 'NotoSerif-Italic'
+    (expect pdf.pages[0][:raw_content]).to include %(\n0.2 0.6 1.0 scn\n48.24 790.899 498.8 14.991 re)
+    (expect title_text[:y]).to be > 790.899
+    (expect title_text[:y]).to (be_within 5).of 790.899
+    (expect title_text[:font_size].round).to eql 10
+  end
+
   it 'should allow theme to place caption below block' do
     pdf_theme = { code_caption_end: 'bottom' }
 
