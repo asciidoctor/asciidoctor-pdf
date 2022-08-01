@@ -131,6 +131,8 @@ base:
 [#height]
 == line-height and line-height-length
 
+Refer to the xref:text.adoc#line-height[line-height] section to learn how to use the `line-height` key.
+
 The `line-height-length` key is a utility property that's internal to the theme.
 It's used as an intermediate property for computing the `base-line-height` from the base font size and the desired line height size.
 For instance, if you set `base-line-height-length`, you can use `$base-line-height-length / $base-font-size` to set the value of `base-line-height`.
