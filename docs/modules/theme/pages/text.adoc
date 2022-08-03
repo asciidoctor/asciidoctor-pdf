@@ -61,49 +61,57 @@ Only use a relative font size when the font size should always be scaled relativ
 [#line-height]
 == Line height
 
-The `line-height` key specifies the height of the rectangle in which a single line of text is positioned.
+The `line-height` key specifies the height of the box in which a single line of text is positioned.
 This theme key is used to control the spacing between wrapped lines.
 
-The line height value is a multiplier of the font height (the font height being a product of the <<font-size,font size>>).
+The line height value is a multiplier of the <<font-size,font size>>.
 A line height value of 1 means that the height of the line should be equivalent to the height of the font.
 In this case, a wrapped line will start directly below the previous line, with no extra vertical space.
 A line height value of 2 means that the height of the line should be equivalent to twice the height of the font.
 In this case, there will be extra space between wrapped lines than what the text occupies.
-If the value is greater than 1, the text is positioned equidistant between the top and bottom of the box.
+If the value is greater than 1, the text is positioned equidistant between the top and bottom of the line's box.
 
-WARNING: If the `line-height` value is less than 1, you risk causing text in adjacent lines to overlap.
+The impact of the line height and how it's computed is more complex than it would seem at first glance.
+Even if you set the value to 1, you may notice extra space between wrapped lines.
+As you're no doubt aware, not all characters have the same height (e.g., `x` vs `X`).
+Furthermore, some characters have vertical strokes that rise above the lowercase letter `x` (ascenders) and some have strokes that drop below the lowercase letter `x` (descenders).
+We refer to the height of the lowercase letter `x` the x-height.
+The x-height is always less than--and can vary considerably from--the effective height of the font.
+//Some fonts add even more space above the ascenders and descenders than what's required for them to fit in the line's box.
+//All this extra space translates into a built-in line height.
+//(The font size is really a rough approximation of the height, not an exact value).
 
-The impact of the line height and how it's computed is a lot more complex than it would seem at first glance.
-Even if you set the value to 1, you may notice that there's space between wrapped lines.
-As you are no doubt aware, not all characters have the same height.
-Furthermore, some characters have vertical strokes that rise above the letter `x` (ascenders) and some have strokes that drop below the letter `x` (descenders).
-(In basic Latin, there's no characters which has both).
-Thus, the x-height (the height of the letter `x`) is always less than, and can vary considerably from, the effective height of the font.
-The difference between the two we refer to as a built-in line height.
+[NOTE]
+====
+Many fonts contain built-in line height.
+As a result, the size of the font may appear to take up more room than the number of points you specify.
+You can compensate for this difference by adjusting the line height value in your theme.
 
-You can study the built-in line height by setting the line height value to 1, then applying the mark formatting to various characters, words, and phrases.
-The background color on the marked text stretches across the line height.
-This reveals the difference between the height of the text and the height of the line.
-If you increase the line height value, you will see spacing above the background color of a wrapped line.
+In particular, the Noto font family has a built-in line height of 1.36.
+Thus, if you set the line height in your theme to 1, you're really setting it to 1.36.
+If you want a line height of 1.5, set the line height to 1.1 in your theme.
+====
+
+You can study the built-in line height by setting the `base-line-height` key to 1, the `mark-border-offset` key to 0, then applying the #mark# formatting to various characters, words, and phrases.
 
 [,asciidoc]
 ----
-#x# #h# #j# #Adjective# #jog#
-
-#x# +
-#x#
+#x# #Hg# #Adjective# #Jog# +
+#Hg# #x#
 ----
+
+The background color under the marked text stretches across the entire built-in line height.
+This reveals the difference between the height of the text and the height of the line.
+If you increase the line height value, you'll see spacing appear between the background color stripes of wrapped lines.
+
+WARNING: If the `line-height` value is < 1, you risk causing the text in adjacent lines to overlap.
 
 The reserved height for ascenders and descenders, which can differ, also impacts how the text is positioned vertically within the line height.
 The text is positioned so that the space above and ascender and the space below a descender are equivalent.
 If the text has no ascenders or descenders (e.g., `x`), it can appear slightly higher or lower in the line than expected.
-It all depends on the font.
-You can observe this beahvior by testing the previous example.
+It all depends on the properties of the font.
+You can observe this behavior by testing the previous example with different fonts.
 Try change the font family (e.g., `Helvetica` or `Times-Roman`) to see what impact it has.
-
-CAUTION: Many fonts contain a built-in line height.
-As a result, size of the font may appear to take up more room than the number of points specified.
-You can use the `line-height` key to compensate for this difference.
 
 When you're choosing a line height value, study the interplay between characters with ascenders (e.g, `h`) and descenders (e.g., `y`).
 Use marked text to reveal the space occupied by a single line.
