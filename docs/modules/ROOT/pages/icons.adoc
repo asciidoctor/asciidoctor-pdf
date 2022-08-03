@@ -113,7 +113,7 @@ admonition:
   icon:
     tip:
       name: fas-lightbulb
-      stroke_color: 111111
+      stroke_color: #111111
       size: 18
 ----
 
