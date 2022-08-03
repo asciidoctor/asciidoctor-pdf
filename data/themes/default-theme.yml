@@ -23,13 +23,7 @@ page:
   size: A4
 base:
   text_align: justify
-  # color as hex string (leading # is optional)
   font_color: 333333
-  # color as RGB array
-  #font_color: [51, 51, 51]
-  # color as CMYK array (approximated)
-  #font_color: [0, 0, 0, 0.92]
-  #font_color: [0, 0, 0, 92%]
   font_family: Noto Serif
   font_size: 10.5
   # line_height_length is really just a vertical spacing variable; it's not actually the height of a line
