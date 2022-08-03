@@ -3,10 +3,23 @@
 
 The theme language supports color values in three formats:
 
-[[hex]]Hex:: A string of 3 or 6 characters with an optional leading `#`, optional surrounding quotes, or both.
+[[hex]]Hex:: A string of 3 or 6 hexadecimal characters with an optional leading `#` and optional enclosing quotes.
 RGB:: An array of numeric values ranging from 0 to 255.
 CMYK:: An array of numeric values ranging from 0 to 1 or from 0% to 100%.
 Transparent:: The special value `transparent` indicates that a color should not be used.
+
+Here's a quick translation between how hex, RGB, and CMYK colors are expressed in an Asciidoctor PDF theme.
+
+|===
+|Hex |RGB |CMYK (decimal) |CMYK (%)
+
+|#333333
+|[51, 51, 51]
+|[0, 0, 0, 0.92]
+|[0, 0, 0, 92%]
+|===
+
+This page describes each color model and how to use it in your theme.
 
 == Hex
 
