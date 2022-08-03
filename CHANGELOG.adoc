@@ -7,6 +7,10 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
+Enhancements::
+
+* Allow footnotes to be placed directly below last block of content if `footnotes_margin_top` theme key is 0 (#2291)
+
 Bug Fixes::
 
 * apply text transform and formatting when checking height of heading for orphan prevention
