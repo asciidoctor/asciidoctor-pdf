@@ -31,20 +31,12 @@ base:
   #font_color: [0, 0, 0, 0.92]
   #font_color: [0, 0, 0, 92%]
   font_family: Noto Serif
-  # choose one of these font_size/line_height_length combinations
-  #font_size: 14
-  #line_height_length: 20
-  #font_size: 11.25
-  #line_height_length: 18
-  #font_size: 11.2
-  #line_height_length: 16
   font_size: 10.5
-  #line_height_length: 15
-  # correct line height for Noto Serif metrics
+  # line_height_length is really just a vertical spacing variable; it's not actually the height of a line
   line_height_length: 12
-  #font_size: 11.25
-  #line_height_length: 18
-  line_height: $base_line_height_length / $base_font_size
+  # The Noto font family has a built-in line height of 1.36
+  # With this line_height, a line of text will occupy a height of 15.78pt
+  line_height: $base_line_height_length / 10.5
   font_size_large: round($base_font_size * 1.25)
   font_size_small: round($base_font_size * 0.85)
   font_size_min: $base_font_size * 0.75
@@ -67,9 +59,6 @@ role:
     font_color: 999999
     font_size: 0.8em
     font_style: normal_italic
-# FIXME vertical_rhythm is weird; we should think in terms of ems
-#vertical_rhythm: $base_line_height_length * 2 / 3
-# correct line height for Noto Serif metrics (comes with built-in line height)
 vertical_rhythm: $base_line_height_length
 horizontal_rhythm: $base_line_height_length
 link:
@@ -107,8 +96,7 @@ heading:
   h4_font_size: $base_font_size_large
   h5_font_size: $base_font_size
   h6_font_size: $base_font_size_small
-  #line_height: 1.4
-  # correct line height for Noto Serif metrics (comes with built-in line height)
+  # rely on built-in line height in Noto
   line_height: 1
   margin_top: $vertical_rhythm * 0.4
   margin_bottom: $vertical_rhythm * 0.9
