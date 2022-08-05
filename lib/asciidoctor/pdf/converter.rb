@@ -1924,8 +1924,10 @@ module Asciidoctor
             advance_page layout: page_layout, margin: @page_margin[page_layout][page_side nil, @folio_placement[:inverted]]
           end
         elsif page_layout
+          bounds.current_column = bounds.last_column if ColumnBox === bounds && !(node.has_role? 'column')
           advance_page layout: page_layout, margin: @page_margin[page_layout][page_side nil, @folio_placement[:inverted]]
         else
+          bounds.current_column = bounds.last_column if ColumnBox === bounds && !(node.has_role? 'column')
           advance_page
         end
       end
