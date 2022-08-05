@@ -145,3 +145,14 @@ smallcaps:: Replaces lowercase Latin letters with their small capital variant.
 uppercase:: Transforms all the text to capital letters.
 
 The `text-transform` key can’t be set on the xref:base.adoc[base category].
+
+[#border-background-color]
+== Border and background color 
+
+For inline elements that support a border or background color, the decoration is fit to the text by default.
+That means it stretches from the start of the first character to the end of the last character horizontally and across the entire built-in line height of the text vertically.
+The `line-height` key on the block element (e.g., paragraph) does not affect the decoration.
+
+To extend the decoration out evenly on both axes, set the `border-offset` key to a positive number.
+This setting does not affect the layout of the text.
+It only swells the extent of the decoration under it.
