@@ -123,6 +123,18 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       (expect pdf.pages).to have_size 1
     end
 
+    it 'should advance to next page if at start of document and always option is specified' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [%always]
+      <<<
+
+      content
+      EOS
+
+      (expect pdf.pages).to have_size 2
+      (expect (pdf.find_unique_text 'content')[:page_number]).to eql 2
+    end
+
     it 'should not advance to next page if preceding content forced a new page to be started' do
       pdf = to_pdf <<~'EOS', analyze: true
       = Book Title
