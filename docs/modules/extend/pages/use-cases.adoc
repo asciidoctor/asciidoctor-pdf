@@ -188,8 +188,8 @@ This line has been changed.
 
 == Avoid break after heading
 
-This functionality is already provided by the converter if you set the `breakable` option on section title or discrete heading.
-The code is presented here both to explain how it works and to use to make this behavior automatic.
+This functionality is already provided by the converter if you set the `breakable` option on section title or discrete heading or you set the `heading-min-height-after` theme key to `auto`.
+The code is presented here both to explain how it works and show how to do it programmatically (perhaps to tune it for specific headings).
 
 If an in-flow heading is followed by content that doesn't fit on the current page, and the `breakable` option is not set on the heading, the converter will orphan the heading on the current page.
 You can fix this behavior by overriding the `arrange_heading` method in an extended converter.
