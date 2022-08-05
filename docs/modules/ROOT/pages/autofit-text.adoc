@@ -12,9 +12,9 @@ To help address this problem, Asciidoctor PDF provides the `autofit` option on a
 
 When the `autofit` option is enabled, Asciidoctor PDF will decrease the font size as much as it can until the longest line fits without wrapping.
 
-CAUTION: The converter won't shrink the font size beyond the value of the `base_font_size_min` key specified in the PDF theme.
+CAUTION: The converter won't shrink the font size beyond the value of the `base-font-size-min` key specified in the PDF theme.
 If that threshold is reached, lines may still wrap.
-To allow `autofit` to handle all cases, set `base_font_size_min` to `0` in your theme.
+To allow `autofit` to handle all cases, set `base-font-size-min` to `0` in your theme.
 
 Here's an example of the `autofit` option enabled on a source block:
 
