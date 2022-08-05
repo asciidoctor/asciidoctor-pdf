@@ -69,7 +69,19 @@ If you wanted, you could just use the low-level `text` method provided by Prawn.
 
 TIP: It's also possible to override the `start_new_part` method if all you want to do is called `page.imported` to turn off the running content.
 
-To find all the available methods to override, consult the {url-api-docs}[API docs^].
+Now let's look at how to center the part title both vertically and horizontally.
+For this, we first need to compute the height of the title using the `height_of_typeset_text` helper, taking into account the vertical padding as well.
+Then, we use that height to position the cursor so that the title falls in the vertical center of the page.
+Next, we set the text alignment to center (which alternately could be done using the theme).
+Finally, we delegate to the super method to handle rendering the title in the new position.
+
+.Extended converter with centered part title
+[,ruby]
+----
+include::example$pdf-converter-centered-part-title.rb[]
+----
+
+To find all the methods available to an extended converter, consult the {url-api-docs}[API docs^].
 
 == Custom chapter title
 
