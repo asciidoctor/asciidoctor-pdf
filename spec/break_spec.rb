@@ -154,6 +154,21 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       (expect start_of_page_text[:page_number]).to be 2
     end
 
+    it 'should not advance to next page if at start of column in multi-column layout' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
+      = Article Title
+
+      <<<
+
+      column 1
+      EOS
+
+      (expect pdf.pages).to have_size 1
+      text = pdf.find_unique_text 'column 1'
+      (expect text[:x]).to eql 48.24
+      (expect text[:y]).to be < (pdf.find_unique_text 'Article Title')[:y]
+    end
+
     it 'should not leave blank page at the end of document' do
       input = <<~'EOS'
       foo
