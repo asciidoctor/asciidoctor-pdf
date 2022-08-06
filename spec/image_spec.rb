@@ -661,7 +661,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-svg-scale-to-fit-page.pdf'
     end
 
-    it 'should place SVG in correct column when page colums are enabled' do
+    it 'should place SVG in correct column when page columns are enabled' do
       pdf_theme = {
         page_columns: 2,
         page_column_gap: 12,
@@ -687,7 +687,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect gs_p1[1]).to include %(#{column_left} 181.89 200.0 600.0 re)
     end
 
-    it 'should center SVG in right column when page colums are enabled', visual: true do
+    it 'should center SVG in right column when page columns are enabled', visual: true do
       pdf_theme = {
         page_columns: 2,
         page_column_gap: 12,
