@@ -1918,7 +1918,7 @@ module Asciidoctor
           page_layout = nil
         end
 
-        if at_page_top?
+        if at_page_top? && !(node.option? 'always')
           if page_layout && page_layout != page.layout && page.empty?
             delete_current_page
             advance_page layout: page_layout, margin: @page_margin[page_layout][page_side nil, @folio_placement[:inverted]]
