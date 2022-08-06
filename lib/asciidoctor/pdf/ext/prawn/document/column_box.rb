@@ -3,6 +3,10 @@
 Prawn::Document::ColumnBox.prepend (Module.new do
   attr_accessor :current_column
 
+  def last_column
+    @columns - 1
+  end
+
   def move_past_bottom
     (doc = @document).y = @y
     return if (@current_column = (@current_column + 1) % @columns) > 0

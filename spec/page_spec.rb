@@ -631,6 +631,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       [.text-right]
       first page
 
+      [.column]
       <<<
 
       second page
@@ -650,6 +651,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       first page
 
+      [.column]
       <<<
 
       second page
@@ -664,10 +666,12 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
       first column
 
+      [.column]
       <<<
 
       second column
 
+      [.column]
       <<<
 
       [.text-right]
@@ -687,6 +691,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
       first columnfootnote:[This page has two columns.]
 
+      [.column]
       <<<
 
       second column
@@ -707,6 +712,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       first column
 
+      [.column]
       <<<
 
       second column
@@ -727,6 +733,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       == First Column
 
+      [.column]
       <<<
 
       == Second Column
@@ -751,14 +758,17 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 4 }, analyze: true
       one
 
+      [.column]
       <<<
 
       two
 
+      [.column]
       <<<
 
       three
 
+      [.column]
       <<<<
 
       four
@@ -780,6 +790,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2, page_column_gap: 12 }, analyze: :image
       image::square.png[pdfwidth=100%]
 
+      [.column]
       <<<
 
       image::square.png[pdfwidth=100%]
@@ -801,6 +812,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       left column
 
+      [.column]
       <<<
 
       right column
@@ -828,6 +840,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       left column
 
+      [.column]
       <<<
 
       right column
@@ -836,6 +849,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       left column
 
+      [.column]
       <<<
 
       right column
@@ -863,6 +877,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       left column
 
+      [.column]
       <<<
 
       right column
@@ -871,6 +886,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       left column
 
+      [.column]
       <<<
 
       right column
@@ -897,6 +913,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
       left column
 
+      [.column]
       <<<
 
       right column

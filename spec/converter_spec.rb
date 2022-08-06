@@ -1171,10 +1171,12 @@ describe Asciidoctor::PDF::Converter do
 
       column 1, page 1
 
+      [.column]
       <<<
 
       column 2, page 1
 
+      [.column]
       <<<
 
       column 1, page 2

@@ -113,6 +113,24 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       (expect pdf.pages[1][:strings]).to include 'bar'
     end
 
+    it 'should insert page break if page does not have columns' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      :notitle:
+
+      first page
+
+      [.column]
+      <<<
+
+      second page
+      EOS
+
+      (expect pdf.pages).to have_size 2
+      (expect (pdf.find_unique_text 'first page')[:page_number]).to eql 1
+      (expect (pdf.find_unique_text 'second page')[:page_number]).to eql 2
+    end
+
     it 'should not advance to next page if at start of document' do
       pdf = to_pdf <<~'EOS', analyze: :page
       <<<
@@ -166,10 +184,11 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       (expect start_of_page_text[:page_number]).to be 2
     end
 
-    it 'should not advance to next page if at start of column in multi-column layout' do
+    it 'should not advance to next column if at start of column in multi-column layout' do
       pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
       = Article Title
 
+      [.column]
       <<<
 
       column 1
@@ -178,6 +197,22 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       (expect pdf.pages).to have_size 1
       text = pdf.find_unique_text 'column 1'
       (expect text[:x]).to eql 48.24
+      (expect text[:y]).to be < (pdf.find_unique_text 'Article Title')[:y]
+    end
+
+    it 'should advance to next column if at start of column in multi-column layout and always option is specified' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
+      = Article Title
+
+      [.column%always]
+      <<<
+
+      column 1
+      EOS
+
+      (expect pdf.pages).to have_size 1
+      text = pdf.find_unique_text 'column 1'
+      (expect text[:x]).to be > 48.24
       (expect text[:y]).to be < (pdf.find_unique_text 'Article Title')[:y]
     end
 
@@ -299,6 +334,89 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       EOS
 
       (expect (pdf.page 3)[:size]).to eql (pdf.page 2)[:size]
+    end
+
+    it 'should insert page break in column layout' do
+      pdf = to_pdf <<~EOS, pdf_theme: { page_columns: 2 }, analyze: true
+      = Article Title
+
+      column 1, page 1
+
+      <<<
+
+      column 1, page 2
+      EOS
+
+      c1p1_text = pdf.find_unique_text 'column 1, page 1'
+      (expect c1p1_text[:x]).to eql 48.24
+      (expect c1p1_text[:page_number]).to eql 1
+      c1p2_text = pdf.find_unique_text 'column 1, page 2'
+      (expect c1p2_text[:x]).to eql 48.24
+      (expect c1p2_text[:page_number]).to eql 2
+    end
+
+    it 'should insert page break with custom layout in column layout' do
+      pdf = to_pdf <<~EOS, pdf_theme: { page_columns: 2 }, analyze: true
+      = Article Title
+
+      column 1, page 1
+
+      [page-layout=landscape]
+      <<<
+
+      column 1, page 2
+      EOS
+
+      c1p1_text = pdf.find_unique_text 'column 1, page 1'
+      (expect c1p1_text[:x]).to eql 48.24
+      (expect c1p1_text[:page_number]).to eql 1
+      p1 = pdf.pages[0]
+      (expect p1[:size][0]).to be < p1[:size][1]
+      c1p2_text = pdf.find_unique_text 'column 1, page 2'
+      (expect c1p2_text[:x]).to eql 48.24
+      (expect c1p2_text[:page_number]).to eql 2
+      p2 = pdf.pages[1]
+      (expect p2[:size][0]).to be > p2[:size][1]
+    end
+
+    it 'should insert column break in column layout if column role is specified' do
+      pdf = to_pdf <<~EOS, pdf_theme: { page_columns: 2 }, analyze: true
+      = Article Title
+
+      column 1, page 1
+
+      [.column]
+      <<<
+
+      column 2, page 1
+      EOS
+
+      c1p1_text = pdf.find_unique_text 'column 1, page 1'
+      (expect c1p1_text[:x]).to eql 48.24
+      (expect c1p1_text[:page_number]).to eql 1
+      c2p1_text = pdf.find_unique_text 'column 2, page 1'
+      (expect c2p1_text[:x]).to be > 48.24
+      (expect c2p1_text[:page_number]).to eql 1
+    end
+
+    it 'should insert page break in column layout if page layout is specified even if column role is specified' do
+      pdf = to_pdf <<~EOS, pdf_theme: { page_columns: 2 }, analyze: true
+      = Article Title
+
+      column 1, page 1
+
+      [.column,page-layout=landscape]
+      <<<
+
+      column 1, page 2
+      EOS
+
+      c1p1_text = pdf.find_unique_text 'column 1, page 1'
+      (expect c1p1_text[:x]).to eql 48.24
+      (expect c1p1_text[:page_number]).to eql 1
+      c1p2_text = pdf.find_unique_text 'column 1, page 2'
+      (expect c1p2_text[:x]).to eql 48.24
+      (expect c1p2_text[:page_number]).to eql 2
     end
   end
 end

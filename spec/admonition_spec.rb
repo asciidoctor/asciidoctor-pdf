@@ -610,6 +610,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
       left column
 
+      [.column]
       <<<
 
       right column

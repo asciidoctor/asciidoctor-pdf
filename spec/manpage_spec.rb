@@ -106,6 +106,7 @@ describe 'Asciidoctor::PDF::Converter - Manpage' do
 
     *cmd* [_OPTION_]... _FILE_...
 
+    [.column]
     <<<
 
     == Options

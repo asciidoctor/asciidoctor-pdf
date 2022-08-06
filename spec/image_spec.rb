@@ -671,6 +671,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       input = <<~'EOS'
       left column
 
+      [.column]
       <<<
 
       ---
@@ -697,6 +698,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       input = <<~'EOS'
       left column
 
+      [.column]
       <<<
 
       ---
