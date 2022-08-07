@@ -399,6 +399,38 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     (expect abstract_text[:x]).to be > main_text[:x]
   end
 
+  it 'should not indent first line of abstract if text alignment is center' do
+    input = <<~'EOS'
+    = Document Title
+
+    [abstract]
+    abstract
+
+    This is the main content.
+    EOS
+
+    expected_x = ((to_pdf input, pdf_theme: { abstract_text_align: 'center' }, analyze: true).find_unique_text 'abstract')[:x]
+    actual_x = ((to_pdf input, pdf_theme: { abstract_text_align: 'center', prose_text_indent: 18 }, analyze: true).find_unique_text 'abstract')[:x]
+
+    (expect actual_x).to eql expected_x
+  end
+
+  it 'should not indent first line of abstract if text alignment is right' do
+    input = <<~'EOS'
+    = Document Title
+
+    [abstract]
+    abstract
+
+    This is the main content.
+    EOS
+
+    expected_x = ((to_pdf input, pdf_theme: { abstract_text_align: 'right' }, analyze: true).find_unique_text 'abstract')[:x]
+    actual_x = ((to_pdf input, pdf_theme: { abstract_text_align: 'right', prose_text_indent: 18 }, analyze: true).find_unique_text 'abstract')[:x]
+
+    (expect actual_x).to eql expected_x
+  end
+
   it 'should allow theme to set text alignment of abstract title' do
     pdf = to_pdf <<~'EOS', pdf_theme: { abstract_title_text_align: 'center' }, analyze: true
     = Document Title

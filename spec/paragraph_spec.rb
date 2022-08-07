@@ -50,12 +50,44 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     end
   end
 
-  it 'should indent first line of paragraph if prose_text_indent key is set in theme' do
+  it 'should indent first line of justified paragraph if prose_text_indent key is set in theme' do
     pdf = to_pdf (lorem_ipsum '2-paragraphs'), pdf_theme: { prose_text_indent: 18 }, analyze: true
 
     (expect pdf.text).to have_size 4
     (expect pdf.text[0][:x]).to be > pdf.text[1][:x]
     (expect pdf.text[2][:x]).to be > pdf.text[3][:x]
+  end
+
+  it 'should indent first line of left-aligned paragraph if prose_text_indent key is set in theme' do
+    pdf = to_pdf (lorem_ipsum '2-paragraphs'), pdf_theme: { base_text_align: 'left', prose_text_indent: 18 }, analyze: true
+
+    (expect pdf.text).to have_size 4
+    (expect pdf.text[0][:x]).to be > pdf.text[1][:x]
+    (expect pdf.text[2][:x]).to be > pdf.text[3][:x]
+  end
+
+  it 'should not indent first line of paragraph if text alignment is center' do
+    input = <<~'EOS'
+    [.text-center]
+    x
+    EOS
+
+    expected_x = (to_pdf input, analyze: true).text[0][:x]
+    actual_x = (to_pdf input, pdf_theme: { prose_text_indent: 18 }, analyze: true).text[0][:x]
+
+    (expect actual_x).to eql expected_x
+  end
+
+  it 'should not indent first line of paragraph if text alignment is right' do
+    input = <<~'EOS'
+    [.text-right]
+    x
+    EOS
+
+    expected_x = (to_pdf input, analyze: true).text[0][:x]
+    actual_x = (to_pdf input, pdf_theme: { prose_text_indent: 18 }, analyze: true).text[0][:x]
+
+    (expect actual_x).to eql expected_x
   end
 
   it 'should not alter line height of wrapped lines when prose_text_indent is set in theme that uses a TTF font' do
