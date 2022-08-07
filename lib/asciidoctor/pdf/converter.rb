@@ -2475,13 +2475,13 @@ module Asciidoctor
 
       def convert_inline_footnote node
         if (index = node.attr 'index') && (fn = node.document.footnotes.find {|candidate| candidate.index == index })
-          anchor = node.type == :xref ? '' : %(<a id="_footnoteref_#{index}">#{DummyText}</a>)
+          anchor = node.type == :xref ? '' : %(<a class="wj" id="_footnoteref_#{index}">#{DummyText}</a>)
           if defined? @rendered_footnotes
             label = (@rendered_footnotes.include? fn) ? fn.label : (index - @rendered_footnotes.length)
           else
             label = index
           end
-          %(#{anchor}<sup>[<a anchor="_footnotedef_#{index}">#{label}</a>]</sup>)
+          %(#{anchor}<sup><a anchor="_footnotedef_#{index}">[#{label}]</a></sup>)
         elsif node.type == :xref
           %(<sup><font color="#{theme.role_unresolved_font_color}">[#{node.text}]</font></sup>)
         else
@@ -3183,7 +3183,7 @@ module Asciidoctor
                 fn.singleton_class.send :attr_accessor, :label unless fn.respond_to? :label=
                 fn.label = %(#{label} - #{sect_xreftext})
               end
-              ink_prose %(<a id="_footnotedef_#{index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{label}</a>] #{fn.text}), margin_bottom: item_spacing, hyphenate: true
+              ink_prose %(<a id="_footnotedef_#{index}">#{DummyText}</a><strong><a anchor="_footnoteref_#{index}">#{label}.</a></strong> #{fn.text}), margin_bottom: item_spacing, hyphenate: true
             end
             @rendered_footnotes += fns if extent
           end

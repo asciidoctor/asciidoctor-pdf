@@ -1994,9 +1994,9 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         'before[1]',
         'inside[2]',
         'after[3]',
-        '[1] Footnote before table',
-        '[2] Footnote inside table',
-        '[3] Footnote after table',
+        '1. Footnote before table',
+        '2. Footnote inside table',
+        '3. Footnote after table',
       ]
       (expect pdf.lines).to eql expected_lines
     end

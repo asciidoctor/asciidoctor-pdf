@@ -2330,7 +2330,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       EOS
 
       pdf = to_pdf input, analyze: true
-      expected_lines = ['Figure 1. Tux, the Linux mascot[1]', '[1] The one and only.']
+      expected_lines = ['Figure 1. Tux, the Linux mascot[1]', '1. The one and only.']
       (expect pdf.lines pdf.text).to eql expected_lines
 
       pdf = to_pdf input

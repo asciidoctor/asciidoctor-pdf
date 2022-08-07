@@ -319,6 +319,7 @@ module Asciidoctor
                 if (type = attrs[:type])
                   fragment[:type] = type.to_sym
                 end
+                fragment[:wj] = true if attrs[:class] == 'wj'
                 visible = nil
               end
             end
