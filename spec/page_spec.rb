@@ -704,7 +704,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       right_column_text = pdf.text.select {|it| it[:x] > midpoint }
       right_column_lines = pdf.lines right_column_text
       (expect right_column_lines).to have_size 2
-      (expect right_column_lines[-1]).to eql '[1] This page has two columns.'
+      (expect right_column_lines[-1]).to eql '1. This page has two columns.'
     end
 
     it 'should place document title outside of column box' do
