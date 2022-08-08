@@ -52,6 +52,45 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     (expect pdf.text[3][:string]).to eql 'And on it goes.'
   end
 
+  it 'should apply inner margin between inner paragraphs in abstract' do
+    pdf = to_pdf <<~EOS, pdf_theme: { prose_margin_inner: 0 }, analyze: true
+    = Document Title
+
+    [abstract]
+    --
+    #{lorem_ipsum '2-sentences-2-paragraphs'}
+    --
+
+    And on it goes.
+    EOS
+
+    expected_line_spacing = pdf.text[1][:y] - pdf.text[2][:y]
+    second_paragraph_text = pdf.find_unique_text %r/^Magna /
+    (expect pdf.text[3]).to eql second_paragraph_text
+    (expect pdf.text[2][:y] - second_paragraph_text[:y]).to eql expected_line_spacing
+  end
+
+  it 'should apply indent to inner paragraphs in abstract when prose_text_indent_inner is set' do
+    pdf = to_pdf <<~EOS, pdf_theme: { prose_text_indent_inner: 18, prose_margin_inner: 0 }, analyze: true
+    = Document Title
+
+    [abstract]
+    --
+    #{lorem_ipsum '2-sentences-2-paragraphs'}
+    --
+
+    And on it goes.
+    EOS
+
+    text_left_margin = (pdf.find_unique_text 'And on it goes.')[:x]
+    (expect pdf.text[1][:x]).to eql text_left_margin
+    expected_line_spacing = pdf.text[1][:y] - pdf.text[2][:y]
+    second_paragraph_text = pdf.find_unique_text %r/^Magna /
+    (expect pdf.text[3]).to eql second_paragraph_text
+    (expect pdf.text[2][:y] - second_paragraph_text[:y]).to eql expected_line_spacing
+    (expect second_paragraph_text[:x]).to be > text_left_margin
+  end
+
   it 'should support non-paragraph blocks inside abstract block' do
     input = <<~'EOS'
     = Document Title

@@ -778,10 +778,7 @@ module Asciidoctor
               ink_prose node.title, align: (@theme.abstract_title_text_align || @base_text_align).to_sym, margin_top: @theme.heading_margin_top, margin_bottom: @theme.heading_margin_bottom, line_height: (@theme.heading_line_height || @theme.base_line_height)
             end if node.title?
             theme_font :abstract do
-              prose_opts = { align: (@theme.abstract_text_align || @base_text_align).to_sym, hyphenate: true }
-              if (text_indent = @theme.prose_text_indent) > 0
-                prose_opts[:indent_paragraphs] = text_indent
-              end
+              prose_opts = { align: (@theme.abstract_text_align || @base_text_align).to_sym, hyphenate: true, margin_bottom: 0 }
               # FIXME: allow theme to control more first line options
               if (line1_font_style = @theme.abstract_first_line_font_style&.to_sym) && line1_font_style != font_style
                 case line1_font_style
@@ -802,14 +799,11 @@ module Asciidoctor
               prose_opts[:first_line_options] = first_line_options if first_line_options
               # FIXME: make this cleaner!!
               if node.blocks?
-                last_block = node.last_child
                 node.blocks.each do |child|
                   if child.context == :paragraph
                     child.document.playback_attributes child.attributes
-                    prose_opts[:margin_bottom] = 0 if child == last_block
-                    ink_prose child.content, ((text_align = resolve_text_align_from_role child.roles) ? (prose_opts.merge align: text_align) : prose_opts.dup)
+                    convert_paragraph child, prose_opts.dup
                     prose_opts.delete :first_line_options
-                    prose_opts.delete :margin_bottom
                   else
                     # FIXME: this could do strange things if the wrong kind of content shows up
                     child.convert
@@ -819,7 +813,10 @@ module Asciidoctor
                 if (text_align = resolve_text_align_from_role node.roles)
                   prose_opts[:align] = text_align
                 end
-                ink_prose string, (prose_opts.merge margin_bottom: 0)
+                if (text_indent = @theme.prose_text_indent) > 0
+                  prose_opts[:indent_paragraphs] = text_indent
+                end
+                ink_prose string, prose_opts
               end
             end
           end
@@ -828,10 +825,10 @@ module Asciidoctor
         theme_margin :block, :bottom, (next_enclosed_block node)
       end
 
-      def convert_paragraph node
+      def convert_paragraph node, opts = nil
         add_dest_for_block node if node.id
 
-        prose_opts = { margin_bottom: 0, hyphenate: true }
+        prose_opts = opts || { margin_bottom: 0, hyphenate: true }
         if (text_align = resolve_text_align_from_role (roles = node.roles), query_theme: true, remove_predefined: true)
           prose_opts[:align] = text_align
         end
