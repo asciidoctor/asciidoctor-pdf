@@ -142,6 +142,29 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     (expect abstract_text_line2[0][:font_name]).not_to include 'BoldItalic'
   end
 
+  it 'should decorate first line of first paragraph of abstract with multiple paragraphs' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    = Document Title
+
+    [abstract]
+    --
+    First line of abstract. +
+    Second line of abstract.
+
+    Second paragraph of abstract.
+    --
+
+    == Section
+
+    content
+    EOS
+
+    first_line_text = pdf.find_unique_text 'First line of abstract.'
+    (expect first_line_text[:font_name]).to end_with '-BoldItalic'
+    second_paragraph_text = pdf.find_unique_text 'Second paragraph of abstract.'
+    (expect second_paragraph_text[:font_name]).to end_with '-Italic'
+  end
+
   it 'should apply text transform to first line of abstract and shrink it to fit', visual: true do
     pdf_theme = {
       abstract_font_color: 'AA0000',
