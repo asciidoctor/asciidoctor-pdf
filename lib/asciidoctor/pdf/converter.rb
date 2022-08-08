@@ -743,22 +743,16 @@ module Asciidoctor
             pagenums = consolidate_ranges term.dests.map {|dest| dest[:page] }.uniq
           end
           pagenums.each do |pagenum|
-            # NOTE: addresses a very minor kerning issue for text adjacent to the comma
-            if (prev_fragment = term_fragments[-1]).size == 1
-              if ::String === pagenum
-                term_fragments[-1] = prev_fragment.merge text: %(#{prev_fragment[:text]}, #{pagenum})
-                next
-              else
-                term_fragments[-1] = prev_fragment.merge text: %(#{prev_fragment[:text]}, )
-              end
+            if ::String === pagenum
+              term_fragments << ({ text: %(, #{pagenum}) })
             else
-              term_fragments << ({ text: ', ' })
+              term_fragments << { text: ', ' }
+              term_fragments << pagenum
             end
-            term_fragments << (::String === pagenum ? { text: pagenum } : pagenum)
           end
         end
         subterm_indent = @theme.description_list_description_indent
-        typeset_formatted_text term_fragments, (calc_line_metrics @base_line_height), align: :left, color: @font_color, hanging_indent: subterm_indent * 2
+        typeset_formatted_text term_fragments, (calc_line_metrics @base_line_height), align: :left, color: @font_color, hanging_indent: subterm_indent * 2, consolidate: true
         indent subterm_indent do
           term.subterms.each do |subterm|
             convert_index_term subterm, pagenum_sequence_style
@@ -4548,6 +4542,7 @@ module Asciidoctor
       # QUESTION: combine with typeset_text?
       def typeset_formatted_text fragments, line_metrics, opts = {}
         opts = { leading: line_metrics.leading, initial_gap: line_metrics.padding_top, final_gap: line_metrics.final_gap }.merge opts
+        fragments = consolidate_fragments fragments if opts.delete :consolidate
         if (hanging_indent = (opts.delete :hanging_indent) || 0) > 0
           indent hanging_indent do
             formatted_text fragments, (opts.merge indent_paragraphs: -hanging_indent)
@@ -4755,6 +4750,20 @@ module Asciidoctor
         else
           nums
         end
+      end
+
+      def consolidate_fragments fragments
+        return fragments unless fragments.size > 1
+        accum = []
+        prev_fragment = nil
+        fragments.each do |fragment|
+          if prev_fragment && fragment == (prev_fragment.merge text: (fragment_text = fragment[:text]))
+            prev_fragment[:text] += fragment_text
+          else
+            accum << (prev_fragment = fragment)
+          end
+        end
+        accum
       end
 
       def conum_glyph number
