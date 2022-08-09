@@ -1675,7 +1675,7 @@ module Asciidoctor
             alignment = float_to.to_sym
           elsif (alignment = node.attr 'align')
             alignment = (BlockAlignmentNames.include? alignment) ? alignment.to_sym : :left
-          elsif !(alignment = node.roles.reverse.find {|r| BlockAlignmentNames.include? r }&.to_sym)
+          elsif !(alignment = node.roles.reverse.find {|role| BlockAlignmentNames.include? role }&.to_sym)
             alignment = @theme.image_align&.to_sym || :left
           end
         end
@@ -4296,7 +4296,7 @@ module Asciidoctor
       end
 
       def resolve_text_align_from_role roles, query_theme: false, remove_predefined: false
-        if (align_role = roles.reverse.find {|r| TextAlignmentRoles.include? r })
+        if (align_role = roles.reverse.find {|role| TextAlignmentRoles.include? role })
           roles.replace roles - TextAlignmentRoles if remove_predefined
           (align_role.slice 5, align_role.length).to_sym
         elsif query_theme
