@@ -47,6 +47,7 @@ module Asciidoctor
         warning: { name: 'fas-exclamation-triangle', stroke_color: 'BF6900', size: 24 },
       }
       TextAlignmentNames = %w(justify left center right)
+      IndentableTextAlignment = { justify: true, left: true }
       TextAlignmentRoles = %w(text-justify text-left text-center text-right)
       TextDecorationStyleTable = { 'underline' => :underline, 'line-through' => :strikethrough }
       FontKerningTable = { 'normal' => true, 'none' => false }
@@ -813,7 +814,7 @@ module Asciidoctor
                 if (text_align = resolve_text_align_from_role node.roles)
                   prose_opts[:align] = text_align
                 end
-                if (text_indent = @theme.prose_text_indent) > 0
+                if IndentableTextAlignment[prose_opts[:align]] && (text_indent = @theme.prose_text_indent) > 0
                   prose_opts[:indent_paragraphs] = text_indent
                 end
                 ink_prose string, prose_opts
@@ -831,10 +832,13 @@ module Asciidoctor
         prose_opts = opts || { margin_bottom: 0, hyphenate: true }
         if (text_align = resolve_text_align_from_role (roles = node.roles), query_theme: true, remove_predefined: true)
           prose_opts[:align] = text_align
+        else
+          text_align = @base_text_align.to_sym
         end
         role_keys = roles.map {|role| %(role_#{role}) } unless roles.empty?
-        if (text_indent = @theme.prose_text_indent) > 0 ||
-            ((text_indent = @theme.prose_text_indent_inner) > 0 && node.previous_sibling&.context == :paragraph)
+        if IndentableTextAlignment[text_align] &&
+            ((text_indent = @theme.prose_text_indent) > 0 ||
+            ((text_indent = @theme.prose_text_indent_inner) > 0 && node.previous_sibling&.context == :paragraph))
           prose_opts[:indent_paragraphs] = text_indent
         end
         if (bottom_gutter = @bottom_gutters[-1][node])
