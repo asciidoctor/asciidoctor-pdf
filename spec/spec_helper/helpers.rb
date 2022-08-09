@@ -39,8 +39,8 @@ module RSpec::ExampleHelpers
     bin_script 'asciidoctor-pdf-optimize'
   end
 
-  def bin_script name, opts = {}
-    bin_path = Gem.bin_path (opts.fetch :gem, 'asciidoctor-pdf'), name
+  def bin_script name, gem: 'asciidoctor-pdf'
+    bin_path = Gem.bin_path gem, name
     if (defined? DeepCover) && !(DeepCover.const_defined? :TAKEOVER_IS_ON)
       [Gem.ruby, '-rdeep_cover', bin_path]
     elsif windows?
