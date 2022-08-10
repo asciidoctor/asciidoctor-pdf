@@ -254,8 +254,7 @@ module Asciidoctor
           end
         end
         if (expr.end_with? ')') && expr =~ PrecisionFuncRx
-          op = $1
-          offset = op.length + 1
+          offset = (op = $1).length + 1
           expr = expr[offset...-1].to_f.send op.to_sym
         end
         if expr == original
