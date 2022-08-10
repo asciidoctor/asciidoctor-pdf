@@ -1194,7 +1194,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       end
     end
 
-    it 'should resolve value with units to PDF point value' do
+    it 'should resolve value with fixed units to PDF point value' do
       ['0.5in', '36pt', '48px', '12.7mm', '1.27cm'].each do |val|
         theme_data = YAML.safe_load <<~EOS
         footer:
@@ -1354,6 +1354,16 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.brand_ten).to be 10
       (expect theme.brand_a_string).to eql 'ten*10'
       (expect theme.brand_another_string).to eql 'ten-10'
+    end
+
+    it 'should resolve fixed units before computing value' do
+      theme_data = YAML.safe_load <<~'EOS'
+      title-page:
+        title:
+          top: 3in / 4
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.title_page_title_top).to eql 54
     end
 
     it 'should apply precision functions to value' do
