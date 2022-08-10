@@ -231,7 +231,6 @@ module Asciidoctor
       def evaluate_math expr
         return expr if !(::String === expr) || ColorValue === expr
         # resolve measurement values (e.g., 0.5in => 36)
-        # QUESTION: should we round the value? perhaps leave that to the precision functions
         # NOTE: leave % as a string; handled by converter for now
         original, expr = expr, (resolve_measurement_values expr)
         while true
