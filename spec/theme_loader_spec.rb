@@ -1204,6 +1204,16 @@ describe Asciidoctor::PDF::ThemeLoader do
         (expect theme.footer_padding.to_f.round 2).to eql 36.0
       end
     end
+
+    it 'should preserve value with relative units' do
+      theme_data = YAML.safe_load <<~EOS
+      role:
+        big:
+          font-size: 1.2em
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.role_big_font_size).to eql '1.2em'
+    end
   end
 
   context 'interpolation' do
