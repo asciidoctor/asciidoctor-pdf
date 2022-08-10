@@ -706,15 +706,26 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect lines[0][:width]).to eql 0.5
     end
 
-    it 'should support size roles (big and small) in default theme' do
-      pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: (pdf_theme = build_pdf_theme), analyze: true
-      (expect pdf_theme.role_big_font_size).to be 13
-      (expect pdf_theme.role_small_font_size).to be 9
+    it 'should support size roles (big and small) in base theme' do
+      pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: (pdf_theme = build_pdf_theme({}, 'base')), analyze: true
+      (expect pdf_theme.role_big_font_size).to eql '1.2em'
+      (expect pdf_theme.role_small_font_size).to eql '0.8em'
       text = pdf.text
       (expect text).to have_size 3
-      (expect text[0][:font_size].to_f.round 2).to eql pdf_theme.base_font_size_large.to_f
+      (expect text[0][:font_size]).to eql ((pdf_theme.base_font_size * 1.2).round 2)
       (expect text[1][:font_size]).to eql pdf_theme.base_font_size
-      (expect text[2][:font_size].to_f.round 2).to eql pdf_theme.base_font_size_small.to_f
+      (expect text[2][:font_size]).to eql ((pdf_theme.base_font_size * 0.8).round 2)
+    end
+
+    it 'should support size roles (big and small) in default theme' do
+      pdf = to_pdf '[.big]#big# and [.small]#small#', pdf_theme: (pdf_theme = build_pdf_theme), analyze: true
+      (expect pdf_theme.role_big_font_size).to eql '1.2em'
+      (expect pdf_theme.role_small_font_size).to eql '0.8em'
+      text = pdf.text
+      (expect text).to have_size 3
+      (expect text[0][:font_size]).to eql ((pdf_theme.base_font_size * 1.2).round 2)
+      (expect text[1][:font_size]).to eql pdf_theme.base_font_size
+      (expect text[2][:font_size]).to eql ((pdf_theme.base_font_size * 0.8).round 2)
     end
 
     it 'should allow theme to override formatting for font size roles' do

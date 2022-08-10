@@ -17,8 +17,8 @@ base_border_color: '000000'
 role_lead_font_size: 13.5
 role_line-through_text_decoration: line-through
 role_underline_text_decoration: underline
-role_big_font_size: 14
-role_small_font_size: 10
+role_big_font_size: 1.2em
+role_small_font_size: 0.8em
 role_subtitle_font_size: 0.8em
 button_content: '[%s]'
 button_font_family: Courier
