@@ -46,9 +46,9 @@ role:
   underline:
     text_decoration: underline
   big:
-    font_size: $base_font_size_large
+    font_size: 1.2em
   small:
-    font_size: $base_font_size_small
+    font_size: 0.8em
   subtitle:
     font_color: 999999
     font_size: 0.8em
