@@ -446,6 +446,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       to_file = to_pdf_file <<~'EOS', 'page-prepress-margins.pdf', enable_footer: true
       = Book Title
       :media: prepress
+      :pdf-theme: default
       :doctype: book
       // NOTE: setting front-cover-image to ~ informs converter cover page will be inserted by separate process
       :front-cover-image: ~

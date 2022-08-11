@@ -3,7 +3,27 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - media' do
+  context 'print' do
+    it 'should use default-for-print theme if media is print and theme is not specified' do
+      input = 'worth #marking#'
+      text = (to_pdf input, attribute_overrides: { 'media' => 'print' }, analyze: true).text
+      (expect text[0][:font_color]).to eql '000000'
+      rects = (to_pdf input, attribute_overrides: { 'media' => 'print' }, analyze: :rect).rectangles
+      (expect rects).to have_size 1
+      (expect rects[0][:fill_color]).to eql 'CCCCCC'
+    end
+  end
+
   context 'prepress' do
+    it 'should use default-for-print theme if media is prepress and theme is not specified' do
+      input = 'worth #marking#'
+      text = (to_pdf input, attribute_overrides: { 'media' => 'prepress' }, analyze: true).text
+      (expect text[0][:font_color]).to eql '000000'
+      rects = (to_pdf input, attribute_overrides: { 'media' => 'prepress' }, analyze: :rect).rectangles
+      (expect rects).to have_size 1
+      (expect rects[0][:fill_color]).to eql 'CCCCCC'
+    end
+
     it 'should leave blank page after image cover page' do
       pdf = to_pdf <<~EOS
       = Document Title

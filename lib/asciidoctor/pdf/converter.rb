@@ -535,8 +535,10 @@ module Asciidoctor
           elsif (theme_name = doc.attr 'pdf-theme')
             theme = ThemeLoader.load_theme theme_name, (user_themesdir = (doc.attr 'pdf-themesdir')&.sub '{docdir}', (doc.attr 'docdir'))
             @themesdir = theme.__dir__
-          else
+          elsif (doc.attr 'media', 'screen') == 'screen'
             @themesdir = (theme = ThemeLoader.load_theme).__dir__
+          else
+            @themesdir = (theme = ThemeLoader.load_theme 'default-for-print').__dir__
           end
           prepare_theme theme
         rescue

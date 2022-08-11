@@ -2081,7 +2081,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
     it 'below top, does not fit, media=prepress' do
       to_file = to_pdf_file (Pathname.new (fixture_file 'arrange-block-below-top-does-not-fit.adoc')),
         'arrange-block-below-top-does-not-fit.pdf',
-        attribute_overrides: { 'source-highlighter' => 'rouge', 'media' => 'prepress', 'doctype' => 'book' }
+        attribute_overrides: { 'source-highlighter' => 'rouge', 'media' => 'prepress', 'pdf-theme' => 'default', 'doctype' => 'book' }
       (expect to_file).to visually_match 'arrange-block-below-top-does-not-fit-prepress.pdf'
     end
   end
