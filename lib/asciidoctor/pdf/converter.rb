@@ -817,7 +817,6 @@ module Asciidoctor
                 if IndentableTextAlignment[prose_opts[:align]] && (text_indent = @theme.prose_text_indent) > 0
                   prose_opts[:indent_paragraphs] = text_indent
                 end
-                # Q: don't we need bottom gutter logic here?
                 ink_prose string, prose_opts
               end
             end

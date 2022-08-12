@@ -632,4 +632,22 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     (expect margins.uniq).to have_size 1
     (expect margins[0]).to (be_within 1).of 16.0
   end
+
+  it 'should support padding around block' do
+    pdf = to_pdf <<~'EOS', pdf_theme: { abstract_padding: 72 }, analyze: true
+    = Article Title
+
+    [abstract]
+    This is the abstract.
+
+    This is the opening paragraph.
+    EOS
+
+    doctitle_text = pdf.find_unique_text 'Article Title'
+    abstract_text = pdf.find_unique_text 'This is the abstract.'
+    opening_paragraph_text = pdf.find_unique_text 'This is the opening paragraph.'
+    (expect abstract_text[:x]).to eql 120.24
+    (expect doctitle_text[:y] - abstract_text[:y]).to be > 72
+    (expect abstract_text[:y] - opening_paragraph_text[:y]).to be > 72
+  end
 end
