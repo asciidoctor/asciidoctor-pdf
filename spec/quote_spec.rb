@@ -101,7 +101,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
     (expect link_annotation[:Rect][2]).to eql (citetitle_text[:x] + citetitle_text[:width])
   end
 
-  it 'should honor text align role on styled paragraph' do
+  it 'should honor text alignment role on styled paragraph' do
     pdf = to_pdf <<~'EOS', analyze: true
     [quote.text-right]
     Yep.

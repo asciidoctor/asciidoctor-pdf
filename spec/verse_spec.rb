@@ -64,6 +64,18 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
     (expect lines[2]).to eql %(\u00a0       go)
   end
 
+  it 'should honor text alignment role' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    [verse.text-right]
+    ____
+    Over here.
+    ____
+    EOS
+
+    midpoint = pdf.pages[0][:size][0] * 0.5
+    (expect (pdf.find_unique_text 'Over here.')[:x]).to be > midpoint
+  end
+
   it 'should not draw left border if border_left_width is 0' do
     pdf = to_pdf <<~'EOS', pdf_theme: { verse_border_left_width: 0 }, analyze: :line
     [verse]

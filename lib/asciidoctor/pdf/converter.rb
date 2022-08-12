@@ -1279,7 +1279,7 @@ module Asciidoctor
                 content = guard_indentation node.content
                 ink_prose content,
                   normalize: false,
-                  align: :left,
+                  align: (resolve_text_align_from_role node.roles) || :left,
                   hyphenate: true,
                   margin_bottom: 0,
                   bottom_gutter: (attribution ? nil : @bottom_gutters[-1][node])
