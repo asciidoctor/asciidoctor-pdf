@@ -2361,6 +2361,9 @@ module Asciidoctor
           node.content
         elsif node.content_model != :compound && (string = node.content)
           prose_opts = opts.merge hyphenate: true, margin_bottom: 0
+          if (text_align = resolve_text_align_from_role node.roles)
+            prose_opts[:align] = text_align
+          end
           if (bottom_gutter = @bottom_gutters[-1][node])
             prose_opts[:bottom_gutter] = bottom_gutter
           end

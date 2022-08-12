@@ -101,6 +101,16 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
     (expect link_annotation[:Rect][2]).to eql (citetitle_text[:x] + citetitle_text[:width])
   end
 
+  it 'should honor text align role on styled paragraph' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    [quote.text-right]
+    Yep.
+    EOS
+
+    midpoint = pdf.pages[0][:size][0] * 0.5
+    (expect (pdf.find_unique_text 'Yep.')[:x]).to be > midpoint
+  end
+
   it 'should not draw left border if border_left_width is 0' do
     pdf = to_pdf <<~'EOS', pdf_theme: { quote_border_left_width: 0 }, analyze: :line
     ____
