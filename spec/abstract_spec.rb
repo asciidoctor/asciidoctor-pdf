@@ -650,4 +650,36 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     (expect doctitle_text[:y] - abstract_text[:y]).to be > 72
     (expect abstract_text[:y] - opening_paragraph_text[:y]).to be > 72
   end
+
+  it 'should collapse bottom padding if simple abstract will fit on current page' do
+    pdf = to_pdf <<~EOS, pdf_theme: { abstract_padding: 72 }, analyze: true
+    = Article Title
+
+    [abstract]
+    #{lorem_ipsum '4-sentences-1-paragraph'}
+    #{lorem_ipsum '4-sentences-1-paragraph'}
+    #{lorem_ipsum '1-line'}
+
+    And so it goes.
+    EOS
+
+    (expect (pdf.find_text page_number: 2)[0][:string]).to eql 'And so it goes.'
+  end
+
+  it 'should collapse bottom padding if compound abstract will fit on current page' do
+    pdf = to_pdf <<~EOS, pdf_theme: { abstract_padding: 72 }, analyze: true
+    = Article Title
+
+    [abstract]
+    --
+    #{lorem_ipsum '4-sentences-1-paragraph'}
+    #{lorem_ipsum '4-sentences-1-paragraph'}
+    #{lorem_ipsum '1-line'}
+    --
+
+    And so it goes.
+    EOS
+
+    (expect (pdf.find_text page_number: 2)[0][:string]).to eql 'And so it goes.'
+  end
 end
