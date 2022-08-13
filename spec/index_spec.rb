@@ -705,7 +705,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
   end
 
   it 'should not enclose page number in link or apply link styles if media is not screen' do
-    pdf = to_pdf <<~'EOS', doctype: :book, attribute_overrides: { 'media' => 'print' }, analyze: true
+    pdf = to_pdf <<~'EOS', doctype: :book, attribute_overrides: { 'media' => 'print', 'pdf-theme' => 'default' }, analyze: true
     ((index term))
 
     [index]

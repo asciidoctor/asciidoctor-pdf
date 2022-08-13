@@ -13,6 +13,7 @@ Enhancements::
 * insert column break instead of page break in multi-column layout if `column` role is specified on page break macro (#2293)
 * allow page / column break to be forced using `always` option (e.g., `[%always]`) (#2300)
 * use relative font size for big and small roles (#2307)
+* use default-for-print theme by default if media is `print` or `prepress` (#2306)
 
 Bug Fixes::
 
