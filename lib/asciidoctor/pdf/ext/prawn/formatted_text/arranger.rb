@@ -26,6 +26,17 @@ Prawn::Text::Formatted::Arranger.prepend (Module.new do
     (string = super) == @dummy_text ? (string.extend Prawn::Text::NoopLstripBang) : string
   end
 
+  def preview_joined_string
+    if (next_unconsumed = @unconsumed[0] || {})[:wj] && !(@consumed[-1] || [])[:wj]
+      idx = 0
+      str = '' if (str = next_unconsumed[:text]) == @dummy_text
+      while (next_unconsumed = @unconsumed[idx += 1] || {})[:wj] && (next_string = next_unconsumed[:text])
+        str += next_string unless next_string == @dummy_text
+      end
+      str unless str == ''
+    end
+  end
+
   def apply_font_size size, styles
     if (subscript? styles) || (superscript? styles)
       size ||= @document.font_size

@@ -20,6 +20,8 @@ Bug Fixes::
 * apply text transform and formatting when computing height of background for caption
 * honor theme settings (`prose-margin-inner` and `prose-text-indent-inner`) for inner paragraphs in abstract
 * only indent text that starts at left margin (i.e., when text align is left or justify) (#2298)
+* prevent footnote label from wrapping (#2297)
+* keep footnote label with preceding text if adjacent (#2297)
 
 Compliance::
 
