@@ -1045,7 +1045,7 @@ module Asciidoctor
             else
               highlighter = nil
             end
-            prev_subs = (subs = node.subs).dup
+            saved_subs = (subs = node.subs).dup
             callouts_enabled = subs.include? :callouts
             highlight_idx = subs.index :highlight
             # NOTE: scratch? here only applies if listing block is nested inside another block
@@ -1055,7 +1055,7 @@ module Asciidoctor
                 # switch the :highlight sub back to :specialcharacters
                 subs[highlight_idx] = :specialcharacters
               else
-                prev_subs = nil
+                saved_subs = nil
               end
               source_string = guard_indentation node.content
             elsif highlight_idx
@@ -1064,7 +1064,7 @@ module Asciidoctor
               # NOTE: indentation guards will be added by the source highlighter logic
               source_string = expand_tabs node.content
             else
-              highlighter = prev_subs = nil
+              highlighter = saved_subs = nil
               source_string = guard_indentation node.content
             end
           else
@@ -1156,7 +1156,7 @@ module Asciidoctor
             # NOTE: only format if we detect a need (callouts or inline formatting)
             source_chunks = (XMLMarkupRx.match? source_string) ? (text_formatter.format source_string) : [text: source_string]
           end
-          node.subs.replace prev_subs if prev_subs
+          node.subs.replace saved_subs if saved_subs
           adjusted_font_size = ((node.option? 'autofit') || (node.document.attr? 'autofit-option')) ? (compute_autofit_font_size source_chunks, :code) : nil
         end
 
