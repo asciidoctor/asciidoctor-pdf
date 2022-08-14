@@ -271,6 +271,63 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect footnote_text[:y]).to be < 60
   end
 
+  it 'should keep footnote label with previous adjacent text' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. Go.footnote:a[This is note A.]
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 3
+    (expect lines[1]).to eql 'Go.[1]'
+    (expect lines[2]).to eql '[1] This is note A.'
+  end
+
+  it 'should not keep footnote label with previous text if separated by a space' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. Go. footnote:a[This is note A.]
+    EOS
+
+    text = pdf.text
+    (expect text[1][:string]).to start_with '['
+    (expect text[0][:y] - text[1][:y]).to be > 10
+    lines = pdf.lines
+    (expect lines).to have_size 3
+    (expect lines[0]).to end_with 'Go.'
+    (expect lines[1]).to eql '[1]'
+    (expect lines[2]).to eql '[1] This is note A.'
+  end
+
+  it 'should keep footnote label with previous text when line wraps to next page' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    image::tall.svg[pdfwidth=85mm]
+    The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. Go.footnote:a[This is note A.]
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 3
+    (expect lines[1]).to eql 'Go.[1]'
+    (expect lines[2]).to eql '[1] This is note A.'
+    (expect (pdf.find_unique_text 'Go.')[:page_number]).to eql 2
+    (expect (pdf.find_unique_text %r/This is note A/)[:page_number]).to eql 2
+  end
+
+  it 'should keep formatted footnote label with previous text' do
+    expected_y = ((to_pdf <<~'EOS', analyze: true).find_unique_text '[1]')[:y]
+    The +
+    Go.^[1]^
+    EOS
+
+    pdf = to_pdf <<~'EOS', pdf_theme: { mark_border_offset: 0 }, analyze: true
+    The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. Go.#footnote:a[This is note A.]#
+    EOS
+
+    lines = pdf.lines
+    (expect lines).to have_size 3
+    (expect lines[1]).to eql 'Go.[1]'
+    (expect lines[2]).to eql '[1] This is note A.'
+    (expect (pdf.find_text %r/\[/)[0][:y]).to eql expected_y
+  end
+
   it 'should support text formatting in a footnote' do
     pdf = to_pdf <<~'EOS', analyze: true
     You can download patches from the product page.footnote:[Only available if you have an _active_ subscription.]

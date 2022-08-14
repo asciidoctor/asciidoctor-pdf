@@ -315,10 +315,12 @@ module Asciidoctor
                 end) : value
               elsif (value = attrs[:id])
                 # NOTE: text is null character, which is used as placeholder text so Prawn doesn't drop fragment
-                fragment = { name: value, callback: [InlineDestinationMarker] }
+                new_fragment = { name: value, callback: [InlineDestinationMarker] }
+                new_fragment[:wj] = true if fragment[:wj]
                 if (type = attrs[:type])
-                  fragment[:type] = type.to_sym
+                  new_fragment[:type] = type.to_sym
                 end
+                fragment = new_fragment
                 visible = nil
               end
             end
@@ -357,6 +359,7 @@ module Asciidoctor
           end
           # TODO: we could limit to select tags, but doesn't seem to really affect performance
           attrs[:class].split.each do |class_name|
+            fragment[:wj] = true if class_name == 'wj'
             next unless @theme_settings.key? class_name
             update_fragment fragment, @theme_settings[class_name]
             # NOTE: defer assignment of callback since we must look at combined styles of element and role
