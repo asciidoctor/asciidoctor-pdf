@@ -46,9 +46,9 @@ module Asciidoctor
         tip: { name: 'far-lightbulb', stroke_color: '111111', size: 24 },
         warning: { name: 'fas-exclamation-triangle', stroke_color: 'BF6900', size: 24 },
       }
-      TextAlignmentNames = %w(justify left center right)
-      IndentableTextAlignment = { justify: true, left: true }
-      TextAlignmentRoles = %w(text-justify text-left text-center text-right)
+      TextAlignmentNames = { 'justify' => true, 'left' => true, 'center' => true, 'right' => true }
+      IndentableTextAlignments = { justify: true, left: true }
+      TextAlignmentRoles = { 'text-justify' => true, 'text-left' => true, 'text-center' => true, 'text-right' => true }
       TextDecorationStyleTable = { 'underline' => :underline, 'line-through' => :strikethrough }
       FontKerningTable = { 'normal' => true, 'none' => false }
       BlockFloatNames = %w(left right)
@@ -396,7 +396,7 @@ module Asciidoctor
         @font_scale = 1
         @font_color = theme.base_font_color
         @text_decoration_width = theme.base_text_decoration_width
-        @base_text_align = (text_align = doc.attr 'text-align') && (TextAlignmentNames.include? text_align) ? text_align : theme.base_text_align
+        @base_text_align = (text_align = doc.attr 'text-align') && TextAlignmentNames[text_align] ? text_align : theme.base_text_align
         @base_line_height = theme.base_line_height
         @cjk_line_breaks = doc.attr? 'scripts', 'cjk'
         if (hyphen_lang = (doc.attr 'hyphens') || ((doc.attr_unspecified? 'hyphens') ? @theme.base_hyphens : nil)) &&
@@ -816,7 +816,7 @@ module Asciidoctor
                 if (text_align = resolve_text_align_from_role node.roles)
                   prose_opts[:align] = text_align
                 end
-                if IndentableTextAlignment[prose_opts[:align]] && (text_indent = @theme.prose_text_indent) > 0
+                if IndentableTextAlignments[prose_opts[:align]] && (text_indent = @theme.prose_text_indent) > 0
                   prose_opts[:indent_paragraphs] = text_indent
                 end
                 ink_prose string, prose_opts
@@ -838,7 +838,7 @@ module Asciidoctor
           text_align = @base_text_align.to_sym
         end
         role_keys = roles.map {|role| %(role_#{role}) } unless roles.empty?
-        if IndentableTextAlignment[text_align] &&
+        if IndentableTextAlignments[text_align] &&
             ((text_indent = @theme.prose_text_indent) > 0 ||
             ((text_indent = @theme.prose_text_indent_inner) > 0 && node.previous_sibling&.context == :paragraph))
           prose_opts[:indent_paragraphs] = text_indent
@@ -4322,8 +4322,8 @@ module Asciidoctor
       end
 
       def resolve_text_align_from_role roles, query_theme: false, remove_predefined: false
-        if (align_role = roles.reverse.find {|role| TextAlignmentRoles.include? role })
-          roles.replace roles - TextAlignmentRoles if remove_predefined
+        if (align_role = roles.reverse.find {|role| TextAlignmentRoles[role] })
+          roles.replace roles - TextAlignmentRoles.keys if remove_predefined
           (align_role.slice 5, align_role.length).to_sym
         elsif query_theme
           roles.reverse.each do |role|
