@@ -1060,9 +1060,26 @@ module Asciidoctor
               source_string = guard_indentation node.content
             elsif highlight_idx
               # NOTE: the source highlighter logic below handles the highlight and callouts subs
-              subs.replace subs - [:highlight, :callouts]
-              # NOTE: indentation guards will be added by the source highlighter logic
-              source_string = expand_tabs node.content
+              if (subs - [:highlight, :callouts]).empty?
+                subs.clear
+                # NOTE: indentation guards will be added by the source highlighter logic
+                source_string = expand_tabs node.content
+              else
+                if callouts_enabled
+                  saved_lines = node.lines.dup
+                  subs.delete :callouts
+                  prev_subs = subs.dup
+                  subs.clear
+                  source_string, conum_mapping = extract_conums node.content
+                  node.lines.replace (source_string.split LF)
+                  subs.replace prev_subs
+                  callouts_enabled = false
+                end
+                subs[highlight_idx] = :specialcharacters
+                # NOTE: indentation guards will be added by the source highlighter logic
+                source_string = expand_tabs unescape_xml (sanitize node.content, compact: false)
+                node.lines.replace saved_lines if saved_lines
+              end
             else
               highlighter = saved_subs = nil
               source_string = guard_indentation node.content
