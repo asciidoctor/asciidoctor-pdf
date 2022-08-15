@@ -19,6 +19,9 @@ Further information about using `inherit` on image caption text and table captio
 The `text-align` key is distinct from the similarly-named `align` key.
 The xref:blocks.adoc#align[align key] aligns a block element horizontally within its container.
 
+The base `text-align` can be set using the `text-align` document attribute, which takes precedence over the value in the theme.
+If a `text-<align>` role (e.g., `text-center`) is set on a block element it overrides the value from the theme.
+
 [#decoration]
 == Decoration
 

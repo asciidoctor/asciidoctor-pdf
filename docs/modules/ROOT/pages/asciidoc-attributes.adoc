@@ -176,7 +176,7 @@ In other case, if the value is empty, then the value of the `lang` document attr
 Chinese and Japanese are written without spaces (and may not use spaces when mixing with English words either).
 This setting allows a line break to be placed between any two CJK characters to accommodate wrapping.
 These languages also use different punctuation for pause, full stop, and dash, which are taken into account when breaking lines.
-7. _(Experimental)_ The `text-align` document attribute is intended as a simple way to toggle text justification.
+7. The `text-align` document attribute is intended as a simple way to toggle text justification.
 The value of this attribute overrides the `base-text-align` key set by the theme.
-For more fine-grained control, you should customize using the theme.
+If a `text-<align>` role is set on a block element, that alignment always takes precedence over the theme.
 8. If the TOC overlaps the first page of content, increase this number.
