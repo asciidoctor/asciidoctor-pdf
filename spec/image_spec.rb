@@ -1168,6 +1168,28 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-png-implicit-width.pdf'
     end
 
+    # TODO: we'd like to avoid this, but the cached objects are document bound
+    it 'should decode PNG image again in scratch document' do
+      image_handler = Prawn.image_handler
+      old_image_handler = Prawn.singleton_method :image_handler
+      Prawn.singleton_class.remove_method :image_handler
+      call_count = 0
+      Prawn.singleton_class.define_method :image_handler do
+        call_count += 1
+        image_handler
+      end
+      pdf = to_pdf <<~'EOS', analyze: :image
+      ****
+      image::tux.png[]
+      ****
+      EOS
+      (expect pdf.images).to have_size 1
+      (expect call_count).to eql 2
+    ensure
+      Prawn.singleton_class.remove_method :image_handler
+      Prawn.singleton_class.define_method :image_handler, &old_image_handler
+    end
+
     it 'should set color space on page that only has image and stamp' do
       pdf = to_pdf <<~'EOS', pdf_theme: { footer_recto_right_content: 'pg {page-number}' }, enable_footer: true
       image::tux.png[]
