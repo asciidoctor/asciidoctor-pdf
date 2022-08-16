@@ -4,45 +4,42 @@
 :doctype: book
 :leveloffset: 1
 :page-toclevels: 2
-:url-milestone-2-2-0: {url-project-issues}?q=is%3Aissue+milestone%3Av2.2.0+is%3Aclosed
-//:url-milestone-2-2-1: {url-project-issues}?q=is%3Aissue+milestone%3Av2.2.1+is%3Aclosed
+:url-issue-label-2-3-0: {url-project-issues}?q=is%3Aissue+milestone%3Av2.3.0+is%3Aclosed
 
 This page presents the changes made in each of the patch releases in the Asciidoctor PDF {page-component-version} release line.
 The releases are ordered from newest to oldest.
 
 = Asciidoctor PDF {page-component-version}.0
 
-_**Release date:** 2022.07.22 | *Release notes:* {url-project-repo}/releases/tag/v2.2.0[v{page-component-version}.0^] | *Issue label:* {url-milestone-2-2-0}[{page-component-version}.0^]_
+_**Release date:** 2022.08.16 | *Release notes:* {url-project-repo}/releases/tag/v2.3.0[v{page-component-version}.0^] | *Issue label:* {url-issue-label-2-3-0}[{page-component-version}.0^]_
 
-Asciidoctor PDF {page-component-version}.0 introduces several enhancements.
+Asciidoctor PDF {page-component-version}.0 introduces several enhancements and bug fixes.
 For a complete list of changes, see the {url-project-repo}/blob/main/CHANGELOG.adoc[CHANGELOG^].
 
 == Enhancements
 
-* Allow a xref:background-images.adoc#page-layout[page background image to be specified per layout] using the `+{page-layout}+` attribute reference in the target path.
-* Allow the page margins for rotated pages to be configured independently using the xref:theme:page.adoc#rotated-margin[page-margin-rotated theme key] or xref:asciidoc-attributes.adoc[pdf-page-margin-rotated document attribute].
-* Allow xref:breakable-and-unbreakable.adoc#section-or-discrete-heading[orphan detection to be enabled for all section titles and discrete headings] by setting xref:theme:heading.adoc#min-height-after[heading-min-height-after] to `auto` in the theme.
-* Set the xref:theme:images.adoc#specify[docimagesdir attribute] when attribute substitutions are applied to a value from the theme.
-* Start xref:theme:page-numbers.adoc[page numbering] and xref:theme:add-running-content.adoc#page[running content] on empty verso page before first chapter of prepress book if `start-at` value is `0`.
-* Don't force a page break after a TOC with automatic placement in an article if the `title-page` attribute is set and the xref:theme:toc.adoc[value of toc-break-after theme key is auto].
-* Add `--theme` option to CLI as shorthand for `-a pdf-theme`.
-* Add `--sourcemap` option to CLI to enable `:sourcemap` option.
-* Broaden support for xref:theme:text.adoc#font-size[relative font sizes in the theme] to more than just inline elements.
-* Allow the theme to control the font properties of ordered list markers using the xref:theme:list.adoc#olist-marker[olist-marker category].
-* Allow the theme to control the xref:theme:list.adoc#ulist-marker[font style of unordered list markers] per marker or all markers.
+* Place footnotes below last block of content, offset by the specified amount, when the `footnotes_margin_top` theme key is a fixed value (e.g. 0).
+* Insert column break instead of page break in multi-column layout if `column` role is specified on the page break macro.
+* Allow page or column break to be forced using `always` option (e.g., `[%always]`).
+* Use a relative font size for big and small roles in the built-in themes.
+* Use the default-for-print theme by default (no theme is specified) if media is `print` or `prepress`.
+* Support text alignment roles on all styled paragraphs and verse blocks.
 
 == Bug fixes
 
-* Always set the `imagesdir` attribute to the value of `themesdir` when resolving images from theme.
-* Allow the `top` keys in the `title-page` theme category to accept a fixed value (e.g., `1in`).
-* Prevent orphan detection for headings (section title or discrete heading) from modifying the document state.
+* Strip formatting added to source block by custom subs when syntax highlighter is enabled.
+* Only indent text that starts at left margin (i.e., when text align is left or justify).
+* Correctly compute height of heading and caption for orphan prevention.
+* Honor theme settings (`prose-margin-inner` and `prose-text-indent-inner`) for inner paragraphs in abstract.
+* Prevent footnote label from being split across lines.
+* Keep footnote label with preceding adjacent text.
 
 == Compliance
 
-* Configure table borders to be compatible with prawn-table > 0.2.2.
-* Don't coerce a font size < 1 to a relative font size; relative font size should be specified in units.
+* Remove support for deprecated `spread` role on table.
 
 == Previous releases
 
+* See xref:2.2@whats-new.adoc[What's New in Asciidoctor PDF 2.2] to learn about the improvements added in Asciidoctor PDF 2.2.
 * See xref:2.1@whats-new.adoc[What's New in Asciidoctor PDF 2.1] to learn about the improvements added in Asciidoctor PDF 2.1.
 * Refer to xref:2.0@whats-new.adoc[What's New in Asciidoctor PDF 2.0] to learn about the new features, improvements, and fixes introduced in 2.0.

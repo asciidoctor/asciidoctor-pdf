@@ -14,6 +14,8 @@ Enhancements::
 * insert column break instead of page break in multi-column layout if `column` role is specified on page break macro (#2293)
 * use relative font size for big and small roles (#2307)
 * use default-for-print theme by default if media is `print` or `prepress` (#2306)
+* support text alignment roles on all styled paragraphs
+* support text alignment roles on verse block
 
 Bug Fixes::
 
@@ -28,8 +30,6 @@ Bug Fixes::
 Compliance::
 
 * remove support for deprecated `spread` role on table
-* support text alignment roles on style paragraphs
-* support text alignment roles on verse block
 
 == 2.2.0 (2022-07-22) - @mojavelinux
 
