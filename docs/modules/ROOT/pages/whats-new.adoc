@@ -18,7 +18,7 @@ For a complete list of changes, see the {url-project-repo}/blob/main/CHANGELOG.a
 
 == Enhancements
 
-* Place footnotes below last block of content, offset by the specified amount, when the `footnotes_margin_top` theme key is a fixed value (e.g. 0).
+* Place footnotes below last block of content, offset by the specified amount, when the `footnotes-margin-top` theme key is a fixed value (e.g. 0).
 * Insert column break instead of page break in multi-column layout if `column` role is specified on the page break macro.
 * Allow page or column break to be forced using `always` option (e.g., `[%always]`).
 * Use a relative font size for big and small roles in the built-in themes.

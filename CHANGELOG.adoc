@@ -9,7 +9,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 Enhancements::
 
-* place footnotes directly below last block of content if `footnotes_margin_top` theme key is 0 (#2291)
+* place footnotes directly below last block of content if `footnotes-margin-top` theme key is 0 (#2291)
 * allow page / column break to be forced using `always` option (e.g., `[%always]`) (#2300)
 * insert column break instead of page break in multi-column layout if `column` role is specified on page break macro (#2293)
 * use relative font size for big and small roles (#2307)
