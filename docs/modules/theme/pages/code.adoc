@@ -96,6 +96,13 @@ code:
 code:
   line-height: 1.25
 
+|orphans-min-height
+|xref:blocks.adoc#padding[Measurement]
+(default: `0`)
+|[source]
+code:
+  orphans-min-height: 0.5in
+
 |padding
 |xref:blocks.adoc#padding[Measurement] {vbar} xref:blocks.adoc#padding[Measurement[\]] +
 (default: `9`)

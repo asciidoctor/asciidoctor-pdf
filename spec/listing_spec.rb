@@ -66,6 +66,34 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect lines.map {|it| it[:page_number] }.uniq).to eql [2]
   end
 
+  it 'should advance block to next page if remaining height is less than code_orphans_min_height' do
+    pdf_theme = {
+      code_orphans_min_height: 72,
+      code_border_color: 'FF0000',
+    }
+    pdf = with_content_spacer 10, 700 do |spacer_path|
+      input = <<~EOS
+      image::#{spacer_path}[]
+
+      ----
+      this
+      code
+      will
+      not
+      break
+      ----
+      EOS
+
+      (expect ((to_pdf input, analyze: true).find_unique_text 'this')[:page_number]).to eql 1
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      (expect pdf.pages).to have_size 2
+      (expect (pdf.find_unique_text 'this')[:page_number]).to eql 2
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
+      code_border = pdf.lines.select {|it| it[:color] == 'FF0000' }
+      (expect code_border.map {|it| it[:page_number] }.uniq).to eql [2]
+    end
+  end
+
   it 'should keep anchor together with block when block is moved to next page' do
     pdf = to_pdf <<~EOS
     #{(['paragraph'] * 20).join (?\n * 2)}
