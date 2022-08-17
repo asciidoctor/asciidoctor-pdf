@@ -289,9 +289,23 @@ All icon types must be grouped under a single `icons` category.
 In other words, _do not_ declare the `icons` category multiple times.
 The keys in the `admonition-icon` category can't be flattened (e.g., `tip-name: far-lightbulb` is not valid syntax).
 
+The `image` key is only relevant when image-based icons are used (`icons=image`).
+It's an alternative to using the `icon` attribute on the admonition block.
+The path is resolved starting from the location of the AsciiDoc document and relative to the value of the `iconsdir` attribute.
+The image macro syntax is not supported for this key.
+
 [cols="3,5,6a"]
 |===
 |Key |Value Type |Example
+
+|image
+|path +
+(default: _not set_)
+|[source]
+admonition:
+  icon:
+    tip:
+      image: bulb.png
 
 |<<name,name>>
 |<icon set>-<icon name> +
