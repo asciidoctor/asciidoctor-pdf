@@ -1267,7 +1267,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   end
 
   context 'Theming' do
-    it 'should be able to set font styles per position of periphery and column position in theme' do
+    it 'should be able to set font styles per position of periphery, side, and column position in theme' do
       pdf_theme = {
         footer_font_size: 7.5,
         footer_recto_left_content: '{section-title}',
@@ -1275,8 +1275,8 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_left_text_transform: 'lowercase',
         footer_recto_right_content: '{page-number}',
         footer_recto_right_font_color: '00ff00',
+        footer_verso_font_color: 'ff0000',
         footer_verso_left_content: '{page-number}',
-        footer_verso_left_font_color: 'ff0000',
         footer_verso_right_content: '{section-title}',
         footer_verso_right_text_transform: 'uppercase',
       }
@@ -1300,11 +1300,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       EOS
 
       (expect pdf.find_text font_size: 7.5, page_number: 1, string: '1', font_color: '00FF00').to have_size 1
-      (expect pdf.find_text font_size: 7.5, page_number: 2, string: 'BEGINNING').to have_size 1
+      (expect pdf.find_text font_size: 7.5, page_number: 2, string: 'BEGINNING', font_color: 'FF0000').to have_size 1
       (expect pdf.find_text font_size: 7.5, page_number: 2, string: '2', font_color: 'FF0000').to have_size 1
       (expect pdf.find_text font_size: 7.5, page_number: 3, string: 'middle', font_name: 'NotoSerif-Bold').to have_size 1
       (expect pdf.find_text font_size: 7.5, page_number: 3, string: '3', font_color: '00FF00').to have_size 1
-      (expect pdf.find_text font_size: 7.5, page_number: 4, string: 'END').to have_size 1
+      (expect pdf.find_text font_size: 7.5, page_number: 4, string: 'END', font_color: 'FF0000').to have_size 1
       (expect pdf.find_text font_size: 7.5, page_number: 4, string: '4', font_color: 'FF0000').to have_size 1
     end
 

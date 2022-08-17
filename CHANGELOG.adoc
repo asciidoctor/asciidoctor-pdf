@@ -7,7 +7,9 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Enhancements::
+
+* allow font settings to be specified per side of a running content periphery (#2316)
 
 == 2.3.0 (2022-08-16) - @mojavelinux
 

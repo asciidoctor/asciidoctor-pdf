@@ -495,6 +495,16 @@ The maximum section level considered when assigning the implicit `section-title`
 
 The `<side>` in the `<side>-columns`, `<side>-margin`, `<side>-content-margin`, `<side>-padding`, and `<side>-<position>-content` keys is specified as `recto` (right-hand, odd-numbered pages) or `verso` (left-hand, even-numbered pages).
 
+Although not listed in the tables above, you can override the font settings (`font-family`, `font-size`, `font-color`, `font-style`, `text-transform`) for each page side for a running content periphery (e.g., `header-<side>-font-color`).
+For example, you can set the font color used for the footer on recto pages as follows:
+
+[,yaml]
+----
+footer:
+  recto:
+    font-color: #AA0000
+----
+
 [#position]
 == <position>
 
