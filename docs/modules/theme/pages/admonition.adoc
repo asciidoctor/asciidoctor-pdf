@@ -288,6 +288,10 @@ The keys in the `admonition-icon-<name>` category control the arrangement and st
 All icon types must be grouped under a single `icon` category.
 In other words, the `icon` category _cannot_ be declared multiple times and its keys _cannot_ be flattened (e.g., `tip-name: far-lightbulb` is not valid syntax).
 
+A font-based icon is placed in a container with a width 1.5 times the size of the icon.
+This is done to give the icon more padding than the textual label.
+This behavior will be configurable starting in Asciidoctor PDF 3.
+
 The `image` key is only relevant when image-based icons are used (`icons=image`).
 It's an alternative to using the `icon` attribute on the admonition block.
 The path is resolved starting from the location of the AsciiDoc document and relative to the value of the `iconsdir` attribute.
