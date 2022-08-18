@@ -296,6 +296,8 @@ The `image` key is only relevant when image-based icons are used (`icons=image`)
 It's an alternative to using the `icon` attribute on the admonition block.
 The path is resolved starting from the location of the AsciiDoc document and relative to the value of the `iconsdir` attribute.
 The image macro syntax is not supported for this key.
+The width is controlled by the `width` key.
+The `width` key is only used for image-based icons.
 
 [cols="3,5,6a"]
 |===
@@ -345,6 +347,15 @@ admonition:
   icon:
     important:
       stroke-color: #FF0000
+
+|width
+|xref:measurement-units.adoc[Measurement] +
+(default: `36`)
+|[source]
+admonition:
+  icon:
+    important:
+      width: 24
 |===
 
 [#name]

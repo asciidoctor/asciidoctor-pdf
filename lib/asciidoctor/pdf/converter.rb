@@ -889,8 +889,9 @@ module Asciidoctor
               (ThemeLoader.resolve_theme_asset (apply_subs_discretely doc, icon_path, subs: [:attributes], imagesdir: @themesdir), @themesdir)) &&
               (::File.readable? icon_path)
             icons = true
-            # TODO: introduce @theme.admonition_image_width? or use size key from admonition_icon_<name>?
-            label_width = label_min_width || 36.0
+            icon_data = admonition_icon_data type.to_sym
+            icon_width = (label_width = icon_data[:width] || 36) * (icon_data[:scale] || 2/3r).to_f
+            label_width = label_min_width if label_min_width && label_min_width > label_width
           else
             log :warn, %(admonition icon image#{has_icon ? '' : ' for ' + type.upcase} not found or not readable: #{icon_path || (get_icon_image_path node, type, false)})
           end
@@ -949,7 +950,7 @@ module Asciidoctor
                         svg_obj = ::Prawn::SVG::Interface.new (::File.read icon_path, mode: 'r:UTF-8'), self,
                           position: label_text_align,
                           vposition: label_valign,
-                          width: label_width,
+                          width: icon_width,
                           height: label_height,
                           fallback_font_name: fallback_svg_font_name,
                           enable_web_requests: allow_uri_read ? (method :load_open_uri).to_proc : false,
@@ -969,7 +970,7 @@ module Asciidoctor
                         image_obj, image_info = ::File.open(icon_path, 'rb') {|fd| build_image_object fd }
                         icon_aspect_ratio = image_info.width.fdiv image_info.height
                         # NOTE: don't scale image up if smaller than label_width
-                        icon_width = [(to_pt image_info.width, :px), label_width].min
+                        #icon_width = [(to_pt image_info.width, :px), icon_width].min
                         if (icon_height = icon_width * (1 / icon_aspect_ratio)) > label_height
                           icon_width *= label_height / icon_height
                         end
