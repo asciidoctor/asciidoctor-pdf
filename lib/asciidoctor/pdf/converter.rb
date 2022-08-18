@@ -881,8 +881,7 @@ module Asciidoctor
         if (doc = node.document).attr? 'icons'
           if !(has_icon = node.attr? 'icon') && (doc.attr 'icons') == 'font'
             icons = 'font'
-            label_text = type.to_sym
-            icon_data = admonition_icon_data label_text
+            icon_data = admonition_icon_data type.to_sym
             icon_size = icon_data[:size] || 24
             label_width = label_min_width || (icon_size * 1.5)
           elsif (icon_path = has_icon || !(icon_path = (@theme[%(admonition_icon_#{type})] || {})[:image]) ?
