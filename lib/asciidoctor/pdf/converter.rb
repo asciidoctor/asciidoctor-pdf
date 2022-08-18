@@ -40,12 +40,12 @@ module Asciidoctor
       OptimizerRequirePath = ::File.join __dir__, 'optimizer'
 
       AdmonitionIcons = {
-        caution: { name: 'fas-fire', stroke_color: 'BF3400', size: 24 },
-        important: { name: 'fas-exclamation-circle', stroke_color: 'BF0000', size: 24 },
-        note: { name: 'fas-info-circle', stroke_color: '19407C', size: 24 },
-        tip: { name: 'far-lightbulb', stroke_color: '111111', size: 24 },
-        warning: { name: 'fas-exclamation-triangle', stroke_color: 'BF6900', size: 24 },
-      }
+        caution: { name: 'fas-fire', stroke_color: 'BF3400' },
+        important: { name: 'fas-exclamation-circle', stroke_color: 'BF0000' },
+        note: { name: 'fas-info-circle', stroke_color: '19407C' },
+        tip: { name: 'far-lightbulb', stroke_color: '111111' },
+        warning: { name: 'fas-exclamation-triangle', stroke_color: 'BF6900' },
+      }.transform_values {|val| val.merge size: 36 }
       TextAlignmentNames = { 'justify' => true, 'left' => true, 'center' => true, 'right' => true }
       IndentableTextAlignments = { justify: true, left: true }
       TextAlignmentRoles = { 'text-justify' => true, 'text-left' => true, 'text-center' => true, 'text-right' => true }
@@ -882,8 +882,8 @@ module Asciidoctor
           if !(has_icon = node.attr? 'icon') && (doc.attr 'icons') == 'font'
             icons = 'font'
             icon_data = admonition_icon_data type.to_sym
-            icon_size = icon_data[:size] || 24
-            label_width = label_min_width || (icon_size * 1.5)
+            icon_size = (label_width = icon_data[:size] || 36) * (icon_data[:scale] || 2/3r).to_f
+            label_width = label_min_width if label_min_width && label_min_width > label_width
           elsif (icon_path = has_icon || !(icon_path = (@theme[%(admonition_icon_#{type})] || {})[:image]) ?
               (get_icon_image_path node, type) :
               (ThemeLoader.resolve_theme_asset (apply_subs_discretely doc, icon_path, subs: [:attributes], imagesdir: @themesdir), @themesdir)) &&

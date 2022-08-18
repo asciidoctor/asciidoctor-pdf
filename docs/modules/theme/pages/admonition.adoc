@@ -319,14 +319,23 @@ admonition:
     tip:
       name: fas-fire
 
-|size
-|xref:language.adoc#values[Number] +
-(default: `24`)
+|scale
+|Number in range (0,1] +
+(default: `2 / 3`)
 |[source]
 admonition:
   icon:
     note:
-      size: 20
+      scale: 1
+
+|size
+|xref:language.adoc#values[Number] +
+(default: `36`)
+|[source]
+admonition:
+  icon:
+    note:
+      size: 24
 
 |stroke-color
 |xref:color.adoc[Color] +

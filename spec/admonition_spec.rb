@@ -436,7 +436,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should not reduce font size of icon if specified size fits within available space' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_important: { size: 50 } }, analyze: true
+      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_important: { size: 50, scale: 1 } }, analyze: true
       :icons: font
 
       [IMPORTANT]
