@@ -1267,7 +1267,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
   end
 
   context 'Theming' do
-    it 'should be able to set font styles per position of periphery and side in theme' do
+    it 'should be able to set font styles per position of periphery and column position in theme' do
       pdf_theme = {
         footer_font_size: 7.5,
         footer_recto_left_content: '{section-title}',
