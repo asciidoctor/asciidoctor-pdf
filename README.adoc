@@ -37,9 +37,9 @@ image:{url-project-repo}/workflows/CI/badge.svg[Build Status (GitHub Actions),li
 image:https://img.shields.io/gem/v/asciidoctor-pdf.svg[Latest Release, link={url-gem}]
 endif::[]
 
-Asciidoctor PDF is a native PDF converter for AsciiDoc that plugs into the `pdf` backend.
-It bypasses the requirement to generate an intermediary format such as DocBook, Apache FO, or LaTeX.
-Instead, you can use Asciidoctor PDF to convert your documents directly from AsciiDoc to PDF.
+Asciidoctor PDF is a native PDF converter for AsciiDoc that serves the `pdf` backend.
+It bypasses the step of generating an intermediary format such as DocBook, Apache FO, or LaTeX in order to produce PDF.
+Instead, you use Asciidoctor PDF to convert your documents directly from AsciiDoc to PDF with Asciidoctor.
 The aim of this library is to take the pain out of creating PDF documents from AsciiDoc.
 
 [NOTE]

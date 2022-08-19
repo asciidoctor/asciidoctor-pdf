@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.name = 'asciidoctor-pdf'
   s.version = Asciidoctor::PDF::VERSION
   s.summary = 'Converts AsciiDoc documents to PDF using Asciidoctor and Prawn'
-  s.description = 'An extension for Asciidoctor that converts AsciiDoc documents to PDF using the Prawn PDF library.'
+  s.description = 'An add-on converter for Asciidoctor that converts AsciiDoc documents to PDF using the Prawn PDF generation library.'
   s.authors = ['Dan Allen', 'Sarah White']
   s.email = 'dan@opendevise.com'
   s.homepage = 'https://asciidoctor.org/docs/asciidoctor-pdf'
