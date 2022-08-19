@@ -500,8 +500,8 @@ The `<side>` in the `<side>-columns`, `<side>-margin`, `<side>-content-margin`, 
 
 The `<position>` in the `<side>-<position>-content` key is specified as `left`, `center` or `right`.
 
-Although not listed in the tables above, you can control the font settings (`font-family`, `font-size`, `font-color`, `font-style`, `text-transform`) for each column position per page side (e.g., `header-<side>-<position>-font-color`).
-For example, you can set the font color used for the right-hand column on recto pages as follows:
+Although not listed in the tables above, you can override individual font settings (`font-family`, `font-size`, `font-color`, `font-style`, `text-transform`) for each column position of a page side for a running content periphery (e.g., `header-<side>-<position>-font-color`).
+For example, you can set the font color used for the right-hand column of the header on recto pages as follows:
 
 [,yaml]
 ----
