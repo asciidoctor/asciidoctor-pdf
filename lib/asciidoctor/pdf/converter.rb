@@ -3608,9 +3608,9 @@ module Asciidoctor
 
           stamp stamp_names[side] if stamp_names
 
-          theme_font periphery do
-            canvas do
-              bounding_box [trim_styles[:content_left][side], trim_styles[:top][side]], width: trim_styles[:content_width][side], height: trim_styles[:height] do
+          canvas do
+            bounding_box [trim_styles[:content_left][side], trim_styles[:top][side]], width: trim_styles[:content_width][side], height: trim_styles[:height] do
+              theme_font periphery do
                 if trim_styles[:column_rule_color] && (trim_column_rule_width = trim_styles[:column_rule_width]) > 0
                   trim_column_rule_spacing = trim_styles[:column_rule_spacing]
                 else
