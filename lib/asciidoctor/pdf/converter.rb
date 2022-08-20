@@ -1176,7 +1176,7 @@ module Asciidoctor
           adjusted_font_size = ((node.option? 'autofit') || (node.document.attr? 'autofit-option')) ? (compute_autofit_font_size source_chunks, :code) : nil
         end
 
-        if !(node.option? 'unbreakable') && (breakable_min_lines = @theme.code_breakable_min_lines) && (source_string.count LF) + 1 < breakable_min_lines
+        if !(unbreakable = node.option? 'unbreakable') && (breakable_min_lines = @theme.code_breakable_min_lines) && (source_string.count LF) + 1 < breakable_min_lines
           node.set_option 'unbreakable'
           toggle_breakable = true
         end
@@ -1185,6 +1185,10 @@ module Asciidoctor
           add_dest_for_block node if node.id
           tare_first_page_content_stream do
             theme_fill_and_stroke_block :code, extent, background_color: bg_color_override, caption_node: caption_below ? nil : node
+          end
+          unless extent || unbreakable || (cursor >= (@theme.code_orphans_min_height || 0))
+            delete_current_page
+            raise NewPageRequiredError
           end
           pad_box @theme.code_padding, node do
             theme_font :code do

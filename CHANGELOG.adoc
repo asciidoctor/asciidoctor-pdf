@@ -11,6 +11,7 @@ Enhancements::
 
 * allow font settings to be specified per side of a running content periphery (#2316)
 * don't split code block that has less than breakable minimum lines (#2304)
+* allow theme to set minimum height of orphans for code blocks (#2304)
 
 == 2.3.0 (2022-08-16) - @mojavelinux
 
