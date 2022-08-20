@@ -2,14 +2,14 @@
 :description: The notitle option hides a section title in the document body. It can also add a preamble, preface, or imported PDF entry to the TOC.
 
 Asciidoctor PDF adds support for the `notitle` option on a section as a way to express that you want the title of that section to be hidden in the document body.
-This option can also be used to add a TOC entnry for a preamble, anonymous preface, or imported PDF page.
+This option can also be used to add a TOC entry for a preamble, anonymous preface, or imported PDF page.
 
 == notitle option
 
-When the `notitle` option is set on a section, the converter will hide the section title in the body of the document, but still display it in the TOC and in cross references to that section.
+When the `notitle` option is set on a section, the converter will hide the section title in the body of the document, but still display it in the TOC and in cross-references to that section.
 To hide a section title, add the `notitle` option on the section.
 
-You can set the notitle option using either the the named attribute syntax, `opts=notitle`, or the shorthand syntax, `%notitle` (preferred).
+You can set the notitle option using either the named attribute syntax, `opts=notitle`, or the shorthand syntax, `%notitle` (preferred).
 The following example shows how to use the shorthand syntax.
 
 [,asciidoc]
