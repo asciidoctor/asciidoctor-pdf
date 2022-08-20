@@ -50,6 +50,22 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect listing_page_numbers).to eql [2]
   end
 
+  it 'should not split block that has less lines than breakable_min_lines value' do
+    pdf = with_content_spacer 10, 700 do |spacer_path|
+      to_pdf <<~EOS, pdf_theme: { code_border_color: 'FF0000', code_breakable_min_lines: 3 }, analyze: :line
+      image::#{spacer_path}[]
+
+      ----
+      not
+      breakable
+      ----
+      EOS
+    end
+
+    lines = pdf.lines.select {|it| it[:color] == 'FF0000' }
+    (expect lines.map {|it| it[:page_number] }.uniq).to eql [2]
+  end
+
   it 'should keep anchor together with block when block is moved to next page' do
     pdf = to_pdf <<~EOS
     #{(['paragraph'] * 20).join (?\n * 2)}

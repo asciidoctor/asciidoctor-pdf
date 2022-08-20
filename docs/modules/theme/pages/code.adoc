@@ -47,6 +47,13 @@ code:
 code:
   border-width: [0.75, 0]
 
+|breakable-min-lines
+|Number +
+(default: _not set_)
+|[source]
+code:
+  breakable-min-lines: 5
+
 |font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)

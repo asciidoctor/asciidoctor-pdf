@@ -1030,7 +1030,7 @@ module Asciidoctor
       # QUESTION: can we avoid arranging fragments multiple times (conums & autofit) by eagerly preparing arranger?
       def convert_code node
         extensions = []
-        source_chunks = bg_color_override = font_color_override = adjusted_font_size = nil
+        source_chunks = source_string = bg_color_override = font_color_override = adjusted_font_size = nil
         theme_font :code do
           # HACK: disable built-in syntax highlighter; must be done before calling node.content!
           if node.style == 'source' && (highlighter = (syntax_hl = node.document.syntax_highlighter)&.highlight? && syntax_hl.name)
@@ -1176,6 +1176,10 @@ module Asciidoctor
           adjusted_font_size = ((node.option? 'autofit') || (node.document.attr? 'autofit-option')) ? (compute_autofit_font_size source_chunks, :code) : nil
         end
 
+        if !(node.option? 'unbreakable') && (breakable_min_lines = @theme.code_breakable_min_lines) && (source_string.count LF) + 1 < breakable_min_lines
+          node.set_option 'unbreakable'
+          toggle_breakable = true
+        end
         caption_below = @theme.code_caption_end&.to_sym == :bottom
         arrange_block node do |extent|
           add_dest_for_block node if node.id
@@ -1192,6 +1196,7 @@ module Asciidoctor
             end
           end
         end
+        node.remove_attr 'unbreakable-option' if toggle_breakable
         # TODO: add protection against the bottom caption being widowed
         ink_caption node, category: :code, end: :bottom if caption_below
         theme_margin :block, :bottom, (next_enclosed_block node)
