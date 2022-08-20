@@ -6,7 +6,7 @@ This option can also be used to add a TOC entry for a preamble, anonymous prefac
 
 == notitle option
 
-When the `notitle` option is set on a section, the converter will hide the section title in the body of the document, but still display it in the TOC and in cross-references to that section.
+When the `notitle` option is set on a section, the converter will hide the section title in the body of the document, but still display it in the TOC and in cross references to that section.
 To hide a section title, add the `notitle` option on the section.
 
 You can set the notitle option using either the named attribute syntax, `opts=notitle`, or the shorthand syntax, `%notitle` (preferred).
