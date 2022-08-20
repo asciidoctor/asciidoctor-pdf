@@ -13,7 +13,7 @@ module Asciidoctor
       if (image_path.start_with? 'data:') && (m = DataUriRx.match image_path)
         [(m[:data].extend ::Base64), (FormatAliases.fetch m[:fmt], m[:fmt])]
       else
-        [image_path, attributes&.[]('format') || ((ext = ::File.extname image_path).downcase.slice 1, ext.length)]
+        [image_path, (attributes&.[] 'format') || ((ext = ::File.extname image_path).downcase.slice 1, ext.length)]
       end
     end
 

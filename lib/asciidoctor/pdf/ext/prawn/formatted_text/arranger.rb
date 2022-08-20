@@ -13,7 +13,7 @@ Prawn::Text::Formatted::Arranger.prepend (Module.new do
   end
 
   def format_array= array
-    @normalize_line_height = !array.empty? && (array[0].delete :normalize_line_height)
+    @normalize_line_height = (array[0]&.delete :normalize_line_height) || false
     super
   end
 
