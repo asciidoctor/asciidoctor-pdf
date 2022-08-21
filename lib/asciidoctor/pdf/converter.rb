@@ -2506,7 +2506,7 @@ module Asciidoctor
           else
             label = index
           end
-          %(<sup class="wj">#{anchor}[<a anchor="_footnotedef_#{index}">#{label}</a>]</sup>)
+          %(<sup class="wj">#{anchor}<a anchor="_footnotedef_#{index}">[#{label}]</a></sup>)
         elsif node.type == :xref
           %(<sup class="wj"><font color="#{theme.role_unresolved_font_color}">[#{node.text}]</font></sup>)
         else
@@ -3208,7 +3208,7 @@ module Asciidoctor
                 fn.singleton_class.send :attr_accessor, :label unless fn.respond_to? :label=
                 fn.label = %(#{label} - #{sect_xreftext})
               end
-              ink_prose %(<a id="_footnotedef_#{index}">#{DummyText}</a>[<a anchor="_footnoteref_#{index}">#{label}</a>] #{fn.text}), margin_bottom: item_spacing, hyphenate: true
+              ink_prose %(<a id="_footnotedef_#{index}">#{DummyText}</a><strong><a anchor="_footnoteref_#{index}">#{label}.</a></strong> #{fn.text}), margin_bottom: item_spacing, hyphenate: true
             end
             @rendered_footnotes += fns if extent
           end

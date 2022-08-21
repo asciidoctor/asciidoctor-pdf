@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 Enhancements::
 
+* bring appearance of footnotes and footnote labels in line with common style guidelines (include brackets around footnote label in link; use bold footnote number with trailing period as footnote list marker) (#2311)
 * allow font settings to be specified per side of a running content periphery (#2316)
 * don't split code block that has less than breakable minimum lines (#2304)
 * allow theme to set minimum height of orphans for code blocks (#2304)

@@ -14,22 +14,22 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     Yada yada yada.
     EOS
     strings, text = pdf.strings, pdf.text
-    (expect (strings.slice 2, 3).join).to eql '[1]'
+    (expect strings[2]).to eql '[1]'
     # superscript
     (expect text[2][:y]).to be > text[1][:y]
+    (expect text[2][:y]).to be > text[3][:y]
     (expect text[2][:font_size]).to be < text[1][:font_size]
-    (expect text[3][:font_color]).to eql '428BCA'
-    # superscript group
-    (expect (text.slice 2, 3).uniq {|it| [it[:y], it[:font_size]] }).to have_size 1
+    (expect text[2][:font_color]).to eql '428BCA'
     # footnote item
-    (expect (strings.slice 6, 3).join).to eql '[1] More about that thing.'
-    (expect text[6][:y]).to be < text[5][:y]
-    (expect text[6][:y]).to be < 60
-    (expect text[6][:page_number]).to be 1
-    (expect text[6][:font_size]).to be 8
-    (expect (text.slice 6, 3).uniq {|it| [it[:y], it[:font_size]] }).to have_size 1
+    (expect (strings.slice 4, 2).join).to eql '1. More about that thing.'
+    (expect text[4][:y]).to be < text[3][:y]
+    (expect text[4][:y]).to be < 60
+    (expect text[4][:font_name]).to eql 'NotoSerif-Bold'
+    (expect text[4][:page_number]).to be 1
+    (expect text[4][:font_size]).to be 8
+    (expect (text.slice 4, 2).uniq {|it| [it[:y], it[:font_size]] }).to have_size 1
     # next chapter
-    (expect text[9][:page_number]).to be 2
+    (expect text[6][:page_number]).to be 2
   end
 
   it 'should reset footnote number per chapter' do
@@ -45,11 +45,11 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
 
     chapter_a_lines = pdf.lines pdf.find_text page_number: 1
     (expect chapter_a_lines).to include 'About this thing.[1] And so on.'
-    (expect chapter_a_lines).to include '[1] More about that thing.'
+    (expect chapter_a_lines).to include '1. More about that thing.'
 
     chapter_b_lines = pdf.lines pdf.find_text page_number: 2
     (expect chapter_b_lines).to include 'Yada yada yada.[1]'
-    (expect chapter_b_lines).to include '[1] What does it all mean?'
+    (expect chapter_b_lines).to include '1. What does it all mean?'
   end
 
   it 'should add xreftext of chapter to footnote reference to footnote in previous chapter' do
@@ -73,11 +73,11 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
 
     chapter_a_lines = pdf.lines pdf.find_text page_number: 1
     (expect chapter_a_lines).to include 'About this thing.[1] And so on.'
-    (expect chapter_a_lines).to include '[1] More about that thing.'
+    (expect chapter_a_lines).to include '1. More about that thing.'
 
     chapter_b_lines = pdf.lines pdf.find_text page_number: 2
     (expect chapter_b_lines).to include 'Yada yada yada.[1 - Chapter 1]'
-    (expect chapter_b_lines).not_to include '[1] More about that thing.'
+    (expect chapter_b_lines).not_to include '1. More about that thing.'
   end
 
   it 'should not warn when adding label accessor to footnote' do
@@ -128,17 +128,15 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     EOS
 
     strings, text = pdf.strings, pdf.text
-    (expect (strings.slice 2, 3).join).to eql '[1]'
+    (expect strings[2]).to eql '[1]'
     # superscript
-    (expect text[2][:y]).to be > text[1][:y]
+    (expect text[6][:y]).to be < text[5][:y]
     (expect text[2][:font_size]).to be < text[1][:font_size]
-    (expect text[3][:font_color]).to eql '428BCA'
-    # superscript group
-    (expect (text.slice 2, 3).uniq {|it| [it[:y], it[:font_size]] }).to have_size 1
-    (expect text[2][:font_size]).to be < text[1][:font_size]
+    (expect text[2][:font_size]).to be < text[3][:font_size]
+    (expect text[2][:font_color]).to eql '428BCA'
     # footnote item
-    (expect (pdf.find_text 'Section B')[0][:order]).to be < (pdf.find_text '] More about that thing.')[0][:order]
-    (expect strings.slice(-3, 3).join).to eql '[1] More about that thing.'
+    (expect (pdf.find_text 'Section B')[0][:order]).to be < (pdf.find_unique_text %r/More about that thing/)[:order]
+    (expect strings.slice(-2, 2).join).to eql '1. More about that thing.'
     (expect text[-1][:page_number]).to be 2
     (expect text[-1][:font_size]).to be 8
     (expect text[-1][:y]).to be < 60
@@ -263,7 +261,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     expected_lines = <<~'EOS'.lines.map(&:chomp)
     A bold statement.[1]
     Another audacious statement.[1]
-    [1] Opinions are my own.
+    1. Opinions are my own.
     EOS
 
     (expect pdf.lines).to eql expected_lines
@@ -279,7 +277,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     lines = pdf.lines
     (expect lines).to have_size 3
     (expect lines[1]).to eql 'Go.[1]'
-    (expect lines[2]).to eql '[1] This is note A.'
+    (expect lines[2]).to eql '1. This is note A.'
   end
 
   it 'should not keep footnote label with previous text if separated by a space' do
@@ -294,19 +292,20 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     (expect lines).to have_size 3
     (expect lines[0]).to end_with 'Go.'
     (expect lines[1]).to eql '[1]'
-    (expect lines[2]).to eql '[1] This is note A.'
+    (expect lines[2]).to eql '1. This is note A.'
   end
 
   it 'should keep footnote label with previous text when line wraps to next page' do
     pdf = to_pdf <<~'EOS', analyze: true
     image::tall.svg[pdfwidth=85mm]
+
     The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. Go.footnote:a[This is note A.]
     EOS
 
     lines = pdf.lines
     (expect lines).to have_size 3
     (expect lines[1]).to eql 'Go.[1]'
-    (expect lines[2]).to eql '[1] This is note A.'
+    (expect lines[2]).to eql '1. This is note A.'
     (expect (pdf.find_unique_text 'Go.')[:page_number]).to eql 2
     (expect (pdf.find_unique_text %r/This is note A/)[:page_number]).to eql 2
   end
@@ -324,7 +323,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     lines = pdf.lines
     (expect lines).to have_size 3
     (expect lines[1]).to eql 'Go.[1]'
-    (expect lines[2]).to eql '[1] This is note A.'
+    (expect lines[2]).to eql '1. This is note A.'
     (expect (pdf.find_text %r/\[/)[0][:y]).to eql expected_y
   end
 
@@ -333,7 +332,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     You can download patches from the product page.footnote:[Only available if you have an _active_ subscription.]
     EOS
 
-    (expect pdf.lines[-1]).to eql '[1] Only available if you have an active subscription.'
+    (expect pdf.lines[-1]).to eql '1. Only available if you have an active subscription.'
     active_text = pdf.find_unique_text 'active'
     (expect active_text[:font_name]).to eql 'NotoSerif-Italic'
   end
@@ -350,7 +349,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     expected_lines = <<~'EOS'.lines.map(&:chomp)
     You will receive notifications of all product updates.[1]
     You can download patches from the product page.[1]
-    [1] Only available if you have an active subscription.
+    1. Only available if you have an active subscription.
     EOS
 
     (expect pdf.lines).to eql expected_lines
@@ -407,7 +406,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     == Section Titlefootnote:[Footnote about this section title.]
     EOS
 
-    (expect pdf.lines[-1]).to eql '[1] Footnote about this section title.'
+    (expect pdf.lines[-1]).to eql '1. Footnote about this section title.'
   end
 
   it 'should be able to use footnotes_line_spacing key in theme to control spacing between footnotes' do
@@ -519,14 +518,14 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     EOS
 
     text = pdf.text
-    p1 = (pdf.find_text %r/download/)[0]
-    fn1 = (text.slice p1[:order], 3).reduce('') {|accum, it| accum + it[:string] }
+    p1 = pdf.find_unique_text %r/download/
+    fn1 = text[p1[:order]][:string]
     (expect fn1).to eql '[1]'
-    p2 = (pdf.find_text %r/support request/)[0]
-    fn2 = (text.slice p2[:order], 3).reduce('') {|accum, it| accum + it[:string] }
+    p2 = pdf.find_unique_text %r/support request/
+    fn2 = text[p2[:order]][:string]
     (expect fn2).to eql '[1]'
     f1 = (pdf.find_text font_size: 8).reduce('') {|accum, it| accum + it[:string] }
-    (expect f1).to eql '[1] Only available if you have an active subscription.'
+    (expect f1).to eql '1. Only available if you have an active subscription.'
   end
 
   it 'should not duplicate footnotes that are included in unbreakable blocks' do
@@ -546,12 +545,12 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
 
     combined_text = pdf.strings.join
     (expect combined_text).to include 'Make it rain.[1]'
-    (expect combined_text).to include '[1] money'
+    (expect combined_text).to include '1. money'
     (expect combined_text).to include 'Make it snow.[2]'
-    (expect combined_text).to include '[2] dollar bills'
-    (expect combined_text.scan '[1]').to have_size 2
-    (expect combined_text.scan '[2]').to have_size 2
-    (expect combined_text.scan '[3]').to be_empty
+    (expect combined_text).to include '2. dollar bills'
+    (expect combined_text.scan '1').to have_size 2
+    (expect combined_text.scan '2').to have_size 2
+    (expect combined_text.scan '3').to be_empty
   end
 
   it 'should not duplicate footnotes included in the desc of a horizontal dlist' do
@@ -565,7 +564,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     EOS
 
     lines = pdf.lines pdf.text
-    (expect lines).to eql ['ctrl-r Make it rain.[1]', 'ctrl-d Make it snow.[2]', '[1] money', '[2] dollar bills']
+    (expect lines).to eql ['ctrl-r Make it rain.[1]', 'ctrl-d Make it snow.[2]', '1. money', '2. dollar bills']
   end
 
   it 'should allow a bibliography ref to be used inside the text of a footnote' do
@@ -580,7 +579,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
 
     lines = pdf.lines
     (expect lines[0]).to eql 'There are lots of things to know.[1]'
-    (expect lines[-1]).to eql '[1] Be sure to read [wells] to learn about it.'
+    (expect lines[-1]).to eql '1. Be sure to read [wells] to learn about it.'
   end
 
   it 'should allow a link to be used in footnote when media is print' do
@@ -590,7 +589,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
 
     lines = pdf.lines
     (expect lines[0]).to eql 'When in doubt, search.[1]'
-    (expect lines[-1]).to eql '[1] Use a search engine like Google [https://google.com]'
+    (expect lines[-1]).to eql '1. Use a search engine like Google [https://google.com]'
   end
 
   it 'should not allocate space for anchor if font is missing glyph for null character' do
@@ -599,6 +598,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
       font_catalog: {
         'Missing Null' => {
           'normal' => (fixture_file 'mplus1mn-regular-ascii.ttf'),
+          'bold' => (fixture_file 'mplus1mn-regular-ascii.ttf'),
         },
       },
       base_font_family: 'Missing Null',
@@ -608,9 +608,9 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     foo{empty}footnote:[Note about foo.]
     EOS
 
-    foo_text = (pdf.find_text 'foo')[0]
+    foo_text = pdf.find_unique_text 'foo'
     foo_text_end = foo_text[:x] + foo_text[:width]
-    footnote_ref_start = (pdf.find_text '[')[0][:x]
+    footnote_ref_start = (pdf.find_unique_text '[1]')[:x]
     (expect footnote_ref_start).to eql foo_text_end
   end
 

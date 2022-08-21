@@ -1426,7 +1426,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
       paragraph_text = (pdf.find_text 'paragraph')[0]
       footnote_text_fragments = pdf.text.select {|it| it[:y] < paragraph_text[:y] }
-      (expect footnote_text_fragments[0][:string]).to eql '['
+      (expect footnote_text_fragments[0][:string]).to eql '1.'
       (expect footnote_text_fragments[0][:x]).to eql 48.24
     end
 
@@ -1442,7 +1442,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
       paragraph_text = (pdf.find_text 'paragraph')[0]
       footnote_text_fragments = (pdf.find_text page_number: 2).select {|it| it[:y] < paragraph_text[:y] }
-      (expect footnote_text_fragments[0][:string]).to eql '['
+      (expect footnote_text_fragments[0][:string]).to eql '1.'
       (expect footnote_text_fragments[0][:x]).to eql 48.24
     end
 
