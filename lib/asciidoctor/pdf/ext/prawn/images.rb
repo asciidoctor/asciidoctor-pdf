@@ -33,8 +33,35 @@ module Asciidoctor
         end
       end
 
+      # Override built-in method to cache info separately from obj.
+      def build_image_object file
+        if ::File === file
+          cache_key = ((::File.absolute_path? (file_path = file.path)) ? file_path : (File.absolute_path file_path)).to_sym
+          info = image_info_cache[cache_key]
+        end
+        unless info
+          image_content = verify_and_read_image file
+          if cache_key || !(info = image_info_cache[(cache_key = ::Digest::SHA1.hexdigest image_content)])
+            # build the image object
+            info = (::Prawn.image_handler.find image_content).new image_content
+            renderer.min_version info.min_pdf_version if info.respond_to? :min_pdf_version
+            image_info_cache[cache_key] = info
+          end
+        end
+        # reuse image if it has already been embedded
+        unless (image_obj = image_registry[cache_key])
+          # add the image to the PDF then register it in case we see it again
+          image_registry[cache_key] = image_obj = info.build_pdf_object self
+        end
+        [image_obj, info]
+      end
+
       def recommend_prawn_gmagick? err, image_format
         ::Prawn::Errors::UnsupportedImageType === err && !(defined? ::GMagick::Image) && ((err.message.include? 'PNG') || (%w(jpg png).none? image_format))
+      end
+
+      def image_info_cache
+        @image_info_cache ||= {}
       end
     end
 

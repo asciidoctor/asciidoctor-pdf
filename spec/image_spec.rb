@@ -1168,8 +1168,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-png-implicit-width.pdf'
     end
 
-    # TODO: we'd like to avoid this, but the cached objects are document bound
-    it 'should decode PNG image again in scratch document' do
+    it 'should not decode PNG image again in scratch document' do
       image_handler = Prawn.image_handler
       old_image_handler = Prawn.singleton_method :image_handler
       Prawn.singleton_class.remove_method :image_handler
@@ -1184,7 +1183,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       ****
       EOS
       (expect pdf.images).to have_size 1
-      (expect call_count).to eql 2
+      (expect call_count).to eql 1
     ensure
       Prawn.singleton_class.remove_method :image_handler
       Prawn.singleton_class.define_method :image_handler, &old_image_handler

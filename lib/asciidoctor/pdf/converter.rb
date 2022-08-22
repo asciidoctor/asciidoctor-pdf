@@ -432,6 +432,7 @@ module Asciidoctor
         else
           @optimize = nil
         end
+        image_info_cache
         # allocate_scratch_prototype calls create_scrate_prototype to set up the scratch prototype
         # scratch calls init_scratch on a copy of the prototype to instantiate a scratch document
         # push_scratch and pop_scratch make changes to the document catalog and attributes transactional
@@ -5212,6 +5213,7 @@ module Asciidoctor
           # NOTE: prepare scratch document to use page margin from recto side (which has same width as verso side)
           set_page_margin page_margin_recto
         end
+        @image_info_cache = originator.instance_variable_get :@image_info_cache
         @scratch_prototype = originator.instance_variable_get :@scratch_prototype
         @tmp_files = originator.instance_variable_get :@tmp_files
         text_formatter.scratch = true
