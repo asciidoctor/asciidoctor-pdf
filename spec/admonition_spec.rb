@@ -436,7 +436,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should not reduce font size of icon if specified size fits within available space' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_important: { size: 50 } }, analyze: true
+      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_important: { size: 50, scale: 1 } }, analyze: true
       :icons: font
 
       [IMPORTANT]
@@ -602,7 +602,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         page_column_gap: 12,
         admonition_padding: 0,
         admonition_column_rule_width: 0,
-        admonition_label_min_width: 24,
+        admonition_icon_tip: { width: 24, scale: 1 },
       }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
       :icons: svg
@@ -778,7 +778,8 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should use original width of SVG icon if height is less than height of admonition block', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'admonition-custom-svg-fit.pdf', attribute_overrides: { 'docdir' => fixtures_dir }
+      pdf_theme = { admonition_icon_note: { width: 36, scale: 1 } }
+      to_file = to_pdf_file <<~'EOS', 'admonition-custom-svg-fit.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }
       :icons: font
       :iconsdir:
 
@@ -805,9 +806,8 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect to_file).to visually_match 'admonition-custom-raster-icon.pdf'
     end
 
-    # NOTE: this is a pretty flimsy feature and probably needs some rethink
-    it 'should allow theme to control width of admonition icon image using admonition_label_min_width key' do
-      pdf_theme = { admonition_label_min_width: 40 }
+    it 'should allow theme to control width of admonition icon image using width key' do
+      pdf_theme = { admonition_icon_tip: { scale: 0.6, width: 40 } }
       pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
       :icons: font
       :iconsdir:
@@ -822,7 +822,28 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
       images = pdf.images
       (expect images).to have_size 1
-      (expect images[0][:width]).to eql 40.0
+      (expect images[0][:width]).to eql 24.0
+      (expect images[0][:x]).to eql 68.24
+    end
+
+    it 'should allow theme to control spacing around admonition icon image using admonition_label_min_width key' do
+      pdf_theme = { admonition_label_min_width: 40, admonition_icon_tip: { scale: 1, width: 24 } }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
+      :icons: font
+      :iconsdir:
+
+      [TIP,icon=logo.png]
+      ====
+      Use the icon attribute to customize the image for an admonition block.
+
+      Use the admonition_label_min_width key to control the image width.
+      ====
+      EOS
+
+      images = pdf.images
+      (expect images).to have_size 1
+      (expect images[0][:width]).to eql 24.0
+      (expect images[0][:x]).to eql 68.24
     end
 
     it 'should resolve icon when icons attribute is set to image', visual: true do
@@ -919,7 +940,8 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should resize icon only if it does not fit within the available space' do
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
+      pdf_theme = { admonition_icon_tip: { scale: 1 } }
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
       :icons: image
       :iconsdir:
 
@@ -933,7 +955,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect images[0][:width]).to be < 36.0
       (expect images[0][:height]).to be < 42.3529
 
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
       :icons: image
       :iconsdir:
 
