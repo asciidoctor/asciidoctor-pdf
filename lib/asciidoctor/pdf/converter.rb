@@ -432,6 +432,9 @@ module Asciidoctor
         else
           @optimize = nil
         end
+        # allocate_scratch_prototype calls create_scrate_prototype to set up the scratch prototype
+        # scratch calls init_scratch on a copy of the prototype to instantiate a scratch document
+        # push_scratch and pop_scratch make changes to the document catalog and attributes transactional
         allocate_scratch_prototype
         self
       end
