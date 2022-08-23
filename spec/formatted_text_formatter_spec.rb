@@ -454,13 +454,22 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       EOS
       menu_texts = pdf.find_text font_name: 'NotoSerif-Bold'
       (expect menu_texts).to have_size 3
-      (expect menu_texts[0][:string]).to eql 'File '
+      (expect menu_texts[0][:string]).to eql %(File\u00a0)
       (expect menu_texts[0][:font_color]).to eql '333333'
       (expect menu_texts[1][:string]).to eql ?\u203a
       (expect menu_texts[1][:font_color]).to eql 'B12146'
       (expect menu_texts[2][:string]).to eql ' Quit'
       (expect menu_texts[2][:font_color]).to eql '333333'
-      (expect pdf.lines).to eql [%(Select File \u203a Quit to exit.)]
+      (expect pdf.lines).to eql [%(Select File\u00a0\u203a Quit to exit.)]
+    end
+
+    it 'should convert menu macro when using base theme' do
+      pdf = to_pdf <<~'EOS', analyze: true, attribute_overrides: { 'experimental' => '', 'pdf-theme' => 'base' }
+      Select menu:File[Quit] to exit.
+      EOS
+      menu_texts = pdf.find_text font_name: 'Helvetica-Bold'
+      (expect menu_texts).to have_size 1
+      (expect menu_texts[0][:string]).to eql %(File\u00a0\u203a Quit)
     end
 
     it 'should support menu macro with only the root level' do
@@ -480,17 +489,17 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       EOS
       menu_texts = pdf.find_text font_name: 'NotoSerif-Bold'
       (expect menu_texts).to have_size 5
-      (expect menu_texts[0][:string]).to eql 'File '
+      (expect menu_texts[0][:string]).to eql %(File\u00a0)
       (expect menu_texts[0][:font_color]).to eql '333333'
       (expect menu_texts[1][:string]).to eql ?\u203a
       (expect menu_texts[1][:font_color]).to eql 'B12146'
-      (expect menu_texts[2][:string]).to eql ' New '
+      (expect menu_texts[2][:string]).to eql %( New\u00a0)
       (expect menu_texts[2][:font_color]).to eql '333333'
       (expect menu_texts[3][:string]).to eql ?\u203a
       (expect menu_texts[3][:font_color]).to eql 'B12146'
       (expect menu_texts[4][:string]).to eql ' Class'
       (expect menu_texts[4][:font_color]).to eql '333333'
-      (expect pdf.lines).to eql [%(Select File \u203a New \u203a Class to create a new Java class.)]
+      (expect pdf.lines).to eql [%(Select File\u00a0\u203a New\u00a0\u203a Class to create a new Java class.)]
     end
 
     it 'should use default caret content for menu if not specified by theme' do
@@ -514,6 +523,18 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect menu_texts[0][:font_color]).to eql 'AA0000'
       (expect menu_texts[0][:font_size]).to eql 10
       (expect pdf.lines).to eql [%(Select File > Quit to exit.)]
+    end
+
+    it 'should keep caret with previous item if menu wraps' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :experimental:
+
+      This is a long-winded explanation that finally gets to the point by instructing you to use menu:File[Make,Class] to create a new class.
+      EOS
+      lines = pdf.lines
+      (expect lines).to have_size 2
+      (expect lines[1]).not_to start_with ?\u203a
+      (expect lines[0]).to end_with ?\u203a
     end
 
     it 'should add background to mark as defined in theme', visual: true do

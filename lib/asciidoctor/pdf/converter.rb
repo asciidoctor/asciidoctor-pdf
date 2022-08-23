@@ -2662,7 +2662,7 @@ module Asciidoctor
 
       def convert_inline_menu node
         menu = node.attr 'menu'
-        caret = (load_theme node.document).menu_caret_content || %( \u203a )
+        caret = (load_theme node.document).menu_caret_content || %(\u00a0\u203a )
         if !(submenus = node.attr 'submenus').empty?
           %(<menu>#{[menu, *submenus, (node.attr 'menuitem')].join caret}</menu>)
         elsif (menuitem = node.attr 'menuitem')

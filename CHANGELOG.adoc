@@ -17,6 +17,10 @@ Enhancements::
 * introduce `width` theme key for admonition icon to control width of image-based icon (#2318)
 * share image info cache between primary and scratch documents to avoid decoding same image more than once
 
+Bug Fixes::
+
+* keep caret between items in menu macro with previous item if items wrap
+
 == 2.3.0 (2022-08-16) - @mojavelinux
 
 Enhancements::

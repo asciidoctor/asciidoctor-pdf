@@ -76,7 +76,7 @@ mark:
   background_color: FFFF00
   border_offset: 1
 menu:
-  caret_content: " <font size=\"1.15em\" color=\"#B12146\">\u203a</font> "
+  caret_content: "\u00a0<font size=\"1.15em\" color=\"#B12146\">\u203a</font> "
   font_style: bold
 heading:
   text_align: left
