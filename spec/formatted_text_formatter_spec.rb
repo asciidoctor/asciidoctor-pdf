@@ -463,15 +463,6 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect pdf.lines).to eql [%(Select File\u00a0\u203a Quit to exit.)]
     end
 
-    it 'should convert menu macro when using base theme' do
-      pdf = to_pdf <<~'EOS', analyze: true, attribute_overrides: { 'experimental' => '', 'pdf-theme' => 'base' }
-      Select menu:File[Quit] to exit.
-      EOS
-      menu_texts = pdf.find_text font_name: 'Helvetica-Bold'
-      (expect menu_texts).to have_size 1
-      (expect menu_texts[0][:string]).to eql %(File\u00a0\u203a Quit)
-    end
-
     it 'should support menu macro with only the root level' do
       pdf = to_pdf <<~'EOS', analyze: true, attribute_overrides: { 'experimental' => '' }
       The menu:File[] menu is where all the useful stuff is.
@@ -508,9 +499,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       EOS
       menu_texts = pdf.find_text font_name: 'NotoSerif-Bold'
       (expect menu_texts).to have_size 1
-      (expect menu_texts[0][:string]).to eql %(File \u203a Quit)
+      (expect menu_texts[0][:string]).to eql %(File\u00a0\u203a Quit)
       (expect menu_texts[0][:font_color]).to eql '333333'
-      (expect pdf.lines).to eql [%(Select File \u203a Quit to exit.)]
+      (expect pdf.lines).to eql [%(Select File\u00a0\u203a Quit to exit.)]
     end
 
     it 'should allow theme to control font properties for menu' do
