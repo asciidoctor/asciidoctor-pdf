@@ -15,6 +15,7 @@ Enhancements::
 * allow theme to set minimum height of orphans for code blocks (#2304)
 * introduce `scale` theme key for admonition icon to scale down icon without affecting layout (#2318)
 * introduce `width` theme key for admonition icon to control width of image-based icon (#2318)
+* share image info cache between primary and scratch documents to avoid decoding same image more than once
 
 == 2.3.0 (2022-08-16) - @mojavelinux
 
