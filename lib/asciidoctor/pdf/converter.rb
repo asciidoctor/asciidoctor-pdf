@@ -589,7 +589,7 @@ module Asciidoctor
         theme.footnotes_item_spacing ||= 0
         theme.index_columns ||= 2
         theme.index_column_gap ||= theme.base_font_size
-        theme.kbd_separator_content ||= '+'
+        theme.kbd_separator_content ||= %(+#{ZeroWidthSpace})
         theme.title_page_authors_delimiter ||= ', '
         theme.title_page_revision_delimiter ||= ', '
         theme.toc_indent ||= 0

@@ -71,7 +71,7 @@ kbd:
   border_radius: 2
   border_width: 0.5
   font_family: $codespan_font_family
-  separator_content: "\u202f+\u202f"
+  separator_content: "\u202f+\u202f\u200b"
 mark:
   background_color: FFFF00
   border_offset: 1
