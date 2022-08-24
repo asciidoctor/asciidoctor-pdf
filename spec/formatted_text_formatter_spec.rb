@@ -441,11 +441,28 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect to_file).to visually_match 'text-formatter-kbd.pdf'
     end
 
-    it 'should use + as kbd separator if not specified in theme' do
-      pdf = to_pdf <<~'EOS', analyze: true, pdf_theme: { kbd_separator: nil }, attribute_overrides: { 'experimental' => '' }
+    it 'should use + as kbd separator content if not specified in theme' do
+      pdf_theme = {
+        kbd_separator_content: nil,
+        kbd_border_width: 0,
+        kbd_border_offset: 0,
+      }
+      pdf = to_pdf <<~'EOS', analyze: true, pdf_theme: pdf_theme, attribute_overrides: { 'experimental' => '' }
       Press kbd:[Ctrl,c] to kill the process.
       EOS
-      (expect pdf.lines).to eql ['Press Ctrl + c to kill the process.']
+      (expect pdf.lines).to eql ['Press Ctrl+c to kill the process.']
+    end
+
+    it 'should allow theme to customize kbd separator content' do
+      pdf_theme = {
+        kbd_separator_content: '-',
+        kbd_border_width: 0,
+        kbd_border_offset: 0,
+      }
+      pdf = to_pdf <<~'EOS', analyze: true, pdf_theme: pdf_theme, attribute_overrides: { 'experimental' => '' }
+      Press kbd:[Ctrl,c] to kill the process.
+      EOS
+      (expect pdf.lines).to eql ['Press Ctrl-c to kill the process.']
     end
 
     it 'should convert menu macro' do

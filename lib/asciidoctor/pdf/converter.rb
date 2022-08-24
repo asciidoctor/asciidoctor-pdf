@@ -589,7 +589,7 @@ module Asciidoctor
         theme.footnotes_item_spacing ||= 0
         theme.index_columns ||= 2
         theme.index_column_gap ||= theme.base_font_size
-        theme.kbd_separator ||= '+'
+        theme.kbd_separator_content ||= '+'
         theme.title_page_authors_delimiter ||= ', '
         theme.title_page_revision_delimiter ||= ', '
         theme.toc_indent ||= 0
@@ -2656,7 +2656,7 @@ module Asciidoctor
         if (keys = node.attr 'keys').size == 1
           %(<kbd>#{keys[0]}</kbd>)
         else
-          keys.map {|key| %(<kbd>#{key}</kbd>) }.join (load_theme node.document).kbd_separator
+          keys.map {|key| %(<kbd>#{key}</kbd>) }.join (load_theme node.document).kbd_separator_content
         end
       end
 

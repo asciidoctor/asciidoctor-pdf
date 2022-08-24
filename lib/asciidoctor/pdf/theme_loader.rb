@@ -186,7 +186,8 @@ module Asciidoctor
           else
             data[key] = to_color evaluate val, data, math: false
           end
-        elsif key.end_with? '_content'
+        elsif (key.end_with? '_content') || (key == 'kbd_separator' && (rekey = key = 'kbd_separator_content'))
+          logger.warn %(the kbd-separator theme key is deprecated; use the kbd-separator-content key instead) if rekey
           data[key] = (expand_vars val.to_s, data).to_s
         else
           data[key] = evaluate val, data

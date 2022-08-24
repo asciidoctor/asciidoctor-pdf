@@ -204,6 +204,19 @@ describe Asciidoctor::PDF::ThemeLoader do
       end).to not_log_message
     end
 
+    it 'should remap kbd-separator key to kbd-separator-content key and warn' do
+      (expect do
+        theme_data = YAML.safe_load <<~'EOS'
+        kbd:
+          separator: '-'
+        EOS
+        theme = subject.new.load theme_data
+        (expect theme).to be_an OpenStruct
+        (expect theme.kbd_separator).to be_nil
+        (expect theme.kbd_separator_content).to eql '-'
+      end).to log_message severity: :WARN, message: 'the kbd-separator theme key is deprecated; use the kbd-separator-content key instead'
+    end
+
     it 'should remap outline-list category to list category and warn' do
       (expect do
         theme_data = YAML.safe_load <<~'EOS'
