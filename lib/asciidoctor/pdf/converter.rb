@@ -3262,8 +3262,8 @@ module Asciidoctor
               align: @base_text_align.to_sym,
             }.merge(opts)
           end
-          if h_category && @theme[%(#{h_category}_border_width)] &&
-              (@theme[%(#{h_category}_border_color)] || @theme.base_border_color) && page_number == start_page_number
+          if h_category && @theme[%(#{h_category}_border_width)] && (@theme[%(#{h_category}_border_color)] || @theme.base_border_color)
+            start_cursor = bounds.top unless page_number == start_page_number
             float do
               bounding_box [bounds.left, start_cursor], width: bounds.width, height: start_cursor - cursor do
                 theme_fill_and_stroke_bounds h_category
