@@ -222,11 +222,8 @@ module Asciidoctor
                   fragments << fragment
                   previous_fragment_is_text = false
                 else # :br
-                  if @merge_adjacent_text_nodes && previous_fragment_is_text
-                    fragments << (clone_fragment inherited, text: %(#{fragments.pop[:text]}#{LF}))
-                  else
-                    fragments << { text: LF }
-                  end
+                  text = @merge_adjacent_text_nodes && previous_fragment_is_text ? %(#{fragments.pop[:text]}#{LF}) : LF
+                  fragments << (clone_fragment inherited, text: text)
                   previous_fragment_is_text = true
                 end
               end
@@ -240,18 +237,12 @@ module Asciidoctor
                 # FIXME: AFM fonts do not include a thin space glyph; set fallback_fonts to allow glyph to be resolved
                 text = [(node[:value].to_i 16)].pack 'U1'
               end
-              if @merge_adjacent_text_nodes && previous_fragment_is_text
-                fragments << (clone_fragment inherited, text: %(#{fragments.pop[:text]}#{text}))
-              else
-                fragments << (clone_fragment inherited, text: text)
-              end
+              text = %(#{fragments.pop[:text]}#{text}) if @merge_adjacent_text_nodes && previous_fragment_is_text
+              fragments << (clone_fragment inherited, text: text)
               previous_fragment_is_text = true
             else # :text
-              if @merge_adjacent_text_nodes && previous_fragment_is_text
-                fragments << (clone_fragment inherited, text: %(#{fragments.pop[:text]}#{node[:value]}))
-              else
-                fragments << (clone_fragment inherited, text: node[:value])
-              end
+              text = @merge_adjacent_text_nodes && previous_fragment_is_text ? %(#{fragments.pop[:text]}#{node[:value]}) : node[:value]
+              fragments << (clone_fragment inherited, text: text)
               previous_fragment_is_text = true
             end
           end
