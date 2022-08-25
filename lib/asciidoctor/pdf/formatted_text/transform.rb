@@ -369,11 +369,10 @@ module Asciidoctor
             fragment = fragment.dup
             fragment[:styles] = fragment[:styles].dup if fragment.key? :styles
             fragment[:callback] = fragment[:callback].dup if fragment.key? :callback
+            append ? (fragment.update append) : fragment
           else
-            fragment = {}
+            append || {}
           end
-          fragment.update append if append
-          fragment
         end
 
         def to_styles font_style, text_decoration = nil
