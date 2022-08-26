@@ -10,7 +10,7 @@ module Asciidoctor
 
       def []= pgnum, val
         if ::Asciidoctor::Section === val
-          @table[pgnum] = { title: val.send(*@title_method), numeral: val.numeral }
+          @table[pgnum] = { title: (val.send @title_method[0], **@title_method[1]), numeral: val.numeral }
         else
           @table[pgnum] = { title: val }
         end

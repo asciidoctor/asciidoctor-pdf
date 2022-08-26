@@ -128,8 +128,8 @@ module Asciidoctor
       ViewportWidth = ::Module.new
       ImageWidth = ::Module.new
       (TitleStyles = {
-        'toc' => [:numbered_title],
-        'basic' => [:title],
+        'toc' => [:numbered_title, {}],
+        'basic' => [:title, {}],
       }).default = [:numbered_title, formal: true]
 
       def initialize backend, opts
