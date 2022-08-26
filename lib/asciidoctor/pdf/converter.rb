@@ -626,7 +626,7 @@ module Asciidoctor
         end
       end
 
-      def convert_section sect, _opts = {}
+      def convert_section sect, _opts = nil
         if (sectname = sect.sectname) == 'abstract'
           # HACK: cheat a bit to hide this section from TOC; TOC should filter these sections
           sect.context = :open
