@@ -889,7 +889,7 @@ module Asciidoctor
             icon_data = admonition_icon_data type.to_sym
             icon_size = (label_width = icon_data[:size] || 36) * (icon_data[:scale] || 2/3r).to_f
             label_width = label_min_width if label_min_width && label_min_width > label_width
-          elsif (icon_path = has_icon || !(icon_path = (@theme[%(admonition_icon_#{type})] || {})[:image]) ?
+          elsif (icon_path = has_icon || !(icon_path = @theme[%(admonition_icon_#{type})]&.[](:image)) ?
               (get_icon_image_path node, type) :
               (ThemeLoader.resolve_theme_asset (apply_subs_discretely doc, icon_path, subs: [:attributes], imagesdir: @themesdir), @themesdir)) &&
               (::File.readable? icon_path)
@@ -4112,7 +4112,7 @@ module Asciidoctor
           end
 
           if image_format == 'pdf'
-            [image_path, page: [((image_attrs || {})['page']).to_i, 1].max, format: image_format]
+            [image_path, page: [image_attrs&.[]('page').to_i, 1].max, format: image_format]
           else
             [image_path, (resolve_image_options image_path, image_format, image_attrs, (({ background: true, container_size: [page_width, page_height] }.merge opts)))]
           end
@@ -4687,7 +4687,7 @@ module Asciidoctor
 
       def admonition_icon_data key
         if (icon_data = @theme[%(admonition_icon_#{key})])
-          icon_data = (AdmonitionIcons[key] || {}).merge icon_data
+          icon_data = (AdmonitionIcons[key]&.merge icon_data) || icon_data
           if (icon_name = icon_data[:name])
             unless icon_name.start_with?(*IconSetPrefixes)
               log(:info) { %(#{key} admonition in theme uses icon from deprecated fa icon set; use fas, far, or fab instead) }
