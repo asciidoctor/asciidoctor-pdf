@@ -309,6 +309,27 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect pdf_b.text[0][:y]).to eql (pdf_a.text[0][:y] - 10)
   end
 
+  it 'should draw border around heading if it is advanced to next page' do
+    pdf_theme = {
+      heading_h2_border_width: [0.5, 0],
+      heading_h2_border_color: '0000FF',
+    }
+    pdf = with_content_spacer 10, 700 do |spacer_path|
+      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: :line
+      image::#{spacer_path}[]
+
+      == Pushed to Next Page
+
+      content
+      EOS
+    end
+
+    heading_lines = pdf.lines.select {|it| it[:color] == '0000FF' }
+    (expect heading_lines).to have_size 2
+    (expect heading_lines.map {|it| it[:page_number] }.uniq).to eql [2]
+    (expect heading_lines[0][:from][:y]).to eql 805.89
+  end
+
   it 'should not partition section title by default' do
     pdf = to_pdf <<~'EOS', analyze: true
     == Title: Subtitle

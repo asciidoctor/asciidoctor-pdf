@@ -7,7 +7,9 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Bug Fixes::
+
+* draw border on heading (section title or discrete heading) if it is advanced to next page (#2322)
 
 == 2.3.0 (2022-08-16) - @mojavelinux
 
