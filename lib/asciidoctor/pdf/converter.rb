@@ -3426,7 +3426,7 @@ module Asciidoctor
                   end
                 end
                 # QUESTION: should we allow the columns to overlap (capping width at 100%)?
-                side_colspecs.each {|_, colspec| colspec[:width] = (colspec[:width] / tot_width) * side_trim_content_width }
+                side_colspecs.each_value {|colspec| colspec[:width] = (colspec[:width] / tot_width) * side_trim_content_width }
                 side_colspecs[:right][:x] = (side_colspecs[:center][:x] = side_colspecs[:left][:width]) + side_colspecs[:center][:width]
                 acc[side] = side_colspecs
               else
