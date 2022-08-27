@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Asciidoctor::Section
-  def numbered_title formal: nil
+  def numbered_title opts = {}
     @cached_numbered_title ||= nil
     unless @cached_numbered_title
       if @numbered && !@caption && (slevel = @level) <= (@document.attr 'sectnumlevels', 3).to_i
@@ -28,7 +28,7 @@ class Asciidoctor::Section
         @cached_numbered_title = @cached_formal_numbered_title = captioned_title
       end
     end
-    formal ? @cached_formal_numbered_title : @cached_numbered_title
+    opts[:formal] ? @cached_formal_numbered_title : @cached_numbered_title
   end unless method_defined? :numbered_title
 
   def first_section_of_part?
