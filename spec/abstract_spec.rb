@@ -235,6 +235,28 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     (expect to_file).to visually_match 'abstract-first-line-text-transform.pdf'
   end
 
+  it 'should not force justify first line of abstract with text transform if ends with hard break', visual: true do
+    pdf_theme = { abstract_first_line_text_transform: 'uppercase' }
+    to_file = to_pdf_file <<~'EOS', 'abstract-first-line-text-transform-hard-break.pdf', pdf_theme: pdf_theme
+    [abstract]
+    Welcome young Jedi. +
+    This tutorial will show you the way.
+    EOS
+
+    (expect to_file).to visually_match 'abstract-first-line-text-transform-hard-break.pdf'
+  end
+
+  it 'should not force justify first line of abstract with text transform if not justified', visual: true do
+    pdf_theme = { abstract_text_align: 'left', abstract_first_line_text_transform: 'uppercase' }
+    to_file = to_pdf_file <<~'EOS', 'abstract-first-line-text-transform-hard-break-not-justified.pdf', pdf_theme: pdf_theme
+    [abstract]
+    Welcome young Jedi. +
+    This tutorial will show you the way.
+    EOS
+
+    (expect to_file).to visually_match 'abstract-first-line-text-transform-hard-break.pdf'
+  end
+
   it 'should not crash when applying text transform to first line of abstract inside column box' do
     backend = nil
     create_class (Asciidoctor::Converter.for 'pdf') do

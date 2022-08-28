@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 Bug Fixes::
 
 * draw border on heading (section title or discrete heading) if it is advanced to next page (#2322)
+* don't force justify first line of abstract if it ends with a hard break
 
 == 2.3.0 (2022-08-16) - @mojavelinux
 
