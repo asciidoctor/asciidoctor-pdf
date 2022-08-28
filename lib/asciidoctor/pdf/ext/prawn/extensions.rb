@@ -500,26 +500,12 @@ module Asciidoctor
         end
         if first_line_text_transform
           # NOTE: applying text transform here could alter the wrapping, so isolate first line and shrink it to fit
-          first_printed_line = (box.instance_variable_get :@printed_lines)[0]
-          unless first_printed_line == fragments[0][:text]
-            original_fragments, fragments = fragments, []
-            original_fragments.reduce '' do |traced, fragment|
-              fragments << fragment
-              # NOTE: we could just do a length comparison here
-              if (traced += fragment[:text]).start_with? first_printed_line
-                fragment[:text] = fragment[:text][0...-(traced.length - first_printed_line.length)]
-                break
-              end
-              traced
-            end
-          end
-          fragments.each {|fragment| fragment[:text] = transform_text fragment[:text], first_line_text_transform }
+          first_line_fragments = (box.instance_variable_get :@arranger).consumed
+          fragments = first_line_fragments.map {|fragment| fragment.merge text: (transform_text fragment[:text], first_line_text_transform) }
           first_line_options[:overflow] = :shrink_to_fit
           if remaining_fragments
             @final_gap = true
-            if first_line_options[:align] == :justify && (box.instance_variable_get :@arranger).consumed[-1]&.[](:text) != ?\n
-              first_line_options[:force_justify] = true
-            end
+            first_line_options[:force_justify] = true if first_line_options[:align] == :justify && first_line_fragments[-1][:text] != ?\n
           end
         end
         if text_indent
