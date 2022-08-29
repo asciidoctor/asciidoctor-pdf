@@ -1071,6 +1071,22 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect content_text[:page_number]).to be 2
   end
 
+  it 'should force section title to next page if wrapped line does not fit on current page' do
+    pdf = with_content_spacer 10, 690 do |spacer_path|
+      to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 0, heading_font_color: 'AA0000' }, analyze: true
+      image::#{spacer_path}[]
+
+      == This is a long heading that wraps to a second line
+
+      content
+      EOS
+    end
+
+    heading_texts = pdf.find_text font_color: 'AA0000'
+    (expect heading_texts).to have_size 2
+    (expect heading_texts.map {|it| it[:page_number] }.uniq).to eql [2]
+  end
+
   it 'should force section title with text transform to next page to keep with first line of section content' do
     pdf = to_pdf <<~EOS, pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
     image::tall.svg[pdfwidth=80mm]
