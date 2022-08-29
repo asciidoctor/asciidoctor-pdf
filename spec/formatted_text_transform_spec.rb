@@ -59,8 +59,17 @@ describe Asciidoctor::PDF::FormattedText::Transform do
     parsed = parser.parse input
     fragments = subject.apply parsed.content
     (expect fragments).to have_size 2
-    (expect fragments[0][:text]).to eql 'foo'
-    (expect fragments[1][:text]).to eql ' bar'
+    (expect fragments[0][:text]).to eql 'foo '
+    (expect fragments[1][:text]).to eql 'bar'
+  end
+
+  it 'should not collapse space only on one side of empty element' do
+    input = 'foo <strong></strong>bar'
+    parsed = parser.parse input
+    fragments = subject.apply parsed.content
+    (expect fragments).to have_size 2
+    (expect fragments[0][:text]).to eql 'foo '
+    (expect fragments[1][:text]).to eql 'bar'
   end
 
   it 'should create fragment with custom font name' do
@@ -150,7 +159,7 @@ describe Asciidoctor::PDF::FormattedText::Transform do
     fragments = subject.apply parsed.content
     (expect fragments).to have_size 3
     (expect fragments[0][:text]).to eql 'foo'
-    (expect fragments[1][:text]).to eql ?\n
+    (expect fragments[1][:text]).to eql %(\n\u200b)
     (expect fragments[2][:text]).to eql 'bar'
   end
 
@@ -159,7 +168,7 @@ describe Asciidoctor::PDF::FormattedText::Transform do
     parsed = parser.parse input
     fragments = (subject.class.new merge_adjacent_text_nodes: true).apply parsed.content
     (expect fragments).to have_size 1
-    (expect fragments[0][:text]).to eql %(foo\nbar)
+    (expect fragments[0][:text]).to eql %(foo\n\u200bbar)
   end
 
   it 'should apply inherited styles' do

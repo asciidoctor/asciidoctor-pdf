@@ -6,8 +6,9 @@ module Asciidoctor
       class Transform
         include TextTransformer
 
-        LF = ?\n
+        DummyText = ?\u0000
         ZeroWidthSpace = ?\u200b
+        LF = ?\n + ZeroWidthSpace # without trailing character, use of fallback font can change line height
         CharEntityTable = { amp: '&', apos: ?', gt: '>', lt: '<', nbsp: ?\u00a0, quot: '"' }
         CharRefRx = /&(?:(#{CharEntityTable.keys.join '|'})|#(?:(\d\d\d{0,4})|x(\h\h\h{0,3})));/
         HexColorRx = /^#\h\h\h\h{0,3}$/
@@ -153,6 +154,7 @@ module Asciidoctor
 
         def apply parsed, fragments = [], inherited = nil
           previous_fragment_is_text = false
+          previous_fragment_end_with_space = false
           # NOTE: we use each since using inject is slower than a manual loop
           parsed.each do |node|
             case node[:type]
@@ -160,27 +162,23 @@ module Asciidoctor
               # case 1: non-void element
               if node.key? :pcdata
                 # NOTE: skip element if it has no children
-                if (pcdata = node[:pcdata]).empty?
-                  # QUESTION: should this be handled by the formatter after the transform is complete?
-                  if previous_fragment_is_text && ((previous_fragment_text = fragments[-1][:text]).end_with? ' ')
-                    fragments[-1][:text] = previous_fragment_text.chop
-                  end
-                else
+                unless (pcdata = node[:pcdata]).empty?
                   tag_name = node[:name]
                   attributes = node[:attributes]
-                  parent = clone_fragment inherited
-                  fragment = build_fragment parent, tag_name, attributes
-                  if tag_name == :a && fragment[:type] == :indexterm && !attributes[:visible] &&
-                      previous_fragment_is_text && ((previous_fragment_text = fragments[-1][:text]).end_with? ' ')
-                    fragments[-1][:text] = previous_fragment_text.chop
+                  fragment = build_fragment (clone_fragment inherited), tag_name, attributes
+                  if tag_name == :a && pcdata[0][:value] == DummyText && pcdata.length == 1
+                    fragment[:text] = DummyText
+                    fragments << fragment
+                  else
+                    if (text_transform = fragment.delete :text_transform)
+                      text = (text_chunks = extract_text pcdata).join
+                      text_io = StringIO.new transform_text text, text_transform
+                      restore_text pcdata, text_chunks.each_with_object([]) {|chunk, accum| accum << (text_io.read chunk.length) }
+                    end
+                    # NOTE: decorate child fragments with inherited properties from this element
+                    apply pcdata, fragments, fragment
+                    previous_fragment_end_with_space = false
                   end
-                  if (text_transform = fragment.delete :text_transform)
-                    text = (text_chunks = extract_text pcdata).join
-                    text_io = StringIO.new transform_text text, text_transform
-                    restore_text pcdata, text_chunks.each_with_object([]) {|chunk, accum| accum << (text_io.read chunk.length) }
-                  end
-                  # NOTE: decorate child fragments with inherited properties from this element
-                  apply pcdata, fragments, fragment
                   previous_fragment_is_text = false
                 end
               # case 2: void element
@@ -220,11 +218,11 @@ module Asciidoctor
                     fragment[:image_fit] = img_fit
                   end
                   fragments << fragment
-                  previous_fragment_is_text = false
+                  previous_fragment_is_text = previous_fragment_end_with_space = false
                 else # :br
                   text = @merge_adjacent_text_nodes && previous_fragment_is_text ? %(#{fragments.pop[:text]}#{LF}) : LF
                   fragments << (clone_fragment inherited, text: text)
-                  previous_fragment_is_text = true
+                  previous_fragment_is_text = previous_fragment_end_with_space = true
                 end
               end
             when :charref
@@ -240,10 +238,14 @@ module Asciidoctor
               text = %(#{fragments.pop[:text]}#{text}) if @merge_adjacent_text_nodes && previous_fragment_is_text
               fragments << (clone_fragment inherited, text: text)
               previous_fragment_is_text = true
+              previous_fragment_end_with_space = false
             else # :text
-              text = @merge_adjacent_text_nodes && previous_fragment_is_text ? %(#{fragments.pop[:text]}#{node[:value]}) : node[:value]
-              fragments << (clone_fragment inherited, text: text)
-              previous_fragment_is_text = true
+              unless (text = previous_fragment_end_with_space ? node[:value].lstrip : node[:value]).empty?
+                text = %(#{fragments.pop[:text]}#{text}) if @merge_adjacent_text_nodes && previous_fragment_is_text
+                fragments << (clone_fragment inherited, text: text)
+                previous_fragment_is_text = true
+                previous_fragment_end_with_space = text.end_with? ' '
+              end
             end
           end
           fragments

@@ -268,6 +268,33 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect text[0][:string]).to eql 'between'
     end
 
+    it 'should collapse spaces around hidden index term' do
+      pdf = to_pdf 'before (((term))) after', analyze: true
+      text = pdf.text.map {|it| it[:string] }.join
+      (expect text).to eql 'before after'
+    end
+
+    it 'should collapse interspersed newlines around hidden index terms' do
+      pdf = to_pdf %(before\n(((term-a)))\n(((term-b)))\nafter), analyze: true
+      text = pdf.text.map {|it| it[:string] }.join
+      (expect text).to eql 'before after'
+    end
+
+    it 'should use of fallback font after hard line break should not alter line height' do
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => 'default-with-font-fallbacks' }, analyze: true
+      [%hardbreaks]
+      けふこえて
+      あさきゆめみし
+      ゑひもせす
+      EOS
+
+      text = pdf.text
+      (expect text).to have_size 3
+      first_line_gap = (text[1][:y] - text[0][:y]).round 2
+      second_line_gap = (text[2][:y] - text[1][:y]).round 2
+      (expect second_line_gap).to eql first_line_gap
+    end
+
     it 'should format stem equation as monospace' do
       pdf = to_pdf 'Use stem:[x^2] to square the value.', analyze: true
       equation_text = (pdf.find_text 'x^2')[0]
