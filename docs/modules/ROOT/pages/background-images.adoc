@@ -19,6 +19,8 @@ The target of the image macro can be a xref:image-paths-and-formats.adoc#imagesd
 :page-background-image: image:bg.png[]
 ----
 
+You can also assign a page background image <<recto-version,per side>> and/or <<page-layout,per page layout>>.
+
 By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
 You can set the <<fit,fit>>, sizing, and <<position,position>> attributes on the image macro.
 The size of the background image can be controlled using any of the xref:image-scaling.adoc[sizing attributes] on the image macro when `fit=none`.
