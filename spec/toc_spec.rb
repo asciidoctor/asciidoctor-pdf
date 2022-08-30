@@ -1502,7 +1502,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
   end
 
   it 'should not include section title or its children in toc if title is empty' do
-    pdf = to_pdf <<~'EOS', analyze: true, debug: true
+    pdf = to_pdf <<~'EOS', analyze: true
     = Document Title
     :toc:
     :title-page:
