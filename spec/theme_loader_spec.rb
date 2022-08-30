@@ -1389,6 +1389,46 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.title_page_title_top).to eql 54
     end
 
+    it 'should preserve em units when computing value' do
+      theme_data = YAML.safe_load <<~'EOS'
+      title-page:
+        title:
+          top: 1em / 4
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.title_page_title_top).to eql '0.25em'
+    end
+
+    it 'should preserve rem units when computing value' do
+      theme_data = YAML.safe_load <<~'EOS'
+      title-page:
+        title:
+          top: 3rem / 4
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.title_page_title_top).to eql '0.75rem'
+    end
+
+    it 'should preserve em units when applying precision to value' do
+      theme_data = YAML.safe_load <<~'EOS'
+      title-page:
+        title:
+          top: ceil(3em / 4)
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.title_page_title_top).to eql '1em'
+    end
+
+    it 'should preserve rem units when applying precision to value' do
+      theme_data = YAML.safe_load <<~'EOS'
+      title-page:
+        title:
+          top: floor(4rem / 3)
+      EOS
+      theme = subject.new.load theme_data
+      (expect theme.title_page_title_top).to eql '1rem'
+    end
+
     it 'should apply precision functions to value' do
       theme_data = YAML.safe_load <<~'EOS'
       base:

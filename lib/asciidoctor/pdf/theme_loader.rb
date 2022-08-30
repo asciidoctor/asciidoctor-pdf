@@ -24,6 +24,7 @@ module Asciidoctor
       MultiplyDivideOpRx = %r((-?\d+(?:\.\d+)?) +([*/^]) +(-?\d+(?:\.\d+)?))
       AddSubtractOpRx = /(-?\d+(?:\.\d+)?) +([+\-]) +(-?\d+(?:\.\d+)?)/
       PrecisionFuncRx = /^(round|floor|ceil)\(/
+      RelativeUnitsRx = /(?<=\d)(r?em)(?= )/
       RoleAlignKeyRx = /(?:_text)?_align$/
 
       module ColorValue; end
@@ -234,6 +235,10 @@ module Asciidoctor
         # resolve measurement values (e.g., 0.5in => 36)
         # NOTE: leave % as a string; handled by converter for now
         original, expr = expr, (resolve_measurement_values expr)
+        if (expr.include? 'em ') && (segments = expr.split RelativeUnitsRx, 2).length == 3
+          units = segments.delete_at 1
+          expr = segments.join
+        end
         while true
           if (expr.count '*/^') > 0
             result = expr.gsub(MultiplyDivideOpRx) { $1.to_f.send ($2 == '^' ? '**' : $2).to_sym, $3.to_f }
@@ -261,7 +266,8 @@ module Asciidoctor
         if expr == original
           original
         else
-          (int_val = expr.to_i) == (flt_val = expr.to_f) ? int_val : flt_val
+          expr = (int_val = expr.to_i) == (flt_val = expr.to_f) ? int_val : flt_val
+          units ? %(#{expr}#{units}) : expr
         end
       end
 
