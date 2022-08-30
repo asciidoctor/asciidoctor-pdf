@@ -3885,9 +3885,9 @@ module Asciidoctor
         entries.each do |entry|
           next if (num_levels_for_entry = (entry.attr 'toclevels', num_levels).to_i) < (entry_level = entry.level + 1).pred ||
             ((entry.option? 'notitle') && entry == entry.document.last_child && entry.empty?)
+          entry_title = entry.context == :section ? entry.numbered_title : (entry.title? ? entry.title : (entry.xreftext 'basic'))
+          next if entry_title.empty?
           theme_font :toc, level: entry_level do
-            entry_title = entry.context == :section ? entry.numbered_title : (entry.title? ? entry.title : (entry.xreftext 'basic'))
-            next if entry_title.empty?
             entry_title = transform_text entry_title, @text_transform if @text_transform
             pgnum_label_placeholder_width = rendered_width_of_string '0' * @toc_max_pagenum_digits
             # NOTE: only write title (excluding dots and page number) if this is a dry run
