@@ -698,7 +698,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
     end
 
     it 'should not add entry for section with empty title' do
-      pdf = to_pdf <<~'EOS', debug: true
+      pdf = to_pdf <<~'EOS'
       = Document Title
       :outlinelevels: 3
 
