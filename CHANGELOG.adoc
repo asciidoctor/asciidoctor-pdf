@@ -17,6 +17,7 @@ Enhancements::
 * introduce `width` theme key for admonition icon to control width of image-based icon (#2318)
 * share image info cache between primary and scratch documents to avoid decoding same image more than once
 * rename `kbd-separator` theme key to `kbd-separator-content` to make its consistent with other content keys; remap old key and warn
+* preserve em and rem units on numerator in calc operation in theme (#2314)
 
 Bug Fixes::
 
