@@ -2794,6 +2794,7 @@ module Asciidoctor
           next if (num_levels_for_sect = (sect.attr 'outlinelevels', num_levels).to_i) < (level = sect.level) ||
             ((sect.option? 'notitle') && sect == sect.document.last_child && sect.empty?)
           sect_title = sanitize sect.numbered_title formal: true
+          next if sect_title.empty?
           sect_destination = sect.attr 'pdf-destination'
           if level < num_levels_for_sect && sect.sections?
             outline.section sect_title, destination: sect_destination, closed: expand_levels < 1 do
