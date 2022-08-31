@@ -1131,7 +1131,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect content_text[:page_number]).to be 1
   end
 
-  it 'should not force section title to next page to keep with content if heading_min_height_after is zero' do
+  it 'should not force section title to next page to keep with content if heading-min-height-after theme key is zero' do
     pdf = to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 0 }, analyze: true
     == Section A
 
@@ -1204,7 +1204,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect content_text[:page_number]).to be 2
   end
 
-  it 'should keep section with first block of content if heading_min_height_after key is auto' do
+  it 'should keep section with first block of content if heading-min-height-after theme key is auto' do
     pdf = to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 'auto' }, analyze: true
     == Section A
 
