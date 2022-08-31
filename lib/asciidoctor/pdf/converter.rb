@@ -635,7 +635,6 @@ module Asciidoctor
           sect.remove
           return
         end
-
         title = sect.numbered_title formal: true
         sep = (sect.attr 'separator') || (sect.document.attr 'title-separator') || ''
         if !sep.empty? && (title.include? (sep = %(#{sep} )))
