@@ -2415,7 +2415,7 @@ module Asciidoctor
           end
         else
           if (primary_text = node.text).nil_or_empty?
-            ink_prose DummyText, opts unless node.blocks?
+            ink_prose DummyText, opts if node.empty?
           else
             ink_prose primary_text, (opts.merge hyphenate: true)
           end
