@@ -654,7 +654,7 @@ module Asciidoctor
             start_new_chapter sect
           end
         end
-        arrange_heading sect, title, hopts unless hidden || started_new || at_page_top? || sect.empty?
+        arrange_heading sect, title, hopts unless hidden || started_new || at_page_top?
         # QUESTION: should we store pdf-page-start, pdf-anchor & pdf-destination in internal map?
         sect.set_attr 'pdf-page-start', (start_pgnum = page_number)
         # QUESTION: should we just assign the section this generated id?
