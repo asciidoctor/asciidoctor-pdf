@@ -19,6 +19,10 @@ Enhancements::
 * rename `kbd-separator` theme key to `kbd-separator-content` to make its consistent with other content keys; remap old key and warn
 * preserve em and rem units on numerator in calc operation in theme (#2314)
 
+Improvements::
+
+* don't include bottom margin when computing heading height if `heading-min-height-after` theme key is empty (#2326)
+
 Bug Fixes::
 
 * keep caret between items in menu macro with previous item if items wrap
