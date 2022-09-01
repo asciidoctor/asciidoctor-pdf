@@ -118,7 +118,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
 
   it 'should ignore heading-min-height-after if heading is last child' do
     pdf = with_content_spacer 10, 650 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 100, heading_font_color: 'AA0000' }, analyze: true, debug: true
+      to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 100, heading_font_color: 'AA0000' }, analyze: true
       image::#{spacer_path}[]
 
       [discrete]
