@@ -6,7 +6,7 @@
 [#heading]
 == heading
 
-The keys in the `heading` category control the style of most headings, including part titles, chapter titles, sections titles, the title of the table of contents, and discrete headings.
+The keys in the `heading` category control the style of most headings, including part titles, chapter titles, sections titles, the table of contents title, and discrete headings.
 
 [cols="3,4,5a"]
 |===
@@ -68,7 +68,7 @@ heading:
 heading:
   margin-top: 6
 
-|[[min-height-after]]min-height-after
+|<<min-height-after>>
 |xref:measurement-units.adoc[Measurement] {vbar} auto +
 (default: `20`)
 |[source]
@@ -243,6 +243,30 @@ heading:
 heading:
   h3-text-transform: uppercase
 |===
+
+[#min-height-after]
+=== min-height-after
+
+The `min-height-after` key specifies how much space to reserve below a section title or discrete heading (starting from where the bottom margin ends) for content to fit below it.
+If the available space on the page is less than this value, then the heading will automatically be advanced to the next page.
+
+[,yaml]
+----
+heading:
+  min-height-after: 0.25in
+----
+
+Rather than specifying a fixed value, you can configure the converter to ensure at least one line of content is rendered below the heading by setting the value to `auto`.
+
+[,yaml]
+----
+heading:
+  min-height-after: auto
+----
+
+The `min-height-after` value is ignored if the section is empty or the discrete heading is the last child of its parent.
+
+A section title and discrete heading that wraps is always advanced to the next page if it avoids it being split across pages.
 
 [#padding]
 === padding
