@@ -3,7 +3,7 @@
 begin
   require 'rubocop/rake_task'
   RuboCop::RakeTask.new :lint do |t|
-    t.patterns = Dir['lib/**/*.rb'] - ['lib/asciidoctor/pdf/formatted_text/parser.rb'] + %w(Gemfile Rakefile bin/* spec/**/*.rb tasks/*.rake)
+    t.patterns = Dir['lib/**/*.rb'] - ['lib/asciidoctor/pdf/formatted_text/parser.rb'] + %w(Gemfile Rakefile bin/* cops/**/*.rb spec/**/*.rb tasks/*.rake)
   end
 rescue LoadError => e
   task :lint do

@@ -1,6 +1,7 @@
 require:
 - rubocop-rake
 - rubocop-rspec
+- ./cops/to_pdf_no_debug.rb
 AllCops:
   TargetRubyVersion: 2.7
 Gemspec/DeprecatedAttributeAssignment:
