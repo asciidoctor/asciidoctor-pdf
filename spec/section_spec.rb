@@ -1101,6 +1101,21 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect heading_texts.map {|it| it[:page_number] }.uniq).to eql [2]
   end
 
+  it 'should not require space for bottom margin between section title and bottom of page if min-height-after is 0' do
+    pdf = with_content_spacer 10, 710 do |spacer_path|
+      to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 0, heading_font_color: 'AA0000' }, analyze: true
+      image::#{spacer_path}[]
+
+      == Heading Fits
+
+      content
+      EOS
+    end
+
+    heading_text = pdf.find_unique_text font_color: 'AA0000'
+    (expect heading_text[:page_number]).to eql 1
+  end
+
   it 'should force section title with text transform to next page to keep with first line of section content' do
     pdf = to_pdf <<~EOS, pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
     image::tall.svg[pdfwidth=80mm]

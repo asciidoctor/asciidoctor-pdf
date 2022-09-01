@@ -2846,13 +2846,13 @@ module Asciidoctor
           advance_page if orphaned
         else
           theme_font :heading, level: (hlevel = opts[:level]) do
+            if (space_below = ::Numeric === min_height_after ? min_height_after : 0) > 0 && (node.context == :section ? node.blocks? : !node.last_child?)
+              space_below += @theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom
+            end
             h_padding_t, h_padding_r, h_padding_b, h_padding_l = expand_padding_value @theme[%(heading_h#{hlevel}_padding)]
             h_fits = indent h_padding_l, h_padding_r do
-              heading_h = (height_of_typeset_text title, inline_format: true, text_transform: @text_transform) +
-                (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top) +
-                (@theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom) + h_padding_t + h_padding_b
-              heading_h += min_height_after if min_height_after && (node.context == :section ? node.blocks? : !node.last_child?)
-              cursor >= heading_h
+              cursor >= (height_of_typeset_text title, inline_format: true, text_transform: @text_transform) +
+                h_padding_t + h_padding_b + (@theme[%(heading_h#{hlevel}_margin_top)] || @theme.heading_margin_top) + space_below
             end
             advance_page unless h_fits
           end
