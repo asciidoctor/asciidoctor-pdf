@@ -55,7 +55,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
     (expect discrete_heading_text[:x]).to be > main_text[:x]
   end
 
-  it 'should force discrete heading to next page if space below is less than min_height_after value' do
+  it 'should force discrete heading to next page if space below is less than heading-min-height-after value' do
     pdf = with_content_spacer 10, 690 do |spacer_path|
       to_pdf <<~EOS
       image::#{spacer_path}[]
@@ -95,7 +95,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
     (expect (get_dest pdf, 'buddy')[:page_number]).to eql 2
   end
 
-  it 'should force discrete heading to next page when heading_min_content_after is auto if no content is inked below it' do
+  it 'should force discrete heading to next page when heading-min-height-after is auto if no content is inked below it' do
     pdf = with_content_spacer 10, 675 do |spacer_path|
       to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 'auto' }
       image::#{spacer_path}[]
@@ -114,6 +114,21 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
     (expect p2_text).to include 'Discrete Heading'
     (expect get_names pdf).to have_key 'buddy'
     (expect (get_dest pdf, 'buddy')[:page_number]).to eql 2
+  end
+
+  it 'should ignore heading-min-height-after if heading is last child' do
+    pdf = with_content_spacer 10, 650 do |spacer_path|
+      to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 100, heading_font_color: 'AA0000' }, analyze: true
+      image::#{spacer_path}[]
+
+      [discrete]
+      == Heading Fits
+      EOS
+    end
+
+    (expect pdf.pages).to have_size 1
+    heading_text = pdf.find_unique_text font_color: 'AA0000'
+    (expect heading_text[:page_number]).to eql 1
   end
 
   it 'should allow arrange_heading to be reimplemented to always keep heading with content that follows it' do
@@ -151,7 +166,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
     (expect content_text[:page_number]).to be 2
   end
 
-  it 'should not force discrete heading to next page if min_height_after value is not set' do
+  it 'should not force discrete heading to next page if heading-min-height-after value is not set' do
     pdf = with_content_spacer 10, 690 do |spacer_path|
       to_pdf <<~EOS, pdf_theme: { heading_min_height_after: nil }
       image::#{spacer_path}[]
