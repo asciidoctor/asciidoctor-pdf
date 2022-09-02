@@ -200,7 +200,7 @@ describe Asciidoctor::PDF::FormattedText::Transform do
   it 'should apply inherited styles' do
     input = '<a href="https://asciidoctor.org">Asciidoctor</a>'
     parsed = parser.parse input
-    fragments = subject.apply parsed.content, [], { styles: [:bold].to_set }
+    fragments = subject.apply parsed.content, [], { styles: [:bold].to_set }, normalize_space: nil
     (expect fragments).to have_size 1
     (expect fragments[0][:text]).to eql 'Asciidoctor'
     (expect fragments[0][:styles].to_a).to eql [:bold]
@@ -209,7 +209,7 @@ describe Asciidoctor::PDF::FormattedText::Transform do
   it 'should apply styles to inherited styles' do
     input = 'Go <strong>get</strong> them!'
     parsed = parser.parse input
-    fragments = subject.apply parsed.content, [], { styles: [:italic].to_set }
+    fragments = subject.apply parsed.content, [], { styles: [:italic].to_set }, normalize_space: nil
     (expect fragments).to have_size 3
     get_fragment = fragments.find {|it| it[:text] == 'get' }
     (expect get_fragment[:styles].to_a.sort).to eql [:bold, :italic]
