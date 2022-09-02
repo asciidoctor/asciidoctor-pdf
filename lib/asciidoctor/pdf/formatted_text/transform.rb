@@ -8,6 +8,7 @@ module Asciidoctor
 
         DummyText = ?\u0000
         ZeroWidthSpace = ?\u200b
+        DoubleSpace = '  '
         LF = ?\n + ZeroWidthSpace # without trailing character, use of fallback font can change line height
         CharEntityTable = { amp: '&', apos: ?', gt: '>', lt: '<', nbsp: ?\u00a0, quot: '"' }
         CharRefRx = /&(?:(#{CharEntityTable.keys.join '|'})|#(?:(\d\d\d{0,4})|x(\h\h\h{0,3})));/
@@ -152,7 +153,7 @@ module Asciidoctor
           end
         end
 
-        def apply parsed, fragments = [], inherited = nil
+        def apply parsed, fragments = [], inherited = nil, normalize_space: nil
           previous_fragment_is_text = false
           previous_fragment_end_with_space = false
           # NOTE: we use each since using inject is slower than a manual loop
@@ -176,7 +177,7 @@ module Asciidoctor
                       restore_text pcdata, text_chunks.each_with_object([]) {|chunk, accum| accum << (text_io.read chunk.length) }
                     end
                     # NOTE: decorate child fragments with inherited properties from this element
-                    apply pcdata, fragments, fragment
+                    apply pcdata, fragments, fragment, normalize_space: normalize_space
                     previous_fragment_end_with_space = false
                   end
                   previous_fragment_is_text = false
@@ -240,8 +241,12 @@ module Asciidoctor
               previous_fragment_is_text = true
               previous_fragment_end_with_space = false
             else # :text
-              unless (text = previous_fragment_end_with_space ? node[:value].lstrip : node[:value]).empty?
+              preserve_space = inherited && inherited[:preserve_space]
+              unless (text = previous_fragment_end_with_space && normalize_space && !preserve_space ? node[:value].lstrip : node[:value]).empty?
                 text = %(#{fragments.pop[:text]}#{text}) if @merge_adjacent_text_nodes && previous_fragment_is_text
+                if normalize_space && !preserve_space && (text.include? DoubleSpace)
+                  text = text.tr_s ' ', ' '
+                end
                 fragments << (clone_fragment inherited, text: text)
                 previous_fragment_is_text = true
                 previous_fragment_end_with_space = text.end_with? ' '
@@ -353,6 +358,7 @@ module Asciidoctor
           # TODO: we could limit to select tags, but doesn't seem to really affect performance
           attrs[:class].split.each do |class_name|
             fragment[:wj] = true if class_name == 'wj'
+            fragment[:preserve_space] = true if class_name == 'pre-wrap'
             next unless @theme_settings.key? class_name
             update_fragment fragment, @theme_settings[class_name]
             # NOTE: defer assignment of callback since we must look at combined styles of element and role

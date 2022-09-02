@@ -54,22 +54,48 @@ describe Asciidoctor::PDF::FormattedText::Transform do
     (expect fragments[1][:text]).to eql 'new'
   end
 
-  it 'should not create fragment for empty element' do
+  it 'should not create fragment for empty element when normalize_space is on' do
     input = 'foo <strong></strong> bar'
     parsed = parser.parse input
-    fragments = subject.apply parsed.content
+    fragments = subject.apply parsed.content, normalize_space: true
     (expect fragments).to have_size 2
     (expect fragments[0][:text]).to eql 'foo '
     (expect fragments[1][:text]).to eql 'bar'
   end
 
-  it 'should not collapse space only on one side of empty element' do
+  it 'should not collapse space only on one side of empty element when normalize_space is on' do
     input = 'foo <strong></strong>bar'
     parsed = parser.parse input
-    fragments = subject.apply parsed.content
+    fragments = subject.apply parsed.content, normalize_space: true
     (expect fragments).to have_size 2
     (expect fragments[0][:text]).to eql 'foo '
     (expect fragments[1][:text]).to eql 'bar'
+  end
+
+  it 'should preserve space when normalize_space is not set' do
+    input = 'foo  bar'
+    parsed = parser.parse input
+    fragments = subject.apply parsed.content
+    (expect fragments).to have_size 1
+    (expect fragments[0][:text]).to eql 'foo  bar'
+  end
+
+  it 'should preserve space when normalize_space is on and pre-wrap role is set on phrase' do
+    input = '<span class="pre-wrap">foo  bar</span>'
+    parsed = parser.parse input
+    fragments = subject.apply parsed.content, normalize_space: true
+    (expect fragments).to have_size 1
+    (expect fragments[0][:text]).to eql 'foo  bar'
+    (expect fragments[0][:preserve_space]).to be true
+  end
+
+  it 'should preserve space interrupted by empty element when normalize_space is on and pre-wrap role is set on phrase' do
+    input = '<span class="pre-wrap">foo <strong></strong> bar</span>'
+    parsed = parser.parse input
+    fragments = subject.apply parsed.content, normalize_space: true
+    (expect fragments).to have_size 2
+    (expect fragments[0][:text]).to eql 'foo '
+    (expect fragments[1][:text]).to eql ' bar'
   end
 
   it 'should create fragment with custom font name' do
@@ -174,7 +200,7 @@ describe Asciidoctor::PDF::FormattedText::Transform do
   it 'should apply inherited styles' do
     input = '<a href="https://asciidoctor.org">Asciidoctor</a>'
     parsed = parser.parse input
-    fragments = subject.apply parsed.content, [], styles: [:bold].to_set
+    fragments = subject.apply parsed.content, [], { styles: [:bold].to_set }
     (expect fragments).to have_size 1
     (expect fragments[0][:text]).to eql 'Asciidoctor'
     (expect fragments[0][:styles].to_a).to eql [:bold]
@@ -183,7 +209,7 @@ describe Asciidoctor::PDF::FormattedText::Transform do
   it 'should apply styles to inherited styles' do
     input = 'Go <strong>get</strong> them!'
     parsed = parser.parse input
-    fragments = subject.apply parsed.content, [], styles: [:italic].to_set
+    fragments = subject.apply parsed.content, [], { styles: [:italic].to_set }
     (expect fragments).to have_size 3
     get_fragment = fragments.find {|it| it[:text] == 'get' }
     (expect get_fragment[:styles].to_a.sort).to eql [:bold, :italic]

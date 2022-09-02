@@ -10,6 +10,7 @@ module Asciidoctor
 
         FormattingSnifferPattern = /[<&]/
         WHITESPACE = %( \t\n)
+        NORMALIZE_TO_SPACE = %(\t\n)
 
         def initialize options = {}
           @parser = MarkupParser.new
@@ -19,14 +20,16 @@ module Asciidoctor
 
         def format string, *args
           options = args[0] || {}
-          string = string.tr_s WHITESPACE, ' ' if options[:normalize]
           inherited = options[:inherited]
           if FormattingSnifferPattern.match? string
+            string = string.tr NORMALIZE_TO_SPACE, ' ' if (normalize_space = options[:normalize])
             if (parsed = @parser.parse string)
-              return @transform.apply parsed.content, [], inherited
+              return @transform.apply parsed.content, [], inherited, normalize_space: normalize_space
             end
             reason = @parser.failure_reason.sub %r/ at line \d+, column \d+ \(byte (\d+)\)(.*)/, '\2 at byte \1'
             logger.error %(failed to parse formatted text: #{string} (reason: #{reason})) unless @scratch
+          elsif options[:normalize]
+            string = string.tr_s WHITESPACE, ' '
           end
           [inherited ? (inherited.merge text: string) : { text: string }]
         end

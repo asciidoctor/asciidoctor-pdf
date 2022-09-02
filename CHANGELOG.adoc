@@ -23,6 +23,7 @@ Improvements::
 
 * don't include bottom margin when computing heading height if `heading-min-height-after` theme key is empty (#2326)
 * ensure `heading-min-height-after` theme key is ignored if section is empty or discrete heading is last child
+* process `pre-wrap` role in text formatter
 
 Bug Fixes::
 

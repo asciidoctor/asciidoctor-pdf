@@ -68,7 +68,6 @@ module Asciidoctor
       PageSides = [:recto, :verso]
       (PDFVersions = { '1.3' => 1.3, '1.4' => 1.4, '1.5' => 1.5, '1.6' => 1.6, '1.7' => 1.7 }).default = 1.4
       AuthorAttributeNames = { name: 'author', initials: 'authorinitials', firstname: 'firstname', middlename: 'middlename', lastname: 'lastname', email: 'email' }
-      DoubleSpace = '  '
       LF = ?\n
       DoubleLF = LF * 2
       TAB = ?\t
@@ -119,7 +118,6 @@ module Asciidoctor
       BlankLineRx = /\n{2,}/
       CjkLineBreakRx = /(?=[\u3000\u30a0-\u30ff\u3040-\u309f\p{Han}\uff00-\uffef])/
       WhitespaceChars = ' ' + TAB + LF
-      DoubleSpaceRx = / (?= )/
       ValueSeparatorRx = /;|,/
       HexColorRx = /^#[a-fA-F0-9]{6}$/
       VimeoThumbnailRx = %r(<thumbnail_url>(.*?)</thumbnail_url>)
@@ -2704,7 +2702,6 @@ module Asciidoctor
         end
 
         if (roles = node.role)
-          inner_text = inner_text.gsub DoubleSpaceRx, ' ' + ZeroWidthSpace if (node.has_role? 'pre-wrap') && (inner_text.include? DoubleSpace)
           quoted_text = is_tag ? %(#{open.chop} class="#{roles}">#{inner_text}#{close}) : %(<span class="#{roles}">#{open}#{inner_text}#{close}</span>)
         else
           quoted_text = %(#{open}#{inner_text}#{close})
