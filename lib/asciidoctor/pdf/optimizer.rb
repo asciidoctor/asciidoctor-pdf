@@ -39,6 +39,7 @@ module Asciidoctor
 
       attr_reader :quality
       attr_reader :compatibility_level
+      attr_reader :compliance
 
       def initialize quality = 'default', compatibility_level = '1.4', compliance = 'PDF'
         @quality = QUALITY_NAMES[quality]

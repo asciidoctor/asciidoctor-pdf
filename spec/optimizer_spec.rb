@@ -23,6 +23,7 @@ describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_avai
     optimizer = Asciidoctor::PDF::Optimizer.new
     (expect optimizer.quality).to eql :default
     (expect optimizer.compatibility_level).to eql '1.4'
+    (expect optimizer.compliance).to eql 'PDF'
   end
 
   it 'should generate optimized PDF when filename contains spaces' do
