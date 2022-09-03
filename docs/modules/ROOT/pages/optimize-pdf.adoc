@@ -95,7 +95,7 @@ This file is necessary when using versions of Ghostscript < 8.54, which did not 
 You can instruct the converter to automatically generate a pdfmark file by setting the `pdfmark` attribute (i.e., `-a pdfmark`)
 When using a more recent version of Ghostscript, you do not need to generate a `.pdfmark` file for this purpose.
 
-IMPORTANT: The `asciidoctor-pdf-optimize` is not guaranteed to reduce the size of the PDF file.
+IMPORTANT: The `asciidoctor-pdf-optimize` command is not guaranteed to reduce the size of the PDF file.
 It may actually make the PDF larger.
 You should probably only consider using it if the file size of the original PDF is several megabytes.
 
