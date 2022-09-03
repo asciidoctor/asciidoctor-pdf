@@ -54,7 +54,7 @@ module RSpec::ExampleHelpers
     (Asciidoctor::PDF::ThemeLoader.load_theme extends).tap {|theme| overrides.each {|k, v| theme[k] = v } }
   end
 
-  def create_class super_class, &block
+  def create_class super_class = Object, &block
     klass = Class.new super_class, &block
     Object.const_set %(AnonymousClass#{klass.object_id}).to_sym, klass
     klass

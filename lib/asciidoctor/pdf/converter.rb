@@ -420,11 +420,13 @@ module Asciidoctor
         @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
         # NOTE: defer instantiating optimizer until we know min pdf version
         if (optimize = doc.attr 'optimize') &&
-            ((defined? ::Asciidoctor::PDF::Optimizer) || !(Helpers.require_library OptimizerRequirePath, 'rghost', :warn).nil?)
+            (optimizer = doc.options[:pdf_optimizer] || (((defined? ::Asciidoctor::PDF::Optimizer) ||
+            !(Helpers.require_library OptimizerRequirePath, 'rghost', :warn).nil?) && ::Asciidoctor::PDF::Optimizer))
           @optimize = (optimize.include? ',') ?
             ([:quality, :compliance].zip (optimize.split ',', 2)).to_h :
             ((optimize.include? '/') ? { compliance: optimize } : { quality: optimize })
           fit_trim_box if @optimize[:compliance]&.start_with? 'PDF/X'
+          @optimize[:optimizer] = optimizer
         else
           @optimize = nil
         end
@@ -4597,7 +4599,7 @@ module Asciidoctor
           # QUESTION: restore attributes first?
           @pdfmark&.generate_file target
           if (optimize = @optimize)
-            (Optimizer.new optimize[:quality], pdf_doc.min_version, optimize[:compliance]).optimize_file target
+            (@optimize[:optimizer].new optimize[:quality], pdf_doc.min_version, optimize[:compliance]).optimize_file target
           end
           to_file = true
         end
