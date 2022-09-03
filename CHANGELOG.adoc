@@ -27,6 +27,8 @@ Improvements::
 
 Bug Fixes::
 
+* don't add chapter signifier if `chapter-signifier` is unset (#2328)
+* don't add part signifier if `part-signifier` is unset (#2328)
 * keep caret between items in menu macro with previous item if items wrap
 * draw border on heading (section title or discrete heading) if it is advanced to next page (#2322)
 * arrange heading even if section is empty
