@@ -9,6 +9,8 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 Bug Fixes::
 
+* don't add chapter signifier if `chapter-signifier` is unset (#2328)
+* don't add part signifier if `part-signifier` is unset (#2328)
 * don't include bottom margin when computing heading height if `heading-min-height-after` theme key is empty (#2326)
 * draw border on heading (section title or discrete heading) if it is advanced to next page (#2322)
 * arrange heading even if section is empty

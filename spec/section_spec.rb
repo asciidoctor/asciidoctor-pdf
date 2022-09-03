@@ -680,6 +680,29 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect titles).to eql ['P I: A', 'P II: B']
   end
 
+  it 'should not add part signifier to part title if partnums is enabled and part-signifier attribute is unset or empty' do
+    %w(!part-signifier part-signifier).each do |attr_name|
+      pdf = to_pdf <<~EOS, analyze: true
+      = Book Title
+      :doctype: book
+      :sectnums:
+      :partnums:
+      :#{attr_name}:
+
+      = A
+
+      == The Beginning
+
+      = Z
+
+      == The End
+      EOS
+
+      part_titles = (pdf.find_text font_size: 27).map {|it| it[:string] }.reject {|it| it == 'Book Title' }
+      (expect part_titles).to eql ['I: A', 'II: Z']
+    end
+  end
+
   it 'should add default chapter signifier to chapter title if section numbering is enabled' do
     pdf = to_pdf <<~'EOS', analyze: true
     = Book Title
@@ -732,8 +755,8 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     end
   end
 
-  it 'should not add chapter label to chapter title if section numbering is enabled and chapter-signifier attribute is empty' do
-    %w(chapter-signifier).each do |attr_name|
+  it 'should not add chapter signifier to chapter title if sectnums is enabled and chapter-signifier attribute is unset or empty' do
+    %w(!chapter-signifier chapter-signifier).each do |attr_name|
       pdf = to_pdf <<~EOS, analyze: true
       = Book Title
       :doctype: book
