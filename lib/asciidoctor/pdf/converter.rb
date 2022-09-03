@@ -157,15 +157,7 @@ module Asciidoctor
       end
 
       def convert_document doc
-        doc.promote_preface_block
         init_pdf doc
-        # set default value for outline, outline-title, and pagenums attributes if not otherwise set
-        doc.attributes['outline'] = '' if doc.attr_unspecified? 'outline'
-        doc.attributes['outline-title'] = '' if doc.attr_unspecified? 'outline-title'
-        doc.attributes['pagenums'] = '' if doc.attr_unspecified? 'pagenums'
-
-        on_page_create(&(method :init_page).curry[doc])
-
         marked_page_number = page_number
         # NOTE: a new page will already be started (page_number = 2) if the front cover image is a PDF
         ink_cover_page doc, :front
@@ -345,6 +337,12 @@ module Asciidoctor
       alias convert_embedded convert_document
 
       def init_pdf doc
+        # promote preface block to preface section
+        doc.promote_preface_block
+        # set default values for PDF-specific attributes if not otherwise specified (set or unset)
+        doc.attributes['outline'] = '' if doc.attr_unspecified? 'outline'
+        doc.attributes['outline-title'] = '' if doc.attr_unspecified? 'outline-title'
+        doc.attributes['pagenums'] = '' if doc.attr_unspecified? 'pagenums'
         (instance_variables - @initial_instance_variables).each {|ivar| remove_instance_variable ivar } if state
         pdf_opts = build_pdf_options doc, (theme = load_theme doc)
         # QUESTION: should page options be preserved? (otherwise, not readily available)
@@ -435,6 +433,7 @@ module Asciidoctor
         # scratch calls init_scratch on a copy of the prototype to instantiate a scratch document
         # push_scratch and pop_scratch make changes to the document catalog and attributes transactional
         allocate_scratch_prototype
+        on_page_create(&(method :init_page).curry[doc])
         self
       end
 
