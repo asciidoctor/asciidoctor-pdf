@@ -160,4 +160,29 @@ describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_avai
     pdf_info = (PDF::Reader.new to_file).info
     (expect pdf_info[:Producer]).to include 'Ghostscript'
   end
+
+  it 'should allow custom PDF optimizer to be specfied using :pdf_optimizer option' do
+    optimizer = create_class do
+      def initialize quality, _compat_level, _compliance
+        @quality = quality
+      end
+
+      def optimize_file path
+        self.class.optimized << { quality: @quality, path: path }
+        nil
+      end
+
+      def self.optimized
+        @optimized ||= []
+      end
+    end
+
+    input_file = example_file 'basic-example.adoc'
+    to_file = output_file 'optimizer-custom.pdf'
+    Asciidoctor.convert_file input_file, backend: 'pdf', attributes: 'optimize=ebook', to_file: to_file, safe: :safe, pdf_optimizer: optimizer
+    optimized = optimizer.optimized
+    (expect optimized).to have_size 1
+    (expect optimized[0][:quality]).to eql 'ebook'
+    (expect optimized[0][:path]).to eql to_file
+  end
 end)

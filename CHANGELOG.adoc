@@ -18,6 +18,7 @@ Enhancements::
 * share image info cache between primary and scratch documents to avoid decoding same image more than once
 * rename `kbd-separator` theme key to `kbd-separator-content` to make its consistent with other content keys; remap old key and warn
 * preserve em and rem units on numerator in calc operation in theme (#2314)
+* allow optimizer to be specified using `:pdf_optimizer` API option (#1785)
 
 Improvements::
 
