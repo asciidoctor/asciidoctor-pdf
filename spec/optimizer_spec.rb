@@ -18,10 +18,11 @@ describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_avai
     (expect pdf_info[:Title]).to eql 'Document Title'
     (expect pdf_info[:Author]).to eql 'Doc Writer'
     (expect pdf_info[:Subject]).to eql 'Example'
-    (expect defined? Asciidoctor::PDF::Optimizer).to be_truthy
     # NOTE: assert constructor behavior once we know the class has been loaded
-    optimizer = Asciidoctor::PDF::Optimizer.new
-    (expect optimizer.quality).to eql :default
+    optimizer_class = Asciidoctor::PDF::Optimizer.for 'rghost'
+    (expect optimizer_class).not_to be_nil
+    optimizer = optimizer_class.new
+    (expect optimizer.quality).to eql 'default'
     (expect optimizer.compatibility_level).to eql '1.4'
     (expect optimizer.compliance).to eql 'PDF'
   end
@@ -184,5 +185,47 @@ describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_avai
     (expect optimized).to have_size 1
     (expect optimized[0][:quality]).to eql 'ebook'
     (expect optimized[0][:path]).to eql to_file
+  end
+
+  it 'should allow custom PDF optimizer to be registered and used' do
+    create_class Asciidoctor::PDF::Optimizer::Base do
+      register_for 'custom'
+
+      def optimize_file path
+        self.class.optimized << { quality: @quality, path: path }
+        nil
+      end
+
+      def self.optimized
+        @optimized ||= []
+      end
+    end
+
+    optimizer = Asciidoctor::PDF::Optimizer.for 'custom'
+    (expect optimizer).not_to be_nil
+    input_file = example_file 'basic-example.adoc'
+    to_file = output_file 'optimizer-custom-registered.pdf'
+    Asciidoctor.convert_file input_file, backend: 'pdf', attributes: 'optimize=ebook pdf-optimizer=custom', to_file: to_file, safe: :safe
+    optimized = optimizer.optimized
+    (expect optimized).to have_size 1
+    (expect optimized[0][:quality]).to eql 'ebook'
+    (expect optimized[0][:path]).to eql to_file
+  ensure
+    Asciidoctor::PDF::Optimizer.register 'custom', nil
+  end
+
+  it 'should raise error if registered optimizer does not implement optimize_file method' do
+    create_class Asciidoctor::PDF::Optimizer::Base do
+      register_for 'custom'
+    end
+
+    (expect Asciidoctor::PDF::Optimizer.for 'custom').not_to be_nil
+    input_file = example_file 'basic-example.adoc'
+    to_file = output_file 'optimizer-custom-registered-invalid.pdf'
+    (expect do
+      Asciidoctor.convert_file input_file, backend: 'pdf', attributes: 'optimize=ebook pdf-optimizer=custom', to_file: to_file, safe: :safe
+    end).to raise_exception NotImplementedError, %r/must implement the #optimize_file method/
+  ensure
+    Asciidoctor::PDF::Optimizer.register 'custom', nil
   end
 end)

@@ -1,78 +1,56 @@
 # frozen_string_literal: true
 
-require 'pathname'
-require 'rghost'
-require 'rghost/gs_alone'
-require 'tmpdir'
-
-RGhost::GSAlone.prepend (Module.new do
-  def initialize params, debug
-    (@params = params.dup).push(*(@params.pop.split File::PATH_SEPARATOR))
-    @debug = debug
-  end
-
-  def run
-    RGhost::Config.config_platform unless File.exist? RGhost::Config::GS[:path].to_s
-    (cmd = @params.slice 1, @params.length).unshift RGhost::Config::GS[:path].to_s
-    #puts cmd if @debug
-    system(*cmd)
-  end
-end)
-
-RGhost::Engine.prepend (Module.new do
-  def shellescape str
-    str
-  end
-end)
-
 module Asciidoctor
   module PDF
-    class Optimizer
-      # see https://www.ghostscript.com/doc/current/VectorDevices.htm#PSPDF_IN for details
-      (QUALITY_NAMES = {
-        'default' => :default,
-        'screen' => :screen,
-        'ebook' => :ebook,
-        'printer' => :printer,
-        'prepress' => :prepress,
-      }).default = :default
-
+    module Optimizer
       attr_reader :quality
       attr_reader :compatibility_level
       attr_reader :compliance
 
       def initialize quality = 'default', compatibility_level = '1.4', compliance = 'PDF'
-        @quality = QUALITY_NAMES[quality]
+        @quality = quality
         @compatibility_level = compatibility_level
         @compliance = compliance
-        if (gs_path = ::ENV['GS'])
-          ::RGhost::Config::GS[:path] = gs_path
-        end
       end
 
       def optimize_file target
-        ::Dir::Tmpname.create ['asciidoctor-pdf-', '.pdf'] do |tmpfile|
-          filename_o = ::Pathname.new target
-          filename_tmp = ::Pathname.new tmpfile
-          if (pdfmark = filename_o.sub_ext '.pdfmark').file?
-            inputs = [target, pdfmark.to_s].join ::File::PATH_SEPARATOR
-          else
-            inputs = target
-          end
-          d = { Printed: false, CannotEmbedFontPolicy: '/Warning', CompatibilityLevel: @compatibility_level }
-          case @compliance
-          when 'PDF/A', 'PDF/A-1', 'PDF/A-2', 'PDF/A-3'
-            d[:PDFA] = ((@compliance.split '-', 2)[1] || 1).to_i
-            d[:ShowAnnots] = false
-          when 'PDF/X', 'PDF/X-1', 'PDF/X-3'
-            d[:PDFX] = true
-            d[:ShowAnnots] = false
-          end
-          (::RGhost::Convert.new inputs).to :pdf, filename: filename_tmp.to_s, quality: @quality, d: d
-          filename_o.binwrite filename_tmp.binread
-        end
-        nil
+        raise ::NotImplementedError, %(#{Optimizer} subclass #{self.class} must implement the ##{__method__} method)
       end
+
+      private_class_method def self.included into
+        into.extend Config
+      end
+
+      module Config
+        def register_for name
+          Optimizer.register self, name.to_s
+        end
+      end
+
+      module Factory
+        @@registry = {}
+
+        def for name
+          if (optimizer = @@registry[name]).nil? && name == 'rghost'
+            if (::Asciidoctor::Helpers.require_library %(#{__dir__}/optimizer/rghost), 'rghost', :warn).nil?
+              @@registry[name] = false
+            else
+              optimizer = @@registry[name] = Optimizer::RGhost
+            end
+          end
+          optimizer || nil
+        end
+
+        def register optimizer, name
+          optimizer ? (@@registry[name] = optimizer) : (@@registry.delete name)
+        end
+      end
+
+      class Base
+        include Optimizer
+      end
+
+      extend Factory
     end
   end
 end
