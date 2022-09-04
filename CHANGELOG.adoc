@@ -22,8 +22,6 @@ Enhancements::
 
 Improvements::
 
-* don't include bottom margin when computing heading height if `heading-min-height-after` theme key is empty (#2326)
-* ensure `heading-min-height-after` theme key is ignored if section is empty or discrete heading is last child
 * process `pre-wrap` role in text formatter
 
 Bug Fixes::
@@ -31,8 +29,10 @@ Bug Fixes::
 * don't add chapter signifier if `chapter-signifier` is unset (#2328)
 * don't add part signifier if `part-signifier` is unset (#2328)
 * keep caret between items in menu macro with previous item if items wrap
+* don't include bottom margin when computing heading height if `heading-min-height-after` theme key is empty (#2326)
 * draw border on heading (section title or discrete heading) if it is advanced to next page (#2322)
 * arrange heading even if section is empty
+* ensure `heading-min-height-after` theme key is ignored if section is empty or discrete heading is last child
 * don't force justify first line of abstract if it ends with a hard break
 * don't include children of section with empty title in TOC
 * don't include children of section with empty title in outline
