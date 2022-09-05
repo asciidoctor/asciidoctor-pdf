@@ -32,7 +32,7 @@ module Asciidoctor
 
       def store_primary_term name, dest = nil
         store_dest dest if dest
-        (init_category name.chr.upcase).store_term name, dest
+        (init_category name).store_term name, dest
       end
 
       def store_secondary_term primary_name, secondary_name, dest = nil
@@ -45,8 +45,8 @@ module Asciidoctor
         (store_secondary_term primary_name, secondary_name).store_term tertiary_name, dest
       end
 
-      def init_category name
-        name = '@' unless LeadingAlphaRx.match? name
+      def init_category term
+        name = (LeadingAlphaRx.match? term) ? term.chr.upcase : '@'
         @categories[name] ||= IndexTermCategory.new name
       end
 
