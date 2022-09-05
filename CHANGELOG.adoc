@@ -19,6 +19,8 @@ Enhancements::
 * rename `kbd-separator` theme key to `kbd-separator-content` to make its consistent with other content keys; remap old key and warn
 * preserve em and rem units on numerator in calc operation in theme (#2314)
 * allow optimizer to be specified using `:pdf_optimizer` API option (#1785)
+* allow custom optimizer to be registered by extending `Asciidoctor::PDF::Optimizer::Base` and calling `register_for` method (#2330)
+* allow custom optimizer to be selected using `pdf-optimizer` attribute (#2330)
 
 Improvements::
 

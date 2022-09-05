@@ -3,6 +3,7 @@
 require_relative 'formatted_string'
 require_relative 'formatted_text'
 require_relative 'index_catalog'
+require_relative 'optimizer'
 require_relative 'pdfmark'
 require_relative 'roman_numeral'
 require_relative 'section_info_by_page'
@@ -37,7 +38,6 @@ module Asciidoctor
       CodeRayRequirePath = ::File.join __dir__, 'ext/prawn/coderay_encoder'
       RougeRequirePath = ::File.join __dir__, 'ext/rouge'
       PygmentsRequirePath = ::File.join __dir__, 'ext/pygments'
-      OptimizerRequirePath = ::File.join __dir__, 'optimizer'
 
       AdmonitionIcons = {
         caution: { name: 'fas-fire', stroke_color: 'BF3400' },
@@ -420,8 +420,7 @@ module Asciidoctor
         @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
         # NOTE: defer instantiating optimizer until we know min pdf version
         if (optimize = doc.attr 'optimize') &&
-            (optimizer = doc.options[:pdf_optimizer] || (((defined? ::Asciidoctor::PDF::Optimizer) ||
-            !(Helpers.require_library OptimizerRequirePath, 'rghost', :warn).nil?) && ::Asciidoctor::PDF::Optimizer))
+            (optimizer = doc.options[:pdf_optimizer] || (Optimizer.for (doc.attr 'pdf-optimizer', 'rghost')))
           @optimize = (optimize.include? ',') ?
             ([:quality, :compliance].zip (optimize.split ',', 2)).to_h :
             ((optimize.include? '/') ? { compliance: optimize } : { quality: optimize })

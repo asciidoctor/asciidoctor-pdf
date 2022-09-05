@@ -135,45 +135,7 @@ This command does not manipulate the images in any way.
 It merely compresses the objects in the PDF and prunes any unreachable references.
 But given how much waste Prawn leaves behind, this turns out to reduce the file size substantially.
 
-You can hook this command directly into the converter by providing your own implementation of the `Optimizer` class.
-Start by creating a Ruby file named [.path]_optimizer-hexapdf.rb_, then populate it with the following code:
-
-.optimizer-hexapdf.rb
-[source,ruby]
-----
-require 'hexapdf/cli'
-
-class Asciidoctor::PDF::Optimizer
-  def initialize(*)
-    app = HexaPDF::CLI::Application.new
-    app.instance_variable_set :@force, true
-    @optimize = app.main_command.commands['optimize']
-  end
-
-  def optimize_file path
-    options = @optimize.instance_variable_get :@out_options
-    options.compress_pages = true
-    #options.object_streams = :preserve
-    #options.xref_streams = :preserve
-    #options.streams = :preserve # or :uncompress
-    @optimize.execute path, path
-    nil
-  rescue
-    # retry without page compression, which can sometimes fail
-    options.compress_pages = false
-    @optimize.execute path, path
-    nil
-  end
-end
-----
-
-To activate your custom optimizer, load this file when invoking the `asciidoctor-pdf` using the `-r` flag and set the `optimize` attribute as well using the `-a` flag.
-
- $ asciidoctor-pdf -r ./optimizer-hexapdf.rb -a optimize filename.adoc
-
-Now you can convert and optimize all in one go.
-
-To see more options that `hexapdf optimize` offers, run:
+To see all the options that `hexapdf optimize` offers, run:
 
  $ hexapdf help optimize
 
@@ -181,6 +143,39 @@ For example, to make the source of the PDF a bit more readable (though less opti
 You can also disable page compression (e.g., `--no-compress-pages` from the CLI or `options.compress_pages = false` from the API).
 
 hexapdf also allows you to add password protection to your PDF, if that's something you're interested in doing.
+
+=== Define an optimizer
+
+You can hook HexaPDF directly into the conversion process by providing your own implementation of the `Optimizer` class.
+Start by creating a Ruby file named [.path]_optimizer-hexapdf.rb_ where you will define the optimizer.
+Next, populate that file with the following code:
+
+.optimizer-hexapdf.rb
+[source,ruby]
+----
+include::example$optimizer-hexapdf.rb[]
+----
+
+To activate your custom optimizer when using the `asciidoctor-pdf` command, load the optimizer code using the `-r` flag, then set both the `optimize` and `pdf-optimizer` attributes using the `-a` flag.
+
+ $ asciidoctor-pdf -r ./optimizer-hexapdf.rb -a optimize -a pdf-optimizer=hexapdf filename.adoc
+
+If you're calling Asciidoctor PDF using the API, you can pass in the optimizer class directly with the `:pdf_optimizer` option:
+
+[,ruby]
+----
+require 'asciidoctor/pdf'
+require_relative 'optimizer-hexapdf'
+
+Asciidoctor.convert_file 'filename.adoc',
+  safe: :safe,
+  attributes: 'optimize',
+  pdf_optimizer: OptimizerHexaPDF
+----
+
+TIP: When you pass the optimizer class directly to the API, the `register_for` call in the class declaration to self-register the class with a keyword is not required.
+
+You've now converted the input file to PDF and optimized it all in one go!
 
 == Rasterizing the PDF
 
