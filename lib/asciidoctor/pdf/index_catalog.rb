@@ -94,7 +94,13 @@ module Asciidoctor
       end
 
       def <=> other
-        (val = @name.casecmp other.name) == 0 ? @name <=> other.name : val
+        if IndexTermCategory === self
+          @name <=> other.name
+        elsif (val = @name.casecmp other.name) == 0
+          other.name <=> @name
+        else
+          val
+        end
       end
     end
 

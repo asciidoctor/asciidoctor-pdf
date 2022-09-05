@@ -388,8 +388,8 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     Index
     T
     that, 1
-    This, 1
     this, 1
+    This, 1
     EOS
   end
 
