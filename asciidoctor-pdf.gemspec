@@ -39,7 +39,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'prawn-table', '~> 0.2.0'
   s.add_runtime_dependency 'prawn-templates', '~> 0.1.0'
   s.add_runtime_dependency 'prawn-svg', '~> 0.32.0'
-  s.add_runtime_dependency 'prawn-icon', '~> 3.0.0'
+  s.add_runtime_dependency 'prawn-icon', '~> 3.1.0'
   s.add_runtime_dependency 'concurrent-ruby', '~> 1.1'
   s.add_runtime_dependency 'treetop', '~> 1.6.0'
 

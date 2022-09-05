@@ -63,6 +63,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
       %W(far bell \uf0f3 FontAwesome5Free-Regular),
       %W(fas lock \uf023 FontAwesome5Free-Solid),
       %W(fi lock \uf16a fontcustom),
+      %W(mdi alien \uf089 MaterialDesignIcons),
     ].each do |icon_set, icon_name, char_code, font_name|
       pdf = to_pdf <<~EOS, analyze: true
       :icons: font
