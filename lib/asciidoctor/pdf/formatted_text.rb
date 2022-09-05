@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-require 'treetop'
-module Kernel
-  alias require polyglot_original_require
-end if defined? polyglot_original_require
+require 'treetop/runtime'
 require_relative 'formatted_text/parser'
 require_relative 'formatted_text/transform'
 require_relative 'formatted_text/formatter'
