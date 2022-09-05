@@ -96,10 +96,10 @@ module Asciidoctor
       def <=> other
         if IndexTermCategory === self
           @name <=> other.name
-        elsif (val = @name.casecmp other.name) == 0
+        elsif (verdict = @name.casecmp other.name) == 0
           other.name <=> @name
         else
-          val
+          verdict
         end
       end
     end
