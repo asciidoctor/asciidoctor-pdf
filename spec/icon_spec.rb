@@ -57,6 +57,26 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     (expect wink_text[0][:font_name]).to eql 'FontAwesome5Free-Solid'
   end
 
+  it 'should support all available font-based icon sets' do
+    [
+      %W(fab twitter \uf099 FontAwesome5Brands-Regular),
+      %W(far bell \uf0f3 FontAwesome5Free-Regular),
+      %W(fas lock \uf023 FontAwesome5Free-Solid),
+      %W(fi lock \uf16a fontcustom),
+    ].each do |icon_set, icon_name, char_code, font_name|
+      pdf = to_pdf <<~EOS, analyze: true
+      :icons: font
+      :icon-set: #{icon_set}
+
+      Look for the icon:#{icon_name}[] icon.
+      EOS
+      icon_text = pdf.text[1]
+      (expect icon_text).not_to be_nil
+      (expect icon_text[:string]).to eql char_code
+      (expect icon_text[:font_name]).to eql font_name
+    end
+  end
+
   it 'should support icon set as suffix on icon name' do
     pdf = to_pdf <<~'EOS', analyze: true
     :icons: font
