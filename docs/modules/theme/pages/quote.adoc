@@ -37,7 +37,7 @@ quote:
 |xref:blocks.adoc#radius[Measurement] +
 (default: _not set_)
 |[source]
-code:
+quote:
   border-radius: 4
 
 |border-style
