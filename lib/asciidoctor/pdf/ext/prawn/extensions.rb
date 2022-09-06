@@ -16,7 +16,7 @@ module Asciidoctor
       ColumnBox = ::Prawn::Document::ColumnBox
 
       FontAwesomeIconSets = %w(fab far fas)
-      IconSets = %w(fab far fas fi pf).to_set
+      IconSets = %w(fab far fas fi).to_set
       IconSetPrefixes = IconSets.map {|it| it + '-' }
       InitialPageContent = %(q\n)
       (FontStyleToSet = {

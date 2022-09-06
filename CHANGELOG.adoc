@@ -25,6 +25,7 @@ Enhancements::
 Improvements::
 
 * process `pre-wrap` role in text formatter
+* drop support for the unmaintained payment font (`pf`) for use in font-based icons
 
 Bug Fixes::
 
