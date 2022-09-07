@@ -69,6 +69,8 @@ See xref:background-images.adoc[] to learn more.
 == Logo image
 
 You can place a logo image on the title page using the `title-logo-image` document attribute.
+Using an inline image macro, you can specify attributes to position and resize the image.
+The special `top` attribute is recognized in this context for setting the vertical position of the image.
 
 [,asciidoc]
 ----
@@ -77,4 +79,9 @@ Author Name
 :title-logo-image: image:logo.png[top=25%,align=center,pdfwidth=0.5in]
 ----
 
-When the value is specified using the inline image macro, you position and scale the image using the accepted macro attributes.
+The value of the `top` attribute is the distance from the top of the content area (just below the top margin).
+It can either be a fixed value (e.g., `1in`) or relative value (`10%`).
+A fixed value is converted to a point value.
+A percentage value is multiplied by the height of the content area (the area inside the top and bottom margins).
+The advantage of a fixed value is that it gives you precision.
+The advantage of a relative value is that it automatically adjusts for different page sizes.
