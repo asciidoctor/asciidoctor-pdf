@@ -16,7 +16,7 @@ gem 'prawn-gmagick', ENV['PRAWN_GMAGICK_VERSION'], require: false if (ENV.key? '
 gem 'pygments.rb', ENV['PYGMENTS_VERSION'], require: false if ENV.key? 'PYGMENTS_VERSION'
 gem 'rghost', ENV['RGHOST_VERSION'], require: false if ENV.key? 'RGHOST_VERSION'
 # Asciidoctor PDF supports Rouge >= 2 (verified in CI build using 2.0.0)
-gem 'rouge', (ENV.fetch 'ROUGE_VERSION', '~> 4.0'), require: false
+gem 'rouge', (ENV.fetch 'ROUGE_VERSION', RUBY_ENGINE == 'jruby' ? '~> 3.0' : '~> 4.0'), require: false
 gem 'text-hyphen', require: false
 
 group :docs do

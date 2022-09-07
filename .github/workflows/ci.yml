@@ -57,7 +57,6 @@ jobs:
         include:
         - os: ubuntu-latest
           ruby: jruby-9.2
-          rouge-version: '~> 3.0'
         - os: ubuntu-latest
           ruby: '3.0'
         - os: macos-latest
