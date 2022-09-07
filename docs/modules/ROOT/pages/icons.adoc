@@ -45,6 +45,7 @@ You can use font-based icons from any of the following icon sets in your PDF doc
 * *fab* - https://fontawesome.com/icons?d=gallery&s=brands[Font Awesome - Brands^]
 * *far* - https://fontawesome.com/icons?d=gallery&s=regular[Font Awesome - Regular^]
 * *fi* - http://zurb.com/playground/foundation-icon-fonts-3[Foundation Icons^]
+* *mdi* - https://materialdesignicons.com[Material Design Icons^]
 
 Use of the fa icon set is deprecated.
 Please use one of the styled FontAwesome icon sets.
