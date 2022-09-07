@@ -124,6 +124,10 @@ jobs:
       run: |
         echo 'PRAWN_GMAGICK_VERSION=0.0.9' >> $GITHUB_ENV
         brew install GraphicsMagick
+    - name: Set ffi-icu version (Linux)
+      if: matrix.primary
+      run: |
+        echo 'FFI_ICU_VERSION=0.4.3' >> $GITHUB_ENV
     - name: Set Rouge version
       if: matrix.rouge-version
       run: echo 'ROUGE_VERSION=${{ matrix.rouge-version }}' >> $GITHUB_ENV

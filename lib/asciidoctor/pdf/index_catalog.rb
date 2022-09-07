@@ -1,19 +1,26 @@
 # frozen_string_literal: true
 
+begin
+  require 'ffi-icu'
+rescue LoadError # rubocop:disable Lint/SuppressedException
+end unless defined? ICU
+
 module Asciidoctor
   module PDF
     class IndexCatalog
       include TextTransformer
 
       LeadingAlphaRx = /^\p{Alpha}/
+      CategoryNameTransliterationIDs = 'Any-Latin;Latin-ASCII;Any-Upper'
 
       attr_accessor :start_page_number
 
-      def initialize
+      def initialize locale = nil
         @categories = {}
         @start_page_number = 1
         @dests = {}
         @sequence = 0
+        @locale = locale || 'en'
       end
 
       def next_anchor_name
@@ -46,8 +53,15 @@ module Asciidoctor
       end
 
       def init_category term
-        name = (LeadingAlphaRx.match? term) ? term.chr.upcase : '@'
-        @categories[name] ||= IndexTermCategory.new name
+        if LeadingAlphaRx.match? term
+          name = term.chr
+          name = !(defined? ::ICU::Transliteration) || name.ascii_only? ?
+            name.upcase :
+            ((::ICU::Transliteration::Transliterator.new CategoryNameTransliterationIDs).transliterate name)
+        else
+          name = '@'
+        end
+        @categories[name] ||= (IndexTermCategory.new name, @locale)
       end
 
       def find_category name
@@ -78,9 +92,10 @@ module Asciidoctor
       include Comparable
       attr_reader :name
 
-      def initialize name
+      def initialize name, locale = nil
         @name = name
         @terms = {}
+        @locale = locale || 'en'
       end
 
       def store_term name, dest
@@ -98,6 +113,8 @@ module Asciidoctor
           @name <=> other.name
         elsif (verdict = @name.casecmp other.name) == 0
           other.name <=> @name
+        elsif (defined? ::ICU::Collation) && (!@name.ascii_only? || !other.name.ascii_only?)
+          (::ICU::Collation::Collator.new @locale).compare @name, other.name
         else
           verdict
         end

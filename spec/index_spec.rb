@@ -471,13 +471,24 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     == Index
     EOS
 
-    (expect (pdf.lines pdf.find_text page_number: 3).join ?\n).to eql <<~'EOS'.chomp
-    Index
-    É
-    étudier, 1
-    Λ
-    λ, 1
-    EOS
+    if gem_available? 'ffi-icu'
+      expected = <<~'EOS'.chomp
+      Index
+      E
+      étudier, 1
+      L
+      λ, 1
+      EOS
+    else
+      expected = <<~'EOS'.chomp
+      Index
+      É
+      étudier, 1
+      Λ
+      λ, 1
+      EOS
+    end
+    (expect (pdf.lines pdf.find_text page_number: 3).join ?\n).to eql expected
   end
 
   it 'should sort terms in index, ignoring case' do
@@ -1060,4 +1071,49 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect section_after_index_text[:page_number]).to eql 2
     (expect section_after_index_text[:y]).to be < category_z_text[:y]
   end
+
+  context 'ICU', if: (gem_available? 'ffi-icu'), &(proc do
+    it 'should group terms by uppercase ASCII letter' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :doctype: book
+
+      ((écriter)) ((être))
+
+      [index]
+      == Index
+      EOS
+
+      categories = (pdf.find_text page_number: 2).select {|it| it[:string].length == 1 && it[:font_name] == 'NotoSerif-Bold' }
+      (expect categories).to have_size 1
+      (expect categories[0][:string]).to eql 'E'
+    end
+
+    it 'should sort terms in index asciibetically' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :doctype: book
+
+      ((ecouter)) ((Écriter)) ((être)) ((empêcher)) ((Европа)) ((alpha)) ((gamma))
+
+      [index]
+      == Index
+      EOS
+
+      index_pagenum = (pdf.find_text 'Index')[0][:page_number]
+      expected_lines = <<~'EOS'.lines.map(&:chomp)
+      Index
+      A
+      alpha, 1
+      E
+      ecouter, 1
+      Écriter, 1
+      empêcher, 1
+      être, 1
+      Европа, 1
+      G
+      gamma, 1
+      EOS
+      index_lines = pdf.lines pdf.find_text page_number: index_pagenum
+      (expect index_lines).to eql expected_lines
+    end
+  end)
 end

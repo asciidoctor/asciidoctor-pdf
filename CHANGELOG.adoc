@@ -21,6 +21,8 @@ Enhancements::
 * allow optimizer to be specified using `:pdf_optimizer` API option (#1785)
 * allow custom optimizer to be registered by extending `Asciidoctor::PDF::Optimizer::Base` and calling `register_for` method (#2330)
 * allow custom optimizer to be selected using `pdf-optimizer` attribute (#2330)
+* sort using collation (asciibetical sorting) if ffi-icu gem is available on load path (#928)
+* restrict categories to ASCII letters (using transliteration) if ffi-icu gem is available on load path (#928)
 * upgrade to prawn-icon 3.1.x to add support for the Material Design Icons (`mdi`) as an available font-based icon set (PR #2334)
 
 Improvements::
