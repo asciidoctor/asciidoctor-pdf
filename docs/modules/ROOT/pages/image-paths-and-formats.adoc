@@ -39,6 +39,11 @@ The following image types (and corresponding file extensions) are supported:
 CAUTION: The GIF (.gif), TIFF (.tiff), WebP (.webp), BMP (.bmp), and interlaced PNG formats are not supported unless you install prawn-gmagick.
 See <<other-image-formats>> for details.
 
+TIP: When using an SVG, make sure that the SVG does not define width and height attributes on the root `<svg>` element.
+(A width of 100% is particularly problematic as it can add empty space above and below the visible image).
+The SVG should only declare the `viewBox` attribute.
+The width should be controlled using the `pdfwidth` attribute on the image macro.
+
 In order to embed an image into a PDF, Asciidoctor PDF must understand how to decode it.
 To perform this work, Asciidoctor delegates to the underlying libraries.
 {url-prawn}[Prawn^] provides support for decoding JPG and PNG images.
