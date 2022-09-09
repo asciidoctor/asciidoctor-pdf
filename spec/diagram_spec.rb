@@ -25,6 +25,31 @@ describe 'Asciidoctor Diagram Integration', if: (RSpec::ExampleGroupHelpers.gem_
     (expect Pathname.new fixture_file 'images/sequence-diagram-b.png.cache').not_to exist
   end
 
+  it 'should allow font family used for diagram to be remapped' do
+    require 'asciidoctor-diagram'
+    with_tmp_file '.cfg', contents: %(skinparam defaultFontName M+ 1p Fallback\n) do |tmp_file|
+      Dir.chdir File.dirname tmp_file do
+        pdf = to_pdf <<~EOS, safe: :unsafe, attributes: { 'imagesdir' => '' }, analyze: true
+        :pdf-theme: default-with-font-fallbacks
+        :plantumlconfig: #{File.basename tmp_file}
+
+        [plantuml,font-test,svg]
+        ....
+        @startuml
+        card カード
+        @enduml
+        ....
+        EOS
+
+        text = pdf.text[0]
+        (expect text[:string]).to eql 'カード'
+        (expect text[:font_name]).to eql 'mplus-1p-regular'
+        (expect (File.file? 'font-test.svg')).to be true
+        (expect (File.directory? '.asciidoctor')).to be true
+      end
+    end
+  end
+
   it 'should not crash when both Asciidoctor Diagram and pdfmark are active' do
     require 'asciidoctor-diagram'
     input_file = Pathname.new fixture_file 'diagrams.adoc'
