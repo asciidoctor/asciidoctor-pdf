@@ -124,5 +124,17 @@ Next, pass that path to the `plantumlconfig` attribute in your AsciiDoc document
 Clear the cache of your diagrams and run Asciidoctor PDF with Asciidoctor Diagram enabled.
 The diagrams will be generated using Noto Serif as the default font, and Asciidoctor PDF will know what to do.
 
+An alternative approach is to remap the font family that the diagram tool selects.
+For example, in your theme file, you might override the definition of the `sans-serif` font.
+
+[,yml]
+----
+extends: default
+font:
+  catalog: 
+    merge: true
+    sans-serif: GEM_FONTS_DIR/mplus1p-regular-fallback.ttf
+----
+
 The bottom line is this:
 If you're using fonts in your SVG, and you want those fonts to be preserved, those fonts must be defined in the Asciidoctor PDF theme file.
