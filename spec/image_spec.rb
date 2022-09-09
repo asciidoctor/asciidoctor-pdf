@@ -570,6 +570,32 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect text[0][:y]).to eql 276.036
     end
 
+    it 'should vertically center SVG within content area if width and height attributes are 100%', visual: true do
+      input = <<~'EOS'
+      before
+
+      image::square-100.svg[]
+
+      after
+      EOS
+
+      to_file = to_pdf_file input, 'image-square-100-auto.pdf'
+      (expect to_file).to visually_match 'image-square-100-auto.pdf'
+    end
+
+    it 'should vertically center SVG within content area if width and height attributes are 100% and pdfwidth is set', visual: true do
+      input = <<~'EOS'
+      before
+
+      image::square-100.svg[pdfwidth=1in]
+
+      after
+      EOS
+
+      to_file = to_pdf_file input, 'image-square-100-constrained.pdf'
+      (expect to_file).to visually_match 'image-square-100-constrained.pdf'
+    end
+
     it 'should compute width correctly when SVG defines width in px units', visual: true do
       [true, false].each do |from_theme|
         to_file = with_content_spacer 200, 200, 'px' do |spacer_path|
