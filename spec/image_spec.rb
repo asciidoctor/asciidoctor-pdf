@@ -1026,21 +1026,24 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should not embed remote image if allow allow-uri-read attribute is not set', visual: true do
-      (expect do
-        to_file = to_pdf_file <<~'EOS', 'image-svg-with-remote-image-disabled.pdf'
-        A sign of a good writer: image:svg-with-remote-image.svg[]
-        EOS
-
-        (expect to_file).to visually_match 'image-svg-with-missing-image.pdf'
-      end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-remote-image.svg'}; Error retrieving URL https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@v1.6.2/spec/fixtures/logo.png)
+      with_svg_with_remote_image do |image_path, image_url|
+        (expect do
+          to_file = to_pdf_file <<~EOS, 'image-svg-with-remote-image-disabled.pdf'
+          A sign of a good writer: image:#{image_path}[]
+          EOS
+          (expect to_file).to visually_match 'image-svg-with-missing-image.pdf'
+        end).to log_message severity: :WARN, message: %(~problem encountered in image: #{image_path}; Error retrieving URL #{image_url})
+      end
     end
 
     it 'should embed remote image if allow allow-uri-read attribute is set', visual: true, network: true do
-      to_file = to_pdf_file <<~'EOS', 'image-svg-with-remote-image.pdf', attribute_overrides: { 'allow-uri-read' => '' }
-      A sign of a good writer: image:svg-with-remote-image.svg[pdfwidth=1.27cm]
-      EOS
+      with_svg_with_remote_image do |image_path|
+        to_file = to_pdf_file <<~EOS, 'image-svg-with-remote-image.pdf', attribute_overrides: { 'allow-uri-read' => '' }
+        A sign of a good writer: image:#{image_path}[pdfwidth=1.27cm]
+        EOS
 
-      (expect to_file).to visually_match 'image-svg-with-image.pdf'
+        (expect to_file).to visually_match 'image-svg-with-image.pdf'
+      end
     end
 
     it 'should warn if remote image is missing and allow-uri-read attribute is set', network: true do
@@ -1888,7 +1891,8 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should read remote image over HTTPS if allow-uri-read is set', network: true do
-      pdf = to_pdf 'image::https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@v1.6.2/spec/fixtures/logo.png[Remote Image]', attribute_overrides: { 'allow-uri-read' => '' }
+      refname = 'main' if (refname = %(v#{Asciidoctor::PDF::VERSION})).include? '-'
+      pdf = to_pdf %(image::https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@#{refname}/spec/fixtures/logo.png[Remote Image]), attribute_overrides: { 'allow-uri-read' => '' }
       images = get_images pdf, 1
       (expect images).to have_size 1
       (expect (pdf.page 1).text).to be_empty

@@ -1405,25 +1405,29 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should allow remote image in SVG to be read if allow-uri-read attribute is set', visual: true, network: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-with-remote-image.pdf', attribute_overrides: { 'allow-uri-read' => '' }
-      :page-background-image: image:svg-with-remote-image.svg[fit=none,position=top]
-
-      Asciidoctor
-      EOS
-
-      (expect to_file).to visually_match 'page-background-image-svg-with-image.pdf'
-    end
-
-    it 'should not allow remote image in SVG to be read if allow-uri-read attribute is not set', visual: true do
-      (expect do
-        to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-with-remote-image-disabled.pdf'
-        :page-background-image: image:svg-with-remote-image.svg[fit=none,position=top]
+      with_svg_with_remote_image do |image_path|
+        to_file = to_pdf_file <<~EOS, 'page-background-image-svg-with-remote-image.pdf', attribute_overrides: { 'allow-uri-read' => '' }
+        :page-background-image: image:#{image_path}[fit=none,position=top]
 
         Asciidoctor
         EOS
 
-        (expect to_file).to visually_match 'page-background-image-svg-with-image-disabled.pdf'
-      end).to log_message severity: :WARN, message: '~No handler available for this URL scheme'
+        (expect to_file).to visually_match 'page-background-image-svg-with-image.pdf'
+      end
+    end
+
+    it 'should not allow remote image in SVG to be read if allow-uri-read attribute is not set', visual: true do
+      with_svg_with_remote_image do |image_path|
+        (expect do
+          to_file = to_pdf_file <<~EOS, 'page-background-image-svg-with-remote-image-disabled.pdf'
+          :page-background-image: image:#{image_path}[fit=none,position=top]
+
+          Asciidoctor
+          EOS
+
+          (expect to_file).to visually_match 'page-background-image-svg-with-image-disabled.pdf'
+        end).to log_message severity: :WARN, message: '~No handler available for this URL scheme'
+      end
     end
 
     it 'should not warn if background SVG has warnings', visual: true do

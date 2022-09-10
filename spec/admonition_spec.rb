@@ -764,17 +764,19 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should embed remote image in icon if allow-uri-read attribute is set', visual: true, network: true do
-      to_file = to_pdf_file <<~'EOS', 'admonition-custom-svg-icon-with-remote-image.pdf', attribute_overrides: { 'docdir' => fixtures_dir, 'allow-uri-read' => '' }
-      :icons: font
-      :iconsdir:
+      with_svg_with_remote_image do |image_path|
+        to_file = to_pdf_file <<~EOS, 'admonition-custom-svg-icon-with-remote-image.pdf', attribute_overrides: { 'docdir' => tmp_dir, 'allow-uri-read' => '' }
+        :icons: font
+        :iconsdir:
 
-      [NOTE,icon=svg-with-remote-image.svg]
-      ====
-      AsciiDoc is awesome!
-      ====
-      EOS
+        [NOTE,icon=#{File.basename image_path}]
+        ====
+        AsciiDoc is awesome!
+        ====
+        EOS
 
-      (expect to_file).to visually_match 'admonition-custom-svg-icon-with-remote-image.pdf'
+        (expect to_file).to visually_match 'admonition-custom-svg-icon-with-remote-image.pdf'
+      end
     end
 
     it 'should use original width of SVG icon if height is less than height of admonition block', visual: true do
