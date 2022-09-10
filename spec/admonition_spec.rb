@@ -763,7 +763,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       end).to log_message severity: :WARN, message: %(~could not embed admonition icon image: #{fixture_file 'corrupt.png'}; image file is an unrecognised format)
     end
 
-    it 'should embed remote image in icon if allow-uri-read attribute is set', visual: true do
+    it 'should embed remote image in icon if allow-uri-read attribute is set', visual: true, network: true do
       to_file = to_pdf_file <<~'EOS', 'admonition-custom-svg-icon-with-remote-image.pdf', attribute_overrides: { 'docdir' => fixtures_dir, 'allow-uri-read' => '' }
       :icons: font
       :iconsdir:
