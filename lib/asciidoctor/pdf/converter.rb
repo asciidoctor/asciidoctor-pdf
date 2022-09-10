@@ -136,12 +136,17 @@ module Asciidoctor
         filetype 'pdf'
         htmlsyntax 'html'
         outfilesuffix '.pdf'
+        @label = :primary
+        @initial_instance_variables = [:@initial_instance_variables] + instance_variables
         if (doc = opts[:document])
           # NOTE: enabling data-uri forces Asciidoctor Diagram to produce absolute image paths
           doc.attributes['data-uri'] = (doc.instance_variable_get :@attribute_overrides)['data-uri'] = ''
+          # NOTE: pre-initialize some instance variables for resolving inline images before conversion starts
+          @tmp_files = {}
+          @allow_uri_read = doc.attr? 'allow-uri-read'
+          @cache_uri = doc.attr? 'cache-uri'
+          @jail_dir = doc.safe < ::Asciidoctor::SafeMode::SAFE ? nil : doc.base_dir
         end
-        @label = :primary
-        @initial_instance_variables = [:@initial_instance_variables] + instance_variables
       end
 
       def convert node, name = nil, _opts = {}

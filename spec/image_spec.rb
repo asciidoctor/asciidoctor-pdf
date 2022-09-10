@@ -1898,6 +1898,26 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect (pdf.page 1).text).to be_empty
     end
 
+    it 'should support remote image in document title' do
+      with_local_webserver do |base_url|
+        image_url = %(#{base_url}/logo.png)
+        pdf = to_pdf %(= image:#{image_url}[Remote Image] Document Title), attribute_overrides: { 'allow-uri-read' => '' }
+        images = get_images pdf, 1
+        (expect images).to have_size 1
+        (expect (pdf.page 1).text.strip).to eql 'Document Title'
+      end
+    end
+
+    it 'should support remote image in section title with auto-generated ID' do
+      with_local_webserver do |base_url|
+        image_url = %(#{base_url}/logo.png)
+        pdf = to_pdf %(== Section Title image:#{image_url}[Remote Image]), attribute_overrides: { 'allow-uri-read' => '' }
+        images = get_images pdf, 1
+        (expect images).to have_size 1
+        (expect (pdf.page 1).text.strip).to eql 'Section Title'
+      end
+    end
+
     it 'should log warning if remote image cannot be fetched' do
       with_local_webserver do |base_url|
         image_url = %(#{base_url}/no-such-image.png)
