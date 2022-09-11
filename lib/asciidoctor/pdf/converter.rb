@@ -137,12 +137,12 @@ module Asciidoctor
         htmlsyntax 'html'
         outfilesuffix '.pdf'
         @label = :primary
+        @tmp_files = {}
         @initial_instance_variables = [:@initial_instance_variables] + instance_variables
         if (doc = opts[:document])
           # NOTE: enabling data-uri forces Asciidoctor Diagram to produce absolute image paths
           doc.attributes['data-uri'] = (doc.instance_variable_get :@attribute_overrides)['data-uri'] = ''
           # NOTE: pre-initialize some instance variables for resolving inline images before conversion starts
-          @tmp_files = {}
           @allow_uri_read = doc.attr? 'allow-uri-read'
           @cache_uri = doc.attr? 'cache-uri'
           @jail_dir = doc.safe < ::Asciidoctor::SafeMode::SAFE ? nil : doc.base_dir
@@ -353,8 +353,8 @@ module Asciidoctor
         # QUESTION: should page options be preserved? (otherwise, not readily available)
         #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }
         ((::Prawn::Document.instance_method :initialize).bind self).call pdf_opts
+        register_fonts theme.font_catalog, ((doc.attr 'pdf-fontsdir')&.sub '{docdir}', (doc.attr 'docdir')) || 'GEM_FONTS_DIR'
         renderer.min_version (@pdf_version = PDFVersions[doc.attr 'pdf-version'])
-        @tmp_files ||= {}
         @allow_uri_read = doc.attr? 'allow-uri-read'
         @cache_uri = doc.attr? 'cache-uri'
         @jail_dir = doc.safe < ::Asciidoctor::SafeMode::SAFE ? nil : doc.base_dir
@@ -389,8 +389,6 @@ module Asciidoctor
         end
         @page_bg_image = {}
         @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
-        # QUESTION: should ThemeLoader handle registering fonts instead?
-        register_fonts theme.font_catalog, ((doc.attr 'pdf-fontsdir')&.sub '{docdir}', (doc.attr 'docdir')) || 'GEM_FONTS_DIR'
         default_kerning theme.base_font_kerning != 'none'
         @fallback_fonts = Array theme.font_fallbacks
         @root_font_size = theme.base_font_size
@@ -4277,7 +4275,6 @@ module Asciidoctor
         else
           imagesdir = relative_to
         end
-        @tmp_files ||= {}
         # NOTE: base64 logic currently used for inline images
         if ::Base64 === image_path
           return @tmp_files[image_path] if @tmp_files.key? image_path
