@@ -29,6 +29,8 @@ end)
 module Asciidoctor
   module PDF
     class Optimizer::RGhost < Optimizer::Base
+      DEFAULT_PARAMS = %w(gs -dNOPAUSE -dBATCH -dQUIET -dNOPAGEPROMPT)
+
       # see https://www.ghostscript.com/doc/current/VectorDevices.htm#PSPDF_IN for details
       (QUALITY_NAMES = {
         'default' => :default,
@@ -43,6 +45,11 @@ module Asciidoctor
         if (gs_path = ::ENV['GS'])
           ::RGhost::Config::GS[:path] = gs_path
         end
+        default_params = DEFAULT_PARAMS.drop 0
+        if (user_params = ::ENV['GS_OPTIONS'])
+          (default_params += user_params.split).uniq!
+        end
+        ::RGhost::Config::GS[:default_params] = default_params
       end
 
       def optimize_file target

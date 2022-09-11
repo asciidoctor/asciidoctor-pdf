@@ -118,6 +118,7 @@ class TextInspector < PDF::Inspector
       @pages[-1][:text] << accum
       @cursor = nil
     else
+      @text << { string: '', width: 0 } if @text.empty?
       (accum = @text[-1])[:string] += string
       accum[:width] += text_width
     end

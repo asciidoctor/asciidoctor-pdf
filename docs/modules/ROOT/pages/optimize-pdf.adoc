@@ -1,5 +1,6 @@
 = Optimize the PDF
-:url-hexapdf: https://hexapdf.gettalong.org/
+:url-hexapdf: https://hexapdf.gettalong.org
+:url-gs-pdfwrite: https://ghostscript.com/doc/current/VectorDevices.htm#PDFWRITE
 
 By default, Asciidoctor PDF does not optimize the PDF it generates or compresses its streams.
 This page covers several approaches you can take to optimize your PDF.
@@ -60,6 +61,12 @@ You'll need to use the technique for assigning an environment variable that's ap
 Here's how we set the `GS` environment variable using PowerShell in CI:
 
  $ echo "$(& where.exe /R 'C:\Program Files\gs' gswin64c.exe)" | Out-File -FilePath $env:GS -Encoding utf8 -Append
+
+If you want to pass additional {url-gs-pdfwrite}[command-line arguments to Ghostscript], you can use the `GS_OPTIONS` environment variable.
+The optimizer expects the value to be a space-separated list of arguments (e.g., `-dBlackText`).
+For example, here's how you would get the optimizer to generate a grayscale PDF with vectorized text:
+
+ $ GS_OPTIONS='-sColorConversionStrategy=Gray -dNoOutputFonts' asciidoctor-pdf -a optimize filename.adoc
 
 In addition to optimizing the PDF file, you can also configure the optimizer to convert the document from standard PDF to PDF/A or PDF/X.
 To do so, you can pass one of the following compliance keywords in the value of the optimize attribute: `PDF/A`, `PDF/A-1`, `PDF/A-2`, `PDF/A-3`, `PDF/X`, `PDF/X-1`, or `PDF/X-3`.
