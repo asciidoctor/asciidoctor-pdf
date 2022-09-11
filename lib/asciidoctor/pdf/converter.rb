@@ -4355,7 +4355,7 @@ module Asciidoctor
 
       def stamp_foreground_image doc, has_front_cover
         pages = state.pages
-        if (first_page = (has_front_cover ? (pages.slice 1, pages.size) : pages).find {|it| !it.imported_page? }) &&
+        if (first_page = (has_front_cover ? (pages.drop 1) : pages).find {|it| !it.imported_page? }) &&
             (first_page_num = (pages.index first_page) + 1) &&
             (fg_image = resolve_background_image doc, @theme, 'page-foreground-image') && fg_image[0]
           go_to_page first_page_num

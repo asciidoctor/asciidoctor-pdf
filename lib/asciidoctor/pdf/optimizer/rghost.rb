@@ -14,7 +14,7 @@ RGhost::GSAlone.prepend (Module.new do
 
   def run
     RGhost::Config.config_platform unless File.exist? RGhost::Config::GS[:path].to_s
-    (cmd = @params.slice 1, @params.length).unshift RGhost::Config::GS[:path].to_s
+    (cmd = @params.drop 1).unshift RGhost::Config::GS[:path].to_s
     #puts cmd if @debug
     system(*cmd)
   end
