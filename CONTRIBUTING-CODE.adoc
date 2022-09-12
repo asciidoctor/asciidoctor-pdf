@@ -49,6 +49,30 @@ Follow the instructions below to learn how to clone the source and run it from y
 
 == Development
 
+=== Prerequisites
+
+In order to set up the project build and run the tests, you'll need the following software installed on your computer:
+
+* git
+* Base development tools (for installing certain development gems)
+* Ruby (with development headers)
+* Bundler (optional, but recommended)
+* pdftocairo (required for visual tests)
+
+The test suite relies on additional software to analyze and assert the behavior of Asciidoctor PDF.
+Therefore, these prerequisites are more extensive than what's needed for using Asciidoctor PDF alone.
+
+If you're running a Debian-based Linux distribution, you can install the required software using the following command:
+
+ $ sudo apt-get install -y build-essential git ruby-dev ruby-bundler poppler-utils
+
+If you're running a Fedora-based Linux distribution, you can install the required software using the following command:
+
+ $ sudo dnf group install -y "Development Tools"
+   sudo dnf install -y redhat-rpm-config ruby-devel rubygem-bundler poppler-utils
+
+You can study the CI workflow at [.path]_.github/workflows/ci.yml_ to learn more about what software is needed to run the full test suite.
+
 === Retrieve the Source Code
 
 You can retrieve the source of {project-name} in one of two ways:
@@ -82,19 +106,20 @@ We recommend using {url-rvm}[RVM] to manage the installation of Ruby you'll use 
  $ rvm use 3.1
 
 The dependencies needed to use {project-name} are defined in the [.path]_Gemfile_ at the root of the project.
-We can use Bundler to install the dependencies for us.
+You can use Bundler to install the dependencies listed there.
 
 To check you have Bundler available, use the `bundle` command to query the installed version:
 
- $ bundle --version
+ $ bundle version
 
-If it's not installed, use the `gem` command to install it.
+If the `bundle` command is not available, use the `gem` command to install it.
 
  $ gem install bundler
 
-Then use the `bundle` command with the `--path` option to install the project dependencies into the project:
+Now configure Bundler to install the project dependencies within the project and run it:
 
- $ bundle --path=.bundle/gems
+ $ bundle config --local path .bundle/gems
+   bundle
 
 NOTE: You must call `bundle` from the project directory so that it can find the [.path]_Gemfile_.
 
