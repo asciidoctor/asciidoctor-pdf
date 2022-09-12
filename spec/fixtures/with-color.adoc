@@ -1,0 +1,16 @@
+= Document With Color
+:source-highlighter: rouge
+
+This document has color.
+
+image::square.svg[]
+
+.Create a basic PDF document using Prawn
+[,ruby]
+----
+require 'prawn'
+
+Prawn::Document.generate 'example.pdf' do
+  text 'Hello, World!'
+end
+----

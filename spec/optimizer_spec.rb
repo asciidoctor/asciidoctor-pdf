@@ -151,6 +151,29 @@ describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_avai
     (expect pdf_info[:Producer]).to include 'Ghostscript'
   end
 
+  it 'should append parameter specified in GS_OPTIONS environment variable', cli: true, visual: true do
+    env = { 'GS_OPTIONS' => '-dNoOutputFonts' }
+    out, err, res = run_command asciidoctor_pdf_bin, '-a', 'optimize', '-o', (to_file = output_file 'optimizer-gs-options-single.pdf'), (example_file 'basic-example.adoc'), env: env
+    (expect res.exitstatus).to be 0
+    (expect out).to be_empty
+    (expect err).to be_empty
+    pdf = TextInspector.analyze Pathname.new to_file
+    (expect pdf.text).to be_empty
+  end
+
+  it 'should append all parameters specified in GS_OPTIONS environment variable', cli: true, visual: true do
+    env = { 'GS_OPTIONS' => '-sColorConversionStrategy=Gray -dBlackText' }
+    out, err, res = run_command asciidoctor_pdf_bin, '-a', 'optimize', '-o', (to_file = output_file 'optimizer-gs-options-multiple.pdf'), (fixture_file 'with-color.adoc'), env: env
+    (expect res.exitstatus).to be 0
+    (expect out).to be_empty
+    (expect err).to be_empty
+    pdf = TextInspector.analyze Pathname.new to_file
+    (expect pdf.text.map {|it| it[:font_color] }.uniq).to eql [nil]
+    rects = (RectInspector.analyze Pathname.new to_file).rectangles
+    (expect rects).to have_size 1
+    (expect rects[0][:fill_color]).to eql '818181'
+  end
+
   it 'should not crash if quality passed to asciidoctor-pdf-optimize CLI is not recognized', cli: true do
     input_file = Pathname.new example_file 'basic-example.adoc'
     to_file = to_pdf_file input_file, 'optimizer-cli-fallback-quality.pdf'

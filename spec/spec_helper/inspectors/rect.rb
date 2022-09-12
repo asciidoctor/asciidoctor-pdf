@@ -51,4 +51,15 @@ class RectInspector < PDF::Inspector
   def set_color_for_stroking_and_special *params
     @stroke_color = params.size == 4 ? params.map {|it| it * 100 } : params.map {|it| sprintf '%02X', (it.to_f * 255).round }.join
   end
+
+  # rg
+  def set_rgb_color_for_nonstroking *params
+    @fill_color = params.size == 4 ? params.map {|it| it * 100 } : params.map {|it| sprintf '%02X', (it.to_f * 255).round }.join
+  end
+
+  # g
+  def set_gray_for_nonstroking *params
+    params *= 3
+    @fill_color = params.size == 4 ? params.map {|it| it * 100 } : params.map {|it| sprintf '%02X', (it.to_f * 255).round }.join
+  end
 end
