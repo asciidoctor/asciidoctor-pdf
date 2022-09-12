@@ -130,6 +130,8 @@ To run the tests, invoke rspec via bundler.
 
  $ bundle exec rspec
 
+TIP: If you're using Ruby 2.7, you may have to turn off deprecation warnings using `export RUBYOPT='-W:no-deprecated'` in order for all of the tests to pass.
+
 To disable tests that access the network, pass the `-t ~network` option:
 
  $ bundle exec rspec -t ~network
