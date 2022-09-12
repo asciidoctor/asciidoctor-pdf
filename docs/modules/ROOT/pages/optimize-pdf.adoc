@@ -48,15 +48,18 @@ Here's an example usage that converts your document and optimizes it:
 
  $ asciidoctor-pdf -a optimize filename.adoc
 
-The command will generate an optimized PDF file that is compliant with the PDF 1.4 specification.
+The command will generate an optimized PDF file that's compliant with the PDF 1.4 specification.
 
-If this command fails because the `gs` command cannot be found, you'll need to set it using the `GS` environment variable.
-On Windows, this step is almost always required since the Ghostscript installer does not install the `gs` command into a standard location.
+If this command fails because the `gs` command cannot be found, you'll need to specify the path using the `GS` environment variable.
+On Windows, this step is almost always required since the Ghostscript installer does not install the `gs` command into a standard location that RGhost can locate.
 Here's an example that shows how you can override the `gs` command path:
 
  $ GS=/path/to/gs asciidoctor-pdf -a optimize filename.adoc
 
-You'll need to use the technique for assigning an environment variable that's relevant for your system.
+You'll need to use the technique for assigning an environment variable that's appropriate for your system.
+Here's how we set the `GS` environment variable using PowerShell in CI:
+
+ $ echo "$(& where.exe /R 'C:\Program Files\gs' gswin64c.exe)" | Out-File -FilePath $env:GS -Encoding utf8 -Append
 
 In addition to optimizing the PDF file, you can also configure the optimizer to convert the document from standard PDF to PDF/A or PDF/X.
 To do so, you can pass one of the following compliance keywords in the value of the optimize attribute: `PDF/A`, `PDF/A-1`, `PDF/A-2`, `PDF/A-3`, `PDF/X`, `PDF/X-1`, or `PDF/X-3`.
