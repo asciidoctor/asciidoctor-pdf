@@ -708,10 +708,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
       thematic_break_line = lines.find {|it| it[:color] == '0000FF' && it[:width] == 1 }
       column_left = thematic_break_line[:from][:x]
-      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
-      gs_p1 = (pdf.extract_graphic_states pdf.pages[0][:raw_content])
-      (expect gs_p1).to have_size 2
-      (expect gs_p1[1]).to include %(#{column_left} 181.89 200.0 600.0 re)
+      rects = (to_pdf input, pdf_theme: pdf_theme, analyze: :rect).rectangles
+      (expect rects).to have_size 1
+      (expect rects[0][:page_number]).to eql 1
+      (expect rects[0][:point]).to eql [column_left, 181.89]
+      (expect rects[0][:width]).to eql 200.0
+      (expect rects[0][:height]).to eql 600.0
+      (expect rects[0][:fill_color]).to eql '008000'
     end
 
     it 'should center SVG in right column when page columns are enabled', visual: true do
@@ -749,7 +752,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         end
       end
 
-      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+      input = <<~'EOS'
       = Document Title
 
       image::tall.svg[pdfwidth=90mm]
@@ -757,13 +760,17 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       paragraph in second column
       EOS
 
+      pdf = to_pdf input, backend: backend, analyze: true
       (expect pdf.pages).to have_size 1
-      gs_p1 = (pdf.extract_graphic_states pdf.pages[0][:raw_content])
-      (expect gs_p1).to have_size 1
-      (expect gs_p1[0]).to include '48.24 158.37 200.0 600.0 re'
       second_column_text = pdf.find_unique_text 'paragraph in second column'
       (expect second_column_text[:x]).to eql 302.89
       (expect second_column_text[:y] + second_column_text[:font_size]).to (be_within 2).of 758.37
+      rects = (to_pdf input, backend: backend, analyze: :rect).rectangles
+      (expect rects).to have_size 1
+      (expect rects[0][:page_number]).to eql 1
+      (expect rects[0][:point]).to eql [48.24, 158.37]
+      (expect rects[0][:width]).to eql 200.0
+      (expect rects[0][:height]).to eql 600.0
     end
 
     it 'should advance SVG below top of column box to next column to fit' do
@@ -778,7 +785,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         end
       end
 
-      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+      input = <<~'EOS'
       = Document Title
 
       before
@@ -788,15 +795,19 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       paragraph on next page
       EOS
 
+      pdf = to_pdf input, backend: backend, analyze: true
       (expect pdf.pages).to have_size 2
       before_text = pdf.find_unique_text 'before'
       (expect before_text[:x]).to eql 48.24
-      gs_p1 = (pdf.extract_graphic_states pdf.pages[0][:raw_content])
-      (expect gs_p1).to have_size 1
-      (expect gs_p1[0]).to include '302.89 158.37 200.0 600.0 re'
       second_column_text = pdf.find_unique_text 'paragraph on next page'
       (expect second_column_text[:page_number]).to eql 2
       (expect second_column_text[:x]).to eql 48.24
+      rects = (to_pdf input, backend: backend, analyze: :rect).rectangles
+      (expect rects).to have_size 1
+      (expect rects[0][:page_number]).to eql 1
+      (expect rects[0][:point]).to eql [302.89, 158.37]
+      (expect rects[0][:width]).to eql 200.0
+      (expect rects[0][:height]).to eql 600.0
     end
 
     it 'should scale down SVG to fit bounds if width is set in SVG but not on image macro', visual: true do
