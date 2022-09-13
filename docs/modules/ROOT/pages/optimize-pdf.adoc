@@ -68,6 +68,16 @@ For example, here's how you would get the optimizer to generate a grayscale PDF 
 
  $ GS_OPTIONS='-sColorConversionStrategy=Gray -dNoOutputFonts' asciidoctor-pdf -a optimize filename.adoc
 
+Here are some other features you can enable using `GS_OPTIONS`:
+
+-dBlackText::
+Force all text to rendered in black (gray value 0).
+This can be useful if you are printing the document.
+-dNoOutputFonts::
+Force all text to be converted to paths (linework) so it's not selectable (in exchange for a much larger document).
+-sOwnerPassword=xyx -sUserPassword=xyx::
+Require a password to open the document (owner for edit, user for view).
+
 In addition to optimizing the PDF file, you can also configure the optimizer to convert the document from standard PDF to PDF/A or PDF/X.
 To do so, you can pass one of the following compliance keywords in the value of the optimize attribute: `PDF/A`, `PDF/A-1`, `PDF/A-2`, `PDF/A-3`, `PDF/X`, `PDF/X-1`, or `PDF/X-3`.
 
