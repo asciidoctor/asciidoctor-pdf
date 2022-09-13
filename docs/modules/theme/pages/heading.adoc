@@ -241,7 +241,7 @@ heading:
 (default: `$heading-text-transform`)
 |[source]
 heading:
-  h3-text-transform: uppercase
+  h3-text-transform: smallcaps
 |===
 
 [#min-height-after]
