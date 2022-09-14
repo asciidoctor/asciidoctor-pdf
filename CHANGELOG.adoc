@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 Bug Fixes::
 
+* fix crash when smallcaps text transform is applied to a phrase (#2339)
 * don't add chapter signifier if `chapter-signifier` is unset (#2328)
 * don't add part signifier if `part-signifier` is unset (#2328)
 * don't include bottom margin when computing heading height if `heading-min-height-after` theme key is empty (#2326)

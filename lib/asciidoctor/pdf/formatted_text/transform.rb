@@ -176,8 +176,10 @@ module Asciidoctor
                   end
                   if (text_transform = fragment.delete :text_transform)
                     text = (text_chunks = extract_text pcdata).join
-                    text_io = StringIO.new transform_text text, text_transform
-                    restore_text pcdata, text_chunks.each_with_object([]) {|chunk, accum| accum << (text_io.read chunk.length) }
+                    chars = (StringIO.new transform_text text, text_transform).each_char
+                    restore_text pcdata, (text_chunks.each_with_object [] do |chunk, accum|
+                      accum << chunk.length.times.map { chars.next }.join
+                    end)
                   end
                   # NOTE: decorate child fragments with inherited properties from this element
                   apply pcdata, fragments, fragment
