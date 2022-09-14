@@ -162,6 +162,16 @@ describe Asciidoctor::PDF::FormattedText::Transform do
     (expect fragments[0][:color]).to eql '0000AA'
   end
 
+  it 'should apply smallcaps transform to phrase' do
+    pdf_theme = build_pdf_theme role_sc_text_transform: 'smallcaps'
+    input = 'HTML stands for <strong class="sc">HyperText Markup Language</strong>'
+    parsed = parser.parse input
+    fragments = (subject.class.new theme: pdf_theme).apply parsed.content
+    (expect fragments).to have_size 2
+    (expect fragments[1][:text]).to eql 'HʏᴘᴇʀTᴇxᴛ Mᴀʀᴋᴜᴘ Lᴀɴɢᴜᴀɢᴇ'
+    (expect fragments[1][:styles]).to include :bold
+  end
+
   it 'should return nil if text contains invalid markup' do
     input = 'before <foo>bar</foo> after'
     (expect parser.parse input).to be_nil
