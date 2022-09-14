@@ -255,6 +255,19 @@ image:
   indent: [0.5in, 0]
 ----
 
+== Look for images in multiple dirs
+
+By default, an AsciiDoc converter only supports resolving images from a single location, the value of the `imagesdir` attribute.
+You can use an extended converter to have Asciidoctor PDF look in multiple locations until it finds the image.
+
+.Extended converter that resolve images from multiple locations
+[,ruby]
+----
+include::example$pdf-converter-multiple-imagesdirs.rb[]
+----
+
+If you need the converter to support more than two locations, update the list of attribute names in the extended converter.
+
 == Language label on code block
 
 The built-in HTML converter inserts a source language label in the upper right corner of the code block, which appears on hover.
