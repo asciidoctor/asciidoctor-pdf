@@ -991,6 +991,13 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect text[4][:font_name]).to eql 'mplus1mn-regular'
     end
 
+    it 'should apply smallcaps text transform to phrase' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { role_sc_text_transform: 'smallcaps' }, analyze: true
+      HTML stands for [.sc]#HyperText Markup Language#
+      EOS
+      (expect pdf.lines).to eql ['HTML stands for HʏᴘᴇʀTᴇxᴛ Mᴀʀᴋᴜᴘ Lᴀɴɢᴜᴀɢᴇ']
+    end
+
     it 'should allow custom role to specify relative font size' do
       pdf_theme = {
         heading_h2_font_size: 24,
