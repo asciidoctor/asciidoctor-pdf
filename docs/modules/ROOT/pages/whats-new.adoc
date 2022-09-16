@@ -366,7 +366,10 @@ You can use this attribute to select a background per layout.
 == Themes
 
 Print-optimised themes:: Asciidoctor PDF {page-component-version} has two new print-optimized themes, named `default-for-print` and `default-for-print-with-fallback-font`.
-Extend base theme:: A custom theme does not inherit from the base theme by default; it must be specified explicitly using `extends: base`.
+Extend base theme:: A custom theme no longer inherits from the base theme by default (i.e., when the `extends` key is not specified).
+Instead, it starts with no keys set, such as `base-font-size`.
+If you're getting errors after upgrading, this might be the culprit.
+To make your theme portable across versions of Asciidoctor PDF, explicitly declare which theme you want your theme to extend (e.g., add `extends: base` as the first key).
 Extends hierarchy:: Asciidoctor PDF only extends a theme in the `extends` hierarchy once unless the theme is modified with `!important`.
 Power operator:: The theming language now supports the power operator.
 It has the same precedence as multiply and divide.
