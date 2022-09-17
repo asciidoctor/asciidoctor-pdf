@@ -30,6 +30,7 @@ Improvements::
 
 * process `pre-wrap` role in text formatter
 * drop support for the unmaintained payment font (`pf`) for use in font-based icons
+* provide a fallback value for `base-font-size` when loading theme (#2343)
 
 Bug Fixes::
 
