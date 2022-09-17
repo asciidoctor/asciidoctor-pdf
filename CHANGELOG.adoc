@@ -40,6 +40,16 @@ Bug Fixes::
 * only load Treetop runtime so it does not overload `require` method
 * fix collation order of index terms that differ only in case
 
+== 2.3.2 (2022-09-17) - @mojavelinux
+
+Improvements::
+
+* provide fallback value for `base-font-size` theme key before processing keys (#2342)
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.2[git tag] | {url-repo}/compare/v2.3.1\...v2.3.2[full diff]
+
 == 2.3.1 (2022-09-17) - @mojavelinux
 
 Improvements::
