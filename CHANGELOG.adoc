@@ -7,6 +7,10 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
+Improvements::
+
+* provide a fallback value for `base-font-size` when loading theme (#2343)
+
 Bug Fixes::
 
 * fix crash when smallcaps text transform is applied to a phrase (#2339)

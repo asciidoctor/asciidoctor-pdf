@@ -83,6 +83,7 @@ module Asciidoctor
             theme_data.base_text_align ||= 'left'
             theme_data.base_line_height ||= 1
             theme_data.base_font_color ||= '000000'
+            theme_data.base_font_size ||= 12
             theme_data.code_font_family ||= (theme_data.codespan_font_family || 'Courier')
             theme_data.conum_font_family ||= (theme_data.codespan_font_family || 'Courier')
             if (heading_font_family = theme_data.heading_font_family)

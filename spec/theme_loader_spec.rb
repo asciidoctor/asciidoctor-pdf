@@ -781,7 +781,7 @@ describe Asciidoctor::PDF::ThemeLoader do
           theme = subject.load_theme (File.basename theme_path), (File.dirname theme_path)
           (expect theme.base_font_family).to eql 'Times-Roman'
           (expect theme.heading_font_family).to eql 'Times-Roman'
-          (expect theme.base_font_size).to be_nil
+          (expect theme.base_font_size).to be 12
         end
       end
     end
@@ -889,9 +889,10 @@ describe Asciidoctor::PDF::ThemeLoader do
       (expect theme.base_text_align).to eql 'left'
       (expect theme.base_line_height).to be 1
       (expect theme.base_font_color).to eql '000000'
+      (expect theme.base_font_size).to be 12
       (expect theme.code_font_family).to eql 'Courier'
       (expect theme.conum_font_family).to eql 'Courier'
-      (expect theme.to_h.keys).to have_size 6
+      (expect theme.to_h.keys).to have_size 7
     end
 
     it 'should link code and conum font family to codespan font family by default' do
