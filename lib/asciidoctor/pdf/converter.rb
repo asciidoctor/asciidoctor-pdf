@@ -557,7 +557,7 @@ module Asciidoctor
       def prepare_theme theme
         theme.base_border_color = nil if theme.base_border_color == 'transparent'
         theme.base_font_color ||= '000000'
-        theme.base_font_size ||= 12
+        theme.base_font_family ||= 'Helvetica'
         theme.base_font_style = theme.base_font_style&.to_sym || :normal
         theme.page_numbering_start_at ||= 'body'
         theme.running_content_start_at ||= 'body'
