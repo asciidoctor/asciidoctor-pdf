@@ -7,25 +7,35 @@ This is done using AsciiDoc attributes.
 
 There are three AsciiDoc attributes that tell Asciidoctor PDF how to locate and apply your theme.
 
-pdf-theme:: The name of the YAML theme file to load.
-If the name ends with `.yml`, it's assumed to be the complete name of a file and is resolved relative to `pdf-themesdir`, if specified, otherwise the current directory.
-Otherwise, `-theme.yml` is appended to the name to make the file name (i.e., `<name>-theme.yml`) and is resolved relative to `pdf-themesdir`, if specified, otherwise the built-in themes dir.
-Can be specified using the `--theme` CLI option.
+pdf-theme:: The name or file path of the theme to load.
++
+If the value of the `pdf-theme` attribute ends with `.yml` (e.g., `custom-theme.yml`), the name is assumed to be an absolute or relative file path.
+If the path is relative, it's resolved starting from the value of the `pdf-themesdir` attribute.
+If the `pdf-themesdir` attribute is not specified, the current working directory is used instead.
++
+If the value of the `pdf-theme` attribute doesn't end with `.yml` (e.g., `base`), the suffix `-theme.yml` is automatically appended to build a valid absolute or relative file path (i.e., `<name>-theme.yml`).
+If the resulting file path is relative, it's resolved starting from the value of the `pdf-themesdir` attribute.
+If the `pdf-themesdir` is not specified, the built-in themes directory is used instead (rather than the current working directory).
++
+You can use the `+{docdir}+` token as the first path segment in the name to build an absolute path starting from the directory of the source document.
++
+Can be specified using the `--theme` CLI option as a shorthand.
 
 pdf-themesdir:: The directory where the theme file is located.
-If the path is relative, the value is resolved starting from the current working directory.
-You can use the `+{docdir}+` token as the first path segment to create an absolute path starting from the directory of the document.
-_Specifying an absolute path is recommended._
 +
-If you use images in your theme, image paths are resolved relative to this directory.
-If `pdf-theme` ends with `.yml`, and `pdf-themesdir` is not specified, then `pdf-themesdir` defaults to the directory of the path specified by `pdf-theme`.
+If the path is relative, the value is resolved starting from the current working directory.
+You can use the `+{docdir}+` token as the first path segment to build an absolute path starting from the directory of the source document.
++
+Relative image paths in your theme are resolved starting from this location.
+(In the future, these relative paths may be resolved starting from the directory where the theme file is located, which could be different).
 
 pdf-fontsdir:: The directory or directories where the fonts used by your theme, if any, are located.
++
 Multiple entries must be separated by either a comma or a semicolon.
 To reference a file inside a JAR file on the classpath, prefix with the path with `uri:classloader:` (AsciidoctorJ only).
 If the path is relative, the value is resolved starting from the current working directory.
++
 You can use the `+{docdir}+` token as the first path segment to create an absolute path starting from the directory of the document.
-_Specifying an absolute path is recommended._
 
 == Load a theme
 
@@ -59,14 +69,16 @@ You can skip setting the `pdf-themesdir` attribute by passing the relative path 
 
  $ asciidoctor-pdf --theme resources/themes/basic-theme.yml -a pdf-fontsdir=resources/fonts doc.adoc
 
-However, when theme assets are specified using relative paths, image paths in your theme may not resolve properly.
-Paths in the theme file are resolved relative to the current directory.
-In the future, this may change so that paths are resolved relative to the base directory (typically the document's directory).
-For now, it's recommended that you specify absolute paths to future-proof your configuration.
+These relative paths are resolved starting from the current working directory.
+Alternately, you can use `+{docdir}+` as the first path segment to anchor them to the directory of the source document instead.
+
+If you're having difficulty getting the converter to locate your theme or fonts, you can specify absolute paths instead, which are used as is.
 
  $ asciidoctor-pdf --theme /path/to/resources/themes/basic-theme.yml -a pdf-fontsdir=/path/to/resources/fonts doc.adoc
 
-Alternately, you can prefix image paths in the theme using the `+{docdir}+` or `+{docimagesdir}+` attribute references.
+Relative font paths in the theme are resolved starting from the directory resolved from the `pdf-fontsdir` attribute.
+All other paths in the theme are resolved starting from the directory where the theme file is found.
+You can prefix paths in the theme using the `+{docdir}+` or `+{docimagesdir}+` attribute references.
 
 == Using Maven and Gradle
 
