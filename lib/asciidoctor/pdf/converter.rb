@@ -810,7 +810,7 @@ module Asciidoctor
                 node.blocks.each do |child|
                   if child.context == :paragraph
                     child.document.playback_attributes child.attributes
-                    convert_paragraph child, prose_opts.dup
+                    convert_paragraph child, prose_opts.merge
                     prose_opts.delete :first_line_options
                   else
                     # FIXME: this could do strange things if the wrong kind of content shows up
@@ -1926,7 +1926,7 @@ module Asciidoctor
           ink_caption node, labeled: false, end: :bottom if node.title?
           theme_margin :block, :bottom, (next_enclosed_block node)
         else
-          original_attributes = node.attributes.dup
+          original_attributes = node.attributes.merge
           begin
             node.update_attributes 'target' => poster, 'link' => video_path
             convert_image node
@@ -5226,7 +5226,7 @@ module Asciidoctor
         if (@scratch_depth += 1) == 1
           @save_state = {
             catalog: {}.tap {|accum| doc.catalog.each {|k, v| accum[k] = v.dup } },
-            attributes: doc.attributes.dup,
+            attributes: doc.attributes.merge,
           }
         end
       end

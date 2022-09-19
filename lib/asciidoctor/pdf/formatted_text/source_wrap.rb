@@ -18,11 +18,11 @@ module Asciidoctor
             if (first_fragment = unconsumed[0])[:linenum]
               linenum_text = first_fragment[:text]
               linenum_spacer ||= { text: (NoBreakSpace.encode linenum_text.encoding) + (' ' * (linenum_text.length - 1)), linenum: :spacer }
-              highlight_line = (second_fragment = unconsumed[1])[:highlight] ? second_fragment.dup : nil
+              highlight_line = (second_fragment = unconsumed[1])[:highlight] ? second_fragment.merge : nil
             else # wrapped line
               first_fragment[:text] = first_fragment[:text].lstrip
               @arranger.unconsumed.unshift highlight_line if highlight_line
-              @arranger.unconsumed.unshift linenum_spacer.dup
+              @arranger.unconsumed.unshift linenum_spacer.merge
             end
             @line_wrap.wrap_line \
               document: @document,

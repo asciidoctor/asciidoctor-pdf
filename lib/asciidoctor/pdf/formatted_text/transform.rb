@@ -376,7 +376,7 @@ module Asciidoctor
 
         def clone_fragment fragment, append = nil
           if fragment
-            fragment = fragment.dup
+            fragment = fragment.merge
             fragment[:styles] = fragment[:styles].dup if fragment.key? :styles
             fragment[:callback] = fragment[:callback].dup if fragment.key? :callback
             append ? (fragment.update append) : fragment

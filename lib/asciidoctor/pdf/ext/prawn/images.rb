@@ -7,7 +7,7 @@ module Asciidoctor
       def image file, opts = {}
         # FIXME: handle case when SVG is an IO object
         if ::String === file
-          if ((opts = opts.dup).delete :format) == 'svg' || (file.downcase.end_with? '.svg')
+          if ((opts = opts.merge).delete :format) == 'svg' || (file.downcase.end_with? '.svg')
             #opts[:enable_file_requests_with_root] = (::File.dirname file) unless opts.key? :enable_file_requests_with_root
             #opts[:enable_web_requests] = allow_uri_read if !(opts.key? :enable_web_requests) && (respond_to? :allow_uri_read)
             #opts[:cache_images] = cache_uri if !(opts.key? :cache_images) && (respond_to? :cache_uri)

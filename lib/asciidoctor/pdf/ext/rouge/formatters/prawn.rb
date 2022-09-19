@@ -51,13 +51,13 @@ module Rouge
           linenum = (linenum = opts[:start_line] || 1) > 0 ? linenum : 1
           fragments = []
           line_numbers ? (fragments << (create_linenum_fragment linenum)) : (start_of_line = true)
-          fragments << @highlight_line_fragment.dup if highlight_lines && highlight_lines[linenum]
+          fragments << @highlight_line_fragment.merge if highlight_lines && highlight_lines[linenum]
           tokens.each do |tok, val|
             if val == LF
               fragments << { text: LF }
               linenum += 1
               line_numbers ? (fragments << (create_linenum_fragment linenum)) : (start_of_line = true)
-              fragments << @highlight_line_fragment.dup if highlight_lines && highlight_lines[linenum]
+              fragments << @highlight_line_fragment.merge if highlight_lines && highlight_lines[linenum]
             elsif val.include? LF
               # NOTE: we assume if the fragment ends in a line feed, the intention was to match a line-oriented form
               line_oriented = val.end_with? LF
@@ -72,7 +72,7 @@ module Rouge
                 # NOTE: eagerly append linenum fragment or line highlight if there's a next line
                 linenum += 1
                 line_numbers ? (fragments << (create_linenum_fragment linenum)) : (start_of_line = true)
-                fragments << @highlight_line_fragment.dup if highlight_lines && highlight_lines[linenum]
+                fragments << @highlight_line_fragment.merge if highlight_lines && highlight_lines[linenum]
               end
             else
               if start_of_line
