@@ -1,0 +1,303 @@
+= Upgrade to Asciidoctor PDF 2
+
+This guide is written for anyone making the switch from an Asciidoctor PDF 1.x release to an Asciidoctor PDF 2.x release.
+Although Asciidoctor PDF 2 was carefully designed to make this transition a smooth one, it is still a major release, so there are changes that may impact you.
+You'll also want to begin taking advantage of the new and improved functionality.
+
+This page doesn't call attention to all the changes in the Asciidoctor PDF 2 release line.
+Rather, it focuses on the changes at the transition from Asciidoctor PDF 1 to Asciidoctor PDF 2.
+To find a complete list of changes to Asciidoctor PDF, refer to the {url-project-repo}/blob/main/CHANGELOG.adoc[CHANGELOG^].
+
+== Breaking changes and removals
+
+The Asciidoctor PDF 2 major release gave us the opportunity to clean up and refine some of the behavior of this converter.
+As a result, breaking changes and removals are customary.
+This section summarizes that changes that may impact your content and configuration in order to help you make the transition.
+
+=== Runtimes and dependencies
+
+* Support for Ruby < 2.7 and JRuby < 9.2 has been removed.
+* The converter now relies on Ruby's built-in multibyte support for the uppercase, lowercase, and capitalize text transforms; no additional gems are required.
+* It's no longer necessary to use an unreleased version of the *prawn-table* gem with Asciidoctor PDF.
+If you are, please remove that dependency from your [.path]_Gemfile_ and allow Asciidoctor PDF to handle the dependency on the prawn-table gem.
+* `safe_yaml gem` has been removed; `YAML.safe_load` from the Ruby stdlib is used instead.
+
+=== Theming system and built-in fonts
+
+* Support for the `pdf-style` and `pdf-stylesdir` attributes has been removed (deprecated since 1.5.0.beta.1).
+Use the `pdf-theme` and `pdf-themesdir` attributes instead to specify the location of a custom theme.
+* A custom theme no longer inherits from the base theme when the `extends` key is not specified.
+Instead, it starts with no keys set (plus `base-font-size` starting in 2.3.2) and relies on fallback values when needed by the converter.
+If you're getting errors after upgrading, this could be the culprit.
+To make your theme portable across versions of Asciidoctor PDF, explicitly declare the theme you want your theme to extend using the `extends` key.
+* The basic running footer is now enabled when you use the base theme or extend the base theme.
+(Previously, the basic running footer was only enabled if you used or extended the default theme.)
+* The `top-margin` key on block and prose categories in theme has been removed; space between delimited blocks and lists is now controlled using bottom margins only.
+* The previously undocumented `vertical-spacing` key has been removed from the built-in themes.
+* The `lead` category keys in theme have been replaced with the built-in role named `lead`.
+* Support for the `<color>` tag in passthrough and theme content has been removed; use `<font color="...">` instead; may affect themes that use pseudo-HTML in the value of the `content` key.
+* The previously deprecated "`ascii`" fonts have been removed; only the more complete "`subset`" fonts are now bundled with the gem.
+
+=== Document attributes and options
+
+* The deprecated `chapter-label` document attribute has been renamed to the `chapter-signifier` attribute.
+* The `untitled` section option has been renamed to the `notitle` option
+* Most blocks are now breakable by default.
+You can apply the `unbreakable` option on a block to revert to the old behavior.
+
+=== Require paths and APIs
+
+* The [.path]_asciidoctor-pdf/converter_ and [.path]_asciidoctor-pdf/version_ shim scripts have been removed; use [.path]_asciidoctor/pdf/converter_ and [.path]_asciidoctor/pdf/version_ instead.
+* The `Pdf` module alias in the API has been removed in favor of `PDF`.
+
+== Deprecations
+
+The following features are deprecated with the release of Asciidoctor PDF 2 and will be removed in the next major release.
+
+* The `blockquote` category prefix is deprecated in the theme; use the `quote` prefix instead.
+See xref:theme:quote.adoc[].
+* The `key` category prefix is deprecated in the theme; use the `kbd` prefix instead.
+See xref:theme:keyboard.adoc[].
+* The `literal` category prefix is deprecated in the theme; use the `codespan` prefix instead.
+See xref:theme:codespan.adoc[].
+* The `outline-list` category prefix is deprecated in the theme; use the `list` prefix instead.
+See xref:theme:list.adoc[].
+* The `Optimizer#generate_file` method is deprecated; use `Optimizer#optimize_file` instead.
+* The built-in `default-with-fallback-fonts` and `default-for-print-with-fallback-fonts` theme names are deprecated in favor of `default-with-font-fallbacks` and `default-for-print-with-font-fallbacks`, respectively.
+
+== New and noteworthy
+
+=== Paragraph roles and indent
+
+You can define custom roles in your theme and apply them to specific paragraphs in your document.
+See xref:theme:custom-role.adoc[] to learn how to create a custom role and xref:roles.adoc#custom[Use a custom role] for how to assign a custom role to a paragraph.
+Applying custom roles to other blocks is not yet supported.
+However, you can learn how to enable this feature using an extended converter on the xref:extend:use-cases.adoc[extended converter use cases page].
+
+With the advent of roles being supported on paragraphs, the `lead` category in the theme has been dropped and replaced by a built-in role named `lead`.
+See xref:theme:role.adoc#built-in[Built-in roles] for details.
+
+To control the indent of inner paragraphs (instead of all paragraphs), you can set the new `prose-text-indent-inner` key in your theme.
+See xref:theme:prose.adoc[] for details.
+
+=== Breakable and unbreakable blocks
+
+The following blocks are now breakable by default, which includes automatic anchor and caption orphan prevention:
+
+* Admonitions
+* Block images
+* Code blocks (literal, listing, and source)
+* Examples
+* Open blocks
+* Quote blocks
+* Sidebars
+* Verses
+
+Tables and sections are breakable by default, but do not provide automatic anchor and caption orphan prevention.
+For tables, that means the anchor and caption can be left on the current page if the table is advanced to the next page.
+For sections, that means the section's title may be left on the current page if the first content block doesn't fit.
+However, you can turn on orphan prevention for tables and sections by adding the (seemingly redundant) xref:breakable-and-unbreakable.adoc#breakable[breakable option] as a hint.
+
+The `unbreakable` option can be applied to all delimited blocks (including admonitions and tables), but not sections.
+When the xref:breakable-and-unbreakable.adoc#unbreakable[unbreakable option] is applied to a block, the converter will advance the block and its caption and anchor to the next page if it detects that the block would break across pages and it can fit on a single page.
+
+=== Notitle section option
+
+The `untitled` option on sections has been renamed to `notitle`.
+With the name change, it's also gained new capabilities.
+The `notitle` option hides a section title in the body of a document, but displays the title in the TOC and allows the anchor resulting from that title to still be referencable.
+It can also be used to add an entry to the TOC for a preamble, anonymous preface, and imported PDF pages.
+See xref:notitle.adoc[] for examples and more details.
+
+=== Blocks and block captions
+
+Blocks and block captions gained a lot of new theming capabilities in Asciidoctor PDF 2.
+Here are a few of the highlights:
+
+Padding::
+The theme can now control the padding on a block using a 2-value array for ends and sides or 3-value array with implied left side value.
+Border width::
+The border width of delimited blocks, admonitions, and block images can be customized per edge with the xref:theme:blocks.adoc#border-width[border-width key].
+Border style::
+The border style of delimited blocks, admonitions, and block images can be changed with the xref:theme:blocks.adoc#border-style[border-style key].
+Border styles include dashed, dotted, double, and solid.
+Line height::
+Wherever font properties are accepted in the theme, you can now control the line height of blocks using the `line-height` key.
+Anchor positioning::
+The anchor location for blocks can be positioned relative to the content using the `block-anchor-top` theme key.
+Caption text alignment::
+The text alignment of captions can now be controlled independent of the block alignment using the global xref:theme:caption.adoc[caption-text-align theme key] or per block category with `<category>-caption-text-align`.
+The xref:theme:block-images.adoc#caption-text-align[image-caption-text-align] and xref:theme:tables.adoc#caption-text-align[table-caption-text-align] theme keys accept the value `inherit` in addition to the standard text alignment values.
+The value `inherit` resolves to the alignment of the block image or table.
+Global caption text decoration::
+The text decoration style, color, and width can be applied to captions globally with the `caption-text-decoration-style`, `caption-text-decoration-color`, and `caption-text-decoration-width` theme keys.
+See xref:theme:caption.adoc[] for more information.
+Caption background color::
+You can now specify a background color for captions globally using the `caption-background-color` theme key or per block category (`<category>-caption-background-color`).
+See xref:theme:caption.adoc[] for more information.
+Caption max-width::
+A caption's `max-width` value can be set to a percentage of the content by passing the percentage as an argument to `fit-content` function.
+First line of abstract::
+The theme can control the font color of first line of abstract using `abstract-first-line-font-color` key.
+
+.Notable fixes for blocks
+* Asciidoctor PDF now uses smarter bottom margin logic that prevents extra space from being added below blocks, particularly when blocks are nested or used inside an AsciiDoc table cell.
+* Syntax highlighting isn't applied to a source block if the `specialchars` substitution is disabled.
+* Borders, shading, and padding aren't applied to collapsible blocks.
+* The `callouts` substitution can be removed on code blocks.
+
+=== Tables
+
+Border widths and styles::
+The table border width can be customized per edge with the xref:theme:blocks.adoc#border-width[border-width key].
+The border style can be xref:theme:tables.adoc#border-style[specified per edge by assigning an array of styles] to the `border-style` key.
+Border styles include dashed, dotted, and solid.
+
+Grid widths and styles::
+The width of table grid lines can be specified for rows and columns with the xref:theme:tables.adoc#grid-width[grid-width key].
+The style of the grid lines can be specified for rows and columns with the xref:theme:tables.adoc#grid-style[grid-style key].
+Grid styles include dashed, dotted, and solid.
+
+Maximum caption width::
+The maximum caption width for tables can be set to a percentage of the content by passing an argument to the `fit-content` function.
+
+Caption end::
+The `table-caption-side` theme key has been xref:theme:tables.adoc#end[renamed to table-caption-end].
+
+.Notable fixes for tables
+* Vertical center alignment is correctly applied to regular table cells.
+* The border bottom is correctly applied to a table row when frame and grid are none.
+* The font size of a literal table cells and nested blocks in AsciiDoc table cells is now scaled.
+* AsciiDoc table cells inherit the font properties from the table.
+* The content of an AsciiDoc table cell is prevented from overrunning the footer or subsequent pages.
+* The top and bottom padding is taken into account when computing the height of an AsciiDoc table cell.
+* An error message is logged if a table cell is truncated.
+* Instead of raising an error, the converter logs an error and skips the table if the content cannot fit within the designated width of a cell.
+
+=== Callout lists and numbers
+
+The theming language now has a xref:theme:callout.adoc[callout-list category].
+The new theme keys let you customize the font properties, text alignment, and item spacing of callout lists.
+The `callout-list` category includes the `margin-top-after-code` key that can control the top margin of callout lists that immediately follow a code block.
+
+.Notable fixes for callouts
+* Callout numbers in a callout list stay with primary text when an item is advanced to the next page.
+* A sequence of two or more callouts separated by spaces in a code block are processed correctly.
+* The font family assigned to `conums` in the theme is applied to the callout numbers displayed in code blocks.
+
+=== Images and icons
+
+Caption end:: You can now configure whether the caption for a block image is placed above or below the image using the `caption-end` theme key.
+See xref:theme:block-image.adoc#caption[Block Image Category Keys] for the list of available `image-caption` theme keys and their value types.
+Text alignment roles:: The text alignment roles, such as `text-center`, are now supported on block images.
+Roles for inline images:: Roles and inherited roles are now supported on inline images.
+Image-based icons:: Asciidoctor PDF 2 now supports image-based icons.
+They're resolved from `iconsdir` and should have the `icontype` file extension.
+Add a link to an icon:: The `link` attribute can now be set on the icon macro.
+Admonition icon image:: An admonition icon image can now be remote, if `allow-uri-read` is set, or a data URI.
+
+.Notable fixes for images and icons
+* Warnings from background SVGs are now passed through to the logger.
+* SVGs are correctly scaled down when `fit=scale-down` is used.
+* The textual label on an admonition is displayed if the icon image fails to embed.
+
+=== Links and inline formatting
+
+Typographical quotation marks:: You can now define single and double quotation marks, such as › and », using the `quotes` key in the theme.
+See xref:theme:quotes.adoc[] for details.
+Hexadecimal characters:: Character references that contain both uppercase and lowercase hexadecimal characters are now supported.
+Background color and border offset on links:: You can now control the background color and border offset (only for background) of links from the theme.
+
+.Notable links and inline formatting fixes
+* A closing quote preceded by a trailing ellipsis is kept together with the text enclosed in typographic quotes.
+* The font size for superscript and subscript is computed correctly when the parent element uses `em` and `%` units.
+* Hyphenation exceptions are respected when a word is adjacent to a non-word character.
+* The `pre-wrap` role on honored on a phrase.
+* The `id` attribute can now be set on the link macro.
+
+=== Fonts, font styles, and text transforms
+
+Small caps:: The `text-transform` theme key now accepts the `smallcaps` value.
+When `smallcaps` is specified, the lowercase letters are replaced with the small capital letter variants.
+normal_italic:: The xref:theme:text.adoc#font-style[new normal_italic value] for the `font-style` key resets the font style to normal, then applies the italic variant of a font family.
+Noto Sans:: xref:theme:font-support.adoc#bundled[Noto Sans is now bundled] with Asciidoctor PDF.
+It is used as a fallback font in the `sans-with-fallback-font` theme and can be declared in a custom theme.
+Ceiling and floor characters:: The left and right ceiling and floor characters (⌈, ⌉, ⌊, and ⌋)were added to the M+ fallback font.
+Checkmark, numero, and y with diaeresis glyphs:: The heavy checkmark glyph (✔) was added to the fallback font; the checkmark and heavy checkmark (✓ and ✔) were added to the monospaced font; the № and ÿ glyphs were added to the default and fallback fonts.
+
+=== Covers and title page
+
+Front and back cover images::
+The front and back cover images can now be xref:theme:covers.adoc[defined in the theme] and the target can be a data URI.
+Deactivate title page::
+The xref:theme:title-pages.adoc#deactivate[title page can now be deactivated from the theme] by assigning `false` to the `title-page` category key.
+
+=== TOC and PDF outline
+
+PDF outline title and levels:: You can now deactivate the PDF outline by unsetting the `outline` document attribute (`:!outline:`) as well as customize its title with `outline-title` and the section level depth and expansion with `outlinelevels`.
+See xref:pdf-outline.adoc[] for details.
+Deactivate running content on TOC pages:: The header or footer can be deactivated on TOC pages by assigning the `noheader` or `nofooter` options on the toc macro.
+TOC dot leader:: The theme can control the font size of the dot leader in the TOC.
+TOC location:: The TOC can now be placed following the preamble by assigning the `preamble` value to the `:toc:` document attribute.
+Also, the TOC is only displayed at the first location of a toc macro.
+Extended converter:: An extended converter can now override the `get_entries_for_toc` method to insert or filter TOC entries.
+
+.Notable fixes for the TOC
+* An image now renders at the end of a section title in the corresponding TOC entry.
+
+[#_footnotes]
+=== Footnotes
+
+Reset numbering:: Footnote numbering is now reset in each chapter.
+Footnote reference label:: The xreftext of a chapter is now added to the label of a footnote reference that refers to a previous chapter.
+Unresolved footnote color:: The theme can configure the font color of an unresolved footnote using the `unresolved` role.
+
+.Notable fixes for footnotes
+* A missing footnote reference is shown in superscript.
+* Footnotes defined in an AsciiDoc table cell are now rendered with the footnotes at the end of an article or chapter.
+
+=== Index
+
+Index columns:: The theme can now configure the number of index columns using the `index-columns` key.
+Style of page numbers:: The new `index-pagenum-sequence-style` document attribute controls the style of sequential page numbers in the index when `media=screen`.
+
+.Notable fixes for the index
+* The index section isn't rendered if there are no index entries.
+* A blank line is no longer inserted in the index when a term is forced to break.
+* Prepress page margins  are honored on subsequent pages in the index.
+* Space in front of a hidden index term is now collapsed.
+
+=== Running content and page numbering
+
+Select the page where running content starts:: Specify the page on which the running content starts being displayed by xref:theme:add-running-content.adoc#start-at[assigning an integer to the start-at theme key] on the `running-content` category.
+Running content can also start after the TOC, wherever the TOC is placed, by assigning the keyword `after-toc` to the `start-at` key.
+
+Configure where integer page numbering starts:: Specify the page on which the integer (1-based) page numbering begins using the xref:theme:page-numbers.adoc#start-at[start-at key on the page-numbering category].
+Integer page numbering can start at the front cover by assigning the keyword `cover` to the `start-at` key.
+Or, you can have the page numbering start after the TOC, wherever the TOC is placed, by assigning `after-toc` to the `start-at` key.
+Alternatively, the theme can specify an offset from the first body page where the page numbering should begin when an integer is assigned to `start-at`.
+
+Margin and content margin:: The margin and content margin of the running content per periphery (header or footer) and per side (recto or verso) can now be configured from the theme.
+The margins in running content can be specified using a 2-value array for ends and sides or 3-value array with implied left side value.
+
+Part and chapter numbers:: If the `partnums` attribute is set, the `part-numeral` attribute is automatically set in the running content.
+If the `sectnums` attribute is set, the `chapter-numeral` attribute is automatically set in the running content.
+
+Select a background per layout:: The `page-layout` attribute is now set in the running content.
+You can use this attribute to select a background per layout.
+
+.Notable fixes for running content and page numbering
+* The `pdf-folio-placement` setting is honored even when `media=prepress`.
+* Prepress page margins honor the value of `pdf-folio-placement`.
+
+=== Theming system
+
+Print-optimised themes:: Asciidoctor PDF 2 introduces two new print-optimized themes, named `default-for-print` and `default-for-print-with-fallback-font`.
+Extends hierarchy:: Asciidoctor PDF only extends a theme in the `extends` hierarchy once unless the theme is modified with `!important`.
+Power operator:: The theming language now supports the power operator.
+It has the same precedence as multiply and divide.
+Base theme changes:: The top and bottom padding on quote and verse blocks has been reduced in the base theme.
+The `base-border-color` is now set and used as the default border color.
+The border colors have been removed in the base theme so all border colors can be controlled using the `base-border-color` key when extending the theme.
+Default theme changes:: The top and bottom padding on quote blocks is now uniform in the default theme.
+Rouge theme:: A Rouge theme can now be specified as a theme class or instance (API only).

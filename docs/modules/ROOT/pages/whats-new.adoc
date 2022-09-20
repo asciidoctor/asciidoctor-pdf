@@ -40,6 +40,5 @@ For a complete list of changes, see the {url-project-repo}/blob/main/CHANGELOG.a
 
 == Previous releases
 
-* See xref:2.2@whats-new.adoc[What's New in Asciidoctor PDF 2.2] to learn about the improvements added in Asciidoctor PDF 2.2.
-* See xref:2.1@whats-new.adoc[What's New in Asciidoctor PDF 2.1] to learn about the improvements added in Asciidoctor PDF 2.1.
-* Refer to xref:2.0@whats-new.adoc[What's New in Asciidoctor PDF 2.0] to learn about the new features, improvements, and fixes introduced in 2.0.
+See xref:upgrade-to-2.adoc[Upgrade to Asciidoctor PDF 2] if you're upgrading from Asciidoctor PDF < 2.0.0.
+Otherwise, consult the {url-project-repo}/blob/main/CHANGELOG.adoc[CHANGELOG^] for a complete list of changes in Asciidoctor PDF.
