@@ -1,6 +1,7 @@
 * xref:whats-new.adoc[]
 * xref:features.adoc[]
 * xref:install.adoc[]
+* xref:upgrade-to-2.adoc[]
 * xref:convert-to-pdf.adoc[]
 * xref:image-paths-and-formats.adoc[]
 * xref:image-scaling.adoc[]
