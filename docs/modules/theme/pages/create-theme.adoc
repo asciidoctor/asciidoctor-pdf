@@ -1,5 +1,5 @@
-// TODO rename this file to create-theme.adoc
 = Create a Theme
+:page-aliases: extend-theme.adoc
 :description: Create a PDF theme by extending a built-in theme or starting one from scratch.
 
 There are two ways to create a PDF theme.
