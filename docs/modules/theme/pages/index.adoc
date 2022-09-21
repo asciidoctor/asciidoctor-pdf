@@ -27,6 +27,24 @@ If your theming requirements demand more than what this theming system can accom
 //This document describes how the theming system works, how to define a custom theme in YAML, and how to activate the theme when running Asciidoctor PDF.
 //To learn how the theming system works and how to create and apply custom themes, refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theming Guide>>.
 
+== Built-in themes
+
+Asciidoctor PDF provides the following built-in themes:
+
+base:: A barebones theme that provides rudimentary styling to support AsciiDoc content.
+Useful as a starting point when developing a custom theme.
+default:: Used if no theme is specified.
+Optimized for screen.
+Uses a serif base font.
+default-with-font-fallbacks:: A variation of the `default` theme that includes fallback fonts to provide extended Unicode character support, including emoji and commonly used CJK characters.
+default-for-print:: A variation of the `default` theme that is optimized for print.
+Used if no theme is specified and `media=print` or `media=prepress`.
+default-for-print-with-font-fallbacks:: A combination of the `default` and `default-with-font-fallback` themes.
+default-sans:: A variation of the `default` theme that uses a sans base font.
+default-sans-with-font-fallbacks:: A variation of the `default-sans` theme that includes fallback fonts to provide extended Unicode character support, including emoji and commonly used CJK characters.
+
+Refer to xref:apply-theme.adoc[] to learn how to apply a theme.
+
 == Syntax highlighter style
 
 If you've enabled a source highlighter, you can control the style (aka theme) it applies to source blocks using the `coderay-style`, `pygments-style`, and `rouge-style` attributes, respectively.
