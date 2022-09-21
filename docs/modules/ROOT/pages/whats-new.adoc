@@ -200,7 +200,7 @@ The theme can control the font color of first line of abstract using `abstract-f
 
 In addition to the new theme keys, <<breakable,breakable behavior>>, and <<unbreakable,unbreakable>> option for blocks, Asciidoctor PDF now uses smarter bottom margin logic that prevents extra space from being added below blocks, particularly when blocks are nested or used inside an AsciiDoc table cell.
 
-.*_Notable fixes for blocks_*
+.Notable fixes for blocks
 * Syntax highlighting isn't applied to a source block if the `specialchars` substitution is disabled.
 * Borders, shading, and padding aren't applied to collapsible blocks.
 * The `callouts` substitution can be removed on code blocks.
@@ -224,7 +224,7 @@ The maximum caption width for tables can be set to a percentage of the content b
 Caption end::
 The `table-caption-side` theme key has been xref:theme:tables.adoc#end[renamed to table-caption-end].
 
-.*_Notable fixes for tables_*
+.Notable fixes for tables
 * Vertical center alignment is correctly applied to regular table cells.
 * The border bottom is correctly applied to a table row when frame and grid are none.
 * The font size of a literal table cells and nested blocks in AsciiDoc table cells is now scaled.
@@ -240,7 +240,7 @@ The theming language now has a xref:theme:callout.adoc[callout-list category].
 The new theme keys let you customize the font properties, text alignment, and item spacing of callout lists.
 The `callout-list` category includes the `margin-top-after-code` key that can control the top margin of callout lists that immediately follow a code block.
 
-.*_Notable fixes for callouts_*
+.Notable fixes for callouts
 * Callout numbers in a callout list stay with primary text when an item is advanced to the next page.
 * A sequence of two or more callouts separated by spaces in a code block are processed correctly.
 * The font family assigned to `conums` in the theme is applied to the callout numbers displayed in code blocks.
@@ -252,7 +252,7 @@ See xref:theme:block-image.adoc#caption[Block Image Category Keys] for the list 
 Text alignment roles:: The text alignment roles, such as `text-center`, are now supported on block images.
 Roles for inline images:: Roles and inherited roles are now supported on inline images.
 
-.*_Notable fixes for images_*
+.Notable fixes for images
 * Warnings from background SVGs are now passed through to the logger.
 * SVGs are correctly scaled down when `fit=scale-down`.
 
@@ -277,7 +277,7 @@ Thank you to *@klonfish* for adding this feature to the theming language.
 Hexadecimal characters:: Character references that contain both uppercase and lowercase hexadecimal characters are now supported.
 Thank you to *@etihwnad* for adding this capability.
 
-.*_Notable inline formatting fixes_*
+.Notable inline formatting fixes
 * A closing quote preceded by a trailing ellipsis is kept together with the text enclosed in typographic quotes.
 * The font size for superscript and subscript is computed correctly when the parent element uses `em` and `%` units.
 * Hyphenation exceptions are respected when a word is adjacent to a non-word character.
@@ -311,7 +311,7 @@ TOC location:: The TOC can now be placed following the preamble by assigning the
 Also, the TOC is only displayed at the first location of a toc macro.
 Extended converter:: An extended converter can now override the `get_entries_for_toc` method to insert or filter TOC entries.
 
-.*_Notable fixes for the TOC_*
+.Notable fixes for the TOC
 * An image now renders at the end of a section title in the corresponding TOC entry.
 
 [#footnotes-2-0]
@@ -321,7 +321,7 @@ Reset numbering:: Footnote numbering is now reset in each chapter.
 Footnote reference label:: The xreftext of a chapter is now added to the label of a footnote reference that refers to a previous chapter.
 Unresolved footnote color:: The theme can configure the font color of an unresolved footnote using the `unresolved` role.
 
-.*_Notable fixes for footnotes_*
+.Notable fixes for footnotes
 * A missing footnote reference is shown in superscript.
 * Footnotes defined in an AsciiDoc table cell are now rendered with the footnotes at the end of an article or chapter.
 
@@ -331,7 +331,7 @@ Unresolved footnote color:: The theme can configure the font color of an unresol
 Index columns:: The theme can now configure the number of index columns using the `index-columns` key.
 Style of page numbers:: The new `index-pagenum-sequence-style` document attribute controls the style of sequential page numbers in the index when `media=screen`.
 
-.*_Notable fixes for the index_*
+.Notable fixes for the index
 * The index section isn't rendered if there are no index entries.
 * A blank line is no longer inserted in the index when a term is forced to break.
 * Prepress page margins  are honored on subsequent pages in the index.
@@ -359,7 +359,7 @@ If the `sectnums` attribute is set, the `chapter-numeral` attribute is automatic
 Select a background per layout:: The `page-layout` attribute is now set in the running content.
 You can use this attribute to select a background per layout.
 
-.*_Notable fixes for running content and page numbering_*
+.Notable fixes for running content and page numbering
 * The `pdf-folio-placement` setting is honored even when `media=prepress`.
 * Prepress page margins honor the value of `pdf-folio-placement`.
 
