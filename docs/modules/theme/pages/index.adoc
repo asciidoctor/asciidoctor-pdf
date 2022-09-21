@@ -1,9 +1,13 @@
 = Asciidoctor PDF Theming
 :navtitle: Theming
 
-Asciidoctor PDF comes with a built-in theming system and a default theme.
-The theming system is used to control the layout and styling of a PDF file generated from AsciiDoc by Asciidoctor PDF.
-You can use the default theme for your PDFs as it is, extend the default theme to change or add styles, or create and apply a custom theme.
+Asciidoctor PDF includes a theming system that allows you to control the layout and styling of the PDF that Asciidoctor PDF generates from AsciiDoc.
+The theming system comes with a default theme as well as several additional built-in themes.
+
+If you're looking for a professional-looking result, the default theme may suit your needs.
+Other built-in themes offer variations on this style for different needs, such as print-optimized styling, extended character support (including emoji), or a sans serif font.
+
+If you want to customize the layout and styling of the PDF, you can extend one of the built-in themes to change or add styles or you can develop a custom theme from scratch.
 
 == Theme configuration and language
 
@@ -11,6 +15,8 @@ The Asciidoctor PDF theming system is driven by a YAML configuration file.
 The Asciidoctor PDF theme language is described using https://en.wikipedia.org/wiki/YAML[YAML] and incorporates many _concepts_ from CSS and SASS, such as selectors, properties, and inheritance.
 Therefore, if you have a background in web design, the terminology should be immediately familiar to you.
 *Note, however, that the theming system isn't actually CSS.*
+
+TIP: You can use the built-in themes found in the [.path]_data/themes_ directory of the {url-project-repo}[project's repository^] as a reference.
 
 == Theme capabilities
 
@@ -20,7 +26,8 @@ If your theming requirements demand more than what this theming system can accom
 
 //This document describes how the theming system works, how to define a custom theme in YAML, and how to activate the theme when running Asciidoctor PDF.
 //To learn how the theming system works and how to create and apply custom themes, refer to the <<docs/theming-guide.adoc#,Asciidoctor PDF Theming Guide>>.
-You can use the built-in theme files, which you can find in the [.path]_data/themes_ directory, as examples.
+
+== Syntax highlighter style
 
 If you've enabled a source highlighter, you can control the style (aka theme) it applies to source blocks using the `coderay-style`, `pygments-style`, and `rouge-style` attributes, respectively.
 For example, to configure Rouge to use the built-in monokai theme, run Asciidoctor PDF as follows:
