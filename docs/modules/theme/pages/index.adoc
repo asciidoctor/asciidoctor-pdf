@@ -4,7 +4,7 @@
 Asciidoctor PDF includes a theming system that allows you to control the layout and styling of the PDF that Asciidoctor PDF generates from AsciiDoc.
 The theming system comes with a default theme as well as several additional built-in themes.
 
-If you're looking for a professional-looking result, the default theme may suit your needs.
+If you're just seeking a professional-looking result, the default theme may suit your needs.
 Other built-in themes offer variations on this style for different needs, such as print-optimized styling, extended character support (including emoji), or a sans serif font.
 
 If you want to customize the layout and styling of the PDF, you can extend one of the built-in themes to change or add styles or you can develop a custom theme from scratch.
