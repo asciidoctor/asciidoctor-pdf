@@ -1,12 +1,24 @@
-= Customize the Theme
-:description: Customize a PDF theme by extending a built-in theme.
+// TODO rename this file to create-theme.adoc
+= Create a Theme
+:description: Create a PDF theme by extending a built-in theme or starting one from scratch.
+
+There are two ways to create a PDF theme.
+One way is to extend one of the built-in themes and gradually layer your customizations onto it.
+The other way is to develop a theme from scratch.
+There are advantages to both approaches.
 
 [#extend-default]
 == Extend the default theme
 
-A theme can extend another theme using the `extends` key.
-For example:
+One theme can extend another theme using the `extends` key at the top of the theme file.
+When extending a theme, you only have to define the keys you want to override from the theme you are extending, which is loaded prior to loading the keys in your theme.
+Thus, the quickest and simplest way to create a theme is to extend the default theme.
 
+Let's try this out by drastically modifying the base font color.
+That way, you can clearly tell when Asciidoctor PDF is using your theme.
+Create a new file named [.path]_my-theme.yml_ and populate it with the following code:
+
+.my-theme.yml
 [,yaml]
 ----
 extends: default
@@ -14,23 +26,58 @@ base:
   font-color: #FF0000
 ----
 
+This approach is useful if you want to modify the behavior of the converter or the running content without otherwise changing the style.
+For example, here's a theme that customizes the text in the running footer.
+
+[,yaml]
+----
+extends: default
+footer:
+  recto:
+    right:
+      content: A recto page
+  verso:
+    left:
+      content: A verso page
+----
+
+Learn more about how to customize the running content on the xref:add-running-content.adoc[] page.
+
+== How the extends key works
+
 The `extends` key accepts either a single value or an array of values.
-Each value is interpreted as a filename.
-If the filename equals `default`, it resolves to the location of the default (built-in) theme.
-If the filename is absolute, it's used as is.
-If the filename begins with `./`, it's resolved as a theme file relative to the current theme file.
-Otherwise, the filename is resolved as a theme file in the normal way (relative to the value of the `pdf-themesdir` attribute).
+Each value is interpreted as either a theme name or filename.
 
-Currently, the theme starts out empty.
-Then, the files referenced by the `extends` key are loaded in order.
+If the value matches the name of a built-in theme (e.g., `default`), that theme is used.
+If the value is an absolute path, that theme file is used.
+If the value begins with `./`, the value is resolved to a theme file relative to the current theme file.
+Otherwise, the value is resolved just like the value of the `pdf-theme` attribute.
+In this case, a relative path is resolved starting from the value of the `pdf-themesdir` attribute.
+
+[#load-theme-more-than-once]
+If the same theme appears multiple times in the theme hierarchy, it will only be loaded once by default.
+You can force the theme to be loaded, even if it has already been loaded, by adding the `!important` keyword at the end of the value offset by a space.
+
+Initially, the theme starts out empty.
+Then, the theme file(s) referenced by the `extends` key are loaded in order.
 Finally, the keys in the current file are loaded.
-Each time a theme is loaded, the keys are overlaid onto the keys from the previous theme.
+Each time a theme is loaded, the flattened keys are overlaid onto the keys from the previous theme.
 
-== Basic theme
+If you don't want to extend any theme (not even the base theme), omit the `extends` key or assign the value `~` to the `extends` key.
 
-Here's an example of a basic theme file that extends the base theme:
+== Extend the base theme
 
-.basic-theme.yml
+If you're trying to carefully tailor the appearance of the PDF, you might find that the default theme gets in the way too much.
+In this case, it might be better to extend the base theme.
+
+The base theme provides rudimentary styling so that the visual hierarchy and block and inline elements of the content are honored, but does very little to embellish it.
+
+WARNING: If you extend the base theme or create a theme from scratch, we strongly recommend defining TrueType fonts and specifying them in the `base` and `codespan` categories.
+Otherwise, Asciidoctor PDF will use built-in AFM fonts, which can result in missing functionality and warnings.
+
+Here's an example of a theme that extends the base theme:
+
+.my-theme.yml
 [,yaml]
 ----
 extends: base
@@ -59,41 +106,23 @@ link:
   font-color: #002FA7
 list:
   indent: $base-font-size * 1.5
-footer:
-  height: $base-line-height-length * 2.5
-  line-height: 1
-  recto:
-    right:
-      content: '{page-number}'
-  verso:
-    left:
-      content: $footer-recto-right-content
 ----
 
-When creating a new theme, you only have to define the keys you want to override from the extended theme, which is loaded prior to loading your custom theme.
-The converter uses the information from the theme map to help construct the PDF.
+If you want to go even more barebones, then you can set the `extends` key to `~` (or omit it) so the converter does not load any theme before your own.
 
-== Basic extended theme
-
-Instead of designing a theme from scratch, you can extend the default theme using the `extends` key as follows:
-
+.my-theme.yml
 [,yaml]
 ----
-extends: default
-base:
-  font-color: #FF0000
+extends: ~
+#...
 ----
 
-You can also point the `extends` key at another custom theme to extend from it.
-If you don't want to extend any theme, including the base theme, omit the `extends` key or assign the value `~` to the `extends` key (i.e., `extends: ~`).
+If you do this, you should consult the {url-repo-root}/data/themes/base-theme.yml[base theme] to discover which keys you'll need to set to support the visual hierarchy and core block and inline elements.
+You can also find the location of the [.path]_data/themes_ directory on your local disk by running the following command:
 
-[#load-theme-more-than-once]
-If the same theme appears multiple times in the theme hierarchy, it will only be loaded once by default.
-You can force the theme to be loaded, even if it has already been loaded, by adding the `!important` keyword at the end of the value offset by a space.
+ $ gem contents asciidoctor-pdf --show-install-dir
 
-WARNING: If you start a new theme from scratch, we strongly recommend defining TrueType fonts and specifying them in the `base` and `codespan` categories.
-Otherwise, Asciidoctor PDF will use built-in AFM fonts, which can result in missing functionality and warnings.
-
+////
 [TIP]
 ====
 Instead of creating a theme from scratch, another option is to download the {url-repo-root}/data/themes/default-theme.yml[default-theme.yml^] file from the source repository.
@@ -104,3 +133,4 @@ Alternatively, you can snag the file from your local installation using the foll
  $ ASCIIDOCTOR_PDF_DIR=`gem contents asciidoctor-pdf --show-install-dir`;\
    cp "$ASCIIDOCTOR_PDF_DIR/data/themes/default-theme.yml" custom-theme.yml
 ====
+////
