@@ -1,5 +1,5 @@
 * xref:index.adoc[]
-** xref:extend-theme.adoc[]
+** xref:create-theme.adoc[]
 ** xref:apply-theme.adoc[]
 ** xref:keys.adoc[]
 *** xref:extends.adoc[]
