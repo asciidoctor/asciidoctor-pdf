@@ -3,7 +3,7 @@
 :description: Create a PDF theme by extending a built-in theme or starting one from scratch.
 
 There are two ways to create a PDF theme.
-One way is to extend one of the built-in themes and gradually layer your customizations onto it.
+One way is to extend one of the built-in themes and gradually layer your customizations over it.
 The other way is to develop a theme from scratch.
 There are advantages to both approaches.
 
@@ -11,7 +11,7 @@ There are advantages to both approaches.
 == Extend the default theme
 
 One theme can extend another theme using the `extends` key at the top of the theme file.
-When extending a theme, you only have to define the keys you want to override from the theme you are extending, which is loaded prior to loading the keys in your theme.
+When extending a theme, you only have to define the keys you want to override from the theme you're extending, which is loaded prior to loading the keys in your theme.
 Thus, the quickest and simplest way to create a theme is to extend the default theme.
 
 Let's try this out by drastically modifying the base font color.
