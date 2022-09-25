@@ -1,10 +1,14 @@
 = Background Images
-:description: A background image can be applied to all pages, recto or verso pages, and the title page using the corresponding page-background-image document attribute.
+:description: A background image can be applied to all pages, recto or verso pages, and the title page using designated document attributes.
 
-You can add background images to every page in your document with the `page-background-image` document attribute.
-A background image can also be assigned to recto or verso pages using `page-background-image-recto` and `page-background-image-verso`, respectively.
-A background image for the title page can also be specified using the `title-page-background-image` attribute.
-Alternatively, you can define xref:theme:images.adoc[background images in your theme].
+You can add a background image to all content pages in your document by setting the `page-background-image` document attribute.
+You can also set the background images for recto and verso pages separately using the `page-background-image-recto` and `page-background-image-verso` document attributes.
+You can set (or override) the background image applied to the title page using the `title-page-background-image` document attribute.
+
+This page explains how these attributes are used.
+All the document attributes covered on this page must be defined in the document header.
+
+As an alternative to using document attributes, you can define these background images xref:theme:images.adoc[in your theme].
 
 [#page-background-image]
 == page-background-image attribute
