@@ -4091,7 +4091,7 @@ module Asciidoctor
         if image_path
           if symbolic_paths&.include? image_path
             return [image_path, {}]
-          elsif image_path == 'none'
+          elsif image_path == 'none' || image_path == ''
             return []
           elsif (image_path.include? ':') && image_path =~ ImageAttributeValueRx
             image_attrs = (AttributeList.new $2).parse %w(alt width)

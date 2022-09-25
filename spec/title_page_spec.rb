@@ -1174,20 +1174,22 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       end
     end
 
-    it 'should not use page background on title page if title-page-background-image attribute is set to none' do
+    it 'should not use page background on title page if title-page-background-image attribute is set to none or empty' do
       pdf_theme = {
         title_page_background_image: %(image:#{fixture_file 'bg.png'}[]),
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
-      = Document Title
-      :doctype: book
-      :title-page-background-image: none
+      [' none', ''].each do |val|
+        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme
+        = Document Title
+        :doctype: book
+        :title-page-background-image:#{val}
 
-      content
-      EOS
+        content
+        EOS
 
-      (expect pdf.pages).to have_size 2
-      (expect get_images pdf).to be_empty
+        (expect pdf.pages).to have_size 2
+        (expect get_images pdf).to be_empty
+      end
     end
 
     it 'should not use page background on title page if page_background is set to none in theme' do

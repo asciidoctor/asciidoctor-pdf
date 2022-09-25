@@ -39,6 +39,7 @@ Bug Fixes::
 * don't include children of section with empty title in outline
 * only load Treetop runtime so it does not overload `require` method
 * fix collation order of index terms that differ only in case
+* don't crash if page background image value is empty (interpret as "none")
 
 == 2.3.2 (2022-09-17) - @mojavelinux
 

@@ -974,6 +974,20 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-color.pdf'
     end
 
+    it 'should not set page background if value of page-background-image is none or empty', visual: true do
+      [' none', ''].each do |val|
+        to_file = to_pdf_file <<~EOS, %(page-background-image-#{val.empty? ? 'empty' : 'none'}.pdf)
+        = Document Title
+        :doctype: book
+        :page-background-image:#{val}
+
+        content
+        EOS
+
+        (expect to_file).to visually_match 'page-background-color-default.pdf'
+      end
+    end
+
     it 'should set the background image using target of macro specified in page-background-image attribute', visual: true do
       to_file = to_pdf_file <<~'EOS', 'page-background-image-inline-macro.pdf'
       = Document Title
@@ -1574,9 +1588,10 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-alt.pdf'
     end
 
-    it 'should allow recto background image to be disabled if side is set to none', visual: true do
+    it 'should allow recto background image to be turned off if side is set to none or empty', visual: true do
       [
         { 'page-background-image' => 'image:recto-bg.png[]', 'page-background-image-verso' => 'none' },
+        { 'page-background-image' => 'image:recto-bg.png[]', 'page-background-image-verso' => '' },
         { 'page-background-image-recto' => 'image:recto-bg.png[]' },
       ].each do |attribute_overrides|
         to_file = to_pdf_file <<~'EOS', 'page-background-image-recto-only.pdf', attribute_overrides: attribute_overrides
