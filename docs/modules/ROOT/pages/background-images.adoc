@@ -13,9 +13,12 @@ As an alternative to using document attributes, you can define these background 
 [#page-background-image]
 == page-background-image attribute
 
-Background images can be assigned to every page in a document using the `page-background-image` document attribute.
-The attribute accepts an inline image macro.
-The target of the image macro can be a xref:image-paths-and-formats.adoc#imagesdir[path relative to imagesdir or an absolute path].
+Background images can be applied to all content pages using the `page-background-image` document attribute.
+A content page is defined as every page in the document except for cover and imported pages.
+The list of content pages includes the title page as well as non-facing pages in a prepress document.
+
+The `page-background-image` attribute accepts an inline image macro.
+The target of the image macro can be xref:image-paths-and-formats.adoc#imagesdir[an absolute path or a path relative to imagesdir].
 
 [,asciidoc]
 ----
@@ -23,18 +26,31 @@ The target of the image macro can be a xref:image-paths-and-formats.adoc#imagesd
 :page-background-image: image:bg.png[]
 ----
 
-You can also assign a page background image <<recto-verso,per side>> and/or <<page-layout,per page layout>>.
+You can also assign a page background image <<recto-verso,per side>> or <<page-layout,per page layout>>.
 
-By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
-You can set the <<fit,fit>>, sizing, and <<position,position>> attributes on the image macro.
-The size of the background image can be controlled using any of the xref:image-scaling.adoc[sizing attributes] on the image macro when `fit=none`.
+When you set `page-background-image`, the specified image will be applied to the title page as well.
+You can specify a different image for the title page using the `title-page-background-image` document attribute.
 
 [,asciidoc]
 ----
 = Document Title
-:page-background-image: image:bg.png[fit=none,pdfwidth=25%] <1>
+:doctype: book
+:page-background-image: image:bg.png[]
+:title-page-background-image: image:title-bg.png[]
 ----
-<1> `fit` must be assigned the value `none` when using `pdfwidth` or any of the other sizing attributes.
+
+Alternately, you can turn off the background image on the title page by assigning the value `none`.
+
+[,asciidoc]
+----
+= Document Title
+:doctype: book
+:page-background-image: image:bg.png[]
+:title-page-background-image: none
+----
+
+By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
+To alter this behavior, you can set the <<fit,fit>>, sizing, and <<position,position>> attributes on the image macro.
 
 [#fit]
 == fit attribute
@@ -71,20 +87,21 @@ The `fill` value does not apply to SVG images.
 |The image is not scaled.
 |===
 
-If you need to scale the image using one of the xref:image-scaling.adoc[sizing attributes] (`pdfwidth`, `scaledwidth`, `width`), you must set the `fit` attribute for `none`.
+If you want to scale the image using one of the xref:image-scaling.adoc[sizing attributes] (`pdfwidth`, `scaledwidth`, `width`) on the image macro, you must set the `fit` attribute to the value `none` (i.e., `fit=none`).
 
 [,asciidoc]
 ----
 = Document Title
-:page-background-image: image:mark.jpg[fit=none,pdfwidth=50%]
+:page-background-image: image:bg.png[fit=none,pdfwidth=50%] <1>
 ----
+<1> `fit` must be assigned the value `none` when using `pdfwidth` or any of the other sizing attributes.
 
 The `fit` attribute is often combined with the `position` attribute, <<position,covered next>>, to control the placement of the image on the canvas.
 
 [#position]
 == position attribute
 
-In addition to scaling, background images for cover pages, content pages, and the title page support positioning using the `position` attribute.
+In addition to scaling, background images for cover pages, content pages, and the title page support positioning using the `position` attribute on the image macro.
 The `position` attribute accepts a syntax similar to the `background-position` property in CSS, except only the keyword positions are supported.
 The position consists of two values, the vertical position and the horizontal position (e.g., `top center`).
 If only one value is specified (e.g., `top`), the other value is assumed to be `center`.
