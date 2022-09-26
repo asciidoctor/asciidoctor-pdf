@@ -25,6 +25,25 @@ describe 'Asciidoctor Diagram Integration', if: (RSpec::ExampleGroupHelpers.gem_
     (expect Pathname.new fixture_file 'images/sequence-diagram-b.png.cache').not_to exist
   end
 
+  it 'should be able to control display size of image using pdfwidth attribute on diagram block' do
+    require 'asciidoctor-diagram'
+    pdf = to_pdf <<~EOS, safe: :unsafe, attributes: { 'docdir' => fixtures_dir, 'outdir' => output_dir, 'imagesdir' => 'images' }, analyze: :image
+
+    [plantuml,pdfwidth-test,png,pdfwidth=1in]
+    ....
+    scale 4
+    (*) --> Work
+    Work --> (*)
+    ....
+    EOS
+
+    (expect Pathname.new output_file 'images/pdfwidth-test.png').to exist
+    images = pdf.images
+    (expect images).to have_size 1
+    (expect images[0][:intrinsic_width].to_f).to eql 252.0
+    (expect images[0][:width].to_f).to eql 72.0
+  end
+
   it 'should allow font family used for diagram to be remapped' do
     require 'asciidoctor-diagram'
     with_tmp_file '.cfg', contents: %(skinparam defaultFontName M+ 1p Fallback\n) do |tmp_file|
