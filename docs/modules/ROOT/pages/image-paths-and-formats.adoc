@@ -23,10 +23,20 @@ Otherwise, the SVG library will fail to process it.
 
 == Asciidoctor Diagram integration
 
-Asciidoctor PDF provides seamless integration with Asciidoctor Diagram by setting the `data-uri` attribute by default.
-When the `data-uri` attribute is set, Asciidoctor Diagram returns the absolute path to the generated image, which Asciidoctor PDF can then locate.
-(This makes sense since technically, Asciidoctor Diagram must embed the image in the document, similar in spirit to the `data-uri` feature for HTML).
-This means the input directory and the output directory (and thus the `imagesoutdir`) can differ and Asciidoctor PDF will still be able to locate the generated image.
+Asciidoctor PDF provides seamless integration with Asciidoctor Diagram.
+
+This integration works because Asciidoctor PDF sets the `data-uri` document attribute internally.
+When Asciidoctor Diagram detects that this attribute is set, it passes through the absolute path of the generated image, allowing Asciidoctor PDF to locate it.
+Although the generated image is written to a file as an interim step, Asciidoctor PDF still embeds that image into the generated document.
+Thus, this behavior is consistent with the definition of the `data-uri` attribute.
+
+When using Asciidoctor Diagram with Asciidoctor PDF, the input directory (`docdir`) and the output directory (`outdir` and, in turn, `imagesoutdir`) can differ and Asciidoctor PDF will still be able to find and embed the generated images.
+
+Asciidoctor Diagram builds the `imagesoutdir` from the intrinsic `outdir` attribute.
+This works if Asciidoctor PDF is writing the output to a file.
+If the output is not being written to a file, you can set the `outdir` or `imagesoutdir` attributes explicitly.
+
+You can change the display size of the image in the PDF using the xref:image-scaling.adoc#pdfwidth[pdfwidth] attribute on the diagram block or macro.
 
 == Image formats
 
