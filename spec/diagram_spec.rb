@@ -29,15 +29,13 @@ describe 'Asciidoctor Diagram Integration', if: (RSpec::ExampleGroupHelpers.gem_
     require 'asciidoctor-diagram'
     with_tmp_file '.cfg', contents: %(skinparam defaultFontName M+ 1p Fallback\n) do |tmp_file|
       Dir.chdir File.dirname tmp_file do
-        pdf = to_pdf <<~EOS, safe: :unsafe, attributes: { 'imagesdir' => '' }, analyze: true
+        pdf = to_pdf <<~EOS, attributes: { 'imagesdir' => '' }, analyze: true
         :pdf-theme: default-with-font-fallbacks
         :plantumlconfig: #{File.basename tmp_file}
 
         [plantuml,font-test,svg]
         ....
-        @startuml
         card カード
-        @enduml
         ....
         EOS
 
