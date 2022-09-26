@@ -32,15 +32,16 @@ describe 'Asciidoctor Diagram Integration', if: (RSpec::ExampleGroupHelpers.gem_
     [plantuml,pdfwidth-test,png,pdfwidth=1in]
     ....
     scale 4
-    (*) --> Work
-    Work --> (*)
+    start
+    :Work;
+    end
     ....
     EOS
 
     (expect Pathname.new output_file 'images/pdfwidth-test.png').to exist
     images = pdf.images
     (expect images).to have_size 1
-    (expect images[0][:intrinsic_width].to_f).to eql 252.0
+    (expect images[0][:intrinsic_width].to_f).to eql 288.0
     (expect images[0][:width].to_f).to eql 72.0
   end
 
