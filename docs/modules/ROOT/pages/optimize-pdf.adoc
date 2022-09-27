@@ -71,8 +71,8 @@ For example, here's how you would get the optimizer to generate a grayscale PDF 
 Here are some other features you can enable using `GS_OPTIONS`:
 
 -dBlackText::
-Force all text to rendered in black (gray value 0).
-This can be useful if you are printing the document.
+Force all text to be rendered in black (gray value 0).
+This setting may be useful if you're sending the document to a printer.
 -dNoOutputFonts::
 Force all text to be converted to paths (linework) so it's not selectable (in exchange for a much larger document).
 -sOwnerPassword=xyx -sUserPassword=xyx::
