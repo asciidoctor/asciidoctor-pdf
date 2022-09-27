@@ -42,6 +42,11 @@ module Asciidoctor
 
       def initialize *_args
         super
+        if @quality&.include? ':'
+          @quality, @color_mode = @quality.split ':', 2
+        else
+          @color_mode = nil
+        end
         if (gs_path = ::ENV['GS'])
           ::RGhost::Config::GS[:path] = gs_path
         end
@@ -70,7 +75,14 @@ module Asciidoctor
             d[:PDFX] = true
             d[:ShowAnnots] = false
           end
-          (::RGhost::Convert.new inputs).to :pdf, filename: filename_tmp.to_s, quality: QUALITY_NAMES[@quality], d: d
+          case @color_mode
+          when 'gray', 'grayscale'
+            s = { ColorConversionStrategy: 'Gray' }
+          when 'bw'
+            d[:BlackText] = true
+            s = { ColorConversionStrategy: 'Gray' }
+          end
+          (::RGhost::Convert.new inputs).to :pdf, filename: filename_tmp.to_s, quality: QUALITY_NAMES[@quality], d: d, s: s
           filename_o.binwrite filename_tmp.binread
         end
         nil

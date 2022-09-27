@@ -88,6 +88,31 @@ describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_avai
     end).to not_raise_exception
   end
 
+  it 'should apply grayscale color mode modifier on quality when optimizing output file', visual: true do
+    %w(gray grayscale).each do |mode|
+      input_file = Pathname.new fixture_file 'with-color.adoc'
+      to_file = to_pdf_file input_file, 'optimizer-gray.pdf', attribute_overrides: { 'optimize' => %(screen:#{mode}) }
+      (expect to_file).to visually_match 'optimizer-gray.pdf'
+    end
+  end
+
+  #it 'should apply bw color mode modifier on quality when optimizing output file', visual: true do
+  #  input_file = Pathname.new fixture_file 'with-color.adoc'
+  #  to_file = to_pdf_file input_file, 'optimizer-bw.pdf', attribute_overrides: { 'optimize' => ':bw' }
+  #  (expect to_file).to visually_match 'optimizer-bw.pdf'
+  #end
+
+  it 'should apply bw color mode modifier on quality when optimizing output file', visual: true do
+    input_file = Pathname.new fixture_file 'with-color.adoc'
+    attribute_overrides = { 'optimize' => ':bw' }
+    pdf = to_pdf input_file, attribute_overrides: attribute_overrides, analyze: true
+    (expect pdf.text.map {|it| it[:font_color] }.uniq).to eql [nil]
+    pdf = to_pdf input_file, attribute_overrides: attribute_overrides, analyze: :rect
+    rects = pdf.rectangles
+    (expect rects).to have_size 1
+    (expect rects[0][:fill_color]).to eql '818181'
+  end
+
   it 'should generate PDF that conforms to specified compliance' do
     input_file = Pathname.new example_file 'basic-example.adoc'
     to_file = to_pdf_file input_file, 'optimizer-screen-pdf-a.pdf', attribute_overrides: { 'optimize' => 'PDF/A' }
