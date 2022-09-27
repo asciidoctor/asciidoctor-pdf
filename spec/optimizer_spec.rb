@@ -151,7 +151,7 @@ describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_avai
     (expect pdf_info[:Producer]).to include 'Ghostscript'
   end
 
-  it 'should append parameter specified in GS_OPTIONS environment variable', cli: true, visual: true do
+  it 'should append parameter specified in GS_OPTIONS environment variable', cli: true do
     env = { 'GS_OPTIONS' => '-dNoOutputFonts' }
     out, err, res = run_command asciidoctor_pdf_bin, '-a', 'optimize', '-o', (to_file = output_file 'optimizer-gs-options-single.pdf'), (example_file 'basic-example.adoc'), env: env
     (expect res.exitstatus).to be 0
@@ -161,7 +161,7 @@ describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_avai
     (expect pdf.text).to be_empty
   end
 
-  it 'should append all parameters specified in GS_OPTIONS environment variable', cli: true, visual: true do
+  it 'should append all parameters specified in GS_OPTIONS environment variable', cli: true do
     env = { 'GS_OPTIONS' => '-sColorConversionStrategy=Gray -dBlackText' }
     out, err, res = run_command asciidoctor_pdf_bin, '-a', 'optimize', '-o', (to_file = output_file 'optimizer-gs-options-multiple.pdf'), (fixture_file 'with-color.adoc'), env: env
     (expect res.exitstatus).to be 0
