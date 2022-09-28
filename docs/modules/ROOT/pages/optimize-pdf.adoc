@@ -78,6 +78,14 @@ Force all text to be converted to paths (linework) so it's not selectable (in ex
 -sOwnerPassword=xyx -sUserPassword=xyx::
 Require a password to open the document (owner for edit, user for view).
 
+As a shorthand for using the `-sColorConversionStrategy=Gray` option, you can pass the `gray` color mode after the quality value:
+
+ -a optimize=screen:gray
+
+You can also force all text to render in black in the grayscale document using the `bw` (i.e., black and white) color mode:
+
+ -a optimize=print:bw
+
 In addition to optimizing the PDF file, you can also configure the optimizer to convert the document from standard PDF to PDF/A or PDF/X.
 To do so, you can pass one of the following compliance keywords in the value of the optimize attribute: `PDF/A`, `PDF/A-1`, `PDF/A-2`, `PDF/A-3`, `PDF/X`, `PDF/X-1`, or `PDF/X-3`.
 
