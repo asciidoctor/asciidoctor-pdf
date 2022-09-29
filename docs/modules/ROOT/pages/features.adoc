@@ -61,5 +61,6 @@ See xref:extend:use-cases.adoc#wrap-code-blocks-around-image[Wrap code blocks ar
 * You cannot use inline HTML (like a link or emphasized text) in a source block that also uses syntax highlighting.
 These two technologies don't mix in the PDF generation process due to how the syntax highlighters work.
 * Verse blocks do not use a fixed-width font by default, but you can control this setting xref:theme:verse.adoc[using the theme].
-* Cannot use remote inline image in the doctitle or a section title with an automatic ID
-* Cannot use custom subs that add additional formatting on a source block when source-highlighter is set (e.g., `subs=+quotes`)
+* Cannot use remote inline image in the doctitle or a section title with an automatic ID.
+* Cannot use custom subs that introduce text formatting (e.g., `subs=+quotes`) on a source block when source-highlighter is set.
+The converter will automatically remove the formatting so the source can be recognized and highlighted properly by the syntax highlighter.
