@@ -174,6 +174,15 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       end
     end
 
+    it 'should look for font file in pwd if path entry is .' do
+      Dir.chdir fixtures_dir do
+        pdf = to_pdf 'content', attribute_overrides: { 'pdf-theme' => './otf-theme.yml', 'pdf-fontsdir' => ([examples_dir, '.'].join ';') }
+        fonts = pdf.objects.values.select {|it| Hash === it && it[:Type] == :Font }
+        (expect fonts).to have_size 1
+        (expect fonts[0][:BaseFont]).to end_with '+Quicksand-Regular'
+      end
+    end
+
     it 'should look for font file in gem fonts dir if path entry is empty' do
       pdf = to_pdf 'content', attribute_overrides: { 'pdf-theme' => (fixture_file 'bundled-fonts-theme.yml'), 'pdf-fontsdir' => ([fixtures_dir, ''].join ';') }
       fonts = pdf.objects.values.select {|it| Hash === it && it[:Type] == :Font }
