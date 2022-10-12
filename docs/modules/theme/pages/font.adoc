@@ -78,10 +78,29 @@ font:
   catalog:
     merge: true
     Your Font:
-      normal: /path/to/your/font.ttf
+      normal: /path/to/your/FontName-Regular.ttf
+      italic: /path/to/your/FontName-Italic.ttf
+      bold: /path/to/your/FontName-Bold.ttf
+      bold_italic: /path/to/your/FontName-BoldItalic.ttf
 heading:
   font-family: Your Font
 ----
 
-If you're referring to a bundled font, you'll need to prefix the path with `GEM_FONTS_DIR` (or add it to the value of the `pdf-fontsdir` attribute) so the converter can find and register it.
+If you want to refer to a bundled font in your font catalog, you need to prefix the path with `GEM_FONTS_DIR` (or add `GEM_FONTS_DIR` to the value of the `pdf-fontsdir` attribute) so the converter can find and register it.
 You can find the bundle font definitions in default theme.
+
+If your font only has a single style, or you want to use the same style for all four font styles, assign the font path directly to the key that declares the font name:
+
+.Mapping a single font to all four font styles
+[,yaml]
+----
+extends: default
+font:
+  catalog:
+    merge: true
+    Your Font: /path/to/your/FontName-Regular.ttf
+heading:
+  font-family: Your Font
+----
+
+When not using this shorthand, you must map all four font styles.
