@@ -98,13 +98,15 @@ In addition, the following attributes are also available when defining the conte
 * `document-title`
 * `document-subtitle`
 * `part-title`
+* `part-numeral` (only set on part title page when part numbering is enabled)
 * `chapter-title`
+* `chapter-numeral` (only set on chapter title page when section numbering is enabled)
 * `section-title`
 * `section-or-chapter-title`
 
 The value of the `+*-title+` attributes in the running content matches the text as it appears in the table of contents.
 You can control the style of the text stored in these attributes using the `title-style` key on the periphery category (`header` or `footer`) in the theme.
-The key accepts the values `toc` (as the title appears in the TOC), `document` (as the title appears in the document), and `basic` (title only, no signifier or number prefix).
+The `title-style` key accepts the values `toc` (as the title appears in the TOC), `document` (as the title appears in the document), and `basic` (title only, no signifier or number prefix).
 
 If you reference an attribute which is not defined, all the text on that same line in the running content will be dropped.
 This feature allows you to have alternate lines that are selected when all the attribute references are satisfied.
