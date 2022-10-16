@@ -15,7 +15,7 @@ Bug Fixes::
 
 Improvements::
 
-* provide fallback value for `base-font-size` theme key before processing keys (#2342)
+* provide fallback value for `base-font-size` theme key before processing keys (#2343)
 
 === Details
 
