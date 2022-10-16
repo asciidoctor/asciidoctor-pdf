@@ -818,6 +818,46 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect page_3_lines[0]).to match %r/we are ?(\. )+ ?\u00a038$/
     end
 
+    it 'should not crash if last fragment in toc entry is not rendered' do
+      (expect do
+        pdf = to_pdf <<~EOS, analyze: true
+        = Document Title
+        :notitle:
+        :!toc-title:
+        :toc:
+        :doctype: book
+
+        == Chapter
+
+        == #{(['foo bar'] * 12).join ' '} foo +++<span><br></span>+++
+        EOS
+
+        toc_lines = pdf.lines pdf.find_text page_number: 1
+        (expect toc_lines).to have_size 2
+        (expect toc_lines[1]).to end_with %(foo . . \u00a02)
+      end).to not_raise_exception
+    end
+
+    it 'should not crash if last fragment in toc entry that wraps is not rendered' do
+      (expect do
+        pdf = to_pdf <<~EOS, analyze: true
+        = Document Title
+        :notitle:
+        :!toc-title:
+        :toc:
+        :doctype: book
+
+        == Chapter
+
+        == #{(['foo bar'] * 24).join ' '} foo foo +++<span><br></span>+++
+        EOS
+
+        toc_lines = pdf.lines pdf.find_text page_number: 1
+        (expect toc_lines).to have_size 3
+        (expect toc_lines[2]).to end_with %(foo . . \u00a02)
+      end).to not_raise_exception
+    end
+
     it 'should not crash if theme does not specify toc_indent' do
       (expect do
         pdf = to_pdf <<~'EOS', attributes: { 'pdf-theme' => (fixture_file 'custom-theme.yml') }, analyze: true

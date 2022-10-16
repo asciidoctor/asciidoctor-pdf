@@ -3903,12 +3903,19 @@ module Asciidoctor
               entry_title_fragments = text_formatter.format entry_title, inherited: entry_title_inherited
               line_metrics = calc_line_metrics @base_line_height
               indent 0, pgnum_label_placeholder_width do
-                (entry_title_fragments[-1][:callback] ||= []) << (last_fragment_pos = ::Asciidoctor::PDF::FormattedText::FragmentPositionRenderer.new)
+                fragment_positions = []
+                entry_title_fragments.each do |fragment|
+                  fragment_positions << (fragment_position = ::Asciidoctor::PDF::FormattedText::FragmentPositionRenderer.new)
+                  (fragment[:callback] ||= []) << fragment_position
+                end
                 typeset_formatted_text entry_title_fragments, line_metrics, hanging_indent: hanging_indent, normalize_line_height: true
-                start_dots = last_fragment_pos.right + hanging_indent
-                last_fragment_cursor = last_fragment_pos.top + line_metrics.padding_top
-                start_cursor = last_fragment_cursor if last_fragment_pos.page_number > start_page_number || (start_cursor - last_fragment_cursor) > line_metrics.height
+                break unless (last_fragment_position = fragment_positions.select(&:page_number)[-1])
+                start_dots = last_fragment_position.right + hanging_indent
+                last_fragment_cursor = last_fragment_position.top + line_metrics.padding_top
+                start_cursor = last_fragment_cursor if last_fragment_position.page_number > start_page_number || (start_cursor - last_fragment_cursor) > line_metrics.height
               end
+              # NOTE: this will leave behind a gap where this entry would have been
+              break unless start_dots
               end_cursor = cursor
               move_cursor_to start_cursor
               # NOTE: we're guaranteed to be on the same page as the final line of the entry
