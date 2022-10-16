@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 Bug Fixes::
 
 * fix crash if last fragment in TOC entry is not rendered (#2354)
+* pass `-dNEWPDF=false` to Ghostscript when optimizing PDF so it does not break internal links (#2355)
 
 == 2.3.2 (2022-09-17) - @mojavelinux
 
