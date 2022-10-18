@@ -34,7 +34,7 @@ describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_avai
     toc_annotations = get_annotations pdf, 2
     toc_annotations_with_dest = toc_annotations.select {|it| it[:Dest] }
     (expect toc_annotations_with_dest).to have_size toc_annotations.size
-    (expect File.binread to_optimized_file).to match %r/^%%Invocation: .* -dNEWPDF=false /
+    (expect File.binread to_optimized_file).to match %r/^%%Invocation: .* -dNEWPDF=false(?: |$)/
   end
 
   it 'should generate optimized PDF when filename contains spaces' do
@@ -204,7 +204,7 @@ describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_avai
     (expect err).to be_empty
     pdf = PDF::Reader.new to_file
     (expect get_annotations pdf).not_to be_empty
-    (expect File.binread to_file).to match %r/^%%Invocation: .* -dNEWPDF=true /
+    (expect File.binread to_file).to match %r/^%%Invocation: .* -dNEWPDF=true(?: |$)/
   end
 
   it 'should append all parameters specified in GS_OPTIONS environment variable', cli: true do
