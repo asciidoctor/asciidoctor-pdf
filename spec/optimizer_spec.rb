@@ -26,6 +26,15 @@ describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_avai
     (expect optimizer.compliance).to eql 'PDF'
   end
 
+  it 'should not mangle internal links when optimizing PDF' do
+    input_file = Pathname.new fixture_file 'chronicles-abbreviated.adoc'
+    to_optimized_file = to_pdf_file input_file, 'chronicles-abbreviated.pdf', attribute_overrides: { 'optimize' => '' }
+    pdf = PDF::Reader.new to_optimized_file
+    toc_annotations = get_annotations pdf, 2
+    toc_annotations_with_dest = toc_annotations.select {|it| it[:Dest] }
+    (expect toc_annotations_with_dest).to have_size toc_annotations.size
+  end
+
   it 'should generate optimized PDF when filename contains spaces' do
     input_file = Pathname.new example_file 'basic-example.adoc'
     to_file = to_pdf_file input_file, 'optimizer filename with spaces.pdf', attribute_overrides: { 'optimize' => '' }
