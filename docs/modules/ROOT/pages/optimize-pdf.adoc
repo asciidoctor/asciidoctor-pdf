@@ -51,6 +51,11 @@ Here's an example usage that converts your document and optimizes it:
 
 The command will generate an optimized PDF file that's compliant with the PDF 1.4 specification.
 
+NOTE: Ghostscript 9.56.0 introduced a new PDF interpreter.
+When this interpreter is used, it causes internal references (i.e., links) in the PDF to stop working.
+To workaround this issue, the built-in optimizer requests for Ghostscript to use the old PDF interpreter by passing `-dNEWPDF=false`.
+You can override this behavior using the `GS_OPTIONS` environment variable.
+
 If this command fails because the `gs` command cannot be found, you'll need to specify the path using the `GS` environment variable.
 On Windows, this step is almost always required since the Ghostscript installer does not install the `gs` command into a standard location that RGhost can locate.
 Here's an example that shows how you can override the `gs` command path:

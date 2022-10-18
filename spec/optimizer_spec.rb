@@ -27,6 +27,16 @@ describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_avai
     (expect optimizer.compliance).to eql 'PDF'
   end
 
+  it 'should not mangle internal links when optimizing PDF' do
+    input_file = Pathname.new fixture_file 'chronicles-abbreviated.adoc'
+    to_optimized_file = to_pdf_file input_file, 'chronicles-abbreviated.pdf', attribute_overrides: { 'optimize' => '' }
+    pdf = PDF::Reader.new to_optimized_file
+    toc_annotations = get_annotations pdf, 2
+    toc_annotations_with_dest = toc_annotations.select {|it| it[:Dest] }
+    (expect toc_annotations_with_dest).to have_size toc_annotations.size
+    (expect File.binread to_optimized_file).to match %r/^%%Invocation: .* -dNEWPDF=false /
+  end
+
   it 'should generate optimized PDF when filename contains spaces' do
     input_file = Pathname.new example_file 'basic-example.adoc'
     to_file = to_pdf_file input_file, 'optimizer filename with spaces.pdf', attribute_overrides: { 'optimize' => '' }
@@ -184,6 +194,17 @@ describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_avai
     (expect err).to be_empty
     pdf = TextInspector.analyze Pathname.new to_file
     (expect pdf.text).to be_empty
+  end
+
+  it 'should not set -dNEWPDF=false if specified in GS_OPTIONS', cli: true do
+    env = { 'GS_OPTIONS' => '-dNEWPDF=true' }
+    out, err, res = run_command asciidoctor_pdf_bin, '-a', 'optimize', '-o', (to_file = output_file 'optimizer-gs-options-newpdf.pdf'), (example_file 'basic-example.adoc'), env: env
+    (expect res.exitstatus).to be 0
+    (expect out).to be_empty
+    (expect err).to be_empty
+    pdf = PDF::Reader.new to_file
+    (expect get_annotations pdf).not_to be_empty
+    (expect File.binread to_file).to match %r/^%%Invocation: .* -dNEWPDF=true /
   end
 
   it 'should append all parameters specified in GS_OPTIONS environment variable', cli: true do

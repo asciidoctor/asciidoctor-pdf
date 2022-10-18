@@ -5,6 +5,7 @@ require 'pathname'
 require 'rghost'
 require 'rghost/gs_alone'
 require 'tmpdir'
+autoload :Open3, 'open3'
 
 RGhost::GSAlone.prepend (Module.new do
   def initialize params, debug
@@ -16,7 +17,11 @@ RGhost::GSAlone.prepend (Module.new do
     RGhost::Config.config_platform unless File.exist? RGhost::Config::GS[:path].to_s
     (cmd = @params.drop 1).unshift RGhost::Config::GS[:path].to_s
     #puts cmd if @debug
-    system(*cmd)
+    _out, err, status = Open3.capture3(*cmd)
+    unless (lines = err.lines.each_with_object([]) {|l, accum| (l.include? '-dNEWPDF=') ? accum.pop : (accum << l) }).empty?
+      $stderr.write(*lines)
+    end
+    status.success?
   end
 end)
 
@@ -50,9 +55,11 @@ module Asciidoctor
         if (gs_path = ::ENV['GS'])
           ::RGhost::Config::GS[:path] = gs_path
         end
+        @newpdf = false
         default_params = DEFAULT_PARAMS.drop 0
         if (user_params = ::ENV['GS_OPTIONS'])
           (default_params += user_params.split).uniq!
+          @newpdf = nil if default_params.find {|it| it.start_with? '-dNEWPDF=' }
         end
         ::RGhost::Config::GS[:default_params] = default_params
       end
@@ -67,6 +74,7 @@ module Asciidoctor
             inputs = target
           end
           d = { Printed: false, CannotEmbedFontPolicy: '/Warning', CompatibilityLevel: @compatibility_level }
+          d[:NEWPDF] = @newpdf unless @newpdf.nil?
           case @compliance
           when 'PDF/A', 'PDF/A-1', 'PDF/A-2', 'PDF/A-3'
             d[:PDFA] = ((@compliance.split '-', 2)[1] || 1).to_i

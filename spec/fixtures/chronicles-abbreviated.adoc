@@ -1,0 +1,48 @@
+= Chronicles Abbreviated
+:doctype: book
+:preface-title: Preface
+:icons: font
+:sectnums:
+:toc:
+:toclevels: 3
+:url-devoxx: https://devoxx.be
+:url-wolpertinger: http://en.wikipedia.org/wiki/Wolpertinger
+
+== It's a City Under Siege
+
+(((Conference,Devoxx)))
+This journey begins one late Monday afternoon at {url-devoxx}[((Devoxx))].
+
+(((Wolpertinger)))
+(((Ravenous Beast,Wolpertinger)))
+You may not be familiar with these {url-wolpertinger}[ravenous beasts].
+Trust us, they'll eat your shorts and suck loops from your code.
+In light of this danger, we've searched high and wide for the security crew's defensive operations manual.
+We can't find it and the DefOpsfootnote:defops[DefOps is a portmanteau of "`defensive`" and "`operations`".] werewolves haven't returned from their rendezvous at Bier Central.
+They've either eaten each other or fallen victim to the Wolpertingers roaming the streets of ((Antwerp)).
+
+=== Rendezvous Point
+
+Come on, [[bier-central,Bier Central]]_Bier Central_, of course!
+
+== The Ravages of Writing
+
+Crystalline XML tags relentlessly bombarded the theater.
+
+=== A Recipe for Potion
+
+==== Searching for Burdockian
+
+===== Are You Still There?
+
+====== Yo
+
+== Dawn on the Plateau
+
+Lazarus was hanging from the bottom limb of a Burdockian tree, licking the bark.
+
+== Words Seasoned with Power
+
+=== Can I Get Some Code?
+
+Let's get our #((highlighting))# on!
