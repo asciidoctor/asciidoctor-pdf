@@ -348,7 +348,7 @@ module RSpec::ExampleHelpers
   end
 
   def with_svg_with_remote_image
-    refname = 'main' if (refname = %(v#{Asciidoctor::PDF::VERSION})).include? '-'
+    refname = 'main' if ((refname = %(v#{Asciidoctor::PDF::VERSION})).count '[a-z]') > 0
     image_url = "https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@#{refname}/spec/fixtures/logo.png"
     svg_data = <<~EOS
     <svg width="1cm" height="1cm" version="1.1" viewBox="0 0 5 5" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">

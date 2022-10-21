@@ -1902,7 +1902,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should read remote image over HTTPS if allow-uri-read is set', network: true do
-      refname = 'main' if (refname = %(v#{Asciidoctor::PDF::VERSION})).include? '-'
+      refname = 'main' if ((refname = %(v#{Asciidoctor::PDF::VERSION})).count '[a-z]') > 0
       pdf = to_pdf %(image::https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@#{refname}/spec/fixtures/logo.png[Remote Image]), attribute_overrides: { 'allow-uri-read' => '' }
       images = get_images pdf, 1
       (expect images).to have_size 1
