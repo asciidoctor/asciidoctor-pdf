@@ -41,7 +41,17 @@ Bug Fixes::
 * only load Treetop runtime so it does not overload `require` method
 * fix collation order of index terms that differ only in case
 * don't crash if page background image value is empty (interpret as "none")
-* pass `-dNEWPDF=false` to Ghostscript when optimizing PDF so it does not break internal references (i.e., links) (#2355)
+
+== 2.3.3 (2022-10-21) - @mojavelinux
+
+Bug Fixes::
+
+* fix crash if last fragment in TOC entry is not rendered (#2354)
+* pass `-dNEWPDF=false` to Ghostscript when optimizing PDF so it does not break internal links (#2355)
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.3[git tag] | {url-repo}/compare/v2.3.2\...v2.3.3[full diff]
 
 == 2.3.2 (2022-09-17) - @mojavelinux
 
