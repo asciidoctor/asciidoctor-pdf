@@ -407,6 +407,7 @@ In this case, we're interested in retrieving the page number and inserting it in
 
 Let's create an inline macro named `pagenum` that inserts the current page number into the document when the macro is converted.
 
+.inline-pagenum-macro.rb
 [,ruby]
 ----
 include::example$inline-pagenum-macro.rb[]
@@ -420,6 +421,54 @@ Here's how this macro would be used.
 :doctype: book
 
 You're looking at page number pagenum:[].
+----
+
+We can build on this extension to show the start page of the current section by adding support for a scope parameter.
+We can also have it show the page number label instead of the physical page number by subtracting the start page number (which is stored on the index catalog).
+
+.advanced-inline-pagenum-macro.rb
+[,ruby]
+----
+include::example$advanced-inline-pagenum-macro.rb[]
+----
+
+The macro can now be used to show the page number label for the current section:
+
+[,asciidoc]
+----
+= Document Title
+:doctype: book
+
+== Chapter A
+
+You're reading a section that begins on page pagenum:[section].
+----
+
+Taking inspiration from this extension, we develop another inline macro named `pageref` that resolves the page number of the closest parent section of a reference.
+
+.inline-pageref-macro.rb
+[,rb]
+----
+include::example$inline-pageref-macro.rb[]
+----
+
+The only caveat of this extension is that it has to convert the document a second time to resolve any forward references.
+That's because the page number of a section is not known until it is rendered.
+
+Here's how the `pageref` macro would be used:
+
+[,asciidoc]
+----
+= Document Title
+:doctype: book
+
+== Chapter A
+
+Content.
+
+== Chapter B
+
+Refer to <<_chapter_a>> on page pageref:_chapter_a[].
 ----
 
 == Resources
