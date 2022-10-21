@@ -13,11 +13,12 @@ fi
 RELEASE_GIT_NAME=$(curl -s https://api.github.com/users/$RELEASE_USER | jq -r .name)
 RELEASE_GIT_EMAIL=$RELEASE_USER@users.noreply.github.com
 GEMSPEC=$(ls -1 *.gemspec | head -1)
-RELEASE_NAME=$(ruby -e "print (Gem::Specification.load '$GEMSPEC').name")
+RELEASE_GEM_NAME=$(ruby -e "print (Gem::Specification.load '$GEMSPEC').name")
 # RELEASE_VERSION must be an exact version number; if not set, defaults to next patch release
 if [ -z "$RELEASE_VERSION" ]; then
   export RELEASE_VERSION=$(ruby -e "print (Gem::Specification.load '$GEMSPEC').version.then { _1.prerelease? ? _1.release.to_s : (_1.segments.tap {|s| s[-1] += 1 }.join ?.) }")
 fi
+export RELEASE_GEM_VERSION=${RELEASE_VERSION/-/.}
 
 # configure git to push changes
 git config --local user.name "$RELEASE_GIT_NAME"
@@ -35,9 +36,9 @@ chmod 600 $HOME/.gem/credentials
   git commit -a -m "release $RELEASE_VERSION"
   git tag -m "version $RELEASE_VERSION" v$RELEASE_VERSION
   mkdir -p pkg
-  RUBYOPT='-r ./gem-version-patch.rb' gem build $GEMSPEC -o pkg/$RELEASE_NAME-$RELEASE_VERSION.gem
+  gem build $GEMSPEC -o pkg/$RELEASE_GEM_NAME-$RELEASE_GEM_VERSION.gem
   git push origin $(git describe --tags --exact-match)
-  gem push pkg/$RELEASE_NAME-$RELEASE_VERSION.gem
+  gem push pkg/$RELEASE_GEM_NAME-$RELEASE_GEM_VERSION.gem
   ruby tasks/release-notes.rb
   gh release create v$RELEASE_VERSION -t v$RELEASE_VERSION -F pkg/release-notes.md -d
   ruby tasks/postversion.rb
