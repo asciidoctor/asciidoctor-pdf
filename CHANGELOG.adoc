@@ -5,12 +5,16 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.3.3 (2022-10-21) - @mojavelinux
 
 Bug Fixes::
 
 * fix crash if last fragment in TOC entry is not rendered (#2354)
 * pass `-dNEWPDF=false` to Ghostscript when optimizing PDF so it does not break internal links (#2355)
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.3[git tag] | {url-repo}/compare/v2.3.2\...v2.3.3[full diff]
 
 == 2.3.2 (2022-09-17) - @mojavelinux
 
