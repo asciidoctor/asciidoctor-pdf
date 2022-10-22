@@ -8,8 +8,9 @@ module Asciidoctor
 
         DummyText = ?\u0000
         ZeroWidthSpace = ?\u200b
+        LF = ?\n
+        InnerLF = LF + ZeroWidthSpace # without trailing character, use of fallback font can change line height
         DoubleSpace = '  '
-        LF = ?\n + ZeroWidthSpace # without trailing character, use of fallback font can change line height
         CharEntityTable = { amp: '&', apos: ?', gt: '>', lt: '<', nbsp: ?\u00a0, quot: '"' }
         CharRefRx = /&(?:(#{CharEntityTable.keys.join '|'})|#(?:(\d\d\d{0,4})|x(\h\h\h{0,3})));/
         HexColorRx = /^#\h\h\h\h{0,3}$/
@@ -156,6 +157,7 @@ module Asciidoctor
         def apply parsed, fragments = [], inherited = nil, normalize_space: nil
           previous_fragment_is_text = false
           previous_fragment_end_with_space = false
+          last_node = parsed[-1]
           # NOTE: we use each since using inject is slower than a manual loop
           parsed.each do |node|
             case node[:type]
@@ -223,7 +225,8 @@ module Asciidoctor
                   fragments << fragment
                   previous_fragment_is_text = previous_fragment_end_with_space = false
                 else # :br
-                  text = @merge_adjacent_text_nodes && previous_fragment_is_text ? %(#{fragments.pop[:text]}#{LF}) : LF
+                  lf = node == last_node ? LF : InnerLF
+                  text = @merge_adjacent_text_nodes && previous_fragment_is_text ? %(#{fragments.pop[:text]}#{lf}) : lf
                   fragments << (clone_fragment inherited, text: text)
                   previous_fragment_is_text = previous_fragment_end_with_space = true
                 end
