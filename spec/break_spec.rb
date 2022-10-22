@@ -14,6 +14,33 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       (expect pdf.lines).to eql %w(foo bar baz)
     end
 
+    it 'should preserve inner empty lines that end with hard line break' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      foo +
+      filler +
+      filler +
+      filler +
+
+      bar
+      EOS
+
+      expected_gap = ((pdf.find_unique_text 'foo')[:y] - (pdf.find_unique_text 'bar')[:y]).round 4
+
+      pdf = to_pdf <<~'EOS', analyze: true
+      foo +
+      {empty} +
+      {empty} +
+      {empty} +
+
+      bar
+      EOS
+
+      actual_gap = ((pdf.find_unique_text 'foo')[:y] - (pdf.find_unique_text 'bar')[:y]).round 4
+
+      (expect actual_gap).to eql (expected_gap)
+      (expect actual_gap).to be > 75
+    end
+
     it 'should preserve newlines in paragraph with hardbreaks option' do
       pdf = to_pdf <<~'EOS', analyze: true
       [%hardbreaks]

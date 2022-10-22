@@ -49,6 +49,35 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     (expect pdf.text.map {|it| it.values_at :string, :font_name }).to eql expected_text
   end
 
+  it 'should apply text formatting in section title' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    == Section Title with Some _Oomph_
+
+    text
+    EOS
+
+    (expect pdf.lines[0]).to eql 'Section Title with Some Oomph'
+    text_with_emphasis = pdf.find_unique_text 'Oomph'
+    (expect text_with_emphasis).not_to be_nil
+    (expect text_with_emphasis[:font_name]).to end_with 'Italic'
+  end
+
+  it 'should ignore hard line break at end of section title' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    == Reference Title
+
+    reference text
+
+    == Section Title +
+
+    section text
+    EOS
+
+    expected_gap = ((pdf.find_unique_text 'Reference Title')[:y] - (pdf.find_unique_text 'reference text')[:y]).round 4
+    actual_gap = ((pdf.find_unique_text 'Section Title')[:y] - (pdf.find_unique_text 'section text')[:y]).round 4
+    (expect actual_gap).to eql expected_gap
+  end
+
   it 'should allow theme to set font family for headings' do
     pdf_theme = {
       heading_font_family: 'Helvetica',
