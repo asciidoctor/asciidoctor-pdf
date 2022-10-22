@@ -280,7 +280,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect text).to eql 'before after'
     end
 
-    it 'should use of fallback font after hard line break should not alter line height' do
+    it 'should not allow use of fallback font after hard line break to alter line height' do
       pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => 'default-with-font-fallbacks' }, analyze: true
       [%hardbreaks]
       けふこえて
