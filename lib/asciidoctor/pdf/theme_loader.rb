@@ -239,25 +239,17 @@ module Asciidoctor
           units = segments.delete_at 1
           expr = segments.join
         end
-        while true
-          if (expr.count '*/^') > 0
-            result = expr.gsub(MultiplyDivideOpRx) { $1.to_f.send ($2 == '^' ? '**' : $2).to_sym, $3.to_f }
-            unchanged = (result == expr)
-            expr = result
-            break if unchanged
-          else
-            break
-          end
+        while (expr.count '*/^') > 0
+          result = expr.gsub(MultiplyDivideOpRx) { $1.to_f.send ($2 == '^' ? '**' : $2).to_sym, $3.to_f }
+          unchanged = (result == expr)
+          expr = result
+          break if unchanged
         end
-        while true
-          if (expr.count '+-') > 0
-            result = expr.gsub(AddSubtractOpRx) { $1.to_f.send $2.to_sym, $3.to_f }
-            unchanged = (result == expr)
-            expr = result
-            break if unchanged
-          else
-            break
-          end
+        while (expr.count '+-') > 0
+          result = expr.gsub(AddSubtractOpRx) { $1.to_f.send $2.to_sym, $3.to_f }
+          unchanged = (result == expr)
+          expr = result
+          break if unchanged
         end
         if (expr.end_with? ')') && expr =~ PrecisionFuncRx
           offset = (op = $1).length + 1
