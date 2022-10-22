@@ -296,11 +296,8 @@ module Asciidoctor
             value = value.join
           end
         when ::String
-          if value == 'transparent'
-            return TransparentColorValue.new value
-          elsif value.length == 6
-            return HexColorValue.new value.upcase
-          end
+          return TransparentColorValue.new value if value == 'transparent'
+          return HexColorValue.new value.upcase if value.length == 6
         when ::NilClass
           return
         else

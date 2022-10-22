@@ -34,7 +34,7 @@ class Prawn::Table::Cell::Text
       placeholder_width = styled_width_of 'M'
       text = text.gsub ImageTagRx do
         if (pctidx = $1.index '%')
-          if pctidx == $1.length - 1
+          if pctidx == $1.length - 1 # rubocop:disable Style/GuardClause
             # TODO: look up the intrinsic image width in pixels
             #width_of_images += (<image width> - placeholder_width)
             next ''

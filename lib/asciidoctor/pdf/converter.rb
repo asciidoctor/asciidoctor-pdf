@@ -3171,27 +3171,26 @@ module Asciidoctor
 
       def ink_cover_page doc, face
         image_path, image_opts = resolve_background_image doc, @theme, %(#{face}-cover-image), theme_key: %(cover_#{face}_image).to_sym, symbolic_paths: ['', '~']
-        if image_path
-          if image_path.empty?
-            go_to_page page_count if face == :back
-            start_new_page_discretely
-            # NOTE: open graphics state to prevent page from being reused
-            open_graphics_state if face == :front
-            return
-          elsif image_path == '~'
-            @page_margin[:cover] = @page_margin[page.layout][:recto] if @media == 'prepress'
-            return
-          end
-
+        return unless image_path
+        if image_path.empty?
           go_to_page page_count if face == :back
-          if image_opts[:format] == 'pdf'
-            import_page image_path, (image_opts.merge advance: face != :back, advance_if_missing: false)
-          else
-            begin
-              image_page image_path, image_opts
-            rescue
-              log :warn, %(could not embed #{face} cover image: #{image_path}; #{$!.message})
-            end
+          start_new_page_discretely
+          # NOTE: open graphics state to prevent page from being reused
+          open_graphics_state if face == :front
+          return
+        elsif image_path == '~'
+          @page_margin[:cover] = @page_margin[page.layout][:recto] if @media == 'prepress'
+          return
+        end
+
+        go_to_page page_count if face == :back
+        if image_opts[:format] == 'pdf'
+          import_page image_path, (image_opts.merge advance: face != :back, advance_if_missing: false)
+        else
+          begin
+            image_page image_path, image_opts
+          rescue
+            log :warn, %(could not embed #{face} cover image: #{image_path}; #{$!.message})
           end
         end
       end
@@ -4095,36 +4094,33 @@ module Asciidoctor
           image_path = from_theme = theme[key]
         end
         symbolic_paths = opts.delete :symbolic_paths
-        if image_path
-          if symbolic_paths&.include? image_path
-            return [image_path, {}]
-          elsif image_path == 'none' || image_path == ''
-            return []
-          elsif (image_path.include? ':') && image_path =~ ImageAttributeValueRx
-            image_attrs = (AttributeList.new $2).parse %w(alt width)
-            image_path = $1
-            image_relative_to = true
-          end
-          if from_theme
-            image_path = apply_subs_discretely doc, image_path, subs: [:attributes], imagesdir: (image_relative_to = @themesdir), page_layout: page.layout.to_s
-          elsif image_path.include? '{page-layout}'
-            image_path = image_path.sub '{page-layout}', page.layout.to_s
-          end
-          image_path, image_format = ::Asciidoctor::Image.target_and_format image_path, image_attrs
-          image_path = resolve_image_path doc, image_path, image_format, image_relative_to
+        return unless image_path
+        return [image_path, {}] if symbolic_paths&.include? image_path
+        return [] if image_path == 'none' || image_path == ''
+        if (image_path.include? ':') && image_path =~ ImageAttributeValueRx
+          image_attrs = (AttributeList.new $2).parse %w(alt width)
+          image_path = $1
+          image_relative_to = true
+        end
+        if from_theme
+          image_path = apply_subs_discretely doc, image_path, subs: [:attributes], imagesdir: (image_relative_to = @themesdir), page_layout: page.layout.to_s
+        elsif image_path.include? '{page-layout}'
+          image_path = image_path.sub '{page-layout}', page.layout.to_s
+        end
+        image_path, image_format = ::Asciidoctor::Image.target_and_format image_path, image_attrs
+        image_path = resolve_image_path doc, image_path, image_format, image_relative_to
 
-          return unless image_path
+        return unless image_path
 
-          unless ::File.readable? image_path
-            log :warn, %(#{key.to_s.tr '-_', ' '} not found or readable: #{image_path})
-            return
-          end
+        unless ::File.readable? image_path
+          log :warn, %(#{key.to_s.tr '-_', ' '} not found or readable: #{image_path})
+          return
+        end
 
-          if image_format == 'pdf'
-            [image_path, page: [image_attrs&.[]('page').to_i, 1].max, format: image_format]
-          else
-            [image_path, (resolve_image_options image_path, image_format, image_attrs, (({ background: true, container_size: [page_width, page_height] }.merge opts)))]
-          end
+        if image_format == 'pdf'
+          [image_path, page: [image_attrs&.[]('page').to_i, 1].max, format: image_format]
+        else
+          [image_path, (resolve_image_options image_path, image_format, image_attrs, (({ background: true, container_size: [page_width, page_height] }.merge opts)))]
         end
       end
 

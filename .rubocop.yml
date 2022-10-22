@@ -343,7 +343,8 @@ Style/FormatStringToken:
 Style/GlobalStdStream:
   Enabled: true
 Style/GuardClause:
-  Enabled: false # FIXME enable for some ideas, but we don't agree with all the suggestions, so add ignores
+  Enabled: true
+  MinBodyLength: 15
 Style/HashConversion:
   Enabled: true
 Style/HashAsLastArrayItem:
