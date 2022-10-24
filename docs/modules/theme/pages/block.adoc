@@ -20,6 +20,8 @@ Block styles are applied to the following block types:
 * verse
 |===
 
+To control the spacing and indentation for paragraphs, see xref:prose.adoc[].
+
 The bottom margin (`margin-bottom`) is only added if the block is followed by an adjacent block within the same enclosure (e.g., a sidebar, a table cell, or the area outside any blocks).
 
 [cols="3,4,6a"]

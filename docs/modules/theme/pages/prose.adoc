@@ -1,6 +1,6 @@
 = Prose Category Keys
 :description: Reference list of the available prose category keys and their value types.
-:navtitle: Prose
+:navtitle: Prose (Paragraph Text)
 :source-language: yaml
 
 [#prose]
