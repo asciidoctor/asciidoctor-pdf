@@ -58,6 +58,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
   end
 
   it 'should support all available font-based icon sets' do
+    supports_mdi = true unless (Gem::Version.new Prawn::Icon::VERSION) < (Gem::Version.new '3.1.0')
     [
       %W(fab twitter \uf099 FontAwesome5Brands-Regular),
       %W(far bell \uf0f3 FontAwesome5Free-Regular),
@@ -65,6 +66,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
       %W(fi lock \uf16a fontcustom),
       %W(mdi alien \uf089 MaterialDesignIcons),
     ].each do |icon_set, icon_name, char_code, font_name|
+      next if icon_set == 'mdi' && !supports_mdi
       pdf = to_pdf <<~EOS, analyze: true
       :icons: font
       :icon-set: #{icon_set}
