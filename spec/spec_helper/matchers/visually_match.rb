@@ -36,7 +36,7 @@ module RSpec::Matchers
   end
 end
 
-RSpec::Matchers.define :visually_match do |reference_filename|
+RSpec::Matchers.define :visually_match do |reference_filename, skip_pages: nil|
   reference_path = (Pathname.new reference_filename).absolute? ?
     reference_filename :
     (File.join RSpec::Matchers::REFERENCE_DIR, reference_filename)
@@ -56,6 +56,7 @@ RSpec::Matchers.define :visually_match do |reference_filename|
     files = Dir[%(#{output_basename}-{actual,reference}-*.png)].map {|filename| (/-(?:actual|reference)-(\d+)\.png$/.match filename)[1] }.sort.uniq
     return false if files.empty?
     files.each do |idx|
+      next if skip_pages && (skip_pages.include? idx.to_i)
       reference_page_filename = %(#{output_basename}-reference-#{idx}.png)
       reference_page_filename = nil unless File.exist? reference_page_filename
       tmp_files << reference_page_filename if reference_page_filename
