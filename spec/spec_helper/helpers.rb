@@ -40,7 +40,11 @@ module RSpec::ExampleHelpers
   end
 
   def bin_script name, gem: 'asciidoctor-pdf'
-    bin_path = Gem.bin_path gem, name
+    if gem != 'asciidoctor-pdf' || (defined? Bundler)
+      bin_path = Gem.bin_path gem, name
+    else
+      bin_path = File.join project_dir, 'bin', name
+    end
     if (defined? DeepCover) && !(DeepCover.const_defined? :TAKEOVER_IS_ON)
       [Gem.ruby, '-rdeep_cover', bin_path]
     elsif windows?
