@@ -981,7 +981,89 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       EOS
       (expect text_lines).to eql expected_lines
     end
-  end
+
+    it 'should not apply syntax highlighting if specialchars sub is disabled' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [source,ruby,subs=-specialchars]
+      ----
+      puts "Hello, World!"
+      ----
+      EOS
+
+      text = pdf.text
+      (expect text).to have_size 1
+      (expect text[0][:string]).to eql 'puts "Hello, World!"'
+      (expect text[0][:font_color]).to eql '333333'
+    end
+
+    it 'should not apply syntax highlighting in scratch document if specialchars sub is disabled' do
+      scratch_pdf = nil
+      postprocessor_impl = proc do
+        process do |doc, output|
+          scratch_pdf = doc.converter.scratch
+          output
+        end
+      end
+
+      opts = { extension_registry: Asciidoctor::Extensions.create { postprocessor(&postprocessor_impl) } }
+      pdf = to_pdf <<~'EOS', (opts.merge analyze: true)
+      :source-highlighter: rouge
+
+      [%unbreakable]
+      --
+      [source,ruby,subs=-specialchars]
+      ----
+      puts "Hello, World!"
+      ----
+      --
+      EOS
+
+      [pdf.text, (TextInspector.analyze scratch_pdf.render).text].each do |text|
+        (expect text[0][:string]).to eql 'puts "Hello, World!"'
+        (expect text[0][:font_color]).to eql '333333'
+      end
+    end
+
+    it 'should remove bare HTML tags added by substitutions' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+
+      [,ruby,subs="+quotes,+macros"]
+      ----
+      require 'https://asciidoctor.org[asciidoctor]'
+
+      Asciidoctor._convert_file_ 'README.adoc', *safe: :safe*
+      ----
+      EOS
+
+      lines = pdf.lines pdf.text
+      (expect lines).to eql [%(require 'asciidoctor'), %(Asciidoctor.convert_file 'README.adoc', safe: :safe)]
+      require_text = pdf.find_unique_text 'require'
+      (expect require_text[:font_color]).not_to eql '333333'
+    end
+
+    it 'should substitute attribute references if attributes substitution is enabled' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :source-highlighter: rouge
+      :converter-library: asciidoctor-pdf
+      :backend-value: :pdf
+
+      [,ruby,subs=attributes+]
+      ----
+      require '{converter-library}'
+
+      Asciidoctor.convert_file 'README.adoc', safe: :safe, backend: {backend-value}
+      ----
+      EOS
+
+      lines = pdf.lines pdf.text
+      (expect lines).to eql [%(require 'asciidoctor-pdf'), %(Asciidoctor.convert_file 'README.adoc', safe: :safe, backend: :pdf)]
+      require_text = pdf.find_unique_text 'require'
+      (expect require_text[:font_color]).not_to eql '333333'
+    end
+  end if gem_available? 'rouge'
 
   context 'CodeRay' do
     it 'should highlight source using CodeRay if source-highlighter is coderay' do
@@ -1133,7 +1215,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
   end
 
-  context 'Pygments', if: (gem_available? 'pygments.rb'), &(proc do
+  context 'Pygments' do
     it 'should highlight source using Pygments if source-highlighter is pygments' do
       pdf = to_pdf <<~'EOS', analyze: true
       :source-highlighter: pygments
@@ -1562,7 +1644,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
       (expect pdf.lines).to eql ['①']
     end
-  end)
+  end if gem_available? 'pygments.rb'
 
   context 'Unsupported' do
     it 'should apply specialcharacters substitution and indentation guards for client-side syntax highlighter' do
@@ -1603,88 +1685,6 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
       (expect pdf.lines).to eql ['<root>', %(\u00a0 <child>content</child>), '</root>']
       (expect pdf.text.map {|it| it[:font_color] }.uniq).to eql ['333333']
-    end
-
-    it 'should not apply syntax highlighting if specialchars sub is disabled' do
-      pdf = to_pdf <<~'EOS', analyze: true
-      :source-highlighter: rouge
-
-      [source,ruby,subs=-specialchars]
-      ----
-      puts "Hello, World!"
-      ----
-      EOS
-
-      text = pdf.text
-      (expect text).to have_size 1
-      (expect text[0][:string]).to eql 'puts "Hello, World!"'
-      (expect text[0][:font_color]).to eql '333333'
-    end
-
-    it 'should not apply syntax highlighting in scratch document if specialchars sub is disabled' do
-      scratch_pdf = nil
-      postprocessor_impl = proc do
-        process do |doc, output|
-          scratch_pdf = doc.converter.scratch
-          output
-        end
-      end
-
-      opts = { extension_registry: Asciidoctor::Extensions.create { postprocessor(&postprocessor_impl) } }
-      pdf = to_pdf <<~'EOS', (opts.merge analyze: true)
-      :source-highlighter: rouge
-
-      [%unbreakable]
-      --
-      [source,ruby,subs=-specialchars]
-      ----
-      puts "Hello, World!"
-      ----
-      --
-      EOS
-
-      [pdf.text, (TextInspector.analyze scratch_pdf.render).text].each do |text|
-        (expect text[0][:string]).to eql 'puts "Hello, World!"'
-        (expect text[0][:font_color]).to eql '333333'
-      end
-    end
-
-    it 'should remove bare HTML tags added by substitutions' do
-      pdf = to_pdf <<~'EOS', analyze: true
-      :source-highlighter: rouge
-
-      [,ruby,subs="+quotes,+macros"]
-      ----
-      require 'https://asciidoctor.org[asciidoctor]'
-
-      Asciidoctor._convert_file_ 'README.adoc', *safe: :safe*
-      ----
-      EOS
-
-      lines = pdf.lines pdf.text
-      (expect lines).to eql [%(require 'asciidoctor'), %(Asciidoctor.convert_file 'README.adoc', safe: :safe)]
-      require_text = pdf.find_unique_text 'require'
-      (expect require_text[:font_color]).not_to eql '333333'
-    end
-
-    it 'should substitute attribute references if attributes substitution is enabled' do
-      pdf = to_pdf <<~'EOS', analyze: true
-      :source-highlighter: rouge
-      :converter-library: asciidoctor-pdf
-      :backend-value: :pdf
-
-      [,ruby,subs=attributes+]
-      ----
-      require '{converter-library}'
-
-      Asciidoctor.convert_file 'README.adoc', safe: :safe, backend: {backend-value}
-      ----
-      EOS
-
-      lines = pdf.lines pdf.text
-      (expect lines).to eql [%(require 'asciidoctor-pdf'), %(Asciidoctor.convert_file 'README.adoc', safe: :safe, backend: :pdf)]
-      require_text = pdf.find_unique_text 'require'
-      (expect require_text[:font_color]).not_to eql '333333'
     end
   end
 
@@ -1907,7 +1907,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       msg = pdf.find_unique_text '"Hello, World!"'
       (expect msg[:font_name]).to eql 'mplus1mn-regular'
     end
-  end
+  end if gem_available? 'rouge'
 
   context 'Label' do
     it 'should add label to code block if language is specified' do
@@ -1918,7 +1918,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       source_lines[0] = %(  register_for '#{backend}'\n)
       ext_class.class_eval source_lines.join, source_file
       pdf = to_pdf <<~'EOS', backend: backend, analyze: true
-      :source-highlighter: rouge
+      :source-highlighter: coderay
 
       [,ruby]
       ----
@@ -1947,7 +1947,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       ext_class.class_eval source_lines.join, source_file
       pdf_theme = { page_columns: 2, page_column_gap: 12 }
       pdf = to_pdf <<~'EOS', backend: backend, pdf_theme: pdf_theme, analyze: true
-      :source-highlighter: rouge
+      :source-highlighter: coderay
 
       image::tall-spacer.png[pdfwidth=5]
 
