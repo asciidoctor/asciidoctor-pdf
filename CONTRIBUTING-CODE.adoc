@@ -71,6 +71,12 @@ If you're running a Fedora-based Linux distribution, you can install the require
  $ sudo dnf group install -y "Development Tools"
    sudo dnf install -y redhat-rpm-config ruby-devel rubygem-bundler poppler-utils
 
+If you want to run the tests on Fedora without using Bundler, install these dependencies instead:
+
+ $ sudo dnf install -y ruby rubygem-asciidoctor rubygem-chunky_png rubygem-coderay rubygem-pdf-inspector \
+   rubygem-prawn rubygem-prawn-icon rubygem-prawn-svg rubygem-prawn-table rubygem-prawn-templates \
+   rubygem-rouge rubygem-rspec rubygem-treetop poppler-utils
+
 You can study the CI workflow at [.path]_.github/workflows/ci.yml_ to learn more about what software is needed to run the full test suite.
 
 === Retrieve the Source Code
