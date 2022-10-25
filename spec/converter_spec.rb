@@ -371,14 +371,14 @@ describe Asciidoctor::PDF::Converter do
 
       it 'should not crash if theme does not specify any keys when converting chronicles example' do
         input_path = Pathname.new example_file 'chronicles-example.adoc'
-        pdf = to_pdf input_path, attribute_overrides: { 'imagesdir' => '@', 'pdf-theme' => (fixture_file 'bare-theme.yml') }
+        pdf = to_pdf input_path, attribute_overrides: { 'imagesdir' => '@', 'pdf-theme' => (fixture_file 'bare-theme.yml'), 'source-highlighter' => nil }
         (expect pdf.pages).to have_size 14
         (expect (pdf.page 1).text).to include 'Documentation Chronicles'
       end
 
       it 'should not warn when using dark theme to convert chronicles example' do
         input_path = Pathname.new example_file 'chronicles-example.adoc'
-        pdf = to_pdf input_path, attribute_overrides: { 'imagesdir' => '@', 'pdf-theme' => 'chronicles-dark' }, analyze: true
+        pdf = to_pdf input_path, attribute_overrides: { 'imagesdir' => '@', 'pdf-theme' => 'chronicles-dark', 'source-highlighter' => nil }, analyze: true
         (expect pdf.pages).to have_size 17
         gs_p1 = pdf.pages[0][:raw_content]
         (expect gs_p1).to start_with %(q\n/DeviceRGB cs\n0.0 0.0 0.0 scn\n0.0 0.0 595.28 841.89 re\n)
