@@ -3,14 +3,6 @@
 require_relative 'spec_helper'
 
 describe 'asciidoctor-pdf' do
-  context 'Packaging' do
-    it 'should install bin script named asciidoctor-pdf' do
-      bin_script = (Pathname.new Gem.bindir) / 'asciidoctor-pdf'
-      bin_script = Pathname.new Gem.bin_path 'asciidoctor-pdf', 'asciidoctor-pdf' unless bin_script.exist?
-      (expect bin_script).to exist
-    end
-  end
-
   context 'Options' do
     it 'should print the version of Asciidoctor PDF to stdout when invoked with the -V flag', cli: true do
       out, _, res = run_command asciidoctor_pdf_bin, '-V'
@@ -35,7 +27,15 @@ describe 'asciidoctor-pdf' do
     end
   end
 
-  context 'Require', if: (defined? Bundler) do
+  context 'Packaging' do
+    it 'should install bin script named asciidoctor-pdf' do
+      bin_script = (Pathname.new Gem.bindir) / 'asciidoctor-pdf'
+      bin_script = Pathname.new Gem.bin_path 'asciidoctor-pdf', 'asciidoctor-pdf' unless bin_script.exist?
+      (expect bin_script).to exist
+    end
+  end if defined? Bundler
+
+  context 'Require' do
     it 'should load converter if backend is pdf and require is asciidoctor-pdf', cli: true do
       out, err, res = run_command asciidoctor_bin, '-r', 'asciidoctor-pdf', '-b', 'pdf', '-D', output_dir, (fixture_file 'hello.adoc'), use_bundler: true
       (expect res.exitstatus).to be 0
@@ -51,7 +51,7 @@ describe 'asciidoctor-pdf' do
       (expect err).to be_empty
       (expect Pathname.new output_file 'hello.pdf').to exist
     end
-  end
+  end if defined? Bundler
 
   context 'Theme' do
     it 'should use theme specified by pdf-theme attribute', cli: true do
