@@ -90,22 +90,23 @@ describe 'asciidoctor-pdf' do
   end
 
   context 'Examples' do
-    it 'should convert the basic example', cli: true, visual: true do
+    it 'should convert the basic example', cli: true, visual: true, if: (gem_available? 'rouge'), &(proc do
       out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, (example_file 'basic-example.adoc')
       (expect res.exitstatus).to be 0
       (expect out).to be_empty
       (expect err).to be_empty
       reference_file = File.absolute_path example_file 'basic-example.pdf'
       (expect output_file 'basic-example.pdf').to visually_match reference_file
-    end
+    end)
 
-    it 'should convert the chronicles example', cli: true, visual: true, unless: Gem.loaded_specs['rouge'].version < (Gem::Version.new '2.1.0'), &(proc do
+    it 'should convert the chronicles example', cli: true, visual: true, if: (gem_available? 'rouge'), &(proc do
       out, err, res = run_command asciidoctor_pdf_bin, '-D', output_dir, (example_file 'chronicles-example.adoc')
       (expect res.exitstatus).to be 0
       (expect out).to be_empty
       (expect err).to be_empty
+      skip_pages = [10, 11, 14] if Gem.loaded_specs['rouge'].version < (Gem::Version.new '2.1.0')
       reference_file = File.absolute_path example_file 'chronicles-example.pdf'
-      (expect output_file 'chronicles-example.pdf').to visually_match reference_file
+      (expect output_file 'chronicles-example.pdf').to visually_match reference_file, skip_pages: skip_pages
     end)
   end
 
