@@ -115,11 +115,16 @@ module Prawn
             font_size = font_info[:size]
           end
           font_style ||= font_info[:style]
+          if (@align == :center || @align == :right) && content.blocks.map(&:context).uniq == [:paragraph]
+            prev_text_align = pdf.instance_variable_get :@base_text_align
+            pdf.instance_variable_set :@base_text_align, @align
+          end
           pdf.font font_family, size: font_size, style: font_style do
             yield
           ensure
             pdf.font_color = prev_font_color if prev_font_color
             pdf.font_scale = prev_font_scale if prev_font_scale
+            pdf.instance_variable_set :@base_text_align, prev_text_align if prev_text_align
           end
         end
       end
