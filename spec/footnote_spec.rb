@@ -258,14 +258,24 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     Another audacious statement.{fn-disclaimer}
     EOS
 
-    expected_lines = <<~'EOS'.lines.map(&:chomp)
-    A bold statement.[1]
-    Another audacious statement.[1]
-    1. Opinions are my own.
-    EOS
+    if (Gem::Version.new Asciidoctor::VERSION) < (Gem::Version.new '2.0.11')
+      expected_lines = <<~'EOS'.lines.map(&:chomp)
+      A bold statement.[1]
+      Another audacious statement.[2]
+      1. Opinions are my own.
+      2. Opinions are my own.
+      EOS
+      footnote_text = (pdf.find_text %r/Opinions/)[-1]
+    else
+      expected_lines = <<~'EOS'.lines.map(&:chomp)
+      A bold statement.[1]
+      Another audacious statement.[1]
+      1. Opinions are my own.
+      EOS
+      footnote_text = pdf.find_unique_text %r/Opinions/
+    end
 
     (expect pdf.lines).to eql expected_lines
-    footnote_text = pdf.find_unique_text %r/Opinions/
     (expect footnote_text[:y]).to be < 60
   end
 
@@ -346,14 +356,24 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     You can download patches from the product page.{fn-disclaimer}
     EOS
 
-    expected_lines = <<~'EOS'.lines.map(&:chomp)
-    You will receive notifications of all product updates.[1]
-    You can download patches from the product page.[1]
-    1. Only available if you have an active subscription.
-    EOS
+    if (Gem::Version.new Asciidoctor::VERSION) < (Gem::Version.new '2.0.11')
+      expected_lines = <<~'EOS'.lines.map(&:chomp)
+      You will receive notifications of all product updates.[1]
+      You can download patches from the product page.[2]
+      1. Only available if you have an active subscription.
+      2. Only available if you have an active subscription.
+      EOS
+      active_text = (pdf.find_text 'active')[-1]
+    else
+      expected_lines = <<~'EOS'.lines.map(&:chomp)
+      You will receive notifications of all product updates.[1]
+      You can download patches from the product page.[1]
+      1. Only available if you have an active subscription.
+      EOS
+      active_text = pdf.find_unique_text 'active'
+    end
 
     (expect pdf.lines).to eql expected_lines
-    active_text = pdf.find_unique_text 'active'
     (expect active_text[:font_name]).to eql 'NotoSerif-Italic'
   end
 

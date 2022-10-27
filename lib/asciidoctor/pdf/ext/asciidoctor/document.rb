@@ -13,7 +13,7 @@ class Asciidoctor::Document
       preface.id = preface.generate_id
       if (first_child = blk0.blocks[0])&.option? 'notitle'
         preface.set_option 'notitle'
-        first_child.role = 'lead' if first_child.context == :paragraph && !first_child.role?
+        first_child.set_attr 'role', 'lead' if first_child.context == :paragraph && !first_child.role?
       end
       preface.blocks.replace (blk0.blocks.map do |b|
         b.parent = preface

@@ -46,9 +46,10 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         ruby: [jruby-9.3.7.0, '2.7', '3.1']
-        rouge-version: [~]
+        asciidoctor-version: [~]
         asciidoctor-diagram-version: ['~> 2.2']
         asciidoctor-kroki-version: [~]
+        rouge-version: [~]
         upstream: [~]
         exclude:
         # remove 3.1 on ubuntu-latest to mark as primary
@@ -61,17 +62,18 @@ jobs:
           ruby: '3.0'
         - os: macos-latest
           ruby: '3.1'
-        # NOTE: enable once Asciidoctor 2.1.0 is released
-        #- os: ubuntu-latest
-        #  ruby: '2.7'
-        #  asciidoctor-version: '~> 2.0.0'
         - os: ubuntu-latest
           ruby: '2.7'
+          asciidoctor-version: '2.0.10'
           rouge-version: '~> 2.0.0'
         - os: windows-latest
           ruby: '3.1'
           asciidoctor-diagram-version: ~
           asciidoctor-kroki-version: '0.5.0'
+        # NOTE: enable once Asciidoctor 2.1.0 is released
+        #- os: ubuntu-latest
+        #  ruby: '3.1'
+        #  asciidoctor-version: '~> 2.0.0'
         - os: ubuntu-latest
           ruby: '3.1'
           upstream: upstream
@@ -128,9 +130,10 @@ jobs:
       if: matrix.primary
       run: |
         echo 'FFI_ICU_VERSION=0.4.3' >> $GITHUB_ENV
-    - name: Set Rouge version
-      if: matrix.rouge-version
-      run: echo 'ROUGE_VERSION=${{ matrix.rouge-version }}' >> $GITHUB_ENV
+    - name: Set Asciidoctor version
+      if: matrix.asciidoctor-version
+      run: |
+        echo 'ASCIIDOCTOR_VERSION=${{ matrix.asciidoctor-version }}' >> $GITHUB_ENV
     - name: Set Asciidoctor Diagram version
       if: matrix.asciidoctor-diagram-version
       run: |
@@ -139,6 +142,9 @@ jobs:
       if: matrix.asciidoctor-kroki-version
       run: |
         echo 'ASCIIDOCTOR_KROKI_VERSION=${{ matrix.asciidoctor-kroki-version }}' >> $GITHUB_ENV
+    - name: Set Rouge version
+      if: matrix.rouge-version
+      run: echo 'ROUGE_VERSION=${{ matrix.rouge-version }}' >> $GITHUB_ENV
     - name: Install dependencies
       run: bundle --jobs 3 --retry 3
     - name: Switch to upstream dependencies

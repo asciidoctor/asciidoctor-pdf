@@ -43,6 +43,7 @@ Bug Fixes::
 * only load Treetop runtime so it does not overload `require` method
 * fix collation order of index terms that differ only in case
 * don't crash if page background image value is empty (interpret as "none")
+* replace use of AbstractNode#role= method to ensure compatiblity with minimum supported version of Asciidoctor (Asciidoctor 2.0.10) (#2363)
 
 == 2.3.3 (2022-10-21) - @mojavelinux
 
