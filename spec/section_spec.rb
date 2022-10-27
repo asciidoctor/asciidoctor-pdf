@@ -1087,7 +1087,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     pdf = to_pdf input, analyze: true
     (expect pdf.find_unique_text 'Preface', page_number: 2).not_to be_nil
     (expect pdf.find_unique_text 'Preface', page_number: 3).to be_nil
-    # NOTE: lead role on first paragraph is retained
+    # NOTE: test that lead role on first paragraph is retained
     (expect (pdf.find_unique_text 'anonymous preface', page_number: 3)[:font_size]).to eql 13
   end
 

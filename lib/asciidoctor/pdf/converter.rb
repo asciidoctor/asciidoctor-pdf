@@ -765,7 +765,7 @@ module Asciidoctor
       def convert_preamble node
         # FIXME: core should not be promoting paragraph to preamble if there are no sections
         if (first_block = node.first_child)&.context == :paragraph && node.document.sections? && !first_block.role?
-          first_block.role = 'lead'
+          first_block.set_attr 'role', 'lead'
         end
         traverse node
         theme_margin :block, :bottom, (next_enclosed_block node)

@@ -1032,14 +1032,14 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
       [,ruby,subs="+quotes,+macros"]
       ----
-      require 'https://asciidoctor.org[asciidoctor]'
+      require %(https://asciidoctor.org[asciidoctor])
 
       Asciidoctor._convert_file_ 'README.adoc', *safe: :safe*
       ----
       EOS
 
       lines = pdf.lines pdf.text
-      (expect lines).to eql [%(require 'asciidoctor'), %(Asciidoctor.convert_file 'README.adoc', safe: :safe)]
+      (expect lines).to eql ['require %(asciidoctor)', %(Asciidoctor.convert_file 'README.adoc', safe: :safe)]
       require_text = pdf.find_unique_text 'require'
       (expect require_text[:font_color]).not_to eql '333333'
     end
