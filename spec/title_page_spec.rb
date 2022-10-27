@@ -753,6 +753,46 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect lines).to include 'Version 1.0 - 2019-01-01'
     end
 
+    it 'should allow theme to customize content of revision line' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_revision_content: '{revdate} (*v{revnumber}*)' }
+      = Document Title
+      Author Name
+      v1.0, 2022-10-22
+      :doctype: book
+
+      body
+      EOS
+
+      (expect (pdf.page 1).text).to include '2022-10-22 (v1.0)'
+    end
+
+    it 'should include version label in revision line if revnumber attribute is set' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      Author Name
+      v1.0, 2022-10-22
+      :doctype: book
+
+      body
+      EOS
+
+      (expect pdf.lines).to include 'Version 1.0, 2022-10-22'
+    end
+
+    it 'should not include version label in revision line if version-label attribute is unset' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      Author Name
+      v1.0, 2022-10-22
+      :doctype: book
+      :!version-label:
+
+      body
+      EOS
+
+      (expect pdf.lines).to include '1.0, 2022-10-22'
+    end
+
     it 'should add logo specified by title_page_logo_image theme key to title page' do
       pdf = to_pdf <<~'EOS', pdf_theme: { title_page_logo_image: 'image:{docdir}/tux.png[]' }, attribute_overrides: { 'docdir' => fixtures_dir }
       = Document Title

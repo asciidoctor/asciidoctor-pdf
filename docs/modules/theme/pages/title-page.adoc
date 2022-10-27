@@ -442,13 +442,21 @@ The keys in the `title-page-revision` category control the display, arrangement 
 |===
 |Key |Value Type |Example
 
-|delimiter
-|xref:quoted-string.adoc[Quoted string] +
-(default: `', '`)
+|<<content,content>>
+|xref:quoted-string.adoc[Quoted AsciiDoc string]
+(default: _not set_)
 |[source]
 title-page:
   revision:
-    delimiter: ': '
+    content: '{revdate} (v{revnumber})'
+
+|delimiter
+|xref:quoted-string.adoc[Quoted string] {vbar} xref:quoted-string.adoc[Quoted string[2\]] +
+(default: `[', ', ': ']`)
+|[source]
+title-page:
+  revision:
+    delimiter: [' - ', ' / ']
 
 |display
 |`none` +
