@@ -3435,6 +3435,7 @@ module Asciidoctor
                   attrlist = $2
                   image_attrs = (AttributeList.new attrlist).parse %w(alt width)
                   image_path, image_format = ::Asciidoctor::Image.target_and_format $1, image_attrs
+                  image_path = apply_subs_discretely doc, image_path, subs: [:attributes], imagesdir: @themesdir
                   if (image_path = resolve_image_path doc, image_path, image_format, @themesdir) && (::File.readable? image_path)
                     image_opts = resolve_image_options image_path, image_format, image_attrs, container_size: [colspec_dict[side][position][:width], trim_content_height[side]]
                     side_content[position] = [image_path, image_opts, image_attrs['link']]

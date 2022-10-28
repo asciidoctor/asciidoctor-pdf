@@ -2950,6 +2950,53 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       end).to log_message severity: :WARN, message: %(~could not embed image in running content: #{fixture_file 'broken.svg'}; Missing end tag for 'rect')
     end
 
+    it 'should resolve attribute references in target of inline image' do
+      expected_image_data = File.binread example_file 'sample-logo.jpg'
+      %w(docdir docimagesdir).each do |name|
+        pdf_theme = {
+          page_margin: 36,
+          footer_height: 36,
+          footer_columns: '=100%',
+          footer_recto_center_content: %(image:{#{name}}/sample-logo.jpg[fit=line]),
+          footer_recto_right_content: nil,
+        }
+
+        input = Pathname.new example_file 'basic-example.adoc'
+        pdf = to_pdf input, pdf_theme: pdf_theme, attributes: { 'source-highlighter' => nil }, enable_footer: true
+        images = get_images pdf
+        (expect images).to have_size 1
+        (expect images[0].data).to eql expected_image_data
+      end
+    end
+
+    it 'should resolve page-layout attribute references in target of inline image' do
+      pdf_theme = {
+        __dir__: fixtures_dir,
+        page_margin: 36,
+        footer_height: 36,
+        footer_columns: '=100%',
+        footer_recto_center_content: %(image:square-{page-layout}.svg[fit=line]),
+        footer_verso_center_content: %(image:square-{page-layout}.svg[fit=line]),
+        footer_recto_right_content: nil,
+        footer_verso_left_content: nil,
+      }
+
+      input = <<~'EOS'
+      portrait
+
+      [page-layout=landscape]
+      <<<
+
+      landscape
+      EOS
+      rects = (to_pdf input, pdf_theme: pdf_theme, enable_footer: true, analyze: :rect).rectangles
+      (expect rects).to have_size 2
+      (expect rects[0][:page_number]).to eql 1
+      (expect rects[0][:fill_color]).to eql 'FF0000'
+      (expect rects[1][:page_number]).to eql 2
+      (expect rects[1][:fill_color]).to eql '0000FF'
+    end
+
     it 'should support data URI image', visual: true do
       image_data = File.binread fixture_file 'tux.png'
       encoded_image_data = Base64.strict_encode64 image_data

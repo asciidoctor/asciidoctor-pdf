@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 Bug Fixes::
 
+* resolve attribute references in target of image in running content (#2361)
 * replace use of AbstractNode#role= method to ensure compatiblity with minimum supported version of Asciidoctor (Asciidoctor 2.0.10) (#2363)
 
 == 2.3.3 (2022-10-21) - @mojavelinux
