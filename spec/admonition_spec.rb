@@ -98,7 +98,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     (expect lines[1][:to][:y]).to be > 36.0
   end
 
-  it 'should draw border and background on all pages if block is split across pages', visual: true, breakable: true do
+  it 'should draw border and background on all pages if block is split across pages', breakable: true, visual: true do
     pdf_theme = {
       admonition_background_color: 'F5A9A9',
       admonition_border_width: 0.5,
@@ -763,7 +763,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       end).to log_message severity: :WARN, message: %(~could not embed admonition icon image: #{fixture_file 'corrupt.png'}; image file is an unrecognised format)
     end
 
-    it 'should embed remote image in icon if allow-uri-read attribute is set', visual: true, network: true do
+    it 'should embed remote image in icon if allow-uri-read attribute is set', network: true, visual: true do
       with_svg_with_remote_image do |image_path|
         to_file = to_pdf_file <<~EOS, 'admonition-custom-svg-icon-with-remote-image.pdf', attribute_overrides: { 'docdir' => tmp_dir, 'allow-uri-read' => '' }
         :icons: font

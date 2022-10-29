@@ -30,7 +30,7 @@ group :lint do
   else
     gem 'rubocop', '~> 1.37.0', require: false
     gem 'rubocop-rake', '~> 0.6.0', require: false
-    gem 'rubocop-rspec', '~> 2.13.0', require: false
+    gem 'rubocop-rspec', '~> 2.14.0', require: false
   end
 end
 

@@ -210,6 +210,10 @@ RSpec/BeNil:
   Enabled: true
 RSpec/BeforeAfterAll:
   Enabled: true
+RSpec/Capybara/NegationMatcher:
+  Enabled: false
+RSpec/Capybara/SpecificActions:
+  Enabled: false
 RSpec/Capybara/SpecificFinders:
   Enabled: false
 RSpec/Capybara/SpecificMatcher:
@@ -232,8 +236,10 @@ RSpec/ExcessiveDocstringSpacing:
   Enabled: true
 RSpec/ExpectInHook:
   Enabled: true
+RSpec/FactoryBot/ConsistentParenthesesStyle:
+  Enabled: false
 RSpec/FactoryBot/SyntaxMethods:
-  Enabled: true
+  Enabled: false
 RSpec/FilePath:
   Enabled: false
 RSpec/IdenticalEqualityAssertion:
@@ -251,6 +257,10 @@ RSpec/Rails/AvoidSetupHook:
   Enabled: false
 RSpec/Rails/HaveHttpStatus:
   Enabled: false
+RSpec/Rails/InferredSpecType:
+  Enabled: false
+RSpec/SortMetadata:
+  Enabled: true
 RSpec/SubjectDeclaration:
   Enabled: true
 RSpec/VerifiedDoubleReference:

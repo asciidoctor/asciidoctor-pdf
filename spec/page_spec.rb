@@ -1418,7 +1418,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-fill.pdf'
     end
 
-    it 'should allow remote image in SVG to be read if allow-uri-read attribute is set', visual: true, network: true do
+    it 'should allow remote image in SVG to be read if allow-uri-read attribute is set', network: true, visual: true do
       with_svg_with_remote_image do |image_path|
         to_file = to_pdf_file <<~EOS, 'page-background-image-svg-with-remote-image.pdf', attribute_overrides: { 'allow-uri-read' => '' }
         :page-background-image: image:#{image_path}[fit=none,position=top]
