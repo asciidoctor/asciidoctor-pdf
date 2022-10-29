@@ -1009,7 +1009,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-remote-image.svg'}; Error retrieving URL https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@v1.6.2/spec/fixtures/logo.png)
     end
 
-    it 'should embed remote image if allow allow-uri-read attribute is set', visual: true, network: true do
+    it 'should embed remote image if allow allow-uri-read attribute is set', network: true, visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-svg-with-remote-image.pdf', attribute_overrides: { 'allow-uri-read' => '' }
       A sign of a good writer: image:svg-with-remote-image.svg[pdfwidth=1.27cm]
       EOS
@@ -1297,7 +1297,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     # NOTE: gmagick reads `Depth: 8/2-bit` as 2 instead of 8
-    it 'should reread bit depth if gmagick fails to read bit depth correctly', visual: true, if: (defined? GMagick::Image) do
+    it 'should reread bit depth if gmagick fails to read bit depth correctly', if: (defined? GMagick::Image), visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-png-depth.pdf'
       image::square.png[pdfwidth=25%]
       EOS

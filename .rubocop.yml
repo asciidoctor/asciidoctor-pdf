@@ -80,6 +80,8 @@ Lint/DuplicateBranch:
   Enabled: true
 Lint/DuplicateElsifCondition:
   Enabled: true
+Lint/DuplicateMagicComment:
+  Enabled: true
 Lint/DuplicateRegexpCharacterClassElement:
   Enabled: true
 Lint/DuplicateRequire:
@@ -208,9 +210,17 @@ RSpec/BeNil:
   Enabled: true
 RSpec/BeforeAfterAll:
   Enabled: true
+RSpec/Capybara/NegationMatcher:
+  Enabled: false
+RSpec/Capybara/SpecificActions:
+  Enabled: false
+RSpec/Capybara/SpecificFinders:
+  Enabled: false
 RSpec/Capybara/SpecificMatcher:
   Enabled: false
 RSpec/ChangeByZero:
+  Enabled: true
+RSpec/ClassCheck:
   Enabled: true
 RSpec/ContextWording:
   Enabled: false
@@ -226,8 +236,10 @@ RSpec/ExcessiveDocstringSpacing:
   Enabled: true
 RSpec/ExpectInHook:
   Enabled: true
+RSpec/FactoryBot/ConsistentParenthesesStyle:
+  Enabled: false
 RSpec/FactoryBot/SyntaxMethods:
-  Enabled: true
+  Enabled: false
 RSpec/FilePath:
   Enabled: false
 RSpec/IdenticalEqualityAssertion:
@@ -237,12 +249,18 @@ RSpec/MultipleExpectations:
   Max: 25 # FIXME get this down to 15
 RSpec/NamedSubject:
   Enabled: false
+RSpec/NoExpectationExample:
+  Enabled: false
 RSpec/Pending:
   Enabled: true
 RSpec/Rails/AvoidSetupHook:
   Enabled: false
 RSpec/Rails/HaveHttpStatus:
   Enabled: false
+RSpec/Rails/InferredSpecType:
+  Enabled: false
+RSpec/SortMetadata:
+  Enabled: true
 RSpec/SubjectDeclaration:
   Enabled: true
 RSpec/VerifiedDoubleReference:
@@ -368,6 +386,8 @@ Style/InfiniteLoop:
   Enabled: false # reason: loop is measurably slower than while true
 Style/KeywordParametersOrder:
   Enabled: true
+Style/MagicCommentFormat:
+  Enabled: true
 Style/MapCompactWithConditionalBlock:
   Enabled: true
 Style/MapToHash:
@@ -411,6 +431,8 @@ Style/ObjectThen:
   Enabled: false # reason: not yet available in minimum JRuby version
 Style/OpenStructUse:
   Enabled: false # reason: the theming system relies on OpenStruct
+Style/OperatorMethodCall:
+  Enabled: true
 Style/OptionalBooleanParameter:
   Enabled: false # reason: invasive
 Style/ParallelAssignment:
@@ -448,6 +470,8 @@ Style/RedundantSelfAssignment:
   Enabled: true
 Style/RedundantSelfAssignmentBranch:
   Enabled: false
+Style/RedundantStringEscape:
+  Enabled: false # reason: this rule crashes RuboCop
 Style/RegexpLiteral:
   Enabled: true
 Style/RescueModifier:
@@ -481,7 +505,7 @@ Style/SymbolArray:
 Style/SymbolProc:
   Enabled: true
 Style/TernaryParentheses:
-  Enabled: true
+  Enabled: false # reason: this rule has become too buggy and gets it wrong most of the time
   EnforcedStyle: require_parentheses_when_complex
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma

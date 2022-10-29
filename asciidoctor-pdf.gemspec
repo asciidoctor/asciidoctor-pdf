@@ -44,7 +44,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'treetop', '~> 1.6.0'
 
   s.add_development_dependency 'rake', '~> 13.0.0'
-  s.add_development_dependency 'rspec', '~> 3.11.0'
+  s.add_development_dependency 'rspec', '~> 3.12.0'
   s.add_development_dependency 'pdf-inspector', '~> 1.3.0'
   s.add_development_dependency 'chunky_png', '~> 1.4.0'
 end

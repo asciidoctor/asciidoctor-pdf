@@ -45,7 +45,7 @@ describe 'Asciidoctor::PDF::Converter - Video' do
   end
 
   context 'YouTube' do
-    it 'should replace video with poster image if allow-uri-read attribute is set', visual: true, network: true do
+    it 'should replace video with poster image if allow-uri-read attribute is set', network: true, visual: true do
       video_id = 'EJ09pSuA9hw'
       to_file = to_pdf_file <<~EOS, 'video-youtube-poster.pdf', attribute_overrides: { 'allow-uri-read' => '' }
       video::#{video_id}[youtube,pdfwidth=100%]
@@ -79,7 +79,7 @@ describe 'Asciidoctor::PDF::Converter - Video' do
   end
 
   context 'Vimeo' do
-    it 'should replace video with poster image if allow-uri-read attribute is set', visual: true, network: true do
+    it 'should replace video with poster image if allow-uri-read attribute is set', network: true, visual: true do
       video_id = '77477140'
       to_file = to_pdf_file <<~EOS, 'video-vimeo-poster.pdf', attribute_overrides: { 'allow-uri-read' => '' }
       video::#{video_id}[vimeo,pdfwidth=100%]
