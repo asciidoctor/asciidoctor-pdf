@@ -98,7 +98,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     (expect lines[1][:to][:y]).to be > 36.0
   end
 
-  it 'should draw border and background on all pages if block is split across pages', breakable: true, visual: true do
+  it 'should draw border and background on all pages if block is split across pages', visual: true do
     pdf_theme = {
       admonition_background_color: 'F5A9A9',
       admonition_border_width: 0.5,

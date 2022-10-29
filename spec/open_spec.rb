@@ -3,7 +3,7 @@
 require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Open' do
-  it 'should be breakable by default', breakable: true do
+  it 'should be breakable by default' do
     with_content_spacer 10, 720 do |spacer_path|
       pdf = to_pdf <<~EOS, analyze: true
       image::#{spacer_path}[]
