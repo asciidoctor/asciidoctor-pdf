@@ -10,12 +10,12 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
 
   it 'should read icon from image file when icons mode is image' do
     (expect do
-      pdf = to_pdf <<~'EOS', analyze: :image
+      pdf = to_pdf <<~'END', analyze: :image
       :icons:
       :iconsdir: {imagesdir}
 
       Look for files with the icon:logo[] icon.
-      EOS
+      END
 
       images = pdf.images
       (expect images).to have_size 1
@@ -25,12 +25,12 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
   end
 
   it 'should log warning if image file for icon not readable' do
-    input = <<~'EOS'
+    input = <<~'END'
     :icons:
     :icontype: svg
 
     I looked for icon:not-found[], but it was no where to be seen.
-    EOS
+    END
     (expect do
       pdf = to_pdf input, analyze: :image
       images = pdf.images
@@ -46,12 +46,12 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
   end
 
   it 'should use icon name from specified icon set' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :icons: font
     :icon-set: fas
 
     A icon:wrench[] ought to fix it.
-    EOS
+    END
     wink_text = pdf.find_text ?\uf0ad
     (expect wink_text).to have_size 1
     (expect wink_text[0][:font_name]).to eql 'FontAwesome5Free-Solid'
@@ -67,12 +67,12 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
       %W(mdi alien \uf089 MaterialDesignIcons),
     ].each do |icon_set, icon_name, char_code, font_name|
       next if icon_set == 'mdi' && !supports_mdi
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       :icons: font
       :icon-set: #{icon_set}
 
       Look for the icon:#{icon_name}[] icon.
-      EOS
+      END
       icon_text = pdf.text[1]
       (expect icon_text).not_to be_nil
       (expect icon_text[:string]).to eql char_code
@@ -81,34 +81,34 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
   end
 
   it 'should support icon set as suffix on icon name' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :icons: font
 
     A icon:wrench@fas[] ought to fix it.
-    EOS
+    END
     wink_text = pdf.find_text ?\uf0ad
     (expect wink_text).to have_size 1
     (expect wink_text[0][:font_name]).to eql 'FontAwesome5Free-Solid'
   end
 
   it 'should support icon set as prefix on icon name' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :icons: font
 
     A icon:fas-wrench[] ought to fix it.
-    EOS
+    END
     wink_text = pdf.find_text ?\uf0ad
     (expect wink_text).to have_size 1
     (expect wink_text[0][:font_name]).to eql 'FontAwesome5Free-Solid'
   end
 
   it 'should support icon set as prefix on icon name even if icon set is configured globally' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :icons: font
     :icon-set: fab
 
     A icon:fas-wrench[] ought to fix it.
-    EOS
+    END
     wink_text = pdf.find_text ?\uf0ad
     (expect wink_text).to have_size 1
     (expect wink_text[0][:font_name]).to eql 'FontAwesome5Free-Solid'
@@ -116,22 +116,22 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
 
   it 'should not support icon set as prefix on icon name if explicit icon set is specified' do
     (expect do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :icons: font
 
       A icon:fas-wrench[set=fab] ought to fix it.
-      EOS
+      END
       wink_text = pdf.find_text ?\uf0ad
       (expect wink_text).to be_empty
     end).to log_message severity: :WARN, message: 'fas-wrench is not a valid icon name in the fab icon set'
   end
 
   it 'should apply larger font size to icon if size is lg' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :icons: font
 
     If the icon:wrench[] doesn't do it, try a icon:wrench[lg] one.
-    EOS
+    END
 
     wrench_texts = pdf.find_text ?\uf0ad
     (expect wrench_texts).to have_size 2
@@ -142,34 +142,34 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
   end
 
   it 'should apply specified custom font size to icon' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :icons: font
 
     I icon:fas-heart[1.2x] AsciiDoc
-    EOS
+    END
 
     heart_text = pdf.find_unique_text ?\uf004
     (expect heart_text[:font_size]).to eql 12.6
   end
 
   it 'should use inherited size if font size is 1x' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :icons: font
 
     I icon:fas-heart[1x] AsciiDoc
-    EOS
+    END
 
     heart_text = pdf.find_unique_text ?\uf004
     (expect heart_text[:font_size]).to eql pdf.text[0][:font_size]
   end
 
   it 'should reserve 1em of space for fw icon' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :icons: font
     :icon-set: fas
 
     *|* icon:arrows-alt-h[fw] *|* icon:arrows-alt-v[fw] *|*
-    EOS
+    END
     guide_text = pdf.find_text '|', font_name: 'NotoSerif-Bold'
     first_icon_gap = (guide_text[1][:x] - guide_text[0][:x]).round 2
     second_icon_gap = (guide_text[2][:x] - guide_text[1][:x]).round 2
@@ -177,12 +177,12 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
   end
 
   it 'should align fw icon in center of 1em space', visual: true do
-    to_file = to_pdf_file <<~'EOS', 'icon-fw.pdf'
+    to_file = to_pdf_file <<~'END', 'icon-fw.pdf'
     :icons: font
     :icon-set: fas
 
     *|* icon:arrows-alt-h[fw] *|* icon:arrows-alt-v[fw] *|*
-    EOS
+    END
     (expect to_file).to visually_match 'icon-fw.pdf'
   end
 
@@ -193,11 +193,11 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
       ['icon:fas-no-such-icon[]', 'fas no such icon'],
     ].each do |macro, alt|
       (expect do
-        pdf = to_pdf <<~EOS, analyze: true
+        pdf = to_pdf <<~END, analyze: true
         :icons: font
 
         #{macro} will surely fail.
-        EOS
+        END
         text = pdf.text
         (expect text).to have_size 1
         (expect text[0][:string]).to eql %([#{alt}] will surely fail.)
@@ -207,11 +207,11 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
 
   it 'should remap legacy icon name if icon set is not specified and report remapping' do
     (expect do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :icons: font
 
       Click the icon:hdd-o[] icon to see your files.
-      EOS
+      END
       hdd_text = pdf.find_text ?\uf0a0
       (expect hdd_text).to have_size 1
       (expect hdd_text[0][:font_name]).to eql 'FontAwesome5Free-Regular'
@@ -220,11 +220,11 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
 
   it 'should resolve non-legacy icon name if icon set is not specified and report icon set in which it was found' do
     (expect do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :icons: font
 
       Time to upgrade your icon set icon:smile-wink[]
-      EOS
+      END
       wink_text = pdf.find_text ?\uf4da
       (expect wink_text).to have_size 1
       (expect wink_text[0][:font_name]).to eql 'FontAwesome5Free-Regular'
@@ -232,11 +232,11 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
   end
 
   it 'should apply link to icon if link attribute is set and font-based icons are enabled' do
-    input = <<~'EOS'
+    input = <<~'END'
     :icons: font
 
     gem icon:download[link=https://rubygems.org/downloads/asciidoctor-pdf-1.5.4.gem, window=_blank]
-    EOS
+    END
 
     pdf = to_pdf input
     annotations = get_annotations pdf, 1
@@ -255,9 +255,9 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
   end
 
   it 'should apply link to alt text if link attribute is set and font-based icons are not enabled' do
-    input = <<~'EOS'
+    input = <<~'END'
     gem icon:download[link=https://rubygems.org/downloads/asciidoctor-pdf-1.5.4.gem, window=_blank]
-    EOS
+    END
 
     pdf = to_pdf input
     annotations = get_annotations pdf, 1
@@ -274,11 +274,11 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
   end
 
   it 'should apply styles from role to icon' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { role_red_font_color: 'FF0000' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { role_red_font_color: 'FF0000' }, analyze: true
     :icons: font
 
     icon:heart[role=red]
-    EOS
+    END
 
     heart_text = pdf.text[0]
     (expect heart_text[:string]).to eql ?\uf004
@@ -287,13 +287,13 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
   end
 
   it 'should parse icon inside kbd macro' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :experimental:
     :icons: font
     :icon-set: fas
 
     Press kbd:[Alt,icon:arrow-up[\]] to move the line up.
-    EOS
+    END
 
     keyseq_text = pdf.text.find_all {|candidate| ['Alt', %(\u202f+\u202f), ?\uf062].include? candidate[:string] }
     (expect keyseq_text.size).to be 3

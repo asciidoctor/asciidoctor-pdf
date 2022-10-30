@@ -56,7 +56,7 @@ describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_avai
   it 'should use existing pdfmark file if present when optimizing' do
     input_file = Pathname.new example_file 'basic-example.adoc'
     pdfmark_file = Pathname.new output_file 'optimizer-pdfmark.pdfmark'
-    pdfmark_file.write <<~'EOS'
+    pdfmark_file.write <<~'END'
     [ /Title (All Your PDF Are Belong To Us)
       /Author (CATS)
       /Subject (Zero Wing)
@@ -64,7 +64,7 @@ describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_avai
       /CreationDate (D:19920101000000-00'00')
       /Creator (Genesis)
       /DOCINFO pdfmark
-    EOS
+    END
     to_file = to_pdf_file input_file, 'optimizer-pdfmark.pdf', attribute_overrides: { 'optimize' => '' }
     pdf = PDF::Reader.new to_file
     pdf_info = pdf.info

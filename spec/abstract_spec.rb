@@ -4,10 +4,10 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Abstract' do
   it 'should convert document with only abstract' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     [abstract]
     This article is hot air.
-    EOS
+    END
 
     abstract_text = (pdf.find_text 'This article is hot air.')[0]
     (expect abstract_text).not_to be_nil
@@ -15,7 +15,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should outdent abstract title and body' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36, abstract_title_text_align: :left }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { section_indent: 36, abstract_title_text_align: :left }, analyze: true
     = Document Title
     :doctype: book
 
@@ -26,7 +26,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Chapter
 
     What came to pass.
-    EOS
+    END
 
     abstract_title_text = (pdf.find_text 'Abstract')[0]
     (expect abstract_title_text[:x]).to eql 48.24
@@ -37,7 +37,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should indent first line of abstract if prose_text_indent key is set in theme' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { prose_text_indent: 18 }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { prose_text_indent: 18 }, analyze: true
     = Document Title
 
     [abstract]
@@ -45,7 +45,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     This option is controlled by the prose_text_indent key in the theme.
 
     And on it goes.
-    EOS
+    END
 
     (expect pdf.text[1][:string]).to start_with 'This document'
     (expect pdf.text[1][:x]).to be > pdf.text[2][:x]
@@ -53,7 +53,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should apply inner margin between inner paragraphs in abstract' do
-    pdf = to_pdf <<~EOS, pdf_theme: { prose_margin_inner: 0 }, analyze: true
+    pdf = to_pdf <<~END, pdf_theme: { prose_margin_inner: 0 }, analyze: true
     = Document Title
 
     [abstract]
@@ -62,7 +62,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     --
 
     And on it goes.
-    EOS
+    END
 
     expected_line_spacing = pdf.text[1][:y] - pdf.text[2][:y]
     second_paragraph_text = pdf.find_unique_text %r/^Magna /
@@ -71,7 +71,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should apply indent to inner paragraphs in abstract when prose_text_indent_inner is set' do
-    pdf = to_pdf <<~EOS, pdf_theme: { prose_text_indent_inner: 18, prose_margin_inner: 0 }, analyze: true
+    pdf = to_pdf <<~END, pdf_theme: { prose_text_indent_inner: 18, prose_margin_inner: 0 }, analyze: true
     = Document Title
 
     [abstract]
@@ -80,7 +80,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     --
 
     And on it goes.
-    EOS
+    END
 
     text_left_margin = (pdf.find_unique_text 'And on it goes.')[:x]
     (expect pdf.text[1][:x]).to eql text_left_margin
@@ -92,7 +92,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should support non-paragraph blocks inside abstract block' do
-    input = <<~'EOS'
+    input = <<~'END'
     = Document Title
 
     [abstract]
@@ -105,7 +105,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Intro
 
     And so it begins.
-    EOS
+    END
 
     pdf = to_pdf input, analyze: :line
     lines = pdf.lines
@@ -131,7 +131,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
       heading_margin_top: 0,
       heading_margin_bottom: 12,
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     = Document Title
 
     [abstract]
@@ -146,7 +146,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Section Title
 
     Now we are getting to the main event.
-    EOS
+    END
 
     texts = pdf.text
     margins = []
@@ -159,7 +159,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should decorate first line of abstract when abstract has multiple lines' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Document Title
 
     [abstract]
@@ -169,7 +169,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Section
 
     content
-    EOS
+    END
 
     abstract_text_line1 = pdf.find_text 'First line of abstract.'
     abstract_text_line2 = pdf.find_text 'Second line of abstract.'
@@ -182,7 +182,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should decorate first line of first paragraph of abstract with multiple paragraphs' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Document Title
 
     [abstract]
@@ -196,7 +196,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Section
 
     content
-    EOS
+    END
 
     first_line_text = pdf.find_unique_text 'First line of abstract.'
     (expect first_line_text[:font_name]).to end_with '-BoldItalic'
@@ -209,7 +209,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
       abstract_font_color: 'AA0000',
       abstract_first_line_text_transform: 'uppercase',
     }
-    input = <<~'EOS'
+    input = <<~'END'
     = Document Title
 
     [abstract]
@@ -218,7 +218,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     The text in the first line has been transformed to into uppercase for extra emphasis.
 
     This is the main content.
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
     first_line_text, second_line_text, third_line_text = pdf.lines pdf.find_text font_color: 'AA0000'
@@ -237,22 +237,22 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
 
   it 'should not force justify first line of abstract with text transform if ends with hard break', visual: true do
     pdf_theme = { abstract_first_line_text_transform: 'uppercase' }
-    to_file = to_pdf_file <<~'EOS', 'abstract-first-line-text-transform-hard-break.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~'END', 'abstract-first-line-text-transform-hard-break.pdf', pdf_theme: pdf_theme
     [abstract]
     Welcome young Jedi. +
     This tutorial will show you the way.
-    EOS
+    END
 
     (expect to_file).to visually_match 'abstract-first-line-text-transform-hard-break.pdf'
   end
 
   it 'should not force justify first line of abstract with text transform if not justified', visual: true do
     pdf_theme = { abstract_text_align: 'left', abstract_first_line_text_transform: 'uppercase' }
-    to_file = to_pdf_file <<~'EOS', 'abstract-first-line-text-transform-hard-break-not-justified.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~'END', 'abstract-first-line-text-transform-hard-break-not-justified.pdf', pdf_theme: pdf_theme
     [abstract]
     Welcome young Jedi. +
     This tutorial will show you the way.
-    EOS
+    END
 
     (expect to_file).to visually_match 'abstract-first-line-text-transform-hard-break.pdf'
   end
@@ -271,14 +271,14 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
 
     pdf_theme = { abstract_font_color: '0000FF', abstract_first_line_text_transform: 'uppercase' }
 
-    input = <<~'EOS'
+    input = <<~'END'
     = Document Title
 
     [abstract]
     This *_story_* chronicles the inexplicable hazards and vicious beasts a team must conquer and vanquish on their journey to discovering the true power of Open Source.
 
     == Section Title
-    EOS
+    END
 
     pdf = to_pdf input, backend: backend, pdf_theme: pdf_theme, analyze: true
     lines = pdf.lines (pdf.text.select {|it| it[:font_color] == '0000FF' })
@@ -287,7 +287,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should use base font color if font color is not defined for abstract in theme' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { abstract_font_color: nil, base_font_color: '0000EE' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { abstract_font_color: nil, base_font_color: '0000EE' }, analyze: true
     = Document Title
 
     [abstract]
@@ -295,7 +295,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     This is the second line.
 
     This is the main content.
-    EOS
+    END
 
     abstract_first_line_text, abstract_second_line_text = pdf.find_text font_size: 13
     main_text = pdf.find_unique_text 'This is the main content.'
@@ -304,7 +304,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should set font color on first line of abstract if specified in theme' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { abstract_font_color: '444444', abstract_first_line_font_color: 'AA0000' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { abstract_font_color: '444444', abstract_first_line_font_color: 'AA0000' }, analyze: true
     = Document Title
 
     [abstract]
@@ -314,7 +314,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Section
 
     content
-    EOS
+    END
 
     abstract_texts = pdf.find_text %r/line of abstract/
     (expect abstract_texts).to have_size 2
@@ -324,7 +324,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should not style first line of abstract if theme sets font style to normal' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { abstract_first_line_font_style: 'normal' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { abstract_first_line_font_style: 'normal' }, analyze: true
     = Document Title
 
     [abstract]
@@ -334,7 +334,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Section
 
     content
-    EOS
+    END
 
     abstract_texts = pdf.find_text %r/line of abstract/
     (expect abstract_texts).to have_size 2
@@ -345,7 +345,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
 
   it 'should style first line of abstract if theme sets font style to italic but abstract font style to normal' do
     pdf_theme = { abstract_font_style: 'normal', abstract_first_line_font_style: 'italic' }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     = Document Title
 
     [abstract]
@@ -355,7 +355,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Section
 
     content
-    EOS
+    END
 
     abstract_texts = pdf.find_text %r/line of abstract/
     (expect abstract_texts).to have_size 2
@@ -366,7 +366,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
 
   it 'should style first line of abstract if theme sets font style to bold but abstract font style to normal' do
     pdf_theme = { abstract_font_style: 'normal', abstract_first_line_font_style: 'bold' }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     = Document Title
 
     [abstract]
@@ -376,7 +376,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Section
 
     content
-    EOS
+    END
 
     abstract_texts = pdf.find_text %r/line of abstract/
     (expect abstract_texts).to have_size 2
@@ -387,7 +387,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
 
   it 'should style first line in abstract if theme sets font style to normal_italic and abstract font style to bold' do
     pdf_theme = { abstract_font_style: 'bold', abstract_first_line_font_style: 'normal_italic' }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     = Document Title
 
     [abstract]
@@ -397,7 +397,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Section
 
     content
-    EOS
+    END
 
     abstract_texts = pdf.find_text %r/line in abstract/
     (expect abstract_texts).to have_size 2
@@ -407,14 +407,14 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should allow theme to set text alignment of abstract' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { abstract_text_align: 'center' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { abstract_text_align: 'center' }, analyze: true
     = Document Title
 
     [abstract]
     This is the abstract.
 
     This is the main content.
-    EOS
+    END
 
     abstract_text = pdf.find_unique_text 'This is the abstract.'
     main_text = pdf.find_unique_text 'This is the main content.'
@@ -422,14 +422,14 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should not indent first line of abstract if text alignment is center' do
-    input = <<~'EOS'
+    input = <<~'END'
     = Document Title
 
     [abstract]
     abstract
 
     This is the main content.
-    EOS
+    END
 
     expected_x = ((to_pdf input, pdf_theme: { abstract_text_align: 'center' }, analyze: true).find_unique_text 'abstract')[:x]
     actual_x = ((to_pdf input, pdf_theme: { abstract_text_align: 'center', prose_text_indent: 18 }, analyze: true).find_unique_text 'abstract')[:x]
@@ -438,14 +438,14 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should not indent first line of abstract if text alignment is right' do
-    input = <<~'EOS'
+    input = <<~'END'
     = Document Title
 
     [abstract]
     abstract
 
     This is the main content.
-    EOS
+    END
 
     expected_x = ((to_pdf input, pdf_theme: { abstract_text_align: 'right' }, analyze: true).find_unique_text 'abstract')[:x]
     actual_x = ((to_pdf input, pdf_theme: { abstract_text_align: 'right', prose_text_indent: 18 }, analyze: true).find_unique_text 'abstract')[:x]
@@ -454,7 +454,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should allow theme to set text alignment of abstract title' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { abstract_title_text_align: 'center' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { abstract_title_text_align: 'center' }, analyze: true
     = Document Title
     :doctype: book
 
@@ -465,7 +465,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Chapter
 
     This is the main content.
-    EOS
+    END
 
     abstract_text = pdf.find_unique_text 'This is the abstract.'
     abstract_title_text = pdf.find_unique_text 'Abstract'
@@ -473,7 +473,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should use base text align to align abstract title if theme does not specify alignment' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { base_text_align: 'center', abstract_title_text_align: nil }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { base_text_align: 'center', abstract_title_text_align: nil }, analyze: true
     = Document Title
     :doctype: book
 
@@ -485,7 +485,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
 
     [.text-left]
     This is the main content.
-    EOS
+    END
 
     abstract_title_text = pdf.find_unique_text 'Abstract'
     main_text = pdf.find_unique_text 'This is the main content.'
@@ -493,7 +493,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should use consistent spacing between lines in abstract when theme uses AFM font' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { extends: 'base', abstract_first_line_font_color: 'AA0000' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { extends: 'base', abstract_first_line_font_color: 'AA0000' }, analyze: true
     = Document Title
 
     [abstract]
@@ -504,7 +504,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Section
 
     content
-    EOS
+    END
 
     abstract_text_line1 = (pdf.find_text 'First line of abstract.')[0]
     abstract_text_line2 = (pdf.find_text 'Second line of abstract.')[0]
@@ -516,7 +516,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should decorate first line of abstract when abstract has single line' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Document Title
 
     [abstract]
@@ -525,7 +525,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Section
 
     content
-    EOS
+    END
 
     abstract_text = pdf.find_text 'First and only line of abstract.'
     (expect abstract_text).to have_size 1
@@ -535,7 +535,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should be able to disable first line decoration on abstract using theme' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { abstract_first_line_font_style: nil }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { abstract_first_line_font_style: nil }, analyze: true
     = Document Title
 
     [abstract]
@@ -544,7 +544,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Section
 
     content
-    EOS
+    END
 
     abstract_text = pdf.find_text 'First and only line of abstract.'
     (expect abstract_text).to have_size 1
@@ -552,7 +552,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should honor text alignment role on abstract paragraph' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Document Title
 
     [abstract.text-right]
@@ -561,7 +561,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Section
 
     content
-    EOS
+    END
 
     halfway_point = (pdf.page 1)[:size][0] * 0.5
     abstract_text = pdf.find_text 'Enter stage right.'
@@ -570,7 +570,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should honor text alignment role on nested abstract paragraph' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Document Title
 
     [abstract]
@@ -584,7 +584,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Section
 
     content
-    EOS
+    END
 
     halfway_point = (pdf.page 1)[:size][0] * 0.5
     abstract_text1 = pdf.find_text 'Enter stage right.'
@@ -596,7 +596,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should apply same line height to all paragraphs in abstract' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Document Title
 
     [abstract]
@@ -611,7 +611,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Section
 
     content
-    EOS
+    END
 
     p1_l1_text = (pdf.find_text 'paragraph 1, line 1')[0]
     p1_l2_text = (pdf.find_text 'paragraph 1, line 2')[0]
@@ -630,7 +630,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
       heading_margin_top: 0,
       heading_margin_bottom: 12,
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     = Document Title
 
     [abstract]
@@ -643,7 +643,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     == Section Title
 
     Now we are getting to the main event.
-    EOS
+    END
 
     texts = pdf.text
     margins = []
@@ -656,14 +656,14 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should support padding around block' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { abstract_padding: 72 }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { abstract_padding: 72 }, analyze: true
     = Article Title
 
     [abstract]
     This is the abstract.
 
     This is the opening paragraph.
-    EOS
+    END
 
     doctitle_text = pdf.find_unique_text 'Article Title'
     abstract_text = pdf.find_unique_text 'This is the abstract.'
@@ -674,7 +674,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
   end
 
   it 'should collapse bottom padding if simple abstract will fit on current page' do
-    pdf = to_pdf <<~EOS, pdf_theme: { abstract_padding: 72 }, analyze: true
+    pdf = to_pdf <<~END, pdf_theme: { abstract_padding: 72 }, analyze: true
     = Article Title
 
     [abstract]
@@ -683,13 +683,13 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     #{lorem_ipsum '1-line'}
 
     And so it goes.
-    EOS
+    END
 
     (expect (pdf.find_text page_number: 2)[0][:string]).to eql 'And so it goes.'
   end
 
   it 'should collapse bottom padding if compound abstract will fit on current page' do
-    pdf = to_pdf <<~EOS, pdf_theme: { abstract_padding: 72 }, analyze: true
+    pdf = to_pdf <<~END, pdf_theme: { abstract_padding: 72 }, analyze: true
     = Article Title
 
     [abstract]
@@ -700,7 +700,7 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     --
 
     And so it goes.
-    EOS
+    END
 
     (expect (pdf.find_text page_number: 2)[0][:string]).to eql 'And so it goes.'
   end

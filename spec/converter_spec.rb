@@ -79,13 +79,13 @@ describe Asciidoctor::PDF::Converter do
 
     it 'should warn if convert method is not found for node' do
       (expect do
-        doc = Asciidoctor.load <<~'EOS', backend: 'pdf', safe: :safe, attributes: { 'nofooter' => '' }
+        doc = Asciidoctor.load <<~'END', backend: 'pdf', safe: :safe, attributes: { 'nofooter' => '' }
         before
 
         1,2,3
 
         after
-        EOS
+        END
         doc.blocks[1].context = :chart
         pdf_stream = StringIO.new
         doc.write doc.convert, pdf_stream
@@ -99,7 +99,7 @@ describe Asciidoctor::PDF::Converter do
 
     it 'should not warn if convert method is not found for node in scratch document' do
       (expect do
-        doc = Asciidoctor.load <<~'EOS', backend: 'pdf', safe: :safe, attributes: { 'nofooter' => '' }
+        doc = Asciidoctor.load <<~'END', backend: 'pdf', safe: :safe, attributes: { 'nofooter' => '' }
         before
 
         [%unbreakable]
@@ -108,7 +108,7 @@ describe Asciidoctor::PDF::Converter do
         --
 
         after
-        EOS
+        END
         doc.blocks[1].blocks[0].context = :chart
         pdf_stream = StringIO.new
         doc.write doc.convert, pdf_stream
@@ -121,20 +121,20 @@ describe Asciidoctor::PDF::Converter do
     end
 
     it 'should ensure data-uri attribute is set' do
-      doc = Asciidoctor.load <<~'EOS', backend: 'pdf', base_dir: fixtures_dir, safe: :safe
+      doc = Asciidoctor.load <<~'END', backend: 'pdf', base_dir: fixtures_dir, safe: :safe
       image::logo.png[]
-      EOS
+      END
       (expect doc.attr? 'data-uri').to be true
       doc.convert
       (expect doc.attr? 'data-uri').to be true
     end
 
     it 'should ignore data-uri attribute entry in document' do
-      doc = Asciidoctor.load <<~'EOS', backend: 'pdf', base_dir: fixtures_dir, safe: :safe
+      doc = Asciidoctor.load <<~'END', backend: 'pdf', base_dir: fixtures_dir, safe: :safe
       :!data-uri:
 
       image::logo.png[]
-      EOS
+      END
       (expect doc.attr? 'data-uri').to be true
       doc.convert
       (expect doc.attr? 'data-uri').to be true
@@ -143,9 +143,9 @@ describe Asciidoctor::PDF::Converter do
     it 'should not fail to remove tmp files if already removed' do
       image_data = File.read (fixture_file 'square.jpg'), mode: 'r:UTF-8'
       encoded_image_data = Base64.strict_encode64 image_data
-      doc = Asciidoctor.load <<~EOS, backend: 'pdf'
+      doc = Asciidoctor.load <<~END, backend: 'pdf'
       :page-background-image: image:data:image/png;base64,#{encoded_image_data}[Square,fit=cover]
-      EOS
+      END
       pdf_doc = doc.convert
       tmp_files = (converter = doc.converter).instance_variable_get :@tmp_files
       (expect tmp_files).to have_size 1
@@ -159,9 +159,9 @@ describe Asciidoctor::PDF::Converter do
       (expect do
         image_data = File.read (fixture_file 'square.jpg'), mode: 'r:UTF-8'
         encoded_image_data = Base64.strict_encode64 image_data
-        doc = Asciidoctor.load <<~EOS, backend: 'pdf'
+        doc = Asciidoctor.load <<~END, backend: 'pdf'
         :page-background-image: image:data:image/png;base64,#{encoded_image_data}[Square,fit=cover]
-        EOS
+        END
         pdf_doc = doc.convert
         tmp_files = doc.converter.instance_variable_get :@tmp_files
         (expect tmp_files).to have_size 1
@@ -181,9 +181,9 @@ describe Asciidoctor::PDF::Converter do
     it 'should keep tmp files if KEEP_ARTIFACTS environment variable is set' do
       image_data = File.read (fixture_file 'square.jpg'), mode: 'r:UTF-8'
       encoded_image_data = Base64.strict_encode64 image_data
-      doc = Asciidoctor.load <<~EOS, backend: 'pdf'
+      doc = Asciidoctor.load <<~END, backend: 'pdf'
       :page-background-image: image:data:image/png;base64,#{encoded_image_data}[Square,fit=cover]
-      EOS
+      END
       pdf_doc = doc.convert
       tmp_files = doc.converter.instance_variable_get :@tmp_files
       (expect tmp_files).to have_size 1
@@ -201,16 +201,16 @@ describe Asciidoctor::PDF::Converter do
 
     context 'theme' do
       it 'should apply the theme at the path specified by pdf-theme' do
-        with_pdf_theme_file <<~'EOS' do |theme_path|
+        with_pdf_theme_file <<~'END' do |theme_path|
         base:
           font-color: ff0000
-        EOS
-          pdf = to_pdf <<~EOS, analyze: true
+        END
+          pdf = to_pdf <<~END, analyze: true
           = Document Title
           :pdf-theme: #{theme_path}
 
           red text
-          EOS
+          END
 
           (expect pdf.find_text font_color: 'FF0000').to have_size pdf.text.size
         end
@@ -220,12 +220,12 @@ describe Asciidoctor::PDF::Converter do
         [nil, 'default'].each do |theme|
           to_pdf_opts = { analyze: true }
           to_pdf_opts[:attribute_overrides] = { 'pdf-theme' => theme } if theme
-          pdf = to_pdf <<~EOS, to_pdf_opts
+          pdf = to_pdf <<~END, to_pdf_opts
           = Document Title
           :pdf-themesdir: #{fixtures_dir}
 
           body text
-          EOS
+          END
 
           expected_font_color = theme ? 'AA0000' : '333333'
           body_text = (pdf.find_text 'body text')[0]
@@ -235,17 +235,17 @@ describe Asciidoctor::PDF::Converter do
       end
 
       it 'should apply the named theme specified by pdf-theme located in the specified pdf-themesdir' do
-        with_pdf_theme_file <<~'EOS' do |theme_path|
+        with_pdf_theme_file <<~'END' do |theme_path|
         base:
           font-color: ff0000
-        EOS
-          pdf = to_pdf <<~EOS, analyze: true
+        END
+          pdf = to_pdf <<~END, analyze: true
           = Document Title
           :pdf-theme: #{File.basename theme_path, '-theme.yml'}
           :pdf-themesdir: #{File.dirname theme_path}
 
           red text
-          EOS
+          END
 
           (expect pdf.find_text font_color: 'FF0000').to have_size pdf.text.size
         end
@@ -265,25 +265,25 @@ describe Asciidoctor::PDF::Converter do
       end
 
       it 'should set text color to black when default-for-print theme is specified' do
-        pdf = to_pdf <<~EOS, analyze: true
+        pdf = to_pdf <<~END, analyze: true
         = Document Title
         :pdf-theme: default-for-print
 
         black `text`
 
         > loud quote
-        EOS
+        END
 
         (expect pdf.find_text font_color: '000000').to have_size pdf.text.size
       end
 
       it 'should set font family to Noto Sans when default-sans themme is specified' do
-        pdf = to_pdf <<~EOS, analyze: true
+        pdf = to_pdf <<~END, analyze: true
         = Document Title
         :pdf-theme: default-sans
 
         We don't like those _pesky_ serifs in these here parts.
-        EOS
+        END
 
         text = pdf.text
         sans_text = text.select {|it| it[:font_name].start_with? 'NotoSans' }
@@ -335,7 +335,7 @@ describe Asciidoctor::PDF::Converter do
       end
 
       it 'should not crash if theme does not specify any keys' do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => (fixture_file 'bare-theme.yml') }, analyze: true
+        pdf = to_pdf <<~'END', attribute_overrides: { 'pdf-theme' => (fixture_file 'bare-theme.yml') }, analyze: true
         = Document Title
         :doctype: book
 
@@ -358,7 +358,7 @@ describe Asciidoctor::PDF::Converter do
         <1> A variable assignment
 
         NOTE: That's all, folks!
-        EOS
+        END
 
         (expect pdf.pages).to have_size 3
         (expect pdf.find_text font_name: 'Helvetica', font_size: 12).not_to be_empty
@@ -443,11 +443,11 @@ describe Asciidoctor::PDF::Converter do
 
   describe 'helpers' do
     it 'should not drop lines with unresolved attributes when apply_subs_discretely is called without options' do
-      input = <<~'EOS'
+      input = <<~'END'
       foo
       {undefined}
       bar
-      EOS
+      END
       doc = Asciidoctor.load 'yo', backend: :pdf
       converter = doc.converter
       converter.load_theme doc
@@ -558,11 +558,11 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of block followed by block' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         first paragraph
 
         second paragraph
-        EOS
+        END
       end
 
       let(:start) { doc.blocks[0] }
@@ -572,7 +572,7 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of last block in open block followed by block' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         first paragraph
 
         --
@@ -580,7 +580,7 @@ describe Asciidoctor::PDF::Converter do
         --
 
         third paragraph
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :paragraph)[1] }
@@ -590,13 +590,13 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of last block before parent section' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         == First Section
 
         paragraph
 
         == Second Section
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :paragraph)[0] }
@@ -606,13 +606,13 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of last block before subsection' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         == Section
 
         paragraph
 
         === Subsection
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :paragraph)[0] }
@@ -622,7 +622,7 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of last block before grandparent section' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         == First Section
 
         paragraph
@@ -632,7 +632,7 @@ describe Asciidoctor::PDF::Converter do
         paragraph
 
         == Last Section
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :paragraph)[-1] }
@@ -642,13 +642,13 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of preamble' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         = Document Title
 
         preamble
 
         == First Section
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :preamble)[0] }
@@ -658,7 +658,7 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of abstract' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         = Document Title
 
         [abstract]
@@ -667,7 +667,7 @@ describe Asciidoctor::PDF::Converter do
         --
 
         == First Section
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :open, style: 'abstract')[0] }
@@ -677,7 +677,7 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of abstract followed by more preamble' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         = Document Title
 
         [abstract]
@@ -688,7 +688,7 @@ describe Asciidoctor::PDF::Converter do
         more preamble
 
         == First Section
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :open, style: 'abstract')[0] }
@@ -698,7 +698,7 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of last block in abstract' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         = Document Title
 
         [abstract]
@@ -707,7 +707,7 @@ describe Asciidoctor::PDF::Converter do
         --
 
         == First Section
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :paragraph)[0] }
@@ -717,7 +717,7 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of last block inside abstract followed by more preamble' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         = Document Title
 
         [abstract]
@@ -728,7 +728,7 @@ describe Asciidoctor::PDF::Converter do
         more preamble
 
         == First Section
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :paragraph)[0] }
@@ -738,13 +738,13 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of last block inside delimited block' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         ****
         inside paragraph
         ****
 
         outside paragraph
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :paragraph)[0] }
@@ -754,11 +754,11 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of list followed by block' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         * list item
 
         paragraph
-        EOS
+        END
       end
 
       let(:start) { doc.blocks[0] }
@@ -768,10 +768,10 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of first list item in list' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         * yin
         * yang
-        EOS
+        END
       end
 
       let(:start) { doc.blocks[0].items[0] }
@@ -781,12 +781,12 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of last list item in list' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         * yin
         * yang
 
         paragraph
-        EOS
+        END
       end
 
       let(:start) { doc.blocks[0].items[-1] }
@@ -796,12 +796,12 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of last attached block in first item in list' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         * moon
         +
         stars
         * sun
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :paragraph)[0] }
@@ -811,14 +811,14 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of last attached block in last item in list' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         * sun
         * moon
         +
         stars
 
         paragraph
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :paragraph)[0] }
@@ -828,7 +828,7 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of last block in open block attached to first item in list' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         * moon
         +
         --
@@ -837,7 +837,7 @@ describe Asciidoctor::PDF::Converter do
         dark side
         --
         * sun
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :paragraph)[1] }
@@ -847,11 +847,11 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of last item in nested list of first item in list' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         * sun
          ** star
         * moon
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :list_item)[1] }
@@ -861,13 +861,13 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of last item in nested list of last item in list' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         * moon
         * sun
          ** star
 
         paragraph
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :list_item)[2] }
@@ -877,12 +877,12 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of last item in deeply nested list of first item in list' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         * foo
          ** bar
           *** baz
         * moon
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :list_item)[2] }
@@ -892,9 +892,9 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of term of first item in dlist' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         foo:: bar
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :list_item)[0] }
@@ -904,10 +904,10 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of desc text of first item in dlist' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         foo:: bar
         yin:: yang
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :list_item)[1] }
@@ -917,12 +917,12 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of desc text of last item in dlist' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         foo:: bar
         yin:: yang
 
         paragraph
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :list_item)[3] }
@@ -932,14 +932,14 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of attached block in last item in dlist' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         foo:: bar
         sun:: moon
         +
         stars
 
         paragraph
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :paragraph)[0] }
@@ -949,10 +949,10 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of missing block' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         foo:: bar
         yin:: yang
-        EOS
+        END
       end
 
       let :start do
@@ -966,7 +966,7 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of preamble followed by section' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         = Document Title
 
         [abstract]
@@ -975,7 +975,7 @@ describe Asciidoctor::PDF::Converter do
         --
 
         == Intro
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :open)[0].parent }
@@ -985,7 +985,7 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of paragraph in abstract followed by section' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         = Document Title
 
         [abstract]
@@ -994,7 +994,7 @@ describe Asciidoctor::PDF::Converter do
         --
 
         == Intro
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :paragraph)[0] }
@@ -1004,7 +1004,7 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of quote block in abstract followed by section' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         = Document Title
 
         [abstract]
@@ -1015,7 +1015,7 @@ describe Asciidoctor::PDF::Converter do
         --
 
         == Intro
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :quote)[0] }
@@ -1025,7 +1025,7 @@ describe Asciidoctor::PDF::Converter do
 
     context 'of last block in AsciiDoc table cell' do
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         [cols=2*]
         |===
         a|
@@ -1041,7 +1041,7 @@ describe Asciidoctor::PDF::Converter do
         |===
 
         after
-        EOS
+        END
       end
 
       let(:start) { (doc.find_by context: :quote, traverse_documents: true)[0] }
@@ -1053,7 +1053,7 @@ describe Asciidoctor::PDF::Converter do
       example_group = self
 
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         .Title
         [horizontal]
         term:: desc
@@ -1062,7 +1062,7 @@ describe Asciidoctor::PDF::Converter do
         capture:quote[]
 
         another term::
-        EOS
+        END
       end
 
       let :doc do
@@ -1088,7 +1088,7 @@ describe Asciidoctor::PDF::Converter do
       example_group = self
 
       let :input_source do
-        <<~'EOS'
+        <<~'END'
         .Title
         [horizontal]
         term:: desc
@@ -1097,7 +1097,7 @@ describe Asciidoctor::PDF::Converter do
         capture:quote[]
 
         after
-        EOS
+        END
       end
 
       let :doc do
@@ -1135,7 +1135,7 @@ describe Asciidoctor::PDF::Converter do
       end
 
       pdf_theme = { caption_background_color: 'EEEEEE' }
-      input = <<~'EOS'
+      input = <<~'END'
       = Article Title
 
       * list item
@@ -1149,7 +1149,7 @@ describe Asciidoctor::PDF::Converter do
       code block <1>
       ----
       <1> Callout description
-      EOS
+      END
 
       (expect to_pdf_file input, 'bounding-box-left.pdf', backend: backend, pdf_theme: pdf_theme).to visually_match 'bounding-box-left.pdf'
     end
@@ -1166,7 +1166,7 @@ describe Asciidoctor::PDF::Converter do
         end
       end
 
-      input = <<~'EOS'
+      input = <<~'END'
       = Article Title
 
       column 1, page 1
@@ -1180,7 +1180,7 @@ describe Asciidoctor::PDF::Converter do
       <<<
 
       column 1, page 2
-      EOS
+      END
 
       pdf = to_pdf input, backend: backend, analyze: true
       (expect (pdf.find_unique_text 'column 1, page 2')[:page_number]).to eql 2
@@ -1198,12 +1198,12 @@ describe Asciidoctor::PDF::Converter do
         end
       end
 
-      input = <<~'EOS'
+      input = <<~'END'
       see next section
 
       [#next-section]
       == Next Section
-      EOS
+      END
 
       pdf = to_pdf input, backend: backend, analyze: true
       para_text = pdf.find_unique_text 'see next section'
@@ -1228,13 +1228,13 @@ describe Asciidoctor::PDF::Converter do
         end
       end
 
-      pdf = to_pdf <<~'EOS', backend: backend, pdf_theme: { heading_margin_bottom: 0, heading_margin_top: 100 }, analyze: true
+      pdf = to_pdf <<~'END', backend: backend, pdf_theme: { heading_margin_bottom: 0, heading_margin_top: 100 }, analyze: true
       [.first]
       paragraph
 
       [.second]
       paragraph
-      EOS
+      END
 
       first_heading_text = pdf.find_unique_text 'First Heading'
       (expect first_heading_text).not_to be_nil
@@ -1262,14 +1262,14 @@ describe Asciidoctor::PDF::Converter do
         end
       end
 
-      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+      pdf = to_pdf <<~'END', backend: backend, analyze: true
       before
 
       [.heading]
       heading
 
       paragraph
-      EOS
+      END
 
       heading_text = pdf.find_unique_text 'HEADING'
       (expect heading_text).not_to be_nil
@@ -1289,13 +1289,13 @@ describe Asciidoctor::PDF::Converter do
         end
       end
 
-      pdf = to_pdf <<~'EOS', backend: backend, pdf_theme: { heading_margin_bottom: 0, heading_margin_top: 100 }, analyze: true
+      pdf = to_pdf <<~'END', backend: backend, pdf_theme: { heading_margin_bottom: 0, heading_margin_top: 100 }, analyze: true
       [.first]
       paragraph
 
       [.second]
       paragraph
-      EOS
+      END
 
       first_heading_text = pdf.find_unique_text 'First Heading'
       (expect first_heading_text).not_to be_nil
@@ -1323,14 +1323,14 @@ describe Asciidoctor::PDF::Converter do
         end
       end
 
-      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+      pdf = to_pdf <<~'END', backend: backend, analyze: true
       before
 
       [.heading]
       heading
 
       paragraph
-      EOS
+      END
 
       heading_text = pdf.find_unique_text 'HEADING'
       (expect heading_text).not_to be_nil
@@ -1354,10 +1354,10 @@ describe Asciidoctor::PDF::Converter do
         end
       end
 
-      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+      pdf = to_pdf <<~'END', backend: backend, analyze: true
       [transform=upcase]
       == Section Title
-      EOS
+      END
 
       heading_text = pdf.find_unique_text 'SECTION TITLE'
       (expect heading_text).not_to be_nil
@@ -1377,10 +1377,10 @@ describe Asciidoctor::PDF::Converter do
         end
       end
 
-      pdf = to_pdf <<~'EOS', backend: backend, analyze: :image
+      pdf = to_pdf <<~'END', backend: backend, analyze: :image
       [image=tux.png]
       == Section Title
-      EOS
+      END
 
       (expect pdf.images).to have_size 1
     end
@@ -1399,14 +1399,14 @@ describe Asciidoctor::PDF::Converter do
       end
 
       pdf_theme = { heading_doctitle_font_color: '0000EE', heading_doctitle_margin_bottom: 24 }
-      pdf = to_pdf <<~'EOS', backend: backend, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', backend: backend, pdf_theme: pdf_theme, analyze: true
       = Article Title
 
       First paragraph of body.
       First paragraph of body.
       First paragraph of body.
       First paragraph of body.
-      EOS
+      END
 
       (expect pdf.pages).to have_size 1
       title_text = pdf.find_unique_text 'Article Title'
@@ -1444,14 +1444,14 @@ describe Asciidoctor::PDF::Converter do
         end
       end
 
-      pdf = to_pdf <<~'EOS', backend: backend, enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', backend: backend, enable_footer: true, analyze: true
       = Document Title
       :doctype: book
 
       = Part Title
 
       == Chapter
-      EOS
+      END
 
       page_2_text = pdf.find_text page_number: 2
       (expect page_2_text).to have_size 1
@@ -1470,12 +1470,12 @@ describe Asciidoctor::PDF::Converter do
         end
       end
 
-      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+      pdf = to_pdf <<~'END', backend: backend, analyze: true
       [,ruby]
       ----
       puts "Hello, Ruby!"
       ----
-      EOS
+      END
 
       (expect pdf.text[0][:string]).to eql 'puts "Hello, World!"'
     end
@@ -1491,12 +1491,12 @@ describe Asciidoctor::PDF::Converter do
         end
       end
 
-      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+      pdf = to_pdf <<~'END', backend: backend, analyze: true
       [,ruby]
       ----
       puts "Hello, Ruby!"
       ----
-      EOS
+      END
 
       (expect pdf.text[0][:string]).to eql 'puts "Hello, World!"'
     end
@@ -1518,7 +1518,7 @@ describe Asciidoctor::PDF::Converter do
         end
       end
 
-      pdf = to_pdf <<~'EOS', backend: backend, analyze: :line
+      pdf = to_pdf <<~'END', backend: backend, analyze: :line
       [.custom,cols=2*]
       |===
       |a |b
@@ -1532,7 +1532,7 @@ describe Asciidoctor::PDF::Converter do
       |a |b
       |c |d
       |===
-      EOS
+      END
 
       lines = pdf.lines
       custom_lines = lines.select {|it| it[:color] == '0000EE' }

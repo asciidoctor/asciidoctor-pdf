@@ -4,14 +4,14 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - STEM' do
   it 'should render stem as code block if stem extension not present' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     [stem]
     ++++
     sig = enc(H(D), s)
     ++++
 
     after
-    EOS
+    END
 
     equation_text = (pdf.find_text 'sig = enc(H(D), s)')[0]
     (expect equation_text[:font_name]).to eql 'mplus1mn-regular'
@@ -20,7 +20,7 @@ describe 'Asciidoctor::PDF::Converter - STEM' do
   end
 
   it 'should preserve indentation in stem block' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { page_margin: 36, code_padding: 10 }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { page_margin: 36, code_padding: 10 }, analyze: true
     [stem]
     ++++
     M = \left[
@@ -29,7 +29,7 @@ describe 'Asciidoctor::PDF::Converter - STEM' do
        3 & 4
       \end{array} \right]
     ++++
-    EOS
+    END
 
     pdf.text.each {|text| (expect text[:font_name]).to eql 'mplus1mn-regular' }
     lhs_text = pdf.find_unique_text %r/^M/
@@ -40,7 +40,7 @@ describe 'Asciidoctor::PDF::Converter - STEM' do
   end
 
   it 'should show caption and anchor above block if specified' do
-    input = <<~'EOS'
+    input = <<~'END'
     // listing-caption is not used in this case
     :listing-caption: Listing
 
@@ -53,7 +53,7 @@ describe 'Asciidoctor::PDF::Converter - STEM' do
        3 & 4
       \end{array} \right]
     ++++
-    EOS
+    END
 
     pdf = to_pdf input, analyze: true
     caption_text = pdf.find_unique_text 'A basic matrix'

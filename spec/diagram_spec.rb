@@ -27,7 +27,7 @@ describe 'Asciidoctor Diagram Integration', if: (RSpec::ExampleGroupHelpers.gem_
 
   it 'should be able to control display size of image using pdfwidth attribute on diagram block' do
     require 'asciidoctor-diagram'
-    pdf = to_pdf <<~EOS, safe: :unsafe, attributes: { 'docdir' => fixtures_dir, 'outdir' => output_dir, 'imagesdir' => 'images' }, analyze: :image
+    pdf = to_pdf <<~END, safe: :unsafe, attributes: { 'docdir' => fixtures_dir, 'outdir' => output_dir, 'imagesdir' => 'images' }, analyze: :image
 
     [plantuml,pdfwidth-test,png,pdfwidth=1in]
     ....
@@ -36,7 +36,7 @@ describe 'Asciidoctor Diagram Integration', if: (RSpec::ExampleGroupHelpers.gem_
     :Work;
     end
     ....
-    EOS
+    END
 
     (expect Pathname.new output_file 'images/pdfwidth-test.png').to exist
     images = pdf.images
@@ -49,7 +49,7 @@ describe 'Asciidoctor Diagram Integration', if: (RSpec::ExampleGroupHelpers.gem_
     require 'asciidoctor-diagram'
     with_tmp_file '.cfg', contents: %(skinparam defaultFontName M+ 1p Fallback\n) do |tmp_file|
       Dir.chdir File.dirname tmp_file do
-        pdf = to_pdf <<~EOS, attributes: { 'imagesdir' => '' }, analyze: true
+        pdf = to_pdf <<~END, attributes: { 'imagesdir' => '' }, analyze: true
         :pdf-theme: default-with-font-fallbacks
         :plantumlconfig: #{File.basename tmp_file}
 
@@ -57,7 +57,7 @@ describe 'Asciidoctor Diagram Integration', if: (RSpec::ExampleGroupHelpers.gem_
         ....
         card カード
         ....
-        EOS
+        END
 
         text = pdf.text[0]
         (expect text[:string]).to eql 'カード'

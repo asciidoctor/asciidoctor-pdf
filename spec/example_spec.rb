@@ -4,45 +4,45 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Example' do
   it 'should keep block together if it can fit on one page' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     #{(['filler'] * 15).join %(\n\n)}
 
     [%unbreakable]
     ====
     #{(['content'] * 15).join %(\n\n)}
     ====
-    EOS
+    END
 
     example_text = (pdf.find_text 'content')[0]
     (expect example_text[:page_number]).to be 2
   end
 
   it 'should include title if specified' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     .Title
     ====
     Content
     ====
-    EOS
+    END
 
     title_texts = pdf.find_text 'Example 1. Title'
     (expect title_texts).to have_size 1
   end
 
   it 'should include title if specified and background and border are not set' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { example_background_color: 'transparent', example_border_width: 0 }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { example_background_color: 'transparent', example_border_width: 0 }, analyze: true
     .Title
     ====
     Content
     ====
-    EOS
+    END
 
     title_texts = pdf.find_text 'Example 1. Title'
     (expect title_texts).to have_size 1
   end
 
   it 'should keep title with content when block is advanced to next page' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     #{(['filler'] * 15).join %(\n\n)}
 
     .Title
@@ -50,7 +50,7 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     ====
     #{(['content'] * 15).join %(\n\n)}
     ====
-    EOS
+    END
 
     example_title_text = (pdf.find_text 'Example 1. Title')[0]
     example_content_text = (pdf.find_text 'content')[0]
@@ -59,13 +59,13 @@ describe 'Asciidoctor::PDF::Converter - Example' do
   end
 
   it 'should split block if it cannot fit on one page' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     .Title
     [%unbreakable]
     ====
     #{(['content'] * 30).join %(\n\n)}
     ====
-    EOS
+    END
 
     example_title_text = (pdf.find_text 'Example 1. Title')[0]
     example_content_text = (pdf.find_text 'content')
@@ -75,13 +75,13 @@ describe 'Asciidoctor::PDF::Converter - Example' do
   end
 
   it 'should split border when block is split across pages', visual: true do
-    to_file = to_pdf_file <<~EOS, 'example-page-split.pdf'
+    to_file = to_pdf_file <<~END, 'example-page-split.pdf'
     .Title
     [%unbreakable]
     ====
     #{(['content'] * 30).join %(\n\n)}
     ====
-    EOS
+    END
 
     (expect to_file).to visually_match 'example-page-split.pdf'
   end
@@ -94,14 +94,14 @@ describe 'Asciidoctor::PDF::Converter - Example' do
       example_border_radius: 0,
     }
     pdf = with_content_spacer 10, 690 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
       image::#{spacer_path}[]
 
       ====
       content +
       that wraps
       ====
-      EOS
+      END
     end
 
     pages = pdf.pages
@@ -112,14 +112,14 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     (expect last_text_y - pdf_theme[:example_padding]).to be > 48.24
 
     pdf = with_content_spacer 10, 692 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
       image::#{spacer_path}[]
 
       ====
       content +
       that wraps
       ====
-      EOS
+      END
     end
 
     pages = pdf.pages
@@ -132,7 +132,7 @@ describe 'Asciidoctor::PDF::Converter - Example' do
   end
 
   it 'should draw border around whole block when block contains nested unbreakable block', visual: true do
-    to_file = to_pdf_file <<~EOS, 'example-with-nested-block-page-split.pdf'
+    to_file = to_pdf_file <<~END, 'example-with-nested-block-page-split.pdf'
     .Title
     ====
     #{(['content'] * 25).join %(\n\n)}
@@ -146,20 +146,20 @@ describe 'Asciidoctor::PDF::Converter - Example' do
 
     #{(['content'] * 5).join %(\n\n)}
     ====
-    EOS
+    END
 
     (expect to_file).to visually_match 'example-with-nested-block-page-split.pdf'
   end
 
   it 'should not add signifier and numeral to caption if example-caption attribute is unset' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :!example-caption:
 
     .Title
     ====
     content
     ====
-    EOS
+    END
 
     (expect pdf.lines[0]).to eql 'Title'
   end
@@ -170,12 +170,12 @@ describe 'Asciidoctor::PDF::Converter - Example' do
       example_caption_font_style: 'bold',
     }
 
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     .Title
     ====
     content
     ====
-    EOS
+    END
 
     title_text = (pdf.find_text 'Example 1. Title')[0]
     (expect title_text[:font_color]).to eql '0000FF'
@@ -185,12 +185,12 @@ describe 'Asciidoctor::PDF::Converter - Example' do
   it 'should allow theme to place caption below block' do
     pdf_theme = { example_caption_end: 'bottom' }
 
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     .Look out below!
     ====
     content
     ====
-    EOS
+    END
 
     content_text = pdf.find_unique_text 'content'
     title_text = pdf.find_unique_text 'Example 1. Look out below!'
@@ -203,12 +203,12 @@ describe 'Asciidoctor::PDF::Converter - Example' do
       caption_text_decoration_color: 'DDDDDD',
     }
 
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
     .Title
     ====
     content
     ====
-    EOS
+    END
 
     underline = pdf.lines.find {|it| it[:color] = 'DDDDDD' }
     (expect underline).not_to be_nil
@@ -224,7 +224,7 @@ describe 'Asciidoctor::PDF::Converter - Example' do
       example_border_color: '333333',
     }
 
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
     ====
     example
 
@@ -232,7 +232,7 @@ describe 'Asciidoctor::PDF::Converter - Example' do
 
     here
     ====
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 8
@@ -254,13 +254,13 @@ describe 'Asciidoctor::PDF::Converter - Example' do
       example_padding: 3,
     }
 
-    input = <<~'EOS'
+    input = <<~'END'
     ====
     first
 
     last
     ====
-    EOS
+    END
 
     to_file = to_pdf_file input, 'example-uneven-border-end-caps.pdf', pdf_theme: pdf_theme
     (expect to_file).to visually_match 'example-uneven-border-end-caps.pdf'
@@ -274,13 +274,13 @@ describe 'Asciidoctor::PDF::Converter - Example' do
       example_padding: 3,
     }
 
-    input = <<~'EOS'
+    input = <<~'END'
     ====
     first
 
     last
     ====
-    EOS
+    END
 
     # NOTE: visually, these two reference files are identical, but the image comparator doesn't think so
     to_file = to_pdf_file input, 'example-singular-border-end-caps.pdf', pdf_theme: pdf_theme
@@ -291,13 +291,13 @@ describe 'Asciidoctor::PDF::Converter - Example' do
   end
 
   it 'should add correct padding around content when using default theme' do
-    input = <<~'EOS'
+    input = <<~'END'
     ====
     first
 
     last
     ====
-    EOS
+    END
 
     pdf = to_pdf input, analyze: true
     lines = (to_pdf input, analyze: :line).lines
@@ -316,13 +316,13 @@ describe 'Asciidoctor::PDF::Converter - Example' do
   end
 
   it 'should add equal padding around content when using base theme' do
-    input = <<~'EOS'
+    input = <<~'END'
     ====
     first
 
     last
     ====
-    EOS
+    END
 
     pdf = to_pdf input, attribute_overrides: { 'pdf-theme' => 'base' }, analyze: true
     lines = (to_pdf input, attribute_overrides: { 'pdf-theme' => 'base' }, analyze: :line).lines
@@ -341,7 +341,7 @@ describe 'Asciidoctor::PDF::Converter - Example' do
   end
 
   it 'should use informal title, indented content, no border or shading, and bottom margin if collapsible option is set' do
-    input = <<~'EOS'
+    input = <<~'END'
     .Reveal Answer
     [%collapsible]
     ====
@@ -349,7 +349,7 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     ====
 
     Paragraph following collapsible block.
-    EOS
+    END
 
     pdf = to_pdf input, analyze: true
     lines = pdf.lines
@@ -369,26 +369,26 @@ describe 'Asciidoctor::PDF::Converter - Example' do
 
   # see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary#default_label_text
   it 'should use fallback title for collapsible block if no title is specified' do
-    input = <<~'EOS'
+    input = <<~'END'
     [%collapsible]
     ====
     These are the details.
     ====
-    EOS
+    END
 
     pdf = to_pdf input, analyze: true
     (expect pdf.text[0][:string]).to eql %(\u25bc Details)
   end
 
   it 'should align left margin of content of collapsible block with start of title text' do
-    input = <<~'EOS'
+    input = <<~'END'
     .*Spoiler*
     [%collapsible]
     ====
     Now you can't unsee it.
     Muahahahaha.
     ====
-    EOS
+    END
 
     pdf = to_pdf input, analyze: true
     (expect pdf.text[0][:x]).to eql 48.24
@@ -403,7 +403,7 @@ describe 'Asciidoctor::PDF::Converter - Example' do
       code_border_radius: 0,
       code_border_width: [1, 0],
     }
-    input = <<~'EOS'
+    input = <<~'END'
     [%collapsible]
     ====
     ----
@@ -414,7 +414,7 @@ describe 'Asciidoctor::PDF::Converter - Example' do
     ----
     below
     ----
-    EOS
+    END
 
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines.sort_by {|it| -it[:from][:y] }
     (expect lines).to have_size 4

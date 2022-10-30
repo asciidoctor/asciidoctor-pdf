@@ -4,12 +4,12 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Quote' do
   it 'should show caption above block if title is specified' do
-    input = <<~'EOS'
+    input = <<~'END'
     .Words of wisdom
     ____
     Let it be.
     ____
-    EOS
+    END
 
     pdf = to_pdf input, analyze: :line
     lines = pdf.lines
@@ -27,12 +27,12 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
   end
 
   it 'should show attribution line below text of quote' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     [,Alice Walker,Speech]
     ____
     The most common way people give up their power is by thinking they don't have any.
     ____
-    EOS
+    END
 
     last_quote_text = pdf.text[-2]
     attribution_text = (pdf.find_text %r/Alice Walker/)[0]
@@ -46,10 +46,10 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
 
   it 'should escape bare ampersand in attribution' do
     (expect do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [quote, J. Helliwell & B. McMahon]
       The richer the metadata available to the scientist, the greater the potential for new discoveries.
-      EOS
+      END
 
       (expect pdf.lines[-1]).to eql %(\u2014 J. Helliwell & B. McMahon)
     end).to not_log_message
@@ -57,10 +57,10 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
 
   it 'should escape bare ampersand in citetitle' do
     (expect do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [quote, J. Helliwell & B. McMahon, Melbourne Congress & General Assembly of the IUCr]
       The richer the metadata available to the scientist, the greater the potential for new discoveries.
-      EOS
+      END
 
       (expect pdf.lines[-1]).to eql %(\u2014 J. Helliwell & B. McMahon, Melbourne Congress & General Assembly of the IUCr)
     end).to not_log_message
@@ -68,22 +68,22 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
 
   it 'should render character reference in attribution' do
     (expect do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [quote, J. Helliwell & B. McMahon &#169; IUCr]
       The richer the metadata available to the scientist, the greater the potential for new discoveries.
-      EOS
+      END
 
       (expect pdf.lines[-1]).to eql %(\u2014 J. Helliwell & B. McMahon \u00a9 IUCr)
     end).to not_log_message
   end
 
   it 'should apply substitutions to attribution and citetitle if enclosed in single quotes' do
-    input = <<~'EOS'
+    input = <<~'END'
     [, 'Author--aka Alias', 'https://asciidoctor.org[Source]']
     ____
     Use the attribution and citetitle attributes to credit the author and identify the source of the quote, respectively.
     ____
-    EOS
+    END
 
     pdf = to_pdf input, analyze: true
     attribution_text, citetitle_text = (pdf.find_text font_size: 9)
@@ -102,60 +102,60 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
   end
 
   it 'should honor text alignment role on styled paragraph' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     [quote.text-right]
     Yep.
-    EOS
+    END
 
     midpoint = pdf.pages[0][:size][0] * 0.5
     (expect (pdf.find_unique_text 'Yep.')[:x]).to be > midpoint
   end
 
   it 'should not draw left border if border_left_width is 0' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { quote_border_left_width: 0 }, analyze: :line
+    pdf = to_pdf <<~'END', pdf_theme: { quote_border_left_width: 0 }, analyze: :line
     ____
     Let it be.
     ____
-    EOS
+    END
 
     (expect pdf.lines).to be_empty
   end
 
   it 'should not draw left border if border_left_width is nil' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { quote_border_left_width: nil, quote_border_width: nil }, analyze: :line
+    pdf = to_pdf <<~'END', pdf_theme: { quote_border_left_width: nil, quote_border_width: nil }, analyze: :line
     ____
     Let it be.
     ____
-    EOS
+    END
 
     (expect pdf.lines).to be_empty
   end
 
   it 'should not draw left border if color is transparent' do
-    lines = (to_pdf <<~'EOS', pdf_theme: { quote_border_color: 'transparent' }, analyze: :line).lines
+    lines = (to_pdf <<~'END', pdf_theme: { quote_border_color: 'transparent' }, analyze: :line).lines
     ____
     Let it be.
     ____
-    EOS
+    END
 
     (expect lines).to be_empty
   end
 
   it 'should not draw left border if color is nil and base border color is nil' do
-    lines = (to_pdf <<~'EOS', pdf_theme: { base_border_color: nil, quote_border_color: nil }, analyze: :line).lines
+    lines = (to_pdf <<~'END', pdf_theme: { base_border_color: nil, quote_border_color: nil }, analyze: :line).lines
     before
 
     ____
     Let it be.
     ____
-    EOS
+    END
 
     (expect lines).to be_empty
   end
 
   it 'should not draw left border on next page if block falls at bottom of page' do
     pdf = with_content_spacer 10, 689.5 do |spacer_path|
-      to_pdf <<~EOS, analyze: :line
+      to_pdf <<~END, analyze: :line
       image::#{spacer_path}[]
 
       ____
@@ -165,7 +165,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
       ____
 
       Words of wisdom were spoken.
-      EOS
+      END
     end
 
     quote_borders = pdf.lines.select {|it| it[:color] == 'EEEEEE' }
@@ -178,12 +178,12 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
       quote_background_color: 'dddddd',
       quote_border_color: 'aa0000',
     }
-    to_file = to_pdf_file <<~'EOS', 'quote-background-color.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~'END', 'quote-background-color.pdf', pdf_theme: pdf_theme
     ____
     Let it be. +
     Let it be.
     ____
-    EOS
+    END
 
     (expect to_file).to visually_match 'quote-background-color.pdf'
   end
@@ -196,25 +196,25 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
       quote_background_color: 'dddddd',
       quote_padding: [12, 15],
     }
-    to_file = to_pdf_file <<~'EOS', 'quote-border-and-background-color.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~'END', 'quote-border-and-background-color.pdf', pdf_theme: pdf_theme
     [,Paul McCartney]
     ____
     Let it be. +
     Let it be.
     ____
-    EOS
+    END
 
     (expect to_file).to visually_match 'quote-border-and-background-color.pdf'
   end
 
   it 'should apply correct padding around content' do
-    input = <<~'EOS'
+    input = <<~'END'
     ____
     first
 
     last
     ____
-    EOS
+    END
 
     pdf = to_pdf input, analyze: true
     lines = (to_pdf input, analyze: :line).lines
@@ -231,13 +231,13 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
   end
 
   it 'should apply correct padding around content when using base theme' do
-    input = <<~'EOS'
+    input = <<~'END'
     ____
     first
 
     last
     ____
-    EOS
+    END
 
     pdf = to_pdf input, attribute_overrides: { 'pdf-theme' => 'base' }, analyze: true
     lines = (to_pdf input, attribute_overrides: { 'pdf-theme' => 'base' }, analyze: :line).lines
@@ -261,11 +261,11 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
       quote_background_color: 'EEEEEE',
       quote_padding: [6, 10, 12, 10],
     }
-    to_file = to_pdf_file <<~EOS, 'quote-page-split.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~END, 'quote-page-split.pdf', pdf_theme: pdf_theme
     ____
     #{(['Let it be.'] * 30).join %(\n\n)}
     ____
-    EOS
+    END
 
     (expect to_file).to visually_match 'quote-page-split.pdf'
   end
@@ -273,7 +273,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
   it 'should advance to next page if block is split and caption does not fit' do
     quote = ['Power concedes nothing without a demand.', 'It never did and it never will.'].join %( +\n)
     with_content_spacer 10, 705 do |spacer_path|
-      input = <<~EOS
+      input = <<~END
       before
 
       image::#{spacer_path}[]
@@ -282,7 +282,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
       ____
       #{([quote] * 18).join %(\n\n)}
       ____
-      EOS
+      END
 
       pdf = to_pdf input, analyze: true
       advice_text = pdf.find_unique_text 'Sage advice by Frederick Douglass'
@@ -295,7 +295,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
     block_content = ['text of quote'] * 15 * %(\n\n)
     pdf_theme = { prose_margin_bottom: 12, quote_padding: [0, 0, 0, 15] }
     with_content_spacer 10, 690 do |spacer_path|
-      input = <<~EOS
+      input = <<~END
       before
 
       image::#{spacer_path}[]
@@ -304,7 +304,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
       ____
       #{block_content}
       ____
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
       lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -332,14 +332,14 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
       quote_border_left_width: 0,
     }
     pdf = with_content_spacer 10, 690 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
       image::#{spacer_path}[]
 
       ____
       content +
       that wraps
       ____
-      EOS
+      END
     end
 
     pages = pdf.pages
@@ -350,14 +350,14 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
     (expect last_text_y - pdf_theme[:quote_padding]).to be > 48.24
 
     pdf = with_content_spacer 10, 692 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
       image::#{spacer_path}[]
 
       ____
       content +
       that wraps
       ____
-      EOS
+      END
     end
 
     pages = pdf.pages

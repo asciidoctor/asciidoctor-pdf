@@ -4,11 +4,11 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Sidebar' do
   it 'should draw line around sidebar block' do
-    pdf = to_pdf <<~'EOS', analyze: :line, pdf_theme: { sidebar_background_color: 'transparent' }
+    pdf = to_pdf <<~'END', analyze: :line, pdf_theme: { sidebar_background_color: 'transparent' }
     ****
     sidebar
     ****
-    EOS
+    END
 
     (expect pdf.lines).to have_size 4
     (expect pdf.lines.map {|it| it[:color] }.uniq).to eql ['E1E1E1']
@@ -21,11 +21,11 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
       sidebar_border_style: 'dashed',
       sidebar_border_color: 'cccccc',
     }
-    to_file = to_pdf_file <<~'EOS', 'sidebar-border-style-dashed.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~'END', 'sidebar-border-style-dashed.pdf', pdf_theme: pdf_theme
     ****
     sidebar
     ****
-    EOS
+    END
 
     (expect to_file).to visually_match 'sidebar-border-style-dashed.pdf'
   end
@@ -36,23 +36,23 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
       sidebar_border_style: 'dotted',
       sidebar_border_color: 'cccccc',
     }
-    to_file = to_pdf_file <<~'EOS', 'sidebar-border-style-dotted.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~'END', 'sidebar-border-style-dotted.pdf', pdf_theme: pdf_theme
     ****
     sidebar
     ****
-    EOS
+    END
 
     (expect to_file).to visually_match 'sidebar-border-style-dotted.pdf'
   end
 
   it 'should add correct padding around content when using default theme' do
-    input = <<~'EOS'
+    input = <<~'END'
     ****
     first
 
     last
     ****
-    EOS
+    END
 
     pdf = to_pdf input, analyze: true
     lines = (to_pdf input, analyze: :line).lines
@@ -71,13 +71,13 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
   end
 
   it 'should add equal padding around content when using base theme' do
-    pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => 'base' }, analyze: true
+    pdf = to_pdf <<~'END', attribute_overrides: { 'pdf-theme' => 'base' }, analyze: true
     ****
     first
 
     last
     ****
-    EOS
+    END
 
     boundaries = (pdf.extract_graphic_states pdf.pages[0][:raw_content])[0]
       .select {|l| l.end_with? 'l' }
@@ -94,12 +94,12 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
   end
 
   it 'should use block title as heading of sidebar block' do
-    input = <<~'EOS'
+    input = <<~'END'
     .Sidebar Title
     ****
     Sidebar content.
     ****
-    EOS
+    END
 
     pdf = to_pdf input, analyze: :line
     sidebar_border_top = pdf.lines.find {|it| it[:color] == 'E1E1E1' }[:from][:y]
@@ -121,7 +121,7 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
   end
 
   it 'should render adjacent sidebars without overlapping', visual: true do
-    to_file = to_pdf_file <<~'EOS', 'sidebar-adjacent.pdf'
+    to_file = to_pdf_file <<~'END', 'sidebar-adjacent.pdf'
     ****
     this
 
@@ -137,13 +137,13 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
 
     sidebar
     ****
-    EOS
+    END
 
     (expect to_file).to visually_match 'sidebar-adjacent.pdf'
   end
 
   it 'should keep sidebar together if it can fit on one page' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     #{(['filler'] * 15).join %(\n\n)}
 
     .Sidebar
@@ -151,7 +151,7 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     ****
     #{(['content'] * 15).join %(\n\n)}
     ****
-    EOS
+    END
 
     sidebar_text = (pdf.find_text 'Sidebar')[0]
     (expect sidebar_text[:page_number]).to be 2
@@ -164,7 +164,7 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
       sidebar_background_color: 'DFDFDF',
     }
     pdf = with_content_spacer 10, 680 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
       image::#{spacer_path}[]
 
       .Sidebar Title
@@ -172,7 +172,7 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
 
       First block of content.
       ****
-      EOS
+      END
     end
 
     pages = pdf.pages
@@ -189,12 +189,12 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
   end
 
   it 'should split block if it cannot fit on one page' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     .Sidebar Title
     ****
     #{(['content'] * 30).join %(\n\n)}
     ****
-    EOS
+    END
 
     title_text = (pdf.find_text 'Sidebar Title')[0]
     content_text = (pdf.find_text 'content')
@@ -204,12 +204,12 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
   end
 
   it 'should split border when block is split across pages', visual: true do
-    to_file = to_pdf_file <<~EOS, 'sidebar-page-split.pdf'
+    to_file = to_pdf_file <<~END, 'sidebar-page-split.pdf'
     .Sidebar Title
     ****
     #{(['content'] * 30).join %(\n\n)}
     ****
-    EOS
+    END
 
     (expect to_file).to visually_match 'sidebar-page-split.pdf'
   end
@@ -224,11 +224,11 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
 
     [%(****\ncontent +\nthat wraps\n****), %([sidebar%hardbreaks]\ncontent\nthat wraps)].each do |content|
       pdf = with_content_spacer 10, 690 do |spacer_path|
-        to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         image::#{spacer_path}[]
 
         #{content}
-        EOS
+        END
       end
 
       pages = pdf.pages
@@ -239,11 +239,11 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
       (expect last_text_y - pdf_theme[:sidebar_padding]).to be > 48.24
 
       pdf = with_content_spacer 10, 692 do |spacer_path|
-        to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         image::#{spacer_path}[]
 
         #{content}
-        EOS
+        END
       end
 
       pages = pdf.pages
@@ -257,7 +257,7 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
   end
 
   it 'should extend block to bottom of page but not beyond if content ends with page break', visual: true do
-    to_file = to_pdf_file <<~'EOS', 'sidebar-with-trailing-page-break.pdf'
+    to_file = to_pdf_file <<~'END', 'sidebar-with-trailing-page-break.pdf'
     .Sidebar Title
     ****
     Sidebar
@@ -268,27 +268,27 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     ****
 
     after
-    EOS
+    END
 
     (expect to_file).to visually_match 'sidebar-with-trailing-page-break.pdf'
   end
 
   it 'should not add border if border width is not set in theme or value is nil' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { sidebar_border_color: 'AA0000', sidebar_border_width: nil }, analyze: :line
+    pdf = to_pdf <<~'END', pdf_theme: { sidebar_border_color: 'AA0000', sidebar_border_width: nil }, analyze: :line
     ****
     Sidebar
     ****
-    EOS
+    END
 
     (expect pdf.lines).to have_size 0
   end
 
   it 'should not add border if border color is transaprent' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { sidebar_border_color: 'transparent' }, analyze: :line
+    pdf = to_pdf <<~'END', pdf_theme: { sidebar_border_color: 'transparent' }, analyze: :line
     ****
     Sidebar
     ****
-    EOS
+    END
 
     (expect pdf.lines).to have_size 0
   end
@@ -298,12 +298,12 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
       sidebar_border_width: 0,
       sidebar_border_radius: 5,
     }
-    to_file = to_pdf_file <<~EOS, 'sidebar-page-split-no-border.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~END, 'sidebar-page-split-no-border.pdf', pdf_theme: pdf_theme
     .Sidebar Title
     ****
     #{(['content'] * 30).join %(\n\n)}
     ****
-    EOS
+    END
 
     (expect to_file).to visually_match 'sidebar-page-split-no-border.pdf'
   end
@@ -314,40 +314,40 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
       sidebar_border_color: 'transparent',
       sidebar_border_radius: 5,
     }
-    to_file = to_pdf_file <<~EOS, 'sidebar-page-split-transparent-border.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~END, 'sidebar-page-split-transparent-border.pdf', pdf_theme: pdf_theme
     .Sidebar Title
     ****
     #{(['content'] * 30).join %(\n\n)}
     ****
-    EOS
+    END
 
     (expect to_file).to visually_match 'sidebar-page-split-transparent-border.pdf'
   end
 
   it 'should allow font size of sidebar to be specified using absolute units' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { sidebar_font_size: 9 }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { sidebar_font_size: 9 }, analyze: true
     ****
     sidebar
     ****
-    EOS
+    END
 
     sidebar_text = pdf.find_unique_text 'sidebar'
     (expect sidebar_text[:font_size]).to eql 9
   end
 
   it 'should allow font size of sidebar to be specified using relative units' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { base_font_size: 12, sidebar_font_size: '0.75em' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { base_font_size: 12, sidebar_font_size: '0.75em' }, analyze: true
     ****
     sidebar
     ****
-    EOS
+    END
 
     sidebar_text = pdf.find_unique_text 'sidebar'
     (expect sidebar_text[:font_size]).to eql 9
   end
 
   it 'should allow font size of code block in sidebar to be specified using relative units' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { sidebar_font_size: 12, code_font_size: '0.75em' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { sidebar_font_size: 12, code_font_size: '0.75em' }, analyze: true
     ****
     sidebar
 
@@ -355,7 +355,7 @@ describe 'Asciidoctor::PDF::Converter - Sidebar' do
     code block
     ----
     ****
-    EOS
+    END
 
     sidebar_text = pdf.find_unique_text 'sidebar'
     (expect sidebar_text[:font_size]).to eql 12

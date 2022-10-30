@@ -4,7 +4,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Manpage' do
   it 'should generate name section automatically' do
-    pdf = to_pdf <<~'EOS', doctype: :manpage, analyze: true
+    pdf = to_pdf <<~'END', doctype: :manpage, analyze: true
     = cmd(1)
     Author Name
     v1.0.0
@@ -22,7 +22,7 @@ describe 'Asciidoctor::PDF::Converter - Manpage' do
     == Options
 
     *-v*:: Prints the version.
-    EOS
+    END
 
     expected_name_title = 'Name'
     name_title_text = (pdf.find_text expected_name_title)[0]
@@ -35,7 +35,7 @@ describe 'Asciidoctor::PDF::Converter - Manpage' do
   end
 
   it 'should apply normal substitutions to manname section' do
-    pdf = to_pdf <<~'EOS', doctype: :manpage, analyze: true
+    pdf = to_pdf <<~'END', doctype: :manpage, analyze: true
     = cmd(1)
 
     == Name
@@ -45,7 +45,7 @@ describe 'Asciidoctor::PDF::Converter - Manpage' do
     == Synopsis
 
     *cmd* [_OPTION_]... _FILE_...
-    EOS
+    END
 
     lots_text = (pdf.find_text 'lots')[0]
     (expect lots_text).not_to be_nil
@@ -53,7 +53,7 @@ describe 'Asciidoctor::PDF::Converter - Manpage' do
   end
 
   it 'should uppercase title of auto-generated name section if other sections are uppercase' do
-    pdf = to_pdf <<~'EOS', doctype: :manpage, analyze: true
+    pdf = to_pdf <<~'END', doctype: :manpage, analyze: true
     = cmd(1)
     Author Name
     v1.0.0
@@ -69,7 +69,7 @@ describe 'Asciidoctor::PDF::Converter - Manpage' do
     == OPTIONS
 
     *-v*:: Prints the version.
-    EOS
+    END
 
     name_title_text = pdf.find_unique_text 'NAME'
     (expect name_title_text).not_to be_nil
@@ -78,7 +78,7 @@ describe 'Asciidoctor::PDF::Converter - Manpage' do
   end
 
   it 'should not uppercase title of auto-generated name section if no other sections are found' do
-    pdf = to_pdf <<~'EOS', doctype: :manpage, analyze: true
+    pdf = to_pdf <<~'END', doctype: :manpage, analyze: true
     = cmd(1)
     Author Name
     v1.0.0
@@ -86,7 +86,7 @@ describe 'Asciidoctor::PDF::Converter - Manpage' do
     :mansource: CMD
     :manname: cmd
     :manpurpose: does stuff
-    EOS
+    END
 
     name_title_text = pdf.find_unique_text 'Name'
     (expect name_title_text).not_to be_nil
@@ -95,7 +95,7 @@ describe 'Asciidoctor::PDF::Converter - Manpage' do
   end
 
   it 'should arrange body of manpage into columns if specified in theme' do
-    pdf = to_pdf <<~'EOS', doctype: :manpage, pdf_theme: { page_columns: 2 }, analyze: true
+    pdf = to_pdf <<~'END', doctype: :manpage, pdf_theme: { page_columns: 2 }, analyze: true
     = cmd(1)
 
     == Name
@@ -112,7 +112,7 @@ describe 'Asciidoctor::PDF::Converter - Manpage' do
     == Options
 
     *-v*:: Prints the version.
-    EOS
+    END
 
     midpoint = (get_page_size pdf)[0] * 0.5
     name_text = pdf.find_unique_text 'Name'

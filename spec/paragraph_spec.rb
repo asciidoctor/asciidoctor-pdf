@@ -4,11 +4,11 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Paragraph' do
   it 'should normalize newlines and whitespace' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     He's  a  real  nowhere  man,
     Sitting in his nowhere land,
     Making all his nowhere plans\tfor nobody.
-    EOS
+    END
     (expect pdf.text).to have_size 1
     text = pdf.text[0][:string]
     (expect text).not_to include '  '
@@ -23,14 +23,14 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
       role_outline_border_color: '0000EE',
     }
     with_content_spacer 50, 675 do |spacer_path|
-      input = <<~EOS
+      input = <<~END
       [.outline]#top#
 
       image::#{spacer_path}[]
 
       #{(lorem_ipsum '2-sentences-1-paragraph').sub 'non', '[.outline]#non#'}
       #{(['fillmefillme'] * 380).join ' '} [.outline]#fin#
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
       (expect pdf.pages).to have_size 3
@@ -67,10 +67,10 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
   end
 
   it 'should not indent first line of paragraph if text alignment is center' do
-    input = <<~'EOS'
+    input = <<~'END'
     [.text-center]
     x
-    EOS
+    END
 
     expected_x = (to_pdf input, analyze: true).text[0][:x]
     actual_x = (to_pdf input, pdf_theme: { prose_text_indent: 18 }, analyze: true).text[0][:x]
@@ -79,10 +79,10 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
   end
 
   it 'should not indent first line of paragraph if text alignment is right' do
-    input = <<~'EOS'
+    input = <<~'END'
     [.text-right]
     x
-    EOS
+    END
 
     expected_x = (to_pdf input, analyze: true).text[0][:x]
     actual_x = (to_pdf input, pdf_theme: { prose_text_indent: 18 }, analyze: true).text[0][:x]
@@ -115,11 +115,11 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
   end
 
   it 'should use prose_margin_inner between paragraphs when prose_text_indent key is set in theme' do
-    pdf = to_pdf <<~EOS, pdf_theme: { prose_text_indent: 18, prose_margin_inner: 0 }, analyze: true
+    pdf = to_pdf <<~END, pdf_theme: { prose_text_indent: 18, prose_margin_inner: 0 }, analyze: true
     #{lorem_ipsum '2-sentences-2-paragraphs'}
 
     * list item
-    EOS
+    END
 
     line_spacing = 1.upto(3).map {|i| (pdf.text[i - 1][:y] - pdf.text[i][:y]).round 2 }.uniq
     (expect line_spacing).to have_size 1
@@ -131,11 +131,11 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
   end
 
   it 'should use prose_margin_inner between paragraphs even when prose_text_indent key in theme is set to 0' do
-    pdf = to_pdf <<~EOS, pdf_theme: { prose_text_indent: 0, prose_margin_inner: 0 }, analyze: true
+    pdf = to_pdf <<~END, pdf_theme: { prose_text_indent: 0, prose_margin_inner: 0 }, analyze: true
     #{lorem_ipsum '2-sentences-2-paragraphs'}
 
     * list item
-    EOS
+    END
 
     line_spacing = 1.upto(3).map {|i| (pdf.text[i - 1][:y] - pdf.text[i][:y]).round 2 }.uniq
     (expect line_spacing).to have_size 1
@@ -152,7 +152,7 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
       prose_text_indent_inner: 10.5,
       prose_margin_inner: 0,
     }
-    pdf = to_pdf <<~EOS, analyze: true, pdf_theme: pdf_theme
+    pdf = to_pdf <<~END, analyze: true, pdf_theme: pdf_theme
     #{lorem_ipsum '2-sentences-1-paragraph'}
 
     #{lorem_ipsum '2-sentences-1-paragraph'}
@@ -162,7 +162,7 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     #{lorem_ipsum '2-sentences-1-paragraph'}
 
     #{lorem_ipsum '2-sentences-1-paragraph'}
-    EOS
+    END
 
     lorem_texts = pdf.find_text %r/^Lorem/
     (expect lorem_texts).to have_size 4
@@ -173,12 +173,12 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
   end
 
   it 'should allow text alignment to be controlled using text-align document attribute' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Document Title
     :text-align: right
 
     right-aligned
-    EOS
+    END
 
     center_x = (pdf.page 1)[:size][1] / 2
     paragraph_text = (pdf.find_text 'right-aligned')[0]
@@ -186,10 +186,10 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
   end
 
   it 'should output block title for paragraph if specified' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     .Disclaimer
     All views expressed are my own.
-    EOS
+    END
 
     (expect pdf.lines).to eql ['Disclaimer', 'All views expressed are my own.']
     disclaimer_text = (pdf.find_text 'Disclaimer')[0]
@@ -197,10 +197,10 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
   end
 
   it 'should use base text align if caption align is set to inherit' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { base_text_align: 'right', caption_align: 'inherit' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { base_text_align: 'right', caption_align: 'inherit' }, analyze: true
     .Title
     Text
-    EOS
+    END
 
     center_x = (pdf.page 1)[:size][1] * 0.5
     title_text = pdf.find_unique_text 'Title'
@@ -210,10 +210,10 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
   end
 
   it 'should use value of align on caption to align text if caption_text_align key not specified' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { caption_align: 'right' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { caption_align: 'right' }, analyze: true
     .Title
     Text
-    EOS
+    END
 
     center_x = (pdf.page 1)[:size][1] * 0.5
     title_text = pdf.find_unique_text 'Title'
@@ -223,7 +223,7 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
   end
 
   it 'should apply the lead style to a paragraph with the lead role' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Document Title
 
     preamble content
@@ -234,7 +234,7 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
     == First Section
 
     section content
-    EOS
+    END
 
     preamble_text = pdf.find_text 'preamble content'
     (expect preamble_text).to have_size 1
@@ -245,10 +245,10 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
   end
 
   it 'should allow the theme to control the line height of a lead paragraph' do
-    input = <<~EOS
+    input = <<~END
     [.lead]
     #{lorem_ipsum '2-sentences-1-paragraph'}
-    EOS
+    END
 
     reference_texts = (to_pdf input, analyze: true).text
     default_spacing = reference_texts[0][:y] - reference_texts[1][:y]
@@ -268,12 +268,12 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
       role_custom_text_transform: 'lowercase',
     }
 
-    input = <<~EOS
+    input = <<~END
     reference
 
     [.custom]
     This is a special paragraph.
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
     left_margin = pdf.text[0][:x]
@@ -286,10 +286,10 @@ describe 'Asciidoctor::PDF::Converter - Paragraph' do
   end
 
   it 'should allow the theme to control the line height of a paragraph with a custom role' do
-    input = <<~EOS
+    input = <<~END
     [.spaced-out]
     #{lorem_ipsum '2-sentences-1-paragraph'}
-    EOS
+    END
 
     reference_texts = (to_pdf input, analyze: true).text
     default_spacing = reference_texts[0][:y] - reference_texts[1][:y]

@@ -4,7 +4,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Thematic Break' do
   it 'should apply margin bottom to thematic break' do
-    input = <<~'EOS'
+    input = <<~'END'
     before
 
     '''
@@ -12,7 +12,7 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
     ****
     after
     ****
-    EOS
+    END
     { 'base' => 12.0, 'default' => 18.0 }.each do |theme, bottom_margin|
       lines = (to_pdf input, attribute_overrides: { 'pdf-theme' => theme }, analyze: :line).lines
       break_line = lines[0]
@@ -29,7 +29,7 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
       sidebar_background_color: 'transparent',
       thematic_break_border_color: '00EE00',
     }
-    input = <<~'EOS'
+    input = <<~'END'
     ****
     before
     ****
@@ -39,7 +39,7 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
     ****
     after
     ****
-    EOS
+    END
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
     sidebar_h_lines = lines.select {|it| it[:from][:y] == it[:to][:y] && it[:color] == '0000EE' }.sort_by {|it| -it[:from][:y] }
     break_line = lines.find {|it| it[:color] == '00EE00' }
@@ -57,13 +57,13 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
       thematic_break_padding: 0,
       block_margin_bottom: 10,
     }
-    input = <<~'EOS'
+    input = <<~'END'
     '''
 
     ****
     after
     ****
-    EOS
+    END
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
     sidebar_h_lines = lines.select {|it| it[:from][:y] == it[:to][:y] && it[:color] == '0000EE' }.sort_by {|it| -it[:from][:y] }
     break_line = lines.find {|it| it[:color] == '00EE00' }
@@ -80,7 +80,7 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
       thematic_break_margin_top: 3,
       thematic_break_padding: nil,
     }
-    input = <<~'EOS'
+    input = <<~'END'
     ****
     before
     ****
@@ -90,7 +90,7 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
     ****
     after
     ****
-    EOS
+    END
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
     sidebar_h_lines = lines.select {|it| it[:from][:y] == it[:to][:y] && it[:color] == '0000EE' }.sort_by {|it| -it[:from][:y] }
     break_line = lines.find {|it| it[:color] == '00EE00' }
@@ -99,13 +99,13 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
   end
 
   it 'should apply side padding to thematic break' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { thematic_break_padding: [0, 36] }, analyze: :line
+    pdf = to_pdf <<~'END', pdf_theme: { thematic_break_padding: [0, 36] }, analyze: :line
     before
 
     ---
 
     after
-    EOS
+    END
 
     break_line = pdf.lines[0]
     (expect break_line[:from][:x]).to eql 84.24
@@ -113,13 +113,13 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
   end
 
   it 'should draw a horizonal rule at the location of a thematic break' do
-    pdf = to_pdf <<~'EOS', analyze: :line
+    pdf = to_pdf <<~'END', analyze: :line
     before
 
     ---
 
     after
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 1
@@ -129,13 +129,13 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
   end
 
   it 'should set width of thematic break to 0.5 if not set in theme' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { thematic_break_border_width: nil }, analyze: :line
+    pdf = to_pdf <<~'END', pdf_theme: { thematic_break_border_width: nil }, analyze: :line
     before
 
     ---
 
     after
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 1
@@ -149,13 +149,13 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
       thematic_break_border_style: 'dashed',
       thematic_break_border_color: 'a0a0a0',
     }
-    to_file = to_pdf_file <<~'EOS', 'thematic-break-line-style-dashed.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~'END', 'thematic-break-line-style-dashed.pdf', pdf_theme: pdf_theme
     before
 
     ---
 
     after
-    EOS
+    END
 
     (expect to_file).to visually_match 'thematic-break-line-style-dashed.pdf'
   end
@@ -166,13 +166,13 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
       thematic_break_border_style: 'dotted',
       thematic_break_border_color: 'aa0000',
     }
-    to_file = to_pdf_file <<~'EOS', 'thematic-break-line-style-dotted.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~'END', 'thematic-break-line-style-dotted.pdf', pdf_theme: pdf_theme
     before
 
     ---
 
     after
-    EOS
+    END
 
     (expect to_file).to visually_match 'thematic-break-line-style-dotted.pdf'
   end
@@ -183,13 +183,13 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
       thematic_break_border_style: 'double',
       thematic_break_border_color: 'a0a0a0',
     }
-    to_file = to_pdf_file <<~'EOS', 'thematic-break-line-style-double.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~'END', 'thematic-break-line-style-double.pdf', pdf_theme: pdf_theme
     before
 
     ---
 
     after
-    EOS
+    END
 
     (expect to_file).to visually_match 'thematic-break-line-style-double.pdf'
   end
@@ -200,13 +200,13 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
       thematic_break_border_color: nil,
     }
 
-    lines = (to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line).lines
+    lines = (to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line).lines
     before
 
     ---
 
     after
-    EOS
+    END
 
     (expect lines).to have_size 1
     (expect lines[0][:color]).to eql '0000FF'
@@ -218,13 +218,13 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
       thematic_break_border_color: nil,
     }
 
-    lines = (to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line).lines
+    lines = (to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line).lines
     before
 
     ---
 
     after
-    EOS
+    END
 
     (expect lines).to have_size 1
     (expect lines[0][:color]).to eql '000000'
@@ -235,13 +235,13 @@ describe 'Asciidoctor::PDF::Converter - Thematic Break' do
       thematic_break_border_color: 'transparent',
     }
 
-    lines = (to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line).lines
+    lines = (to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line).lines
     before
 
     ---
 
     after
-    EOS
+    END
 
     (expect lines).to be_empty
   end

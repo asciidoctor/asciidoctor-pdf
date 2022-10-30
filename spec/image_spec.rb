@@ -5,9 +5,9 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - Image' do
   it 'should not crash when converting block image if theme is blank' do
     image_data = File.binread example_file 'wolpertinger.jpg'
-    pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => (fixture_file 'bare-theme.yml'), 'imagesdir' => examples_dir }
+    pdf = to_pdf <<~'END', attribute_overrides: { 'pdf-theme' => (fixture_file 'bare-theme.yml'), 'imagesdir' => examples_dir }
     image::wolpertinger.jpg[]
-    EOS
+    END
     images = get_images pdf, 1
     (expect images).to have_size 1
     (expect images[0].data).to eql image_data
@@ -15,11 +15,11 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   it 'should not crash if doctitle contains inline raster image with no explicit width' do
     expected_image_data = File.binread fixture_file 'tux.jpg'
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_h1_font_size: 42 }, analyze: :image
+    pdf = to_pdf <<~'END', pdf_theme: { heading_h1_font_size: 42 }, analyze: :image
     = Document Title image:tux.jpg[]
 
     content
-    EOS
+    END
     images = pdf.images
     (expect images).to have_size 1
     (expect images[0][:data]).to eql expected_image_data
@@ -29,11 +29,11 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   it 'should not crash if doctitle contains inline raster image with only scale' do
     expected_image_data = File.binread fixture_file 'tux.jpg'
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_h1_font_size: 42 }, analyze: :image
+    pdf = to_pdf <<~'END', pdf_theme: { heading_h1_font_size: 42 }, analyze: :image
     = Document Title image:tux.jpg[scale=.5]
 
     content
-    EOS
+    END
     images = pdf.images
     (expect images).to have_size 1
     (expect images[0][:data]).to eql expected_image_data
@@ -44,11 +44,11 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   it 'should not crash if doctitle contains inline image with data URI target' do
     image_data = File.binread fixture_file 'square.jpg'
     encoded_image_data = Base64.strict_encode64 image_data
-    pdf = to_pdf <<~EOS, analyze: :image
+    pdf = to_pdf <<~END, analyze: :image
     = Document Title image:data:image/jpg;base64,#{encoded_image_data}[]
 
     content
-    EOS
+    END
     images = pdf.images
     (expect images).to have_size 1
     (expect images[0][:data]).to eql image_data
@@ -57,11 +57,11 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   it 'should not crash if doctitle contains inline SVG image with no explicit width' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_h1_font_size: 42 }, analyze: :rect
+    pdf = to_pdf <<~'END', pdf_theme: { heading_h1_font_size: 42 }, analyze: :rect
     = Document Title image:square.svg[]
 
     content
-    EOS
+    END
     (expect pdf.rectangles).to have_size 1
     rect = pdf.rectangles[0]
     (expect rect[:width]).to eql 200.0
@@ -70,11 +70,11 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   it 'should not crash if section title contains inline image with no explicit width' do
     expected_image_data = File.binread fixture_file 'tux.jpg'
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_h2_font_size: 36 }, analyze: :image
+    pdf = to_pdf <<~'END', pdf_theme: { heading_h2_font_size: 36 }, analyze: :image
     == Section Title image:tux.jpg[]
 
     content
-    EOS
+    END
     images = pdf.images
     (expect images).to have_size 1
     (expect images[0][:data]).to eql expected_image_data
@@ -83,12 +83,12 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   it 'should place anchor directly at top of block image' do
-    input = <<~'EOS'
+    input = <<~'END'
     paragraph
 
     [#tux]
     image::tux.png[Tux]
-    EOS
+    END
 
     images = (to_pdf input, analyze: :image).images
     pdf = to_pdf input
@@ -97,12 +97,12 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   it 'should offset anchor from top of block image by amount of block_anchor_top' do
-    input = <<~'EOS'
+    input = <<~'END'
     paragraph
 
     [#tux]
     image::tux.png[Tux]
-    EOS
+    END
 
     pdf_theme = { block_anchor_top: -12 }
 
@@ -113,12 +113,12 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   end
 
   it 'should place anchor at top of block image if advanced to next page' do
-    input = <<~'EOS'
+    input = <<~'END'
     paragraph
 
     [#tall-diagram]
     image::tall-diagram.png[Tall Diagram]
-    EOS
+    END
 
     images = (to_pdf input, analyze: :image).images
     pdf = to_pdf input
@@ -129,9 +129,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   context 'imagesdir' do
     it 'should resolve target of block image relative to imagesdir', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-wolpertinger.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      to_file = to_pdf_file <<~'END', 'image-wolpertinger.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[,144]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-wolpertinger.pdf'
     end
@@ -154,7 +154,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should wrap alt text of block image if it exceeds width of table cell' do
       (expect do
-        pdf = to_pdf <<~'EOS', analyze: true
+        pdf = to_pdf <<~'END', analyze: true
         [cols="1,3"]
         |===
         a|
@@ -164,7 +164,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         s|second
         s|row
         |===
-        EOS
+        END
         (expect pdf.pages).to have_size 1
         alt_text_lines = pdf.lines pdf.text.select {|it| it[:x] == 51.24 && it[:font_name] != 'NotoSerif-Bold' }
         (expect alt_text_lines).to eql ['[This image is missing', 'and therefore will be', 'replaced with alt text] |', 'missing-image-with-', 'very-long-filename.png']
@@ -210,7 +210,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     it 'should skip block if image is missing an alt text is empty' do
       pdf_theme = { image_alt_content: '' }
       (expect do
-        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
         paragraph one
 
         paragraph two
@@ -218,7 +218,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image::no-such-image.png[Missing Image]
 
         paragraph three
-        EOS
+        END
         (expect pdf.lines).to eql ['paragraph one', 'paragraph two', 'paragraph three']
         para_one_y = (pdf.find_text 'paragraph one')[0][:y].round 2
         para_two_y = (pdf.find_text 'paragraph two')[0][:y].round 2
@@ -240,7 +240,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should respect value of imagesdir if changed mid-document' do
-      pdf = to_pdf <<~EOS, enable_footer: true, attributes: {}
+      pdf = to_pdf <<~END, enable_footer: true, attributes: {}
       :imagesdir: #{fixtures_dir}
 
       image::tux.png[tux]
@@ -248,7 +248,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       :imagesdir: #{examples_dir}
 
       image::wolpertinger.jpg[wolpertinger]
-      EOS
+      END
 
       (expect get_images pdf).to have_size 2
     end
@@ -256,9 +256,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   context 'Alignment' do
     it 'should align block image to value of align attribute on macro', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-align-right-attribute.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      to_file = to_pdf_file <<~'END', 'image-align-right-attribute.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[align=right]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-align-right.pdf'
     end
@@ -271,18 +271,18 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should align block image as indicated by block alignment role on macro', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-align-right-attribute.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      to_file = to_pdf_file <<~'END', 'image-align-right-attribute.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       [.right]
       image::wolpertinger.jpg[]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-align-right.pdf'
     end
 
     it 'should align block image to value of image_align key in theme if alignment not specified on image', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-align-right-theme.pdf', pdf_theme: { image_align: 'right' }, attribute_overrides: { 'imagesdir' => examples_dir }
+      to_file = to_pdf_file <<~'END', 'image-align-right-theme.pdf', pdf_theme: { image_align: 'right' }, attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-align-right.pdf'
     end
@@ -369,34 +369,34 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should size image using percentage width specified by pdfwidth', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-pdfwidth-percentage.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      to_file = to_pdf_file <<~'END', 'image-pdfwidth-percentage.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[,144,pdfwidth=25%,scaledwidth=50%]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-pdfwidth-percentage.pdf'
     end
 
     it 'should size image using percentage width specified by scaledwidth', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-scaledwidth-percentage.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      to_file = to_pdf_file <<~'END', 'image-scaledwidth-percentage.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[,144,scaledwidth=25%]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-pdfwidth-percentage.pdf'
     end
 
     it 'should size image using percentage width specified by width', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-width-percentage.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      to_file = to_pdf_file <<~'END', 'image-width-percentage.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[,144,width=25%]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-pdfwidth-percentage.pdf'
     end
 
     it 'should scale raster image as percentage of intrinsic size', visual: true do
       ['scale=75', 'pdfwidth=75iw'].each do |width_attr|
-        pdf = to_pdf <<~EOS, attribute_overrides: { 'imagesdir' => examples_dir }, analyze: :image
+        pdf = to_pdf <<~END, attribute_overrides: { 'imagesdir' => examples_dir }, analyze: :image
         image::wolpertinger.jpg[,144,#{width_attr}]
-        EOS
+        END
 
         image = pdf.images[0]
         (expect image[:intrinsic_width].to_f).to eql 220.0
@@ -406,26 +406,26 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should scale SVG image as percentage of intrinsic size', visual: true do
       ['scale=50', 'pdfwidth=50iw'].each do |width_attr|
-        to_file = to_pdf_file <<~EOS, %(image-svg-#{width_attr.sub '=', '-'}.pdf)
+        to_file = to_pdf_file <<~END, %(image-svg-#{width_attr.sub '=', '-'}.pdf)
         image::square.svg[#{width_attr}]
-        EOS
+        END
 
         (expect to_file).to visually_match 'image-svg-scale.pdf'
       end
     end
 
     it 'should scale image to width of page when pdfwidth=100vw and align-to-page option is set', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-full-width.pdf'
+      to_file = to_pdf_file <<~'END', 'image-full-width.pdf'
       image::square.png[pdfwidth=100vw,opts=align-to-page]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-full-width.pdf'
     end
 
     it 'should interpret unrecognized units as pt' do
-      pdf = to_pdf <<~'EOS', analyze: :image
+      pdf = to_pdf <<~'END', analyze: :image
       Follow the image:square.jpg[pdfwidth=12ft].
-      EOS
+      END
 
       (expect pdf.images).to have_size 1
       (expect pdf.images[0][:width]).to eql 12.0
@@ -433,9 +433,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should scale inline image as percentage of intrinsic size' do
       ['scale=400', 'pdfwidth=400iw'].each do |width_attr|
-        pdf = to_pdf <<~EOS, analyze: :image
+        pdf = to_pdf <<~END, analyze: :image
         image:square.jpg[#{width_attr}]
-        EOS
+        END
 
         image = pdf.images[0]
         (expect image[:intrinsic_width].to_f).to eql 5.0
@@ -446,34 +446,34 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should interpret vw units as pt if align-to-page opts is not set' do
-      pdf = to_pdf <<~'EOS', analyze: :image
+      pdf = to_pdf <<~'END', analyze: :image
       Follow the image:square.jpg[pdfwidth=50vw].
-      EOS
+      END
 
       (expect pdf.images).to have_size 1
       (expect pdf.images[0][:width]).to eql 50.0
     end
 
     it 'should scale down image if height exceeds available space', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-png-scale-to-fit.pdf'
+      to_file = to_pdf_file <<~'END', 'image-png-scale-to-fit.pdf'
       :pdf-page-layout: landscape
 
       image::tux.png[pdfwidth=100%]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-png-scale-to-fit.pdf'
     end
 
     # NOTE: if not implemented properly, this case is subject to a floating point calculation error
     it 'should set height of scaled down image to exactly height of available space' do
-      input = <<~'EOS'
+      input = <<~'END'
       :pdf-page-size: Letter
       :pdf-page-margin: 0.67in
 
       before
 
       image::tall-irregular.jpg[pdfwidth=100%]
-      EOS
+      END
 
       pdf = to_pdf input
       (expect pdf.pages).to have_size 2
@@ -486,38 +486,38 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should use the numeric width defined in the theme if an explicit width is not specified', visual: true do
       [72, '72', '1in', '6pc'].each do |image_width|
-        to_file = to_pdf_file <<~'EOS', 'image-numeric-fallback-width.pdf', pdf_theme: { image_width: image_width }
+        to_file = to_pdf_file <<~'END', 'image-numeric-fallback-width.pdf', pdf_theme: { image_width: image_width }
         image::tux.png[pdfwidth=204px]
 
         image::tux.png[,204]
 
         image::tux.png[]
-        EOS
+        END
 
         (expect to_file).to visually_match 'image-numeric-fallback-width.pdf'
       end
     end
 
     it 'should use the percentage width defined in the theme if an explicit width is not specified', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-percentage-fallback-width.pdf', pdf_theme: { image_width: '50%' }
+      to_file = to_pdf_file <<~'END', 'image-percentage-fallback-width.pdf', pdf_theme: { image_width: '50%' }
       image::tux.png[]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-percentage-fallback-width.pdf'
     end
 
     it 'should use intrinsic width if value of width is not numeric', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-block-intrinsic-width.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      to_file = to_pdf_file <<~'END', 'image-block-intrinsic-width.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[,invalid]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-block-intrinsic-width.pdf'
     end
 
     it 'should use the vw width defined in theme if explicit width is not specified', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-full-width-theme.pdf', pdf_theme: { image_width: '100vw' }
+      to_file = to_pdf_file <<~'END', 'image-full-width-theme.pdf', pdf_theme: { image_width: '100vw' }
       image::square.png[opts=align-to-page]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-full-width.pdf'
     end
@@ -525,14 +525,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   context 'SVG' do
     it 'should not leave gap around SVG that specifies viewBox but no width' do
-      input = <<~'EOS'
+      input = <<~'END'
       :pdf-page-size: 200x400
       :pdf-page-margin: 0
 
       image::square-viewbox-only.svg[]
 
       after
-      EOS
+      END
 
       pdf = to_pdf input, analyze: :rect
       (expect pdf.rectangles).to have_size 1
@@ -548,14 +548,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should not leave gap around constrained SVG that specifies viewBox but no width' do
-      input = <<~'EOS'
+      input = <<~'END'
       :pdf-page-size: 200x400
       :pdf-page-margin: 0
 
       image::square-viewbox-only.svg[pdfwidth=50%]
 
       after
-      EOS
+      END
 
       pdf = to_pdf input, analyze: :rect
       (expect pdf.rectangles).to have_size 1
@@ -571,26 +571,26 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should vertically center SVG within content area if width and height attributes are 100%', visual: true do
-      input = <<~'EOS'
+      input = <<~'END'
       before
 
       image::square-100.svg[]
 
       after
-      EOS
+      END
 
       to_file = to_pdf_file input, 'image-square-100-auto.pdf'
       (expect to_file).to visually_match 'image-square-100-auto.pdf'
     end
 
     it 'should vertically center SVG within content area if width and height attributes are 100% and pdfwidth is set', visual: true do
-      input = <<~'EOS'
+      input = <<~'END'
       before
 
       image::square-100.svg[pdfwidth=1in]
 
       after
-      EOS
+      END
 
       to_file = to_pdf_file input, 'image-square-100-constrained.pdf'
       (expect to_file).to visually_match 'image-square-100-constrained.pdf'
@@ -601,12 +601,12 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         to_file = with_content_spacer 200, 200, 'px' do |spacer_path|
           pdf_theme = {}
           pdf_theme[:image_width] = '200px' if from_theme
-          to_pdf_file <<~EOS, %(image-svg-px-width-from-#{from_theme ? 'theme' : 'file'}.svg), pdf_theme: pdf_theme
+          to_pdf_file <<~END, %(image-svg-px-width-from-#{from_theme ? 'theme' : 'file'}.svg), pdf_theme: pdf_theme
 
           image::#{spacer_path}[]
 
           image::#{spacer_path}[pdfwidth=200px]
-          EOS
+          END
         end
 
         (expect to_file).to visually_match 'image-svg-px-width.pdf'
@@ -614,26 +614,26 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should treat value with px units at pt in SVG data', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-svg-px-data.pdf'
+      to_file = to_pdf_file <<~'END', 'image-svg-px-data.pdf'
       image::red-blue-squares.svg[pdfwidth=25%]
-      EOS
+      END
       (expect to_file).to visually_match 'image-svg-px-data.pdf'
     end
 
     it 'should not allow inline image to affect the cursor position of the following paragraph' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       before
 
       next
-      EOS
+      END
 
       expected_gap = ((pdf.find_unique_text 'before')[:y] - (pdf.find_unique_text 'next')[:y]).round 2
 
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       before image:tall.svg[pdfwidth=0.5in] after
 
       next
-      EOS
+      END
 
       actual_gap = ((pdf.find_unique_text %r/before/)[:y] - (pdf.find_unique_text 'next')[:y]).round 2
       (expect actual_gap).to eql expected_gap
@@ -641,18 +641,18 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should set color space on page that only has image and stamp' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { footer_recto_right_content: 'pg {page-number}' }, enable_footer: true
+      pdf = to_pdf <<~'END', pdf_theme: { footer_recto_right_content: 'pg {page-number}' }, enable_footer: true
       image::square.svg[]
-      EOS
+      END
 
       (expect (pdf.page 1).text.squeeze).to eql 'pg 1'
       raw_content = (pdf.page 1).raw_content
-      color_space_idx = raw_content.index <<~'EOS'
+      color_space_idx = raw_content.index <<~'END'
       /DeviceRGB cs
       0.0 0.0 0.0 scn
       /DeviceRGB CS
       0.0 0.0 0.0 SCN
-      EOS
+      END
       stamp_idx = raw_content.index %(\n/Stamp)
       (expect color_space_idx).to be > 0
       (expect stamp_idx).to be > 0
@@ -660,17 +660,17 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should scale down SVG at top of page if dimensions exceed page size', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-svg-scale-to-fit-page.pdf'
+      to_file = to_pdf_file <<~'END', 'image-svg-scale-to-fit-page.pdf'
       :pdf-page-size: Letter
 
       image::watermark.svg[pdfwidth=100%]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-svg-scale-to-fit-page.pdf'
     end
 
     it 'should scale down SVG not at top of page and advance to next page if dimensions exceed page size', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-svg-scale-to-fit-next-page-with-text.pdf'
+      to_file = to_pdf_file <<~'END', 'image-svg-scale-to-fit-next-page-with-text.pdf'
       :pdf-page-size: Letter
 
       push
@@ -680,7 +680,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       down
 
       image::watermark.svg[pdfwidth=100%]
-      EOS
+      END
 
       to_file = to_pdf_file %(image::#{to_file}[page=2]), 'image-svg-scale-to-fit-next-page.pdf'
 
@@ -694,7 +694,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         thematic_break_border_color: '0000FF',
         thematic_break_border_width: 1,
       }
-      input = <<~'EOS'
+      input = <<~'END'
       left column
 
       [.column]
@@ -703,7 +703,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       ---
 
       image::tall.svg[pdfwidth=50%]
-      EOS
+      END
 
       lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
       thematic_break_line = lines.find {|it| it[:color] == '0000FF' && it[:width] == 1 }
@@ -724,7 +724,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         thematic_break_border_color: '0000FF',
         thematic_break_border_width: 1,
       }
-      input = <<~'EOS'
+      input = <<~'END'
       left column
 
       [.column]
@@ -733,7 +733,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       ---
 
       image::tall.svg[pdfwidth=50%,align=center]
-      EOS
+      END
 
       to_file = to_pdf_file input, 'image-svg-in-column-align-center.pdf', pdf_theme: pdf_theme
 
@@ -752,13 +752,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         end
       end
 
-      input = <<~'EOS'
+      input = <<~'END'
       = Document Title
 
       image::tall.svg[pdfwidth=90mm]
 
       paragraph in second column
-      EOS
+      END
 
       pdf = to_pdf input, backend: backend, analyze: true
       (expect pdf.pages).to have_size 1
@@ -785,7 +785,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         end
       end
 
-      input = <<~'EOS'
+      input = <<~'END'
       = Document Title
 
       before
@@ -793,7 +793,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       image::tall.svg[pdfwidth=90mm]
 
       paragraph on next page
-      EOS
+      END
 
       pdf = to_pdf input, backend: backend, analyze: true
       (expect pdf.pages).to have_size 2
@@ -817,7 +817,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should not scale SVG if it can fit on next page' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       #{(%w(filler) * 6).join %(\n\n)}
 
       image::tall.svg[]
@@ -829,7 +829,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       image::tall.svg[]
 
       below second
-      EOS
+      END
 
       below_first_text = pdf.find_unique_text 'below first'
       below_second_text = pdf.find_unique_text 'below second'
@@ -839,12 +839,12 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should scale down inline SVG to fit height of page' do
-      input = <<~'EOS'
+      input = <<~'END'
       :pdf-page-size: 200x350
       :pdf-page-margin: 0
 
       image:tall.svg[]
-      EOS
+      END
 
       pdf = to_pdf input, analyze: :line
       image_h = pdf.lines[1][:to][:y] - pdf.lines[1][:from][:y]
@@ -852,14 +852,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should scale down inline SVG to fit height of next page' do
-      input = <<~'EOS'
+      input = <<~'END'
       :pdf-page-size: 200x350
       :pdf-page-margin: 0
 
       before
 
       image:tall.svg[]
-      EOS
+      END
 
       pdf = to_pdf input, analyze: :line
       (expect pdf.lines.map {|it| it[:page_number] }.uniq).to eql [2]
@@ -868,9 +868,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should display text inside link' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       image::svg-with-link.svg[]
-      EOS
+      END
 
       text = pdf.find_text 'Text with link'
       (expect text).to have_size 1
@@ -880,9 +880,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should map font names in SVG to font names in document font catalog' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       image::svg-with-text.svg[]
-      EOS
+      END
 
       text = pdf.find_text 'This text uses a document font.'
       (expect text).to have_size 1
@@ -892,9 +892,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should replace unrecognized font family with base font family' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       image::svg-with-unknown-font.svg[]
-      EOS
+      END
 
       text = pdf.find_text 'This text uses the default SVG font.'
       (expect text).to have_size 1
@@ -904,9 +904,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should map generic font family to AFM font by default' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       image::svg-with-generic-font.svg[]
-      EOS
+      END
 
       text = pdf.find_text 'This text uses the serif font.'
       (expect text).to have_size 1
@@ -918,9 +918,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     it 'should allow generic font family to be mapped in font catalog' do
       pdf_theme = build_pdf_theme
       pdf_theme.font_catalog['serif'] = { 'normal' => pdf_theme.font_catalog['Noto Serif']['normal'] }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       image::svg-with-generic-font.svg[]
-      EOS
+      END
 
       text = pdf.find_text 'This text uses the serif font.'
       (expect text).to have_size 1
@@ -931,11 +931,11 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should replace unrecognized font family in SVG with SVG fallback font family if specified in theme' do
       [true, false].each do |block|
-        pdf = to_pdf <<~EOS, pdf_theme: { svg_fallback_font_family: 'Times-Roman' }, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: { svg_fallback_font_family: 'Times-Roman' }, analyze: true
         #{block ? '' : 'before'}
         image:#{block ? ':' : ''}svg-with-unknown-font.svg[pdfwidth=100%]
         #{block ? '' : 'after'}
-        EOS
+        END
 
         text = pdf.find_text 'This text uses the default SVG font.'
         (expect text).to have_size 1
@@ -946,34 +946,34 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should embed local image in inline image', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-svg-with-local-image.pdf'
+      to_file = to_pdf_file <<~'END', 'image-svg-with-local-image.pdf'
       A sign of a good writer: image:svg-with-local-image.svg[pdfwidth=1.27cm]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-svg-with-image.pdf'
     end
 
     it 'should embed local image in block image', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-block-svg-with-local-image.pdf'
+      to_file = to_pdf_file <<~'END', 'image-block-svg-with-local-image.pdf'
       image::svg-with-local-image.svg[pdfwidth=1.27cm]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-block-svg-with-image.pdf'
     end
 
     it 'should allow image path to reference file in ancestor directory inside base dir' do
       expected_image_data = File.binread example_file 'sample-logo.jpg'
-      svg_data = <<~'EOS'
+      svg_data = <<~'END'
       <svg version="1.1" viewBox="0 0 331 369" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <image x="0" y="0" width="331" height="369" xlink:href="../../examples/sample-logo.jpg"/>
       </svg>
-      EOS
+      END
       with_tmp_file '.svg', contents: svg_data do |tmp_file|
         image_path = tmp_file.path
         ['::', ':'].each do |macro_delim|
-          pdf = to_pdf <<~EOS, base_dir: (File.dirname __dir__)
+          pdf = to_pdf <<~END, base_dir: (File.dirname __dir__)
           image#{macro_delim}#{image_path}[SVG with ancestor relative image,pdfwidth=25%]
-          EOS
+          END
 
           images = get_images pdf, 1
           (expect images).to have_size 1
@@ -997,17 +997,17 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should embed image from data-uri in inline image', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-svg-with-data-uri-image.pdf'
+      to_file = to_pdf_file <<~'END', 'image-svg-with-data-uri-image.pdf'
       A sign of a good writer: image:svg-with-data-uri-image.svg[pdfwidth=1.27cm]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-svg-with-image.pdf'
     end
 
     it 'should embed image from data-uri in block image', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-block-svg-with-data-uri-image.pdf'
+      to_file = to_pdf_file <<~'END', 'image-block-svg-with-data-uri-image.pdf'
       image::svg-with-data-uri-image.svg[pdfwidth=1.27cm]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-block-svg-with-image.pdf'
     end
@@ -1021,17 +1021,17 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should use width defined in image if width not specified on inline macro', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-svg-with-own-width.pdf'
+      to_file = to_pdf_file <<~'END', 'image-svg-with-own-width.pdf'
       A sign of a good writer: image:svg-with-local-image.svg[]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-svg-with-image.pdf'
     end
 
     it 'should use width defined in image if width not specified on block macro', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-block-svg-with-own-width.pdf'
+      to_file = to_pdf_file <<~'END', 'image-block-svg-with-own-width.pdf'
       image::svg-with-local-image.svg[]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-block-svg-with-image.pdf'
     end
@@ -1039,9 +1039,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     it 'should not embed remote image if allow allow-uri-read attribute is not set', visual: true do
       with_svg_with_remote_image do |image_path, image_url|
         (expect do
-          to_file = to_pdf_file <<~EOS, 'image-svg-with-remote-image-disabled.pdf'
+          to_file = to_pdf_file <<~END, 'image-svg-with-remote-image-disabled.pdf'
           A sign of a good writer: image:#{image_path}[]
-          EOS
+          END
           (expect to_file).to visually_match 'image-svg-with-missing-image.pdf'
         end).to log_message severity: :WARN, message: %(~problem encountered in image: #{image_path}; Error retrieving URL #{image_url})
       end
@@ -1049,9 +1049,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should embed remote image if allow allow-uri-read attribute is set', network: true, visual: true do
       with_svg_with_remote_image do |image_path|
-        to_file = to_pdf_file <<~EOS, 'image-svg-with-remote-image.pdf', attribute_overrides: { 'allow-uri-read' => '' }
+        to_file = to_pdf_file <<~END, 'image-svg-with-remote-image.pdf', attribute_overrides: { 'allow-uri-read' => '' }
         A sign of a good writer: image:#{image_path}[pdfwidth=1.27cm]
-        EOS
+        END
 
         (expect to_file).to visually_match 'image-svg-with-image.pdf'
       end
@@ -1059,9 +1059,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should warn if remote image is missing and allow-uri-read attribute is set', network: true do
       (expect do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'allow-uri-read' => '' }
+        pdf = to_pdf <<~'END', attribute_overrides: { 'allow-uri-read' => '' }
         See the logo in image:svg-with-missing-remote-image.svg[pdfwidth=16]
-        EOS
+        END
         (expect get_images pdf, 1).to be_empty
         (expect (pdf.page 1).text).to include 'See the logo in'
       end).to log_message severity: :WARN, message: %(problem encountered in image: #{fixture_file 'svg-with-missing-remote-image.svg'}; Error retrieving URL https://github.com/no-such-image.png: 404 Not Found)
@@ -1069,9 +1069,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should warn if remote image is not a valid URL and allow-uri-read attribute is set', network: true do
       (expect do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'allow-uri-read' => '' }
+        pdf = to_pdf <<~'END', attribute_overrides: { 'allow-uri-read' => '' }
         See the logo in image:svg-with-non-url-image.svg[pdfwidth=16]
-        EOS
+        END
         (expect get_images pdf, 1).to be_empty
         (expect (pdf.page 1).text).to include 'See the logo in'
       end).to log_message severity: :WARN, message: %(problem encountered in image: #{fixture_file 'svg-with-non-url-image.svg'}; Error retrieving URL s3://foobar/tux.png: No handler available for this URL scheme)
@@ -1085,9 +1085,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should ignore inline option for SVG on image macro' do
-      pdf = to_pdf <<~'EOS', analyze: :rect
+      pdf = to_pdf <<~'END', analyze: :rect
       image::square.svg[pdfwidth=200pt,opts=inline]
-      EOS
+      END
       (expect pdf.rectangles).to have_size 1
       rect = pdf.rectangles[0]
       (expect rect[:point]).to eql [48.24, 605.89]
@@ -1131,13 +1131,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         footer_recto_right_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),
         footer_verso_left_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, enable_footer: true
       before
 
       image::tall.svg[pdfwidth=50%]
 
       after
-      EOS
+      END
 
       (expect pdf.pages).to have_size 3
       page_contents = pdf.objects[(pdf.page 2).page_object[:Contents]].data
@@ -1149,7 +1149,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         footer_recto_right_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),
         footer_verso_left_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, enable_footer: true
       first
 
       <<<
@@ -1159,7 +1159,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       image::tall.svg[pdfwidth=25%]
 
       after
-      EOS
+      END
 
       (expect pdf.pages).to have_size 2
       [1, 2].each do |pagenum|
@@ -1170,19 +1170,19 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should not embed local SVG in inline image', visual: true do
       (expect do
-        to_file = to_pdf_file <<~'EOS', 'image-inline-svg-with-local-svg.pdf'
+        to_file = to_pdf_file <<~'END', 'image-inline-svg-with-local-svg.pdf'
         image:svg-with-local-svg.svg[pdfwidth=1.27cm] lacks the red square.
-        EOS
+        END
         (expect to_file).to visually_match 'image-inline-svg-with-local-svg.pdf'
       end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-local-svg.svg'}; Unsupported image type supplied to image tag)
     end
 
     it 'should not embed local SVG in block image', visual: true do
       (expect do
-        to_file = to_pdf_file <<~'EOS', 'image-block-svg-with-local-svg.pdf'
+        to_file = to_pdf_file <<~'END', 'image-block-svg-with-local-svg.pdf'
         .Lacks the red square
         image::svg-with-local-svg.svg[pdfwidth=5in]
-        EOS
+        END
         (expect to_file).to visually_match 'image-block-svg-with-local-svg.pdf'
       end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-local-svg.svg'}; Unsupported image type supplied to image tag)
     end
@@ -1217,11 +1217,11 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         call_count += 1
         image_handler
       end
-      pdf = to_pdf <<~'EOS', analyze: :image
+      pdf = to_pdf <<~'END', analyze: :image
       ****
       image::tux.png[]
       ****
-      EOS
+      END
       (expect pdf.images).to have_size 1
       (expect call_count).to eql 1
     ensure
@@ -1230,18 +1230,18 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should set color space on page that only has image and stamp' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { footer_recto_right_content: 'pg {page-number}' }, enable_footer: true
+      pdf = to_pdf <<~'END', pdf_theme: { footer_recto_right_content: 'pg {page-number}' }, enable_footer: true
       image::tux.png[]
-      EOS
+      END
 
       (expect (pdf.page 1).text.squeeze).to eql 'pg 1'
       raw_content = (pdf.page 1).raw_content
-      color_space_idx = raw_content.index <<~'EOS'
+      color_space_idx = raw_content.index <<~'END'
       /DeviceRGB cs
       0.0 0.0 0.0 scn
       /DeviceRGB CS
       0.0 0.0 0.0 SCN
-      EOS
+      END
       stamp_idx = raw_content.index %(\n/Stamp)
       (expect color_space_idx).to be > 0
       (expect stamp_idx).to be > 0
@@ -1252,11 +1252,11 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       pdf_theme = { page_size: 'Letter', page_margin: 50 }
       expected_top = (to_pdf 'image::cover.jpg[pdfwidth=1in]', pdf_theme: pdf_theme, analyze: :image).images[0][:y]
       expected_height = 11 * 72.0 - 100
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :image
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :image
       before
 
       image::cover.jpg[pdfwidth=100%]
-      EOS
+      END
 
       images = pdf.images
       (expect images).to have_size 1
@@ -1269,13 +1269,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     it 'should not scale image if it can fit on next page' do
       reference_width = (to_pdf 'image::cover.jpg[]', analyze: :image).images[0][:width]
 
-      pdf = to_pdf <<~EOS, analyze: :image
+      pdf = to_pdf <<~END, analyze: :image
       :pdf-page-size: A5
 
       #{(%w(filler) * 8).join %(\n\n)}
 
       image::cover.jpg[]
-      EOS
+      END
 
       (expect pdf.images[0][:width]).to eql reference_width
     end
@@ -1288,9 +1288,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_path = tmp_file.path
         { '::' => %([Incomplete PNG] | #{image_path}), ':' => '[Incomplete PNG]' }.each do |macro_delim, alt_text|
           (expect do
-            input = <<~EOS
+            input = <<~END
             image#{macro_delim}#{image_path}[Incomplete PNG]
-            EOS
+            END
             pdf = to_pdf input, pdf_theme: { page_layout: 'landscape' }, analyze: true
             (expect pdf.lines).to eql [alt_text]
           end).to log_message severity: :WARN, message: %(could not embed image: #{image_path}; image file is an unrecognised format)
@@ -1301,12 +1301,12 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     it 'should fail to embed interlaced PNG image with warning', unless: (defined? GMagick::Image) do
       { '::' => '[Interlaced PNG] | interlaced.png', ':' => '[Interlaced PNG]' }.each do |macro_delim, alt_text|
         (expect do
-          input = <<~EOS
+          input = <<~END
           [%unbreakable]
           --
           image#{macro_delim}interlaced.png[Interlaced PNG]
           --
-          EOS
+          END
           pdf = to_pdf input, analyze: true
           (expect pdf.lines).to eql [alt_text]
         end).to log_message severity: :WARN, message: %(could not embed image: #{fixture_file 'interlaced.png'}; PNG uses unsupported interlace method; install prawn-gmagick gem to add support for PNG image format)
@@ -1323,12 +1323,12 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     it 'should not suggest installing prawn-gmagick if gem has already been loaded', if: (defined? GMagick::Image) do
       ['::', ':'].each do |macro_delim|
         (expect do
-          input = <<~EOS
+          input = <<~END
           [%unbreakable]
           --
           image#{macro_delim}lorem-ipsum.yml[Unrecognized image format]
           --
-          EOS
+          END
           pdf = to_pdf input, analyze: :image
           (expect pdf.images).to have_size 0
         end).to log_message severity: :WARN, message: %(could not embed image: #{fixture_file 'lorem-ipsum.yml'}; image file is an unrecognised format)
@@ -1337,9 +1337,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     # NOTE: gmagick reads `Depth: 8/2-bit` as 2 instead of 8
     it 'should reread bit depth if gmagick fails to read bit depth correctly', if: (defined? GMagick::Image), visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-png-depth.pdf'
+      to_file = to_pdf_file <<~'END', 'image-png-depth.pdf'
       image::square.png[pdfwidth=25%]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-png-depth.pdf'
     end
@@ -1349,7 +1349,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         footer_recto_right_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),
         footer_verso_left_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, enable_footer: true
       :pdf-page-size: Letter
 
       before
@@ -1357,7 +1357,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       image::cover.jpg[pdfwidth=100%]
 
       after
-      EOS
+      END
 
       (expect pdf.pages).to have_size 3
       page_contents = pdf.objects[(pdf.page 2).page_object[:Contents]].data
@@ -1476,13 +1476,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should insert page at location of block macro if target is a PDF' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, analyze: true
       before
 
       image::blue-letter.pdf[]
 
       after
-      EOS
+      END
 
       pages = pdf.pages
       (expect pages).to have_size 3
@@ -1495,7 +1495,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should replace empty page at location of block macro if target is a PDF' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, analyze: true
       :page-background-image: image:bg.png[]
 
       before
@@ -1507,7 +1507,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       <<<
 
       after
-      EOS
+      END
 
       pages = pdf.pages
       (expect pages).to have_size 3
@@ -1520,7 +1520,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should not break internal references when PDF is imported on first page' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, attribute_overrides: { 'pdf-page-size' => 'Letter' }
+      pdf = to_pdf <<~'END', enable_footer: true, attribute_overrides: { 'pdf-page-size' => 'Letter' }
       image::blue-letter.pdf[]
 
       see <<Section>>
@@ -1537,7 +1537,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       [#last]
       last
-      EOS
+      END
 
       names = get_names pdf
       (expect names).to have_size 3
@@ -1566,10 +1566,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should not insert blank page between consecutive PDF page imports' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       image::red-green-blue.pdf[page=1]
       image::red-green-blue.pdf[page=2]
-      EOS
+      END
       (expect pdf.pages).to have_size 2
       p1_contents = pdf.objects[(pdf.page 1).page_object[:Contents][0]].data
       (expect (p1_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '1.0 0.0 0.0 scn']
@@ -1579,9 +1579,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should insert all pages specified by pages attribute without leaving blank pages in between' do
       ['pages="3,1,2"', 'pages=3;1..2'].each do |pages_attr|
-        pdf = to_pdf <<~EOS
+        pdf = to_pdf <<~END
         image::red-green-blue.pdf[#{pages_attr}]
-        EOS
+        END
         (expect pdf.pages).to have_size 3
         p1_contents = pdf.objects[(pdf.page 1).page_object[:Contents][0]].data
         (expect (p1_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 1.0 scn']
@@ -1593,9 +1593,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should ignore page numbers not found in imported PDF' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       image::red-green-blue.pdf[pages=1..10]
-      EOS
+      END
       (expect pdf.pages).to have_size 3
       p1_contents = pdf.objects[(pdf.page 1).page_object[:Contents][0]].data
       (expect (p1_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '1.0 0.0 0.0 scn']
@@ -1606,13 +1606,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should not create empty page if imported PDF has no pages' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       == Before
 
       image::no-pages.pdf[]
 
       == After
-      EOS
+      END
 
       (expect pdf.pages).to have_size 2
       (expect (pdf.page 2).text).to eql 'After'
@@ -1622,7 +1622,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should restore rotated margin after imported page' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :pdf-page-margin-rotated: 0
 
       portrait
@@ -1635,7 +1635,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       image::blue-letter.pdf[]
 
       landscape again
-      EOS
+      END
 
       (expect pdf.pages).to have_size 4
       (expect (pdf.find_unique_text 'landscape')[:x]).to eql 0.0
@@ -1643,13 +1643,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should add destination to top of imported page if ID is specified' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       go to <<red>>
 
       .Red Page
       [#red]
       image::red-green-blue.pdf[page=1]
-      EOS
+      END
 
       (expect get_names pdf).to have_key 'red'
       annotations = get_annotations pdf, 1
@@ -1659,13 +1659,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should add destination to top of first import page if ID is specified' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       go to <<red>>
 
       .Red Page
       [#red]
       image::red-green-blue.pdf[pages=1..3]
-      EOS
+      END
 
       (expect get_names pdf).to have_key 'red'
       annotations = get_annotations pdf, 1
@@ -1675,7 +1675,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should restore anchor of hidden section title on imported page' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = Document Title
       :notitle:
       :doctype: book
@@ -1686,7 +1686,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       == Blue Page
 
       image::blue-letter.pdf[]
-      EOS
+      END
 
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
@@ -1700,7 +1700,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should allow imported page to be referenced from TOC by way of notitle section' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = Document Title
       :doctype: book
       :toc:
@@ -1709,7 +1709,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       == Blue Page
 
       image::blue-letter.pdf[]
-      EOS
+      END
 
       toc_page = pdf.page 2
       annotations = get_annotations pdf, 2
@@ -1822,13 +1822,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     it 'should only read remote image once if allow-uri-read is set' do
       pdf = with_local_webserver do |base_url, thr|
         image_macro = %(image::#{base_url}/logo.png[Remote Image])
-        result = to_pdf <<~EOS, attribute_overrides: { 'allow-uri-read' => '' }
+        result = to_pdf <<~END, attribute_overrides: { 'allow-uri-read' => '' }
         #{image_macro}
 
         ====
         #{image_macro}
         ====
-        EOS
+        END
         requests = thr[:requests]
         (expect requests).to have_size 1
         (expect requests[0]).to include '/logo.png'
@@ -1844,13 +1844,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_url = %(#{base_url}/no-such-image.png)
         (expect do
           image_macro = %(image::#{image_url}[Remote Image])
-          pdf = to_pdf <<~EOS, attribute_overrides: { 'allow-uri-read' => '' }
+          pdf = to_pdf <<~END, attribute_overrides: { 'allow-uri-read' => '' }
           #{image_macro}
 
           ====
           #{image_macro}
           ====
-          EOS
+          END
           requests = thr[:requests]
           (expect requests).to have_size 1
           (expect requests[0]).to include '/no-such-image.png'
@@ -1864,11 +1864,11 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should read same remote image for each unique query string if allow-uri-read is set' do
       with_local_webserver do |base_url, thr|
-        pdf = to_pdf <<~EOS, attribute_overrides: { 'allow-uri-read' => '' }
+        pdf = to_pdf <<~END, attribute_overrides: { 'allow-uri-read' => '' }
         image::#{base_url}/logo.png?v=1[Remote Image,format=png]
 
         image::#{base_url}/logo.png?v=2[Remote Image,format=png]
-        EOS
+        END
         requests = thr[:requests]
         (expect requests).to have_size 2
         (expect requests[0]).to include '/logo.png?v=1'
@@ -1888,9 +1888,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
           footer_columns: '=100%',
           footer_recto_center_content: %(image:#{base_url}/logo.png[Remote Image]),
         }
-        result = to_pdf <<~EOS, pdf_theme: pdf_theme, enable_footer: true, attribute_overrides: { 'allow-uri-read' => '' }
+        result = to_pdf <<~END, pdf_theme: pdf_theme, enable_footer: true, attribute_overrides: { 'allow-uri-read' => '' }
         image::#{base_url}/logo.png[Remote Image]
-        EOS
+        END
         requests = thr[:requests]
         (expect requests).to have_size 1
         (expect requests[0]).to include '/logo.png'
@@ -1941,12 +1941,12 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should use image format specified by format attribute' do
       pdf = with_local_webserver do |base_url|
-        to_pdf <<~EOS, attribute_overrides: { 'allow-uri-read' => '' }, analyze: :rect
+        to_pdf <<~END, attribute_overrides: { 'allow-uri-read' => '' }, analyze: :rect
         :pdf-page-size: 200x400
         :pdf-page-margin: 0
 
         image::#{base_url}/square.svg?v=1[format=svg,pdfwidth=100%]
-        EOS
+        END
       end
       (expect pdf.rectangles).to have_size 1
       rect = pdf.rectangles[0]
@@ -1959,13 +1959,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect do
         FileUtils.cp (fixture_file 'square.svg'), (fixture_file 'square')
         pdf = with_local_webserver do |base_url|
-          to_pdf <<~EOS, attribute_overrides: { 'allow-uri-read' => '' }, analyze: :rect
+          to_pdf <<~END, attribute_overrides: { 'allow-uri-read' => '' }, analyze: :rect
           :pdf-page-size: 200x400
           :pdf-page-margin: 0
           :format: svg
 
           image::#{base_url}/square[pdfwidth=100%]
-          EOS
+          END
         ensure
           File.unlink fixture_file 'square'
         end
@@ -2014,9 +2014,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   context 'Inline' do
     it 'should resolve target of inline image relative to imagesdir', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-inline.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      to_file = to_pdf_file <<~'END', 'image-inline.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image:sample-logo.jpg[ACME,12] ACME products are the best!
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-inline.pdf'
     end
@@ -2036,10 +2036,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should only render inline image once if alt text is chunked to apply a fallback font' do
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'imagesdir' => examples_dir, 'pdf-theme' => 'default-with-font-fallbacks' }, analyze: :image
+      pdf = to_pdf <<~'END', attribute_overrides: { 'imagesdir' => examples_dir, 'pdf-theme' => 'default-with-font-fallbacks' }, analyze: :image
       How many wolpertingers do you see? +
       image:wolpertinger.jpg[チのデータレプリケーションです。]
-      EOS
+      END
 
       (expect pdf.images).to have_size 1
     end
@@ -2058,15 +2058,15 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     # NOTE: this test also verifies space is allocated for an inline image at the start of a line
     it 'should convert multiple images on the same line', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-multiple-inline.pdf'
+      to_file = to_pdf_file <<~'END', 'image-multiple-inline.pdf'
       image:logo.png[Asciidoctor,12] is developed on image:tux.png[Linux,12].
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-multiple-inline.pdf'
     end
 
     it 'should not mangle character spacing in line if inline image wraps', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-wrap-inline.pdf'
+      to_file = to_pdf_file <<~'END', 'image-wrap-inline.pdf'
       [cols="30e,58,12",width=75%]
       |===
       |Name |Description |Min # data points
@@ -2079,27 +2079,27 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       a|The confidence interval of the mean is image:equation.svg[width=118], where image:symbol-m.svg[width=11] is the mean, image:symbol-s.svg[width=6] is the estimated sample standard deviation, and so on.
       |2
       |===
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-wrap-inline.pdf'
     end
 
     it 'should increase line height if height if image height is more than 1.5x line height', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-inline-extends-line-height.pdf'
+      to_file = to_pdf_file <<~'END', 'image-inline-extends-line-height.pdf'
       see tux run +
       see image:tux.png[tux] run +
       see tux run
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-inline-extends-line-height.pdf'
     end
 
     it 'should not increase line height if image height does not exceed 1.5x line height' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       see tux run +
       see tux run +
       see image:tux.png[tux,24] run
-      EOS
+      END
 
       text = pdf.text
       line1_spacing = (text[0][:y] - text[1][:y]).round 2
@@ -2108,14 +2108,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should scale image down to fit available height on next page', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-inline-pushed-scale-down-height.pdf'
+      to_file = to_pdf_file <<~'END', 'image-inline-pushed-scale-down-height.pdf'
       :pdf-page-size: A6
       :pdf-page-layout: landscape
 
       before
 
       image:cover.jpg[]
-      EOS
+      END
 
       to_file = to_pdf_file %(image::#{to_file}[page=2]), 'image-inline-pushed-scale-down-height-2.pdf'
 
@@ -2123,22 +2123,22 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should scale image down to fit available height inside delimited block', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-inline-in-block-scale-down-height.pdf'
+      to_file = to_pdf_file <<~'END', 'image-inline-in-block-scale-down-height.pdf'
       :pdf-page-size: A6
       :pdf-page-layout: landscape
 
       ****
       image:cover.jpg[]
       ****
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-inline-in-block-scale-down-height.pdf'
     end
 
     it 'should not scale image if pdfwidth matches intrinsic width' do
-      pdf = to_pdf <<~'EOS', analyze: :image
+      pdf = to_pdf <<~'END', analyze: :image
       see image:tux.png[pdfwidth=204] run
-      EOS
+      END
 
       images = pdf.images
       (expect images).to have_size 1
@@ -2148,22 +2148,22 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should scale image down to fit available height', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-inline-scale-down-height.pdf'
+      to_file = to_pdf_file <<~'END', 'image-inline-scale-down-height.pdf'
       :pdf-page-size: A6
       :pdf-page-layout: landscape
 
       image:cover.jpg[]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-inline-scale-down-height.pdf'
     end
 
     it 'should scale image down to fit available width', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-inline-scale-down-width.pdf'
+      to_file = to_pdf_file <<~'END', 'image-inline-scale-down-width.pdf'
       :pdf-page-size: A6
 
       image:cover.jpg[]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-inline-scale-down-width.pdf'
     end
@@ -2171,7 +2171,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     it 'should compute scaled width relative to container size' do
       midpoint = (get_page_size to_pdf 'body', analyze: true)[0] * 0.5
 
-      input = <<~'EOS'
+      input = <<~'END'
       ****
       ====
       ******
@@ -2183,7 +2183,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       ******
       ====
       ****
-      EOS
+      END
 
       pdf = to_pdf input, analyze: true
       midpoint_text = pdf.find_unique_text 'midpoint'
@@ -2199,17 +2199,17 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should scale image down to fit line if fit=line', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-inline-fit-line.pdf'
+      to_file = to_pdf_file <<~'END', 'image-inline-fit-line.pdf'
       See image:tux.png[fit=line] run.
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-inline-fit-line.pdf'
     end
 
     it 'should not alter character spacing of text in inline SVG image', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-inline-svg-with-text.pdf'
+      to_file = to_pdf_file <<~'END', 'image-inline-svg-with-text.pdf'
       before image:svg-with-text.svg[width=200] after
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-inline-svg-with-text.pdf'
     end
@@ -2224,9 +2224,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should not fail to parse raw image HTML if width attribute not specified' do
-      pdf = to_pdf <<~EOS, analyze: :image
+      pdf = to_pdf <<~END, analyze: :image
       Look for pass:[<img src="#{fixture_file 'logo.png'}" alt="no cow">] when you buy.
-      EOS
+      END
 
       images = pdf.images
       (expect images).to have_size 1
@@ -2234,9 +2234,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should use intrinsic width if value of width is not numeric', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'image-inline-intrinsic-width.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
+      to_file = to_pdf_file <<~'END', 'image-inline-intrinsic-width.pdf', attribute_overrides: { 'imagesdir' => examples_dir }
       image:wolpertinger.jpg[,invalid]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-inline-intrinsic-width.pdf'
     end
@@ -2244,9 +2244,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   context 'Link' do
     it 'should add link around block raster image if link attribute is set' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       image::tux.png[pdfwidth=1in,link=https://www.linuxfoundation.org/projects/linux/]
-      EOS
+      END
 
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
@@ -2279,9 +2279,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should add link around block SVG image if link attribute is set' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       image::square.svg[pdfwidth=1in,link=https://example.org]
-      EOS
+      END
 
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
@@ -2308,9 +2308,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should add link around inline image if link attribute is set' do
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'imagesdir' => examples_dir }
+      pdf = to_pdf <<~'END', attribute_overrides: { 'imagesdir' => examples_dir }
       image:sample-logo.jpg[ACME,pdfwidth=1pc,link=https://example.org] is a sign of quality!
-      EOS
+      END
 
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
@@ -2324,9 +2324,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should add link around alt text of inline image if link attribute is set and image is not found' do
-      input = <<~'EOS'
+      input = <<~'END'
       image:sample-logo.jpg[ACME,pdfwidth=1pc,link=https://example.org] is a sign of quality!
-      EOS
+      END
 
       pdf = nil
       (expect do
@@ -2347,9 +2347,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should add link around inline image if image macro is enclosed in link macro' do
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'imagesdir' => examples_dir }
+      pdf = to_pdf <<~'END', attribute_overrides: { 'imagesdir' => examples_dir }
       https://example.org[image:sample-logo.jpg[ACME,pdfwidth=1pc]] is a sign of quality!
-      EOS
+      END
 
       annotations = get_annotations pdf, 1
       (expect annotations).to have_size 1
@@ -2365,10 +2365,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   context 'Caption' do
     it 'should render caption under an image with a title' do
-      input = <<~'EOS'
+      input = <<~'END'
       .Tux, the Linux mascot
       image::tux.png[tux]
-      EOS
+      END
 
       pdf = to_pdf input, analyze: :image
       images = pdf.images
@@ -2386,10 +2386,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should render caption above an image with a title when image_caption_end is top' do
       pdf_theme = { image_caption_end: 'top' }
-      input = <<~'EOS'
+      input = <<~'END'
       .Tux, the Linux mascot
       image::tux.png[tux]
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :image
       images = pdf.images
@@ -2406,10 +2406,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should not duplicate footnote in a caption' do
-      input = <<~'EOS'
+      input = <<~'END'
       .Tux, the Linux mascotfootnote:[The one and only.]
       image::tux.png[tux]
-      EOS
+      END
 
       pdf = to_pdf input, analyze: true
       expected_lines = ['Figure 1. Tux, the Linux mascot[1]', '1. The one and only.']
@@ -2428,21 +2428,21 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should show caption for missing image' do
       (expect do
-        pdf = to_pdf <<~'EOS', analyze: true
+        pdf = to_pdf <<~'END', analyze: true
         .A missing image
         image::no-such-image.png[Missing Image]
-        EOS
+        END
         (expect pdf.lines).to eql ['[Missing Image] | no-such-image.png', 'Figure 1. A missing image']
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
     it 'should keep caption on same page as image when image exceeds height of page' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       before image
 
       .Image caption
       image::tall-diagram.png[Tall diagram]
-      EOS
+      END
 
       (expect pdf.pages).to have_size 2
       (expect get_images pdf, 2).to have_size 1
@@ -2452,12 +2452,12 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     it 'should keep caption on same page as image when image exceeds height of page and image_caption_end is top' do
       pdf_theme = { image_caption_end: 'top' }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme
       before image
 
       .Image caption
       image::tall-diagram.png[Tall diagram]
-      EOS
+      END
 
       (expect pdf.pages).to have_size 2
       (expect get_images pdf, 2).to have_size 1
@@ -2467,22 +2467,22 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     it 'should raise error if caption does not fit on a single page' do
       (expect do
         caption = (['excessive caption'] * 300).join ' '
-        to_pdf <<~EOS
+        to_pdf <<~END
         before image
 
         .#{caption}
         image::tall-diagram.png[Tall diagram]
-        EOS
+        END
       end).to raise_exception Prawn::Errors::CannotFit
     end
 
     it 'should scale down SVG at top of page to fit image and caption if dimensions exceed page size', visual: true do
-      to_file = to_pdf_file <<~EOS, 'image-svg-with-caption-scale-to-fit-page.pdf'
+      to_file = to_pdf_file <<~END, 'image-svg-with-caption-scale-to-fit-page.pdf'
       :pdf-page-size: Letter
 
       .#{(['title text'] * 15).join ' '}
       image::watermark.svg[pdfwidth=100%]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-svg-with-caption-scale-to-fit-page.pdf'
     end
@@ -2492,10 +2492,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_caption_align: 'inherit',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, attribute_overrides: { 'imagesdir' => examples_dir }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, attribute_overrides: { 'imagesdir' => examples_dir }, analyze: true
       .Behold, the great Wolpertinger!
       image::wolpertinger.jpg[,144,align=right]
-      EOS
+      END
 
       midpoint = (get_page_size pdf)[0] * 0.5
       (expect pdf.text[0][:x]).to be > midpoint
@@ -2507,10 +2507,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_caption_max_width: '25%',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       .This is a picture of our beloved Tux.
       image::tux.png[]
-      EOS
+      END
 
       midpoint = (get_page_size pdf, 1)[0] * 0.5
       (expect pdf.lines).to eql ['Figure 1. This is a picture', 'of our beloved Tux.']
@@ -2526,10 +2526,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_caption_max_width: 'fit-content',
       }
 
-      input = <<~'EOS'
+      input = <<~'END'
       .This is a picture of our beloved Tux.
       image::tux.png[align=right]
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :image
 
@@ -2552,10 +2552,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should configure caption width to fit image width if float attribute is set on image' do
-      input = <<~'EOS'
+      input = <<~'END'
       .This is a picture of our beloved Tux.
       image::tux.png[align=right,float=right]
-      EOS
+      END
 
       tux_image = (to_pdf input, analyze: :image).images[0]
       pdf = to_pdf input, analyze: true
@@ -2572,10 +2572,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should not change caption width if float attribute is set on image and caption max width is fit-content' do
       pdf_theme = { image_caption_align: 'inherit', image_caption_max_width: 'fit-content(50%)' }
-      input = <<~'EOS'
+      input = <<~'END'
       .This is a picture of our beloved Tux.
       image::tux.png[align=right,float=right]
-      EOS
+      END
 
       tux_image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -2597,10 +2597,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_caption_max_width: 'fit-content(50%)',
       }
 
-      input = <<~'EOS'
+      input = <<~'END'
       .This is a picture of our beloved Tux.
       image::tux.png[align=right]
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
 
@@ -2617,10 +2617,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_caption_max_width: 'fit-content',
       }
 
-      input = <<~'EOS'
+      input = <<~'END'
       .This is a picture of our beloved Tux.
       image::tux.png[align=right]
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :image
 
@@ -2647,10 +2647,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_caption_max_width: 'fit-content(50%)',
       }
 
-      input = <<~'EOS'
+      input = <<~'END'
       .This is a picture of our beloved Tux.
       image::tux.png[align=right]
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :image
 
@@ -2682,10 +2682,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_border_color: 'transparent',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       .Tux
       image::tux.png[align=center]
-      EOS
+      END
 
       (expect pdf.lines).to be_empty
     end
@@ -2698,10 +2698,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_border_radius: 2,
       }
 
-      to_file = to_pdf_file <<~'EOS', 'image-border.pdf', pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'image-border.pdf', pdf_theme: pdf_theme
       .Tux
       image::tux.png[align=center]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-border.pdf'
     end
@@ -2712,10 +2712,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_border_color: '5D5D5D',
       }
 
-      to_file = to_pdf_file <<~'EOS', 'image-border-align-left.pdf', pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'image-border-align-left.pdf', pdf_theme: pdf_theme
       .Tux
       image::tux.png[]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-border-align-left.pdf'
     end
@@ -2728,10 +2728,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_border_fit: 'auto',
       }
 
-      to_file = to_pdf_file <<~'EOS', 'image-border-fit-page.pdf', pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'image-border-fit-page.pdf', pdf_theme: pdf_theme
       .Tux
       image::tux.png[align=center]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-border-fit-page.pdf'
     end
@@ -2743,10 +2743,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_border_color: '000000',
       }
 
-      to_file = to_pdf_file <<~'EOS', 'image-svg-border.pdf', pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'image-svg-border.pdf', pdf_theme: pdf_theme
       .Square
       image::square.svg[align=right,pdfwidth=25%]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-svg-border.pdf'
     end
@@ -2758,10 +2758,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_border_fit: 'auto',
       }
 
-      to_file = to_pdf_file <<~'EOS', 'image-svg-border-fit-page.pdf', pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'image-svg-border-fit-page.pdf', pdf_theme: pdf_theme
       .Square
       image::square.svg[align=center,pdfwidth=25%]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-svg-border-fit-page.pdf'
     end
@@ -2771,9 +2771,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_border_width: 1,
         image_border_color: '000000',
       }
-      to_file = to_pdf_file <<~'EOS', 'image-raster-noborder.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'imagesdir' => examples_dir }
+      to_file = to_pdf_file <<~'END', 'image-raster-noborder.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'imagesdir' => examples_dir }
       image::wolpertinger.jpg[,144,role=specimen noborder]
-      EOS
+      END
 
       (expect to_file).to visually_match 'image-wolpertinger.pdf'
     end
@@ -2783,9 +2783,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_border_width: 1,
         image_border_color: 'DEDEDE',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       image::square-viewbox-only.svg[role=noborder]
-      EOS
+      END
 
       (expect pdf.lines.select {|it| it[:color] == 'DEDEDE' }).to be_empty
     end
@@ -2795,9 +2795,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_border_width: [1, 2, 3, 4],
         image_border_color: 'DEDEDE',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       image::square.png[]
-      EOS
+      END
       lines = pdf.lines
       (expect lines).to have_size 4
       (expect lines.map {|it| it[:width] }.sort).to eql [1, 2, 3, 4]
@@ -2809,9 +2809,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         image_border_width: [4, 1],
         image_border_color: 'DEDEDE',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       image::square.png[]
-      EOS
+      END
       lines = pdf.lines
       (expect lines).to have_size 4
       (expect lines.map {|it| it[:width] }.sort).to eql [1, 1, 4, 4]
@@ -2829,9 +2829,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       }
 
       %w([.enclose]#image:tux.png[tux,fit=line]# image:tux.png[tux,fit=line,role=enclose]).each do |image|
-        to_file = to_pdf_file <<~EOS, 'image-inline-border.pdf', pdf_theme: pdf_theme
+        to_file = to_pdf_file <<~END, 'image-inline-border.pdf', pdf_theme: pdf_theme
         before #{image} after
-        EOS
+        END
 
         (expect to_file).to visually_match 'image-inline-border.pdf'
       end
@@ -2845,9 +2845,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       }
 
       %w([.enclose]#image:tux.png[tux,fit=line]# image:tux.png[tux,fit=line,role=enclose]).each do |image|
-        to_file = to_pdf_file <<~EOS, 'image-inline-background.pdf', pdf_theme: pdf_theme
+        to_file = to_pdf_file <<~END, 'image-inline-background.pdf', pdf_theme: pdf_theme
         before #{image} after
-        EOS
+        END
 
         (expect to_file).to visually_match 'image-inline-background.pdf'
       end

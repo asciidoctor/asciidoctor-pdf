@@ -5,7 +5,7 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - Xref' do
   context 'internal' do
     it 'should create reference to a section by title' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = Document Title
       :doctype: book
 
@@ -16,7 +16,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       == Chapter B
 
       Here are the details you're looking for.
-      EOS
+      END
 
       names = get_names pdf
       (expect names).to have_key '_chapter_a'
@@ -28,7 +28,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
     end
 
     it 'should create reference to a section by implicit ID' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = Document Title
       :doctype: book
 
@@ -39,7 +39,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       == Chapter B
 
       Here are the details you're looking for.
-      EOS
+      END
 
       names = get_names pdf
       (expect names).to have_key '_chapter_a'
@@ -51,7 +51,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
     end
 
     it 'should create reference to a section by explicit ID' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = Document Title
       :doctype: book
 
@@ -64,7 +64,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       == Chapter B
 
       Here are the details you're looking for.
-      EOS
+      END
 
       names = get_names pdf
       (expect names).to have_key 'a'
@@ -76,13 +76,13 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
     end
 
     it 'should short-circuit circular reference in section title' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [#a]
       == A <<b>>
 
       [#b]
       == B <<a>>
-      EOS
+      END
 
       (expect pdf.lines).to eql ['A B [a]', 'B [a]']
       lines = pdf.text.map {|it| it[:y] }.uniq
@@ -91,11 +91,11 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
     end
 
     it 'should reference section with ID that contains non-ASCII characters' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       == Über Étudier
 
       See <<_über_étudier>>.
-      EOS
+      END
 
       hex_encoded_id = %(0x#{('_über_étudier'.unpack 'H*')[0]})
       annotations = get_annotations pdf, 1
@@ -105,7 +105,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
     end
 
     it 'should create reference to a block by explicit ID' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = Document Title
       :doctype: book
 
@@ -125,7 +125,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       | bar
       | 1
       |===
-      EOS
+      END
 
       names = get_names pdf
       (expect names).to have_key 'observed-values'
@@ -136,13 +136,13 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
     end
 
     it 'should create reference to an anchor in a paragraph' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       Jump to the <<explanation>>.
 
       <<<
 
       [[explanation,explanation]]This is the explanation.
-      EOS
+      END
 
       names = get_names pdf
       (expect names).to have_key 'explanation'
@@ -153,13 +153,13 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
     end
 
     it 'should create reference to a list item with an anchor' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       Jump to the <<first-item>>.
 
       <<<
 
       * [[first-item,first item]]list item
-      EOS
+      END
 
       names = get_names pdf
       (expect names).to have_key 'first-item'
@@ -170,7 +170,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
     end
 
     it 'should create reference to a table cell with an anchor' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       Jump to the <<first-cell>>.
 
       <<<
@@ -178,7 +178,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       |===
       |[[first-cell,first cell]]table cell
       |===
-      EOS
+      END
 
       names = get_names pdf
       (expect names).to have_key 'first-cell'
@@ -189,9 +189,9 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
     end
 
     it 'should show ID enclosed in square brackets if reference cannot be resolved' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       Road to <<nowhere>>.
-      EOS
+      END
 
       (expect (pdf.page 1).text).to eql 'Road to [nowhere].'
       names = get_names pdf
@@ -271,7 +271,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
 
   context 'xrefstyle' do
     it 'should refer to part by label and number when xrefstyle is short' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :partnums:
@@ -288,13 +288,13 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       == Advanced Lesson
 
       If you are so advanced, why do you even need a lesson?
-      EOS
+      END
 
       (expect pdf.lines).to include 'Now you are ready for Part II!'
     end
 
     it 'should refer to part by name when xrefstyle is basic' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :partnums:
@@ -311,13 +311,13 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       == Advanced Lesson
 
       If you are so advanced, why do you even need a lesson?
-      EOS
+      END
 
       (expect pdf.lines).to include 'Now you are ready for Advanced!'
     end
 
     it 'should refer to part by label, number, and title when xrefstyle is full' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :partnums:
@@ -334,13 +334,13 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       == Advanced Lesson
 
       If you are so advanced, why do you even need a lesson?
-      EOS
+      END
 
       (expect pdf.lines).to include 'Now you are ready for Part II, “Advanced”!'
     end
 
     it 'should refer to chapter by label and number when xrefstyle is short' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :sectnums:
@@ -349,13 +349,13 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       Start with <<_a>>.
 
       == A
-      EOS
+      END
 
       (expect pdf.lines).to include 'Start with Chapter 1.'
     end
 
     it 'should refer to chapter title and number when xrefstyle is basic' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :sectnums:
@@ -364,13 +364,13 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       Start with <<_a>>.
 
       == A
-      EOS
+      END
 
       (expect pdf.lines).to include 'Start with A.'
     end
 
     it 'should refer to chapter label, number and title when xrefstyle is full' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :sectnums:
@@ -379,13 +379,13 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       Start with <<_a>>.
 
       == A
-      EOS
+      END
 
       (expect pdf.lines).to include 'Start with Chapter 1, A.'
     end
 
     it 'should use xrefstyle specified on xref macro' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :sectnums:
@@ -394,25 +394,25 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       Start with xref:_a[xrefstyle=full].
 
       == A
-      EOS
+      END
 
       (expect pdf.lines).to include 'Start with Chapter 1, A.'
     end
 
     it 'should refer to image with title by title by default' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       See <<img>>.
 
       .Title of Image
       [#img]
       image::tux.png[]
-      EOS
+      END
 
       (expect pdf.lines[0]).to eql 'See Title of Image.'
     end
 
     it 'should refer to image with title by reference signifier, number, and title when xrefstyle is full' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :xrefstyle: full
 
       See <<img>>.
@@ -420,13 +420,13 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       .Title of Image
       [#img]
       image::tux.png[]
-      EOS
+      END
 
       (expect pdf.lines[0]).to eql 'See Figure 1, “Title of Image”.'
     end
 
     it 'should refer to image with title by reference signifier and number when xrefstyle is short' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :xrefstyle: short
 
       See <<img>>.
@@ -434,13 +434,13 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       .Title of Image
       [#img]
       image::tux.png[]
-      EOS
+      END
 
       (expect pdf.lines[0]).to eql 'See Figure 1.'
     end
 
     it 'should show ID of reference enclosed in square brackets if reference has no xreftext' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       :xrefstyle: full
 
       Jump to the <<first-item>>.
@@ -448,7 +448,7 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       <<<
 
       * [[first-item]]list item
-      EOS
+      END
 
       names = get_names pdf
       (expect names).to have_key 'first-item'

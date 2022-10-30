@@ -5,7 +5,7 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - Open' do
   it 'should be breakable by default' do
     with_content_spacer 10, 720 do |spacer_path|
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       image::#{spacer_path}[]
 
       --
@@ -13,7 +13,7 @@ describe 'Asciidoctor::PDF::Converter - Open' do
 
       second page
       --
-      EOS
+      END
       (expect pdf.pages).to have_size 2
       (expect (pdf.find_unique_text 'first page')[:page_number]).to be 1
       (expect (pdf.find_unique_text 'second page')[:page_number]).to be 2
@@ -21,7 +21,7 @@ describe 'Asciidoctor::PDF::Converter - Open' do
   end
 
   it 'should keep block together when it has the unbreakable option', visual: true do
-    to_file = to_pdf_file <<~EOS, 'open-unbreakable-option-fit.pdf'
+    to_file = to_pdf_file <<~END, 'open-unbreakable-option-fit.pdf'
     Make it rain.footnote:[money]
 
     #{(['filler'] * 21).join %(\n\n)}
@@ -40,13 +40,13 @@ describe 'Asciidoctor::PDF::Converter - Open' do
     --
 
     Make it snow.footnote:[dollar bills]
-    EOS
+    END
 
     (expect to_file).to visually_match 'open-unbreakable-option-fit.pdf'
   end
 
   it 'should break an unbreakable block if it does not fit on one page', visual: true do
-    to_file = to_pdf_file <<~EOS, 'open-unbreakable-option-break.pdf'
+    to_file = to_pdf_file <<~END, 'open-unbreakable-option-break.pdf'
     Make it rain.footnote:[money]
 
     #{(['filler'] * 21).join %(\n\n)}
@@ -67,18 +67,18 @@ describe 'Asciidoctor::PDF::Converter - Open' do
     --
 
     Make it snow.footnote:[dollar bills]
-    EOS
+    END
 
     (expect to_file).to visually_match 'open-unbreakable-option-break.pdf'
   end
 
   it 'should include title if specified' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     .Title
     --
     content
     --
-    EOS
+    END
 
     title_texts = pdf.find_text 'Title'
     (expect title_texts).to have_size 1
@@ -89,7 +89,7 @@ describe 'Asciidoctor::PDF::Converter - Open' do
 
   it 'should keep title with content if content is advanced to new page' do
     pdf = with_content_spacer 10, 700 do |spacer_path|
-      to_pdf <<~EOS, analyze: true
+      to_pdf <<~END, analyze: true
       image::#{spacer_path}[]
 
       .Title
@@ -99,7 +99,7 @@ describe 'Asciidoctor::PDF::Converter - Open' do
 
       more content
       --
-      EOS
+      END
     end
     (expect pdf.pages).to have_size 2
     (expect (pdf.find_unique_text 'content')[:page_number]).to be 2
@@ -134,7 +134,7 @@ describe 'Asciidoctor::PDF::Converter - Open' do
       %(before\n\n[#idname]) => true,
       %(before\n\n[%unbreakable]) => true,
     }.each do |before_block, dry_run|
-      input = <<~EOS.lstrip
+      input = <<~END.lstrip
       #{before_block}
       --
       #{['block content'] * 4 * %(\n\n)}
@@ -142,7 +142,7 @@ describe 'Asciidoctor::PDF::Converter - Open' do
       [spy]
       block content
       --
-      EOS
+      END
       pdf = to_pdf input, extensions: extensions, analyze: true
       (expect pdf.pages).to have_size 1
       (expect (pdf.find_text 'block content')[0][:page_number]).to be 1

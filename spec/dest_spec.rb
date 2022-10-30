@@ -4,15 +4,15 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Dest' do
   it 'should not define a dest named __anchor-top if document has no body pages' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     = Document Title
     :doctype: book
-    EOS
+    END
     (expect get_names pdf).to be_empty
   end
 
   it 'should define a dest named __anchor-top at top of the first body page' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     = Document Title
     :doctype: book
     :toc:
@@ -22,7 +22,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     == Chapter
 
     content
-    EOS
+    END
 
     (expect (top_dest = get_dest pdf, '__anchor-top')).not_to be_nil
     (expect (top_dest[:page_number])).to be 3
@@ -31,13 +31,13 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
   end
 
   it 'should define a dest named toc at the top of the first toc page' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     = Document Title
     :doctype: book
     :toc:
 
     == Chapter
-    EOS
+    END
 
     (expect (toc_dest = get_dest pdf, 'toc')).not_to be_nil
     (expect toc_dest[:page_number]).to be 2
@@ -46,7 +46,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
   end
 
   it 'should define a dest named toc at the location where the macro toc starts' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     = Document Title
     :toc: macro
 
@@ -57,7 +57,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     == Chapter
 
     == Another Chapter
-    EOS
+    END
 
     (expect (toc_dest = get_dest pdf, 'toc')).not_to be_nil
     (expect (toc_dest[:page_number])).to be 1
@@ -66,7 +66,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
   end
 
   it 'should use the toc macro ID as the name of the dest for the macro toc' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     = Document Title
     :toc: macro
 
@@ -78,18 +78,18 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     == Chapter
 
     == Another Chapter
-    EOS
+    END
 
     (expect get_names pdf).to have_key 'macro-toc'
   end
 
   it 'should define a dest at the top of a chapter page' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     = Document Title
     :doctype: book
 
     == Chapter
-    EOS
+    END
 
     (expect (chapter_dest = get_dest pdf, '_chapter')).not_to be_nil
     (expect (chapter_dest[:page_number])).to be 2
@@ -98,7 +98,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
   end
 
   it 'should define a dest at the top of a part page' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     = Document Title
     :doctype: book
 
@@ -107,7 +107,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     == Chapter
 
     content
-    EOS
+    END
 
     (expect (part_dest = get_dest pdf, '_part_1')).not_to be_nil
     (expect (part_dest[:page_number])).to be 2
@@ -116,7 +116,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
   end
 
   it 'should define a dest at the top of page for section if section is at top of page' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     = Document Title
 
     content
@@ -126,7 +126,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     == Section
 
     content
-    EOS
+    END
 
     (expect (sect_dest = get_dest pdf, '_section')).not_to be_nil
     (expect (sect_dest[:page_number])).to be 2
@@ -137,10 +137,10 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
   it 'should define a dest at the top of content area if page does not start with a section' do
     pdf_theme = { page_margin: 15 }
 
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme
     [#p1]
     content
-    EOS
+    END
 
     (expect (para_dest = get_dest pdf, 'p1')).not_to be_nil
     (expect (para_dest[:page_number])).to be 1
@@ -150,24 +150,24 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
 
   it 'should register dest for every block that has an ID' do
     ['', 'abstract', 'example', 'open', 'sidebar', 'quote', 'verse', 'listing', 'literal', 'NOTE'].each do |style|
-      pdf = to_pdf <<~EOS
+      pdf = to_pdf <<~END
       [#{style}#disclaimer]
       All views expressed are my own.
-      EOS
+      END
 
       (expect get_names pdf).to have_key 'disclaimer'
     end
   end
 
   it 'should register dest for table that has an ID' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     [#props]
     |===
     | Name | Value
 
     | Foo | Bar
     |===
-    EOS
+    END
 
     (expect get_names pdf).to have_key 'props'
   end
@@ -179,47 +179,47 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
       video: 'webcast.mp4',
       audio: 'podcast.mp3',
     }.each do |macro_name, target|
-      pdf = to_pdf <<~EOS
+      pdf = to_pdf <<~END
       [#media]
       #{macro_name == :svg ? 'image' : macro_name.to_s}::#{target}[]
-      EOS
+      END
 
       (expect get_names pdf).to have_key 'media'
     end
   end
 
   it 'should register dest for unordered list that has an ID' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     [#takeaways]
     * one
     * two
-    EOS
+    END
 
     (expect get_names pdf).to have_key 'takeaways'
   end
 
   it 'should register dest for ordered list that has an ID' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     [#takeaways]
     . one
     . two
-    EOS
+    END
 
     (expect get_names pdf).to have_key 'takeaways'
   end
 
   it 'should register dest for description list that has an ID' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     [#takeaways]
     reuse:: try to avoid binning it in the first place
     recycle:: if you do bin it, make sure the material gets reused
-    EOS
+    END
 
     (expect get_names pdf).to have_key 'takeaways'
   end
 
   it 'should register dest for callout list that has an ID' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     ----
     require 'asciidoctor-pdf' // <1>
 
@@ -228,13 +228,13 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     [#details]
     <1> requires the library
     <2> converts the document to PDF
-    EOS
+    END
 
     (expect get_names pdf).to have_key 'details'
   end
 
   it 'should register dest for each section with implicit ID' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     == Fee
 
     === Fi
@@ -242,7 +242,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     ==== Fo
 
     ===== Fum
-    EOS
+    END
 
     names = get_names pdf
     (expect names).to have_key '_fee'
@@ -252,7 +252,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
   end
 
   it 'should register dest for each section with explicit ID' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     [#s-fee]
     == Fee
 
@@ -264,7 +264,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
 
     [#s-fum]
     ===== Fum
-    EOS
+    END
 
     names = get_names pdf
     (expect names).to have_key 's-fee'
@@ -274,7 +274,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
   end
 
   it 'should not register dest with auto-generated name for each section if sectids are disabled' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     :!sectids:
 
     == Fee
@@ -284,7 +284,7 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
     ==== Fo
 
     ===== Fum
-    EOS
+    END
 
     names = get_names pdf
     names.delete '__anchor-top'
@@ -295,25 +295,25 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
   end
 
   it 'should register dest for a discrete heading with an implicit ID' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     [discrete]
     == Bundler
 
     Use this procedure if you're using Bundler.
-    EOS
+    END
 
     (expect get_names pdf).to have_key '_bundler'
   end
 
   it 'should not register dest for a discrete heading when sectids are disabled' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     :!sectids:
 
     [discrete]
     == Bundler
 
     Use this procedure if you're using Bundler.
-    EOS
+    END
 
     names = get_names pdf
     names.delete '__anchor-top'
@@ -321,24 +321,24 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
   end
 
   it 'should register dest for a discrete heading with an explicit ID' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     [discrete#bundler]
     == Bundler
 
     Use this procedure if you're using Bundler.
-    EOS
+    END
 
     (expect get_names pdf).to have_key 'bundler'
   end
 
   it 'should register dest for a link with an ID' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     see <<link,link>>
 
     <<<
 
     https://asciidoctor.org[Asciidoctor,id=link]
-    EOS
+    END
 
     (expect (link_dest = get_dest pdf, 'link')).not_to be_nil
     (expect link_dest[:page_number]).to be 2
@@ -355,13 +355,13 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
 
   it 'should define a dest at the location of an inline anchor' do
     ['[[details]]details', '[#details]#details#'].each do |details|
-      pdf = to_pdf <<~EOS
+      pdf = to_pdf <<~END
       Here's the intro.
 
       <<<
 
       Here are all the #{details}.
-      EOS
+      END
 
       (expect (phrase_dest = get_dest pdf, 'details')).not_to be_nil
       (expect phrase_dest[:page_number]).to be 2
@@ -369,13 +369,13 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
   end
 
   it 'should keep anchor with text if text is advanced to next page' do
-    pdf = to_pdf <<~EOS
+    pdf = to_pdf <<~END
     jump to <<anchor>>
 
     #{(['paragraph'] * 25).join %(\n\n)}
 
     #{(['paragraph'] * 16).join ' '} [#anchor]#supercalifragilisticexpialidocious#
-    EOS
+    END
 
     (expect (phrase_dest = get_dest pdf, 'anchor')).not_to be_nil
     (expect phrase_dest[:page_number]).to be 2
@@ -393,11 +393,11 @@ describe 'Asciidoctor::PDF::Converter - Dest' do
       base_font_family: 'Missing Null',
     }
 
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     foo [#bar]#bar# #baz#
 
     foo bar #baz#
-    EOS
+    END
 
     baz_texts = pdf.find_text 'baz'
     (expect baz_texts).to have_size 2

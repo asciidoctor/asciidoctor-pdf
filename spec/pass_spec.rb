@@ -4,7 +4,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Pass' do
   it 'should render pass as plain literal block' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { base_font_color: '222222', code_font_color: '0000EE' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { base_font_color: '222222', code_font_color: '0000EE' }, analyze: true
     ++++
     <p>
     stay
@@ -14,7 +14,7 @@ describe 'Asciidoctor::PDF::Converter - Pass' do
     through
     </p>
     ++++
-    EOS
+    END
 
     all_text = pdf.text
     (expect all_text.size).to be > 1
@@ -27,13 +27,13 @@ describe 'Asciidoctor::PDF::Converter - Pass' do
   end
 
   it 'should add bottom margin to pass block' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     ++++
     This is a pass block.
     ++++
 
     This is a paragraph.
-    EOS
+    END
 
     pass_text = pdf.find_unique_text 'This is a pass block.'
     para_text = pdf.find_unique_text 'This is a paragraph.'

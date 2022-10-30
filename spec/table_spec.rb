@@ -5,10 +5,10 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - Table' do
   it 'should not crash if table has no rows' do
     (expect do
-      pdf = to_pdf <<~'EOS', analyze: :line
+      pdf = to_pdf <<~'END', analyze: :line
       |===
       |===
-      EOS
+      END
 
       (expect pdf.lines).to have_size 4
     end).to not_raise_exception & (log_message severity: :WARN, message: 'no rows found in table')
@@ -16,12 +16,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
   it 'should not crash if cols and table cells are mismatched' do
     (expect do
-      pdf = to_pdf <<~'EOS', analyze: :line
+      pdf = to_pdf <<~'END', analyze: :line
       [cols="1,"]
       |===
       | cell
       |===
-      EOS
+      END
 
       (expect pdf.lines).to have_size 8
     end).to not_raise_exception & (log_message severity: :WARN, message: 'no rows found in table')
@@ -29,7 +29,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
   it 'should not crash when rows have cells with colspans of varying length' do
     (expect do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [cols=3*]
       |===
       3+|X
@@ -37,7 +37,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |Y
       2+|Z
       |===
-      EOS
+      END
 
       y_text = pdf.find_unique_text 'Y'
       z_text = pdf.find_unique_text 'Z'
@@ -48,50 +48,50 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
   context 'Decoration' do
     it 'should apply frame all and grid all by default' do
-      pdf = to_pdf <<~'EOS', analyze: :line
+      pdf = to_pdf <<~'END', analyze: :line
       |===
       |1 |2
       |3 |4
       |===
-      EOS
+      END
 
       (expect pdf.lines.uniq).to have_size 12
     end
 
     it 'should allow frame and grid to be specified on table using frame and grid attributes' do
-      pdf = to_pdf <<~'EOS', analyze: :line
+      pdf = to_pdf <<~'END', analyze: :line
       [frame=ends,grid=cols]
       |===
       |1 |2
       |3 |4
       |===
-      EOS
+      END
 
       (expect pdf.lines.uniq).to have_size 6
     end
 
     it 'should treat topbot value of frame attribute as an alias for ends' do
-      pdf_a = to_pdf <<~'EOS', analyze: :line
+      pdf_a = to_pdf <<~'END', analyze: :line
       [frame=ends]
       |===
       |1 |2
       |3 |4
       |===
-      EOS
+      END
 
-      pdf_b = to_pdf <<~'EOS', analyze: :line
+      pdf_b = to_pdf <<~'END', analyze: :line
       [frame=topbot]
       |===
       |1 |2
       |3 |4
       |===
-      EOS
+      END
 
       (expect pdf_a.lines).to eql pdf_b.lines
     end
 
     it 'should allow frame and grid to be set globally using table-frame and table-grid attributes' do
-      pdf = to_pdf <<~'EOS', analyze: :line
+      pdf = to_pdf <<~'END', analyze: :line
       :table-frame: ends
       :table-grid: cols
 
@@ -99,7 +99,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |1 |2
       |3 |4
       |===
-      EOS
+      END
 
       (expect pdf.lines.uniq).to have_size 6
     end
@@ -109,7 +109,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_body_background_color: 'FDFDFD',
         table_body_stripe_background_color: 'EFEFEF',
       }
-      to_file = to_pdf_file <<~'EOS', 'table-stripes-even.pdf', pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'table-stripes-even.pdf', pdf_theme: pdf_theme
       [stripes=even]
       |===
       |fee
@@ -117,39 +117,39 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |fo
       |fum
       |===
-      EOS
+      END
 
       (expect to_file).to visually_match 'table-stripes-even.pdf'
     end
 
     it 'should apply stripes to odd rows as specified by stripes attribute', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'table-stripes-odd.pdf'
+      to_file = to_pdf_file <<~'END', 'table-stripes-odd.pdf'
       [cols=3*,stripes=odd]
       |===
       |A1 |B1 |C1
       |A2 |B2 |C2
       |A3 |B3 |C3
       |===
-      EOS
+      END
 
       (expect to_file).to visually_match 'table-stripes-odd.pdf'
     end
 
     it 'should apply stripes to all rows as specified by stripes attribute', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'table-stripes-all.pdf'
+      to_file = to_pdf_file <<~'END', 'table-stripes-all.pdf'
       [cols=3*,stripes=all]
       |===
       |A1 |B1 |C1
       |A2 |B2 |C2
       |A3 |B3 |C3
       |===
-      EOS
+      END
 
       (expect to_file).to visually_match 'table-stripes-all.pdf'
     end
 
     it 'should apply thicker bottom border to table head row' do
-      pdf = to_pdf <<~'EOS', analyze: :line
+      pdf = to_pdf <<~'END', analyze: :line
       [frame=none,grid=rows]
       |===
       | Col A | Col B
@@ -160,7 +160,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | A2
       | B2
       |===
-      EOS
+      END
 
       lines = pdf.lines.uniq
       (expect lines).to have_size 4
@@ -174,7 +174,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should apply 2.5 * grid row width to bottom border of table head row if override not specified' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { table_head_border_bottom_width: nil }, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: { table_head_border_bottom_width: nil }, analyze: :line
       [frame=none,grid=rows]
       |===
       | Col A | Col B
@@ -185,7 +185,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | A2
       | B2
       |===
-      EOS
+      END
 
       lines = pdf.lines.uniq
       (expect lines).to have_size 4
@@ -199,7 +199,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should use grid color as default border color for head bottom border' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { table_grid_color: 'AA0000' }, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: { table_grid_color: 'AA0000' }, analyze: :line
       [frame=none,grid=rows]
       |===
       | Col A | Col B
@@ -207,7 +207,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | A1
       | B1
       |===
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 4
@@ -228,7 +228,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         end
       end
       opts = { extension_registry: Asciidoctor::Extensions.create { tree_processor(&tree_processor_impl) } }
-      pdf = to_pdf <<~'EOS', (opts.merge analyze: :line)
+      pdf = to_pdf <<~'END', (opts.merge analyze: :line)
       [%header,frame=none,grid=rows]
       |===
       | Columns
@@ -238,7 +238,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       | A2
       |===
-      EOS
+      END
 
       lines = pdf.lines.uniq
       ys = lines.map {|l| l[:from][:y] }.sort.reverse.uniq
@@ -250,7 +250,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should retain border on bottom of table head when grid and frame are disabled' do
-      input = <<~'EOS'
+      input = <<~'END'
       [grid=none,frame=none]
       |===
       |A |B
@@ -261,7 +261,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |A2
       |B2
       |===
-      EOS
+      END
 
       pdf = to_pdf input, analyze: :line
 
@@ -286,7 +286,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_head_border_bottom_style: 'dashed',
         table_head_border_bottom_color: 'a9a9a9',
       }
-      to_file = to_pdf_file <<~'EOS', 'table-head-border-bottom.pdf', pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'table-head-border-bottom.pdf', pdf_theme: pdf_theme
       [frame=none,grid=rows]
       |===
       | Col A | Col B
@@ -297,7 +297,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | A2
       | B2
       |===
-      EOS
+      END
 
       (expect to_file).to visually_match 'table-head-border-bottom.pdf'
     end
@@ -310,14 +310,14 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         end
       end
       opts = { extension_registry: Asciidoctor::Extensions.create { tree_processor(&tree_processor_impl) } }
-      pdf = to_pdf <<~EOS, (opts.merge analyze: true)
+      pdf = to_pdf <<~END, (opts.merge analyze: true)
       [%header]
       |===
       2+^| Columns
       ^| Column A ^| Column B
       #{['| cell | cell'] * 40 * ?\n}
       |===
-      EOS
+      END
 
       [1, 2].each do |page_number|
         col_a_text = (pdf.find_text page_number: page_number, string: 'Column A')[0]
@@ -335,7 +335,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_head_border_bottom_color: 'transparent',
       }
 
-      pdf = to_pdf <<~'EOS', analyze: :line, pdf_theme: pdf_theme
+      pdf = to_pdf <<~'END', analyze: :line, pdf_theme: pdf_theme
       [frame=none,grid=rows]
       |===
       | Col A | Col B
@@ -346,7 +346,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | A2
       | B2
       |===
-      EOS
+      END
 
       lines = pdf.lines.uniq
       (expect lines).not_to be_empty
@@ -363,7 +363,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_grid_color: cmyk_color,
       }
 
-      pdf = to_pdf <<~'EOS', analyze: :line, pdf_theme: pdf_theme
+      pdf = to_pdf <<~'END', analyze: :line, pdf_theme: pdf_theme
       [frame=none,grid=rows]
       |===
       | Col A | Col B
@@ -374,7 +374,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | A2
       | B2
       |===
-      EOS
+      END
 
       lines = pdf.lines.uniq
       (expect lines).not_to be_empty
@@ -389,13 +389,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_grid_width: 2,
         table_grid_style: 'dotted',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       [frame=none,grid=all]
       |===
       | A | B
       | C | D
       |===
-      EOS
+      END
 
       # NOTE: it appears Prawn table is drawing the same grid line multiple times
       lines = pdf.lines.uniq
@@ -413,13 +413,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_grid_color: cmyk_color,
         table_grid_width: 1,
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       [frame=none,grid=all]
       |===
       | A | B
       | C | D
       |===
-      EOS
+      END
 
       # NOTE: it appears Prawn table is drawing the same grid line multiple times
       lines = pdf.lines.uniq
@@ -436,7 +436,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_grid_color: nil,
       }
 
-      pdf = to_pdf <<~'EOS', analyze: :line, pdf_theme: pdf_theme
+      pdf = to_pdf <<~'END', analyze: :line, pdf_theme: pdf_theme
       |===
       | Col A | Col B
 
@@ -446,7 +446,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | A2
       | B2
       |===
-      EOS
+      END
 
       lines = pdf.lines.uniq
       (expect lines).not_to be_empty
@@ -461,12 +461,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_grid_color: '3D3D3D',
         table_grid_width: 0,
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       |===
       | A | B
       | C | D
       |===
-      EOS
+      END
 
       line_colors = pdf.lines.map {|l| l[:color] }.uniq
       (expect line_colors).not_to be_empty
@@ -480,13 +480,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_grid_color: %w(3D3D3D D3D3D3),
         table_grid_width: 0,
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       [grid=none]
       |===
       | A | B
       | C | D
       |===
-      EOS
+      END
 
       line_colors = pdf.lines.map {|l| l[:color] }.uniq
       (expect line_colors).not_to be_empty
@@ -499,13 +499,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_border_width: 3,
         table_border_style: 'dashed',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       [frame=all,grid=none]
       |===
       | A | B
       | C | D
       |===
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 8
@@ -523,18 +523,18 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_border_style: 'double',
       }
       (expect do
-        to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+        to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
         [frame=all,grid=none]
         |===
         | A | B
         | C | D
         |===
-        EOS
+        END
       end).to raise_exception ArgumentError, 'border_line must be :solid, :dotted or :dashed'
     end
 
     it 'should honor cellbgcolor attribute in table cell to set background color of cell', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'table-cellbgcolor.pdf'
+      to_file = to_pdf_file <<~'END', 'table-cellbgcolor.pdf'
       :attribute-undefined: drop
 
       [%autowidth,cols=3*]
@@ -543,39 +543,39 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | {set:cellbgcolor:#FF0000}red background color
       | {set:cellbgcolor!}default background color again
       |===
-      EOS
+      END
 
       (expect to_file).to visually_match 'table-cellbgcolor.pdf'
     end
 
     it 'should allow value of cellbgcolor attribute in table cell to be transparent', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'table-cellbgcolor.pdf'
+      to_file = to_pdf_file <<~'END', 'table-cellbgcolor.pdf'
       [%autowidth,cols=3*]
       |===
       | default background color
       | {set:cellbgcolor:#FF0000}red background color
       | {set:cellbgcolor:transparent}default background color again
       |===
-      EOS
+      END
 
       (expect to_file).to visually_match 'table-cellbgcolor.pdf'
     end
 
     it 'should ignore cellbgcolor attribute if not a valid hex color', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'table-cellbgcolor-invalid.pdf'
+      to_file = to_pdf_file <<~'END', 'table-cellbgcolor-invalid.pdf'
       [%autowidth,cols=3*]
       |===
       | {set:cellbgcolor:#f00}default background color
       | {set:cellbgcolor:#ff0000}red background color
       | {set:cellbgcolor:bogus}default background color again
       |===
-      EOS
+      END
 
       (expect to_file).to visually_match 'table-cellbgcolor.pdf'
     end
 
     it 'should use value of cellbgcolor attribute in table cell to override background color set by theme', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'table-cellbgcolor-override.pdf', pdf_theme: { table_body_background_color: 'CCCCCC' }
+      to_file = to_pdf_file <<~'END', 'table-cellbgcolor-override.pdf', pdf_theme: { table_body_background_color: 'CCCCCC' }
       :attribute-undefined: drop
 
       [%autowidth,cols=3*]
@@ -584,7 +584,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | {set:cellbgcolor:#FF0000}red background color
       | {set:cellbgcolor!}default background color again
       |===
-      EOS
+      END
 
       (expect to_file).to visually_match 'table-cellbgcolor-override.pdf'
     end
@@ -595,12 +595,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_grid_width: [0.5, 1.2],
         table_grid_style: %w(dashed solid),
       }
-      to_file = to_pdf_file <<~'EOS', 'table-grid-axes.pdf', pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'table-grid-axes.pdf', pdf_theme: pdf_theme
       |===
       | A | B
       | C | D
       |===
-      EOS
+      END
 
       (expect to_file).to visually_match 'table-grid-axes.pdf'
     end
@@ -611,13 +611,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_border_width: [0.5, 1, 3, 1],
         table_border_style: [:solid, :dashed, :solid, :dotted],
       }
-      to_file = to_pdf_file <<~'EOS', 'table-border-per-side.pdf', pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'table-border-per-side.pdf', pdf_theme: pdf_theme
       [grid=none]
       |===
       | A | B
       | C | D
       |===
-      EOS
+      END
 
       (expect to_file).to visually_match 'table-border-per-side.pdf'
     end
@@ -628,12 +628,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_border_width: [0.5, 1],
         table_border_style: [:solid, :dashed],
       }
-      lines = (to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line).lines
+      lines = (to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line).lines
       [grid=none]
       |===
       | cell
       |===
-      EOS
+      END
 
       (expect lines).to have_size 4
       solid_lines = lines.select {|it| it[:style] == :solid && it[:color] == '000000' && it[:width] == 0.5 }
@@ -652,12 +652,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_border_width: [0.5, 1, 2],
         table_border_style: [:solid, :dashed, :dotted],
       }
-      lines = (to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line).lines
+      lines = (to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line).lines
       [grid=none]
       |===
       | cell
       |===
-      EOS
+      END
 
       (expect lines).to have_size 4
       top_line = lines.find {|it| it[:style] == :solid && it[:color] == '000000' && it[:width] == 0.5 }
@@ -679,12 +679,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_grid_width: 0.5,
         table_border_style: [:solid, :dotted, :solid, :dashed],
       }
-      to_file = to_pdf_file <<~'EOS', 'table-grid-fallbacks.pdf', pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'table-grid-fallbacks.pdf', pdf_theme: pdf_theme
       |===
       | A | B
       | C | D
       |===
-      EOS
+      END
 
       (expect to_file).to visually_match 'table-grid-fallbacks.pdf'
     end
@@ -697,12 +697,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_border_style: [:solid, nil, :solid, nil],
       }
       (expect do
-        to_pdf <<~'EOS', pdf_theme: pdf_theme
+        to_pdf <<~'END', pdf_theme: pdf_theme
         |===
         | A | B
         | C | D
         |===
-        EOS
+        END
       end).to not_raise_exception
     end
 
@@ -715,12 +715,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
             table_grid_width: [0.5, (prop == 'width' ? nil : 0.5)],
             table_grid_style: [:solid, (prop == 'style' ? nil : :solid)],
           }
-          to_pdf <<~'EOS', pdf_theme: pdf_theme
+          to_pdf <<~'END', pdf_theme: pdf_theme
           |===
           | A | B
           | C | D
           |===
-          EOS
+          END
         end
       end).to not_raise_exception
     end
@@ -732,12 +732,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_grid_width: nil,
         table_grid_color: nil,
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       |===
       | A | B
       | C | D
       |===
-      EOS
+      END
       lines = pdf.lines
       (expect lines).to have_size 16
       (expect lines.map {|it| it[:color] }.uniq).to eql %w(DDDDDD)
@@ -752,12 +752,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_grid_width: nil,
         table_grid_color: nil,
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       |===
       | A | B
       | C | D
       |===
-      EOS
+      END
       lines = pdf.lines
       (expect lines).to have_size 16
       (expect lines.map {|it| it[:color] }.uniq).to eql %w(000000)
@@ -771,13 +771,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_padding: 3,
       }
 
-      input = <<~'EOS'
+      input = <<~'END'
       |===
       a|first
 
       last
       |===
-      EOS
+      END
 
       to_file = to_pdf_file input, 'table-border-end-caps.pdf', pdf_theme: pdf_theme
       (expect to_file).to visually_match 'table-border-end-caps.pdf'
@@ -787,7 +787,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
   context 'Dimensions' do
     it 'should log error if no width is assigned to column' do
       (expect do
-        pdf = to_pdf <<~'EOS', analyze: true
+        pdf = to_pdf <<~'END', analyze: true
         before table
 
         [cols=",50%,50%"]
@@ -796,7 +796,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         |===
 
         after table
-        EOS
+        END
         text = pdf.text
         (expect text).to have_size 2
         (expect text[0][:string]).to eql 'before table'
@@ -806,7 +806,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should report file and line number in cannot fit error if sourcemap is enabled' do
       (expect do
-        pdf = to_pdf <<~'EOS', sourcemap: true, attribute_overrides: { 'docfile' => 'test.adoc' }, analyze: true
+        pdf = to_pdf <<~'END', sourcemap: true, attribute_overrides: { 'docfile' => 'test.adoc' }, analyze: true
         before table
 
         [cols="2m,49,49"]
@@ -815,7 +815,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         |===
 
         after table
-        EOS
+        END
         text = pdf.text
         (expect text).to have_size 2
         (expect text[0][:string]).to eql 'before table'
@@ -824,22 +824,22 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should not fail to fit text in cell' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       |===
       |Aaaaa Bbbbb Ccccc |*{zwsp}* Aaaaa_Bbbbb_Ccccc |Aaaaa_Bbbbb_Ccccc |Aaaaa_Bbbbb_Ccccc |A
       |===
-      EOS
+      END
       (expect pdf.strings.index 'Aaaaa Bbbbb').to be 0
       (expect pdf.strings.index 'Ccccc').to be 1
     end
 
     it 'should not fail to fit image with no explicit width in cell' do
-      pdf = to_pdf <<~'EOS', analyze: :image
+      pdf = to_pdf <<~'END', analyze: :image
       [width=10%]
       |===
       |image:tux.png[]
       |===
-      EOS
+      END
       images = pdf.images
       (expect images).to have_size 1
       (expect images[0][:intrinsic_width]).to eql 204
@@ -847,12 +847,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should fit image using intrinsic width in autowidth cell' do
-      pdf = to_pdf <<~'EOS', analyze: :image
+      pdf = to_pdf <<~'END', analyze: :image
       [%autowidth]
       |===
       |image:tux.png[]
       |===
-      EOS
+      END
       images = pdf.images
       (expect images).to have_size 1
       (expect images[0][:intrinsic_width]).to eql 204
@@ -860,12 +860,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should fit image using explicit width in autowidth cell' do
-      pdf = to_pdf <<~'EOS', analyze: :image
+      pdf = to_pdf <<~'END', analyze: :image
       [%autowidth]
       |===
       |image:tux.png[pdfwidth=1.5in]
       |===
-      EOS
+      END
       images = pdf.images
       (expect images).to have_size 1
       (expect images[0][:intrinsic_width]).to eql 204
@@ -873,12 +873,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should fit image using percentage width in autowidth cell' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { table_cell_padding: 0 }, analyze: :image
+      pdf = to_pdf <<~'END', pdf_theme: { table_cell_padding: 0 }, analyze: :image
       [%autowidth]
       |===
       |image:tux.png[width=25%] | image:tux.png[]
       |===
-      EOS
+      END
       images = pdf.images
       (expect images).to have_size 2
       (expect images[0][:intrinsic_width]).to eql 204
@@ -889,12 +889,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should fit passthrough image using percentage width in autowidth cell' do
-      input = <<~EOS
+      input = <<~END
       [%autowidth]
       |===
       |see pass:[<img src="#{fixture_file 'tux.png'}" alt="tux" width="75%">] run
       |===
-      EOS
+      END
       pdf = to_pdf input, pdf_theme: { table_cell_padding: 0 }, analyze: true
       text = pdf.text
       (expect text).to have_size 2
@@ -908,7 +908,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should not break words in head row when autowidth option is set' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [%autowidth]
       |===
       |Operation |Operator
@@ -925,14 +925,14 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |divide
       |/
       |===
-      EOS
+      END
 
       (expect pdf.find_text 'Operation').not_to be_empty
       (expect pdf.find_text 'Operator').not_to be_empty
     end
 
     it 'should not break words in body rows when autowidth option is set' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [%autowidth]
       |===
       |Op
@@ -945,7 +945,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       |divide
       |===
-      EOS
+      END
 
       (expect pdf.find_text 'add').not_to be_empty
       (expect pdf.find_text 'subtract').not_to be_empty
@@ -954,7 +954,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should wrap text by character when autowidth option is set and cell forces table to page boundary' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [%autowidth,cols=3*]
       |===
       | 100
@@ -962,18 +962,18 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | Lorem ipsum dolor sit amet, elit fusce duis, voluptatem ut,
       mauris tempor orci odio sapien viverra ut, deserunt luctus.
       |===
-      EOS
+      END
 
       (expect pdf.lines).to eql ['10', '0', 'Label', '1', 'Lorem ipsum dolor sit amet, elit fusce duis, voluptatem ut, mauris tempor orci odio', 'sapien viverra ut, deserunt luctus.']
     end
 
     it 'should stretch table to width of bounds by default' do
-      pdf = to_pdf <<~'EOS', analyze: :line
+      pdf = to_pdf <<~'END', analyze: :line
       [grid=none,frame=sides]
       |===
       |A |B
       |===
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 2
@@ -982,12 +982,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should not stretch autowidth table to width of bounds by default' do
-      pdf = to_pdf <<~'EOS', analyze: :line
+      pdf = to_pdf <<~'END', analyze: :line
       [%autowidth,grid=none,frame=sides]
       |===
       |A |B
       |===
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 2
@@ -996,13 +996,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should account for hard line breaks when computing natural width of table cell' do
-      pdf = to_pdf <<~'EOS', analyze: :line
+      pdf = to_pdf <<~'END', analyze: :line
       [%autowidth,grid=none,frame=sides]
       |===
       |Everywhere that Mary went, +
       the lamb was sure to go.
       |===
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 2
@@ -1011,7 +1011,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should assume width of empty line is 0 when computing natural width of table cell' do
-      pdf = to_pdf <<~'EOS', analyze: :line
+      pdf = to_pdf <<~'END', analyze: :line
       [%autowidth,grid=none,frame=sides]
       |===
       |fee +
@@ -1020,7 +1020,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       fo +
       fum
       |===
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 2
@@ -1029,12 +1029,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should stretch autowidth table with stretch role to width of bounds' do
-      pdf = to_pdf <<~'EOS', analyze: :line
+      pdf = to_pdf <<~'END', analyze: :line
       [%autowidth.stretch,grid=none,frame=sides]
       |===
       |A |B
       |===
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 2
@@ -1043,12 +1043,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should set width of autowidth table if explicit width is specified' do
-      input = <<~'EOS'
+      input = <<~'END'
       [%autowidth,width=50%,grid=cols,frame=sides]
       |===
       |short |a much wider table column
       |===
-      EOS
+      END
 
       pdf = to_pdf input, analyze: :line
 
@@ -1064,12 +1064,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should apply equal width to columns by default when width attribute is set' do
-      pdf = to_pdf <<~'EOS', analyze: :line
+      pdf = to_pdf <<~'END', analyze: :line
       [frame=sides,grid=cols]
       |===
       |a | bbbbb | c
       |===
-      EOS
+      END
 
       lines = pdf.lines.uniq {|it| [it[:from][:x], it[:from][:y], it[:to][:x], it[:to][:y]] }
       (expect lines).to have_size 4
@@ -1081,12 +1081,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should apply automatic width to columns by default when autowidth option is set and width attribute is set' do
-      pdf = to_pdf <<~'EOS', analyze: :line
+      pdf = to_pdf <<~'END', analyze: :line
       [%autowidth,frame=sides,grid=cols]
       |===
       |a | bbbbb | a
       |===
-      EOS
+      END
 
       lines = pdf.lines.uniq {|it| [it[:from][:x], it[:from][:y], it[:to][:x], it[:to][:y]] }
       (expect lines).to have_size 4
@@ -1098,7 +1098,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should allocate remaining width to autowidth column' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [cols="10,>~"]
       |===
       |0x00
@@ -1107,7 +1107,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |0x01
       |OK
       |===
-      EOS
+      END
       (expect pdf.strings).to eql %w(0x00 UNSPECIFIED 0x01 OK)
       unspecified_text = (pdf.find_text 'UNSPECIFIED')[0]
       (expect unspecified_text[:x].floor).to be 476
@@ -1116,7 +1116,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should extend width of table to fit content in autowidth column when autowidth option is set on table' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [%autowidth,cols="10,>~"]
       |===
       |0x00
@@ -1125,7 +1125,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |0x01
       |OK
       |===
-      EOS
+      END
       (expect pdf.strings).to eql %w(0x00 UNSPECIFIED 0x01 OK)
       unspecified_text = (pdf.find_text 'UNSPECIFIED')[0]
       (expect unspecified_text[:x].floor).to be 81
@@ -1134,7 +1134,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should not apply padding to cell if padding is nil' do
-      input = <<~'EOS'
+      input = <<~'END'
       [cols=2*]
       |===
       |A1
@@ -1143,7 +1143,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |A2
       |B2
       |===
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: { table_cell_padding: 0 }, analyze: true
       b1_x = (pdf.find_unique_text 'B1')[:x]
@@ -1155,7 +1155,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should account for line metrics in cell padding' do
-      input = <<~'EOS'
+      input = <<~'END'
       |===
       |A |B
 
@@ -1165,7 +1165,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |A2
       |B2
       |===
-      EOS
+      END
 
       last_y = nil
       [5, [5, 5, 5, 5], [5, 5, 5, 5, 5]].each do |cell_padding|
@@ -1181,7 +1181,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should account for font size when computing padding' do
-      input = <<~'EOS'
+      input = <<~'END'
       |===
       |A |B
 
@@ -1191,7 +1191,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |A2
       |B2
       |===
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: { table_font_size: 20 }, analyze: true
       a2_text = (pdf.find_text 'A2')[0]
@@ -1200,7 +1200,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should not accumulate cell padding between tables' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { table_cell_padding: [5, 5, 5, 5] }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { table_cell_padding: [5, 5, 5, 5] }, analyze: true
       |===
       |A |B
 
@@ -1230,7 +1230,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |A2
       |B2
       |===
-      EOS
+      END
 
       first_a1_text = (pdf.find_text 'A1')[0]
       first_a2_text = (pdf.find_text 'A2')[0]
@@ -1240,7 +1240,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should set padding on head cells the same as body cells by default' do
-      input = <<~'EOS'
+      input = <<~'END'
       [frame=none,grid=rows]
       |===
       | Column A | Column B
@@ -1248,7 +1248,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | A1
       | B1
       |===
-      EOS
+      END
 
       reference_pdf = to_pdf input, analyze: :line
       pdf = to_pdf input, pdf_theme: { table_cell_padding: [10, 3, 10, 3] }, analyze: :line
@@ -1258,7 +1258,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should set padding on head cells as specified by table_head_cell_padding theme key' do
-      input = <<~'EOS'
+      input = <<~'END'
       [frame=none,grid=rows]
       |===
       | Column A | Column B
@@ -1266,7 +1266,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | A1
       | B1
       |===
-      EOS
+      END
 
       reference_pdf = to_pdf input, analyze: true
       pdf = to_pdf input, pdf_theme: { table_head_cell_padding: [10, 3, 10, 3] }, analyze: true
@@ -1283,7 +1283,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       filler = (['filler'] * 40).join hard_line_break
       head_cell1 = %w(this is a very tall cell in the head row of this table).join hard_line_break
       head_cell2 = %w(this is an even taller cell also in the head row of this table).join hard_line_break
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       #{filler}
 
       [%header,cols=2*]
@@ -1294,7 +1294,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |body cell
       |body cell
       |===
-      EOS
+      END
 
       filler_page_nums = (pdf.find_text 'filler').map {|it| it[:page_number] }
       (expect filler_page_nums.uniq).to have_size 1
@@ -1307,7 +1307,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
   context 'Basic table cell' do
     it 'should keep paragraphs in table cell separate' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       |===
       |all one line
 
@@ -1318,7 +1318,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       paragraph 2
       |===
-      EOS
+      END
 
       cell1_text = pdf.find_text 'all one line'
       (expect cell1_text).not_to be_empty
@@ -1332,13 +1332,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should normalize newlines and whitespace' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       |===
       |He's  a  real  nowhere  man,
       Sitting in his nowhere land,
       Making all his nowhere plans\tfor nobody.
       |===
-      EOS
+      END
       (expect pdf.text).to have_size 1
       text = pdf.text[0][:string]
       (expect text).not_to include '  '
@@ -1349,7 +1349,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should strip whitespace after applying substitutions' do
       ['%autowidth', '%header%autowidth'].each do |table_attrs|
-        pdf = to_pdf <<~EOS, analyze: :line
+        pdf = to_pdf <<~END, analyze: :line
         [#{table_attrs}]
         |===
         | text
@@ -1368,7 +1368,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         |===
         | {empty} text
         |===
-        EOS
+        END
 
         lines_by_page = pdf.lines.each_with_object({}) do |line, accum|
           (accum[line.delete :page_number] ||= []) << line
@@ -1381,14 +1381,14 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should transform non-ASCII letters when text transform is uppercase' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { table_head_text_transform: 'uppercase' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { table_head_text_transform: 'uppercase' }, analyze: true
       |===
       |über |étudier
 
       |cell
       |cell
       |===
-      EOS
+      END
 
       text = pdf.text
       (expect text[0][:string]).to eql 'ÜBER'
@@ -1401,13 +1401,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         'lowercase' => ['heading in head', 'heading in body'],
         'none' => ['Heading in head', 'Heading in body'],
       }.each do |transform, expected|
-        pdf = to_pdf <<~'EOS', pdf_theme: { table_head_text_transform: transform }, analyze: true
+        pdf = to_pdf <<~'END', pdf_theme: { table_head_text_transform: transform }, analyze: true
         |===
         |Heading in head
 
         h|Heading in body
         |===
-        EOS
+        END
 
         text = pdf.text
         (expect text[0][:string]).to eql expected[0]
@@ -1416,12 +1416,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should honor horizontal alignment on cell' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [cols="1,>1"]
       |===
       |a |z
       |===
-      EOS
+      END
 
       page_width = pdf.pages[0][:size][0]
       midpoint = page_width * 0.5
@@ -1432,12 +1432,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should apply line height specified for cell' do
-      input = <<~'EOS'
+      input = <<~'END'
       [width=50%]
       |===
       | A long table cell that wraps | Another table cell
       |===
-      EOS
+      END
 
       reference_pdf = to_pdf input, analyze: true
       reference_spacing = (reference_pdf.find_unique_text %r/^A long/)[:y] - (reference_pdf.find_unique_text 'wraps')[:y]
@@ -1450,7 +1450,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect do
         blank_line = %(\n\n)
 
-        pdf = to_pdf <<~EOS, analyze: true
+        pdf = to_pdf <<~END, analyze: true
         |===
         |before
         |start
@@ -1460,7 +1460,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         end
         |after
         |===
-        EOS
+        END
 
         (expect pdf.pages.size).to eql 3
         before_text = (pdf.find_text 'before')[0]
@@ -1479,7 +1479,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect do
         blank_line = %(\n\n)
 
-        pdf = to_pdf <<~EOS, analyze: true
+        pdf = to_pdf <<~END, analyze: true
         before
 
         [%unbreakable]
@@ -1492,7 +1492,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         end
         |last cell
         |===
-        EOS
+        END
 
         (expect pdf.pages.size).to eql 3
         before_text = (pdf.find_text 'before')[0]
@@ -1512,7 +1512,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect do
         blank_line = %(\n\n)
 
-        pdf = to_pdf <<~EOS, sourcemap: true, attribute_overrides: { 'docfile' => 'test.adoc' }, analyze: true
+        pdf = to_pdf <<~END, sourcemap: true, attribute_overrides: { 'docfile' => 'test.adoc' }, analyze: true
         |===
         |first cell
         |second cell
@@ -1520,7 +1520,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         #{(['filler'] * 25).join blank_line}
         |last cell
         |===
-        EOS
+        END
 
         (expect pdf.pages.size).to eql 3
         (expect (pdf.find_unique_text 'first cell')[:page_number]).to eql 1
@@ -1533,7 +1533,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
   context 'Strong table cell' do
     it 'should style text a strong table cell as bold' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [cols=2*,width=50%]
       |===
       |Item 1
@@ -1545,7 +1545,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       >s|Total
       |$15
       |===
-      EOS
+      END
 
       item_text = (pdf.find_text 'Item 1')[0]
       total_text = (pdf.find_text 'Total')[0]
@@ -1556,7 +1556,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
   context 'Monospaced table cell' do
     it 'should apply codespan style to text in a monospaced table cell' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { codespan_font_size: 10.25 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { codespan_font_size: 10.25 }, analyze: true
       [cols="1m,1",width=50%]
       |===
       m|site.title
@@ -1565,7 +1565,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       m|site.url
       |The URL of the site.
       |===
-      EOS
+      END
 
       monospaced_text = (pdf.find_text 'site.title')[0]
       (expect monospaced_text[:font_name]).to eql 'mplus1mn-regular'
@@ -1574,13 +1574,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should apply codespan style with relative font size to text in a monospaced table cell' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { codespan_font_size: '0.8em' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { codespan_font_size: '0.8em' }, analyze: true
       [cols=2*,width=50%]
       |===
       m|site.url
       |The URL of the site.
       |===
-      EOS
+      END
 
       monospaced_text = pdf.find_unique_text 'site.url'
       reference_text = pdf.find_unique_text 'The URL of the site.'
@@ -1590,12 +1590,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should ignore line-height on codespan category when computing line metrics' do
-      input = <<~'EOS'
+      input = <<~'END'
       [cols=2*m,width=50%]
       |===
       | A long table cell that wraps | Another table cell
       |===
-      EOS
+      END
 
       reference_pdf = to_pdf input, analyze: true
       reference_spacing = (reference_pdf.find_unique_text %r/^A long/)[:y] - (reference_pdf.find_unique_text 'wraps')[:y]
@@ -1607,7 +1607,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
   context 'Head and header table cell' do
     it 'should style a header table cell like a cell in the head row by default' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [%autowidth,cols="1h,3"]
       |===
       | Vendor
@@ -1622,7 +1622,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | Resolution
       | 3040x1440
       |===
-      EOS
+      END
 
       vendor_text = (pdf.find_text 'Vendor')[0]
       (expect vendor_text[:font_name]).to eql 'NotoSerif-Bold'
@@ -1636,7 +1636,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_header_cell_font_style: 'italic',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       [%header%autowidth,cols="1h,3"]
       |===
       | Feature | Value
@@ -1653,7 +1653,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | Resolution
       | 3040x1440
       |===
-      EOS
+      END
 
       feature_text = (pdf.find_text 'Feature')[0]
       (expect feature_text[:font_color]).to eql '222222'
@@ -1670,7 +1670,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should apply line height specified for head to cell in table head' do
-      input = <<~'EOS'
+      input = <<~'END'
       [width=50%]
       |===
       | Column header that wraps | Another column header
@@ -1678,7 +1678,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | cell
       | cell
       |===
-      EOS
+      END
 
       reference_pdf = to_pdf input, analyze: true
       reference_spacing = (reference_pdf.find_unique_text %r/^Column/)[:y] - (reference_pdf.find_unique_text 'wraps')[:y]
@@ -1688,7 +1688,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should inherit line height specified on cell' do
-      input = <<~'EOS'
+      input = <<~'END'
       [width=50%]
       |===
       | Column header that wraps | Another column header
@@ -1696,7 +1696,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | cell
       | cell
       |===
-      EOS
+      END
 
       reference_pdf = to_pdf input, analyze: true
       reference_spacing = (reference_pdf.find_unique_text %r/^Column/)[:y] - (reference_pdf.find_unique_text 'wraps')[:y]
@@ -1711,7 +1711,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_background_color: nil,
       }
 
-      to_file = to_pdf_file <<~'EOS', 'table-transparent-header-cell.pdf', pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'table-transparent-header-cell.pdf', pdf_theme: pdf_theme
       [%header%autowidth,cols="1h,3"]
       |===
       | Feature | Value
@@ -1728,7 +1728,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | Resolution
       | 3040x1440
       |===
-      EOS
+      END
 
       (expect to_file).to visually_match 'table-transparent-header-cell.pdf'
     end
@@ -1742,7 +1742,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_foot_font_family: 'Helvetica',
         table_foot_font_color: '5d5d5d',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
 
       [%footer]
       |===
@@ -1759,7 +1759,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       |Total |6
       |===
-      EOS
+      END
 
       total_text = pdf.find_unique_text 'Total'
       (expect total_text[:font_name]).to eql 'Helvetica-Bold'
@@ -1770,17 +1770,17 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
   context 'Literal table cell' do
     it 'should not apply substitutions' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       |===
       l|{asciidoctor-version} foo--bar
       |===
-      EOS
+      END
 
       (expect pdf.lines[0]).to eql '{asciidoctor-version} foo--bar'
     end
 
     it 'should expand tabs and preserve indentation' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       |===
       l|
       here
@@ -1788,7 +1788,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       \t\tgo
       again
       |===
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 4
@@ -1797,11 +1797,11 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should not double escape specialchars' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       |===
       l|< and >
       |===
-      EOS
+      END
 
       (expect pdf.lines).to eql ['< and >']
     end
@@ -1811,11 +1811,11 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_font_size: 8,
         code_font_size: 10.5,
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       |===
       |normal cell l|literal cell
       |===
-      EOS
+      END
 
       (expect (pdf.find_text 'normal cell')[0][:font_size].to_f).to eql 8.0
       (expect (pdf.find_text 'literal cell')[0][:font_size].to_f).to eql 8.0
@@ -1827,13 +1827,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_font_size: 8,
         codespan_font_size: '0.9em',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       .`code` in caption
       |===
       |`code` in normal cell
       a|`code` in AsciiDoc cell
       |===
-      EOS
+      END
 
       code_texts = pdf.find_text 'code'
       (expect code_texts).to have_size 3
@@ -1846,12 +1846,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
   context 'Verse table cell' do
     it 'should support verse if supported by core' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       |===
       v|foo
         bar
       |===
-      EOS
+      END
 
       foobar_text = (pdf.find_text 'foo bar')[0]
       (expect foobar_text).not_to be_nil
@@ -1860,7 +1860,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
   context 'AsciiDoc table cell' do
     it 'should convert blocks in an AsciiDoc table cell' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       |===
       a|
       [start=10]
@@ -1873,12 +1873,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       my
       shoe
       |===
-      EOS
+      END
       (expect pdf.lines).to eql ['10. ten', '11. eleven', '12. twelve', 'buckle', 'my', 'shoe']
     end
 
     it 'should honor horizontal alignment on AsciiDoc table cell' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [cols=1a]
       |===
       |left
@@ -1893,7 +1893,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       |right
       |===
-      EOS
+      END
 
       page_width = pdf.pages[0][:size][0]
       midpoint = page_width * 0.5
@@ -1907,7 +1907,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should not honor horizontal alignment on AsciiDoc table cell that contains non-paragraph blocks' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [cols=>1a]
       |===
       |
@@ -1917,7 +1917,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       left
       |===
-      EOS
+      END
 
       page_width = pdf.pages[0][:size][0]
       midpoint = page_width * 0.5
@@ -1927,7 +1927,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should convert nested table' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [cols="1,2a"]
       |===
       |Normal cell
@@ -1937,7 +1937,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       !Nested table cell 1 !Nested table cell 2
       !===
       |===
-      EOS
+      END
 
       (expect pdf.lines.any? {|l| l.include? '!' }).to be false
       (expect pdf.lines).to have_size 2
@@ -1949,7 +1949,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should not compound font scale in nested document' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { table_font_size: 21 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { table_font_size: 21 }, analyze: true
       |===
       |foo
       a|
@@ -1959,13 +1959,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       !===
       baz
       |===
-      EOS
+      END
 
       (expect pdf.text.map {|it| it[:font_size] }.uniq).to eql [21]
     end
 
     it 'should apply uniform font scale to table and nested table' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { sidebar_font_size: 8.4 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { sidebar_font_size: 8.4 }, analyze: true
       ****
       before
       |===
@@ -1978,13 +1978,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       baz
       |===
       ****
-      EOS
+      END
 
       (expect pdf.text.map {|it| it[:font_size] }.uniq).to eql [8.4]
     end
 
     it 'should restore counter after computing height of table cell in scratch document' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [cols=2*]
       |===
       a|{counter:req}
@@ -1992,19 +1992,19 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       a|{counter:req}
       |Second requirement.
       |===
-      EOS
+      END
 
       (expect pdf.lines).to eql ['1 First requirement.', '2 Second requirement.']
     end
 
     it 'should align bullet for list item to left cell boundary' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       * yin
-      EOS
+      END
 
       reference_x = ((pdf.find_unique_text ?\u2022)[:x] - 48.24 + 3).round 2
 
-      input = <<~'EOS'
+      input = <<~'END'
       [cols=4*,grid=cols,frame=none]
       |===
       |foo
@@ -2014,7 +2014,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       * ying
       * yang
       |===
-      EOS
+      END
 
       pdf = to_pdf input, analyze: :line
 
@@ -2029,7 +2029,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should capture footnotes in AsciiDoc table cell and render them with other footnotes' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       before{empty}footnote:[Footnote before table]
 
       |===
@@ -2037,7 +2037,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
 
       after{empty}footnote:[Footnote after table]
-      EOS
+      END
 
       expected_lines = [
         'before[1]',
@@ -2056,12 +2056,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         prose_margin_bottom: 0,
         table_cell_padding: [5, 0, 5, 0],
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       |===
       a|
       * abc
       |===
-      EOS
+      END
 
       p1_lines = pdf.lines (pdf.page 1)[:text]
       (expect p1_lines).to eql ['• abc']
@@ -2073,7 +2073,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         base_font_family: 'M+ 1mn',
         prose_margin_bottom: 2,
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       before
 
       |===
@@ -2083,7 +2083,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
 
       after
-      EOS
+      END
 
       p1_lines = pdf.lines (pdf.page 1)[:text]
       (expect p1_lines).to eql ['before', '• abc', '• xyz', 'after']
@@ -2096,7 +2096,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         code_border_radius: 0,
       }
 
-      input = <<~EOS
+      input = <<~END
       [cols="1,1a",frame=none,grid=none]
       |===
       | cell
@@ -2112,7 +2112,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       after block
       |===
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
       lines = pdf.lines
@@ -2131,7 +2131,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should not add margin below last block of content in AsciiDoc table cell' do
-      input = <<~'EOS'
+      input = <<~'END'
       [frame=ends,grid=none]
       |===
       a|
@@ -2139,7 +2139,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       sidebar
       ****
       |===
-      EOS
+      END
 
       horizontal_lines = (to_pdf input, analyze: :line).lines
         .select {|it| it[:from][:y] == it[:to][:y] }.sort_by {|it| -it[:from][:y] }
@@ -2148,7 +2148,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should honor vertical alignment on cell' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [cols=3*]
       |===
       a| 1 +
@@ -2161,7 +2161,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       .>a|
       bottom
       |===
-      EOS
+      END
 
       ref_middle = (pdf.find_text '2')[0][:y]
       ref_bottom = (pdf.find_text '3')[0][:y]
@@ -2172,26 +2172,26 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should align middle vertical alignment on cell to center' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [%autowidth]
       |===
       .<| Ay<
 
       Ay< .^| Ay^
       |===
-      EOS
+      END
 
       expected = pdf.text[0][:y] - (pdf.text[0][:y] - pdf.text[1][:y]) * 0.5
       (expect expected - pdf.text[2][:y]).to be_between 0, 0.5
     end
 
     it 'should coerce middle vertical alignment on head cell to center' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [%header,width=50%]
       |===
       ^.^| Short ^.^| Something Rather Long ^.^| Last
       |===
-      EOS
+      END
 
       long_text = pdf.find_unique_text 'Something'
       short_text = pdf.find_unique_text 'Short'
@@ -2200,12 +2200,12 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should apply cell padding to AsciiDoc table cell' do
       [10, [10], [10, 10, 10, 10, 10]].each do |padding|
-        pdf = to_pdf <<~'EOS', pdf_theme: { table_cell_padding: padding }, analyze: true
+        pdf = to_pdf <<~'END', pdf_theme: { table_cell_padding: padding }, analyze: true
         |===
         | a a| b | c
         | a | b | c
         |===
-        EOS
+        END
 
         a_texts = pdf.find_text 'a'
         b_texts = pdf.find_text 'b'
@@ -2222,11 +2222,11 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_font_family: 'Helvetica',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       |===
       | normal table cell a| AsciiDoc table cell
       |===
-      EOS
+      END
 
       normal_text = (pdf.find_text 'normal table cell')[0]
       (expect normal_text[:font_name]).to eql 'Helvetica-Oblique'
@@ -2245,7 +2245,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_font_family: 'Helvetica',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       ....
       literal block outside table
       ....
@@ -2263,7 +2263,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       ....
       !===
       |===
-      EOS
+      END
 
       outside_text = (pdf.find_text 'literal block outside table')[0]
       (expect outside_text[:font_name]).to eql 'mplus1mn-regular'
@@ -2282,14 +2282,14 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_font_size: 9,
         sidebar_font_size: '0.9em',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       |===
       a|
       ****
       sidebar
       ****
       |===
-      EOS
+      END
 
       sidebar_text = pdf.find_unique_text 'sidebar'
       (expect sidebar_text[:font_size]).to eql 8.1
@@ -2303,7 +2303,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_font_size: 9,
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       |===
       a|
       ....
@@ -2319,7 +2319,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       ....
       |===
       ====
-      EOS
+      END
 
       outside_text = (pdf.find_text 'literal block outside sidebar')[0]
       (expect outside_text[:font_name]).to eql 'mplus1mn-regular'
@@ -2331,7 +2331,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should not compound font scale when computing font size for nested blocks' do
       pdf_theme = { heading_h2_font_size: 20, table_font_size: 5.25 }
-      input = <<~'EOS'
+      input = <<~'END'
       before table
 
       |===
@@ -2349,7 +2349,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       ****
       ====
       |===
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
       (expect (pdf.find_unique_text 'before table')[:font_size]).to eql 10.5
@@ -2368,11 +2368,11 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_font_family: 'Helvetica',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       |===
       | normal table cell a| AsciiDoc table cell
       |===
-      EOS
+      END
 
       normal_text = (pdf.find_text 'normal table cell')[0]
       (expect normal_text[:font_name]).to eql 'Helvetica-Oblique'
@@ -2393,7 +2393,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       }
 
       (expect do
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, enable_footer: true, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, enable_footer: true, analyze: true
         |===
         |before
         a|start
@@ -2403,7 +2403,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         end
         |after
         |===
-        EOS
+        END
 
         (expect pdf.pages.size).to eql 3
         p2_text = pdf.find_text page_number: 2
@@ -2417,7 +2417,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect do
         blank_line = %(\n\n)
 
-        pdf = to_pdf <<~EOS, analyze: true
+        pdf = to_pdf <<~END, analyze: true
         |===
         |before
         a|start
@@ -2427,7 +2427,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         end
         |after
         |===
-        EOS
+        END
 
         (expect pdf.pages.size).to eql 3
         before_text = (pdf.find_text 'before')[0]
@@ -2446,7 +2446,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect do
         blank_line = %(\n\n)
 
-        pdf = to_pdf <<~EOS, analyze: true
+        pdf = to_pdf <<~END, analyze: true
         before
 
         [%unbreakable]
@@ -2459,7 +2459,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         end
         |last cell
         |===
-        EOS
+        END
 
         (expect pdf.pages.size).to eql 3
         before_text = (pdf.find_text 'before')[0]
@@ -2479,7 +2479,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect do
         blank_line = %(\n\n)
 
-        pdf = to_pdf <<~EOS, sourcemap: true, attribute_overrides: { 'docfile' => 'test.adoc' }, analyze: true
+        pdf = to_pdf <<~END, sourcemap: true, attribute_overrides: { 'docfile' => 'test.adoc' }, analyze: true
         before table
 
         |===
@@ -2490,7 +2490,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         #{(['* list item'] * 50).join blank_line}
         |last cell
         |===
-        EOS
+        END
 
         (expect pdf.pages).to have_size 3
         (expect (pdf.find_unique_text 'before list')[:page_number]).to eql 2
@@ -2501,7 +2501,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should not warn if cell exceeds page height in scratch document' do
       (expect do
-        pdf = to_pdf <<~'EOS', analyze: true
+        pdf = to_pdf <<~'END', analyze: true
         [%unbreakable]
         --
         |===
@@ -2515,7 +2515,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         --
 
         after
-        EOS
+        END
 
         (expect pdf.pages).to have_size 2
         (expect pdf.find_unique_text 'page two').to be_nil
@@ -2525,14 +2525,14 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should not warn if cell explicitly advances to new page without adding content to subsequent page' do
       (expect do
-        pdf = to_pdf <<~'EOS', analyze: true
+        pdf = to_pdf <<~'END', analyze: true
         |===
         a|
         paragraph
 
         <<<
         |===
-        EOS
+        END
 
         (expect pdf.pages).to have_size 1
       end).to not_log_message
@@ -2540,7 +2540,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should not warn if cell overflows page without adding content to subsequent page' do
       (expect do
-        pdf = to_pdf <<~EOS, analyze: true
+        pdf = to_pdf <<~END, analyze: true
         |===
         a|
         paragraph
@@ -2549,7 +2549,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
         paragraph
         |===
-        EOS
+        END
 
         (expect pdf.pages).to have_size 1
       end).to not_log_message
@@ -2557,7 +2557,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should warn if cell exceeds more than one page height' do
       (expect do
-        pdf = to_pdf <<~'EOS', analyze: true
+        pdf = to_pdf <<~'END', analyze: true
         |===
         a|
         page one
@@ -2570,7 +2570,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
         page three
         |===
-        EOS
+        END
 
         (expect pdf.pages).to have_size 1
         (expect pdf.find_unique_text 'page two').to be_nil
@@ -2579,7 +2579,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should preserve left margin on page that follows page containing a table with an AsciiDoc table cell' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       == Section Title
 
       image::tall.svg[pdfwidth=38mm]
@@ -2605,7 +2605,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       .list title
       * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.
-      EOS
+      END
 
       first_page_text = pdf.text.select {|it| it[:page_number] == 1 }
       second_page_text = pdf.text.select {|it| it[:page_number] == 2 }
@@ -2619,7 +2619,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     it 'should account for top and bottom padding when computing natural height of table cell' do
       pdf_theme = { page_margin: 36, page_size: 'Letter', table_cell_padding: 50, block_margin_bottom: 10 }
       with_content_spacer 10, 575 do |spacer_path|
-        input = <<~EOS
+        input = <<~END
         |===
         a|
         before image
@@ -2628,7 +2628,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
         after image
         |===
-        EOS
+        END
 
         (expect do
           pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -2646,7 +2646,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
   context 'Caption' do
     it 'should add title as caption above table by default' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       .Table description
       |===
       | Col A | Col B
@@ -2657,7 +2657,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | A2
       | B2
       |===
-      EOS
+      END
 
       caption_text = pdf.text[0]
       (expect caption_text[:string]).to eql 'Table 1. Table description'
@@ -2666,7 +2666,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should add title as caption below table if table_caption_end key in theme is bottom' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { table_caption_end: 'bottom' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { table_caption_end: 'bottom' }, analyze: true
       .Table description
       |===
       | Col A | Col B
@@ -2677,7 +2677,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | A2
       | B2
       |===
-      EOS
+      END
 
       caption_text = pdf.text[-1]
       (expect caption_text[:string]).to eql 'Table 1. Table description'
@@ -2685,7 +2685,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should restrict caption to width of table by default', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'table-caption-width.pdf', pdf_theme: { caption_align: 'center' }
+      to_file = to_pdf_file <<~'END', 'table-caption-width.pdf', pdf_theme: { caption_align: 'center' }
       .A rather long description for this table
       [%header%autowidth]
       |===
@@ -2721,13 +2721,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | E2
       | F2
       |===
-      EOS
+      END
 
       (expect to_file).to visually_match 'table-caption-width.pdf'
     end
 
     it 'should not restrict caption to width of table if table_caption_max_width key in theme is none' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { caption_align: 'center', table_caption_max_width: 'none' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { caption_align: 'center', table_caption_max_width: 'none' }, analyze: true
       :table-caption!:
 
       .A rather long description for this table
@@ -2765,7 +2765,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | E2
       | F2
       |===
-      EOS
+      END
 
       caption_texts = pdf.find_text 'A rather long description for this table'
       (expect caption_texts).to have_size 3
@@ -2773,7 +2773,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should set caption to percentage of table width as specified by argument to fit-content function' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { table_caption_max_width: 'fit-content(50%)' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { table_caption_max_width: 'fit-content(50%)' }, analyze: true
       :!table-caption:
 
       .A rather long description for this table
@@ -2781,14 +2781,14 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       | Col A | Col B | Col C | Col D
       |===
-      EOS
+      END
 
-      expected_lines = <<~'EOS'.lines.map(&:chomp)
+      expected_lines = <<~'END'.lines.map(&:chomp)
       A rather long
       description for
       this table
       Col A Col B Col C Col D
-      EOS
+      END
 
       (expect pdf.lines).to eql expected_lines
 
@@ -2804,7 +2804,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_caption_text_align: 'left',
         table_caption_max_width: '15%',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       :table-caption!:
 
       .A rather long description for this table
@@ -2812,7 +2812,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       | Col A | Col B
       |===
-      EOS
+      END
 
       caption_texts = pdf.find_text font_name: 'NotoSerif-Italic'
       (expect caption_texts).to have_size 3
@@ -2822,14 +2822,14 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     it 'should allow theme to constrain caption to fixed width' do
       [144, '144'].each do |it|
         pdf_theme = { table_caption_max_width: it }
-        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
         :table-caption!:
 
         .A rather long description for this table
         |===
         | Col A | Col B
         |===
-        EOS
+        END
 
         caption_lines = pdf.lines pdf.find_text font_name: 'NotoSerif-Italic'
         (expect caption_lines).to eql ['A rather long description for', 'this table']
@@ -2837,14 +2837,14 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should allow theme to set caption alignment to inherit from table' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { table_caption_align: 'inherit' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { table_caption_align: 'inherit' }, analyze: true
       .Right-aligned caption
       [width=25%,align=right]
       |===
       |1 |2
       |3 |4
       |===
-      EOS
+      END
 
       first_cell_text = (pdf.find_text '1')[0]
       caption_text = (pdf.find_text %r/^Table 1\./)[0]
@@ -2857,14 +2857,14 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_caption_text_align: 'left',
         table_caption_max_width: 'fit-content(50%)',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       .Right-aligned caption
       [width=25%,align=right]
       |===
       |1 |2
       |3 |4
       |===
-      EOS
+      END
 
       caption_prefix_text = pdf.find_unique_text 'Table 1.'
       caption_wrap_text = pdf.find_unique_text 'caption'
@@ -2879,14 +2879,14 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         table_caption_text_align: 'inherit',
         table_caption_max_width: 'fit-content(50%)',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       .Right-aligned caption
       [width=25%,align=right]
       |===
       |1 |2
       |3 |4
       |===
-      EOS
+      END
 
       caption_prefix_text = pdf.find_unique_text 'Table 1.'
       caption_wrap_text = pdf.find_unique_text 'caption'
@@ -2898,7 +2898,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
   context 'Table alignment' do
     it 'should allow theme to customize default alignment of table' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { table_align: 'right' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { table_align: 'right' }, analyze: true
       [cols=3*,width=50%]
       |===
       |RIGHT |B1 |C1
@@ -2912,7 +2912,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |A2 |B2 |C2
       |A3 |B3 |C3
       |===
-      EOS
+      END
 
       cell_right = (pdf.find_text 'RIGHT')[0]
       cell_left = (pdf.find_text 'LEFT')[0]
@@ -2921,7 +2921,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should allow position of table to be set using align attribute on table' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [cols=3*,width=50%]
       |===
       |LEFT |B1 |C1
@@ -2935,7 +2935,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |A2 |B2 |C2
       |A3 |B3 |C3
       |===
-      EOS
+      END
 
       cell_right_text = (pdf.find_text 'RIGHT')[0]
       cell_left_text = (pdf.find_text 'LEFT')[0]
@@ -2946,7 +2946,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     it 'should not mangle margin box on subsequent pages if table with alignment crosses page boundary' do
       blank_line = %(\n\n)
 
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       #{(['filler'] * 25).join blank_line}
 
       [%autowidth,align=right]
@@ -2966,7 +2966,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       #{(['filler'] * 22).join blank_line}
 
       #{(['* list item'] * 6).join ?\n}
-      EOS
+      END
 
       page_width = pdf.pages[0][:size][0]
       a1_text = (pdf.find_text 'A1')[0]
@@ -2982,7 +2982,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should set width of aligned table relative to bounds' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [width=25%,align=right]
       |===
       |A | B
@@ -3008,7 +3008,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
       ****
       ====
-      EOS
+      END
 
       page_width = pdf.pages[0][:size][0]
       first_a1_text = (pdf.find_text 'A1')[0]
@@ -3019,7 +3019,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should break line on any CJK character if value of scripts attribute is cjk' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :scripts: cjk
       :pdf-theme: default-with-font-fallbacks
 
@@ -3027,7 +3027,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       | AsciiDoc 是一个人类可读的文件格式，语义上等同于 DocBook 的 XML，但使用纯文本标记了约定。可以使用任何文本编辑器创建文件把 AsciiDoc 和阅读“原样”，或呈现为HTML 或由 DocBook 的工具链支持的任何其他格式，如 PDF，TeX 的，Unix 的手册页，电子书，幻灯片演示等。
       | AsciiDoc は、意味的には DocBook XML のに相当するが、プレーン·テキスト·マークアップの規則を使用して、人間が読めるドキュメントフォーマット、である。 AsciiDoc は文書は、任意のテキストエディタを使用して作成され、「そのまま"または、HTML や DocBook のツールチェーンでサポートされている他のフォーマット、すなわち PDF、TeX の、Unix の man ページ、電子書籍、スライドプレゼンテーションなどにレンダリングすることができます。
       |===
-      EOS
+      END
       lines = pdf.lines
       (expect lines).to have_size 8
       (expect lines[0]).to end_with '任何'
@@ -3039,7 +3039,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
   context 'Cell spanning' do
     it 'should honor colspan on cell in head row' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [cols=2*^]
       |===
       2+|Columns
@@ -3047,7 +3047,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |cell
       |cell
       |===
-      EOS
+      END
 
       page_width = (get_page_size pdf)[0]
       midpoint = page_width * 0.5
@@ -3058,7 +3058,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should honor colspan on cell in body row' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [cols=2*^]
       |===
       |cell
@@ -3066,7 +3066,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       2+|one big cell
       |===
-      EOS
+      END
 
       page_width = (get_page_size pdf)[0]
       midpoint = page_width * 0.5
@@ -3078,13 +3078,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should not allow colspan to cause table to exceed width of bounds' do
       pdf_theme = { page_margin: 36 }
-      input = <<~'EOS'
+      input = <<~'END'
       [cols="1,1,1,2",grid=none,frame=sides]
       |===
       |a 3+|b
       2+|c |d >|z
       |===
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
       lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -3098,13 +3098,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should not allow colspan to cause stretch table with autowidth columns to exceed width of bounds' do
       pdf_theme = { page_margin: 36 }
-      input = <<~'EOS'
+      input = <<~'END'
       [.stretch%autowidth,grid=none,frame=sides]
       |===
       |a 3+|b
       2+|c |dddddddddddddddddddddddddddddddddddddddddddddddddd >|z
       |===
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
       lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -3118,14 +3118,14 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should not allow colspan to cause table to exceed width of bounds when also using rowspan' do
       pdf_theme = { page_margin: 36 }
-      input = <<~'EOS'
+      input = <<~'END'
       [cols="1,1,1,1,1,4",grid=none,frame=sides]
       |===
       .3+|a 5.+|bcd
       .2+|e |f |g |h >|z
       |one |more |time |fin
       |===
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
       lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -3138,7 +3138,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should honor rowspan on cell in body row' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [cols=2*^.^]
       |===
       .2+|one big cell
@@ -3146,7 +3146,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       |cell
       |===
-      EOS
+      END
 
       big_cell_text = (pdf.find_text 'one big cell')[0]
       top_cell_text, bottom_cell_text = pdf.find_text 'cell'
@@ -3158,7 +3158,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should advance table to next page if rowspan in first row does not fit on current page' do
-      input = <<~EOS
+      input = <<~END
       #{(['filler'] * 5).join %(\n\n)}
 
       [cols=2*]
@@ -3169,7 +3169,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       .30+|Group B |Member 1
       #{29.times.map {|idx| '|Member ' + idx.next.to_s }.join ?\n}
       |===
-      EOS
+      END
 
       pdf = to_pdf input, analyze: true
       (expect pdf.pages).to have_size 3
@@ -3181,7 +3181,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
   context 'Arrange block' do
     it 'should advance table to next page to avoid it from breaking if %unbreakable option is set on table' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       image::tall.svg[pdfwidth=75mm]
 
       [%unbreakable]
@@ -3190,7 +3190,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
       |===
-      EOS
+      END
 
       column_a_text = pdf.find_text 'Column A'
       (expect column_a_text).to have_size 1
@@ -3200,7 +3200,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should advance table with ID to next page to avoid it from breaking if %unbreakable option is set on table' do
-      pdf = to_pdf <<~EOS
+      pdf = to_pdf <<~END
       image::tall.svg[pdfwidth=75mm]
 
       [#t1%unbreakable]
@@ -3209,14 +3209,14 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
       |===
-      EOS
+      END
 
       (expect (table_dest = get_dest pdf, 't1')).not_to be_nil
       (expect table_dest[:page_number]).to be 2
     end
 
     it 'should advance table with caption to next page to avoid it from breaking if %unbreakable option is set on table' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       image::tall.svg[pdfwidth=75mm]
 
       .Title
@@ -3226,7 +3226,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
       |===
-      EOS
+      END
 
       title_text = pdf.find_unique_text 'Table 1. Title'
       (expect title_text[:page_number]).to be 2
@@ -3238,7 +3238,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should keep caption with table if %breakable option is set on table' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       image::tall.svg[pdfwidth=80mm]
 
       .Title that goes on #{['and on'] * 50 * ' '}
@@ -3248,7 +3248,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
       |===
-      EOS
+      END
 
       title_text = pdf.find_unique_text %r/^Table 1\. /
       (expect title_text[:page_number]).to be 2
@@ -3258,7 +3258,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should keep ID with table if %breakable option is set on table' do
-      pdf = to_pdf <<~EOS
+      pdf = to_pdf <<~END
       image::tall.svg[pdfwidth=85mm]
 
       [#t1%breakable]
@@ -3267,7 +3267,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
       |===
-      EOS
+      END
 
       table_dest = get_dest pdf, 't1'
       (expect table_dest[:page_number]).to be 2

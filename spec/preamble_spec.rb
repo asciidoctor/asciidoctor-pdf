@@ -5,11 +5,11 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - Preamble' do
   context 'article' do
     it 'should not style first paragraph of preamble as lead in untitled article with no sections' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       first paragraph
 
       second paragraph
-      EOS
+      END
 
       first_paragraph_text = pdf.find_text 'first paragraph'
       (expect first_paragraph_text).to have_size 1
@@ -20,7 +20,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
     end
 
     it 'should not crash if preamble has no blocks' do
-      doc = Asciidoctor.load <<~'EOS', backend: :pdf, standalone: true
+      doc = Asciidoctor.load <<~'END', backend: :pdf, standalone: true
       = Document Title
       :nofooter:
 
@@ -30,7 +30,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       == Section
 
       content
-      EOS
+      END
 
       doc.blocks[0].blocks.clear
       doc.convert.render (pdf_io = StringIO.new)
@@ -40,13 +40,13 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
     end
 
     it 'should not style first paragraph of preamble as lead in article with no sections' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
 
       first paragraph
 
       second paragraph
-      EOS
+      END
 
       first_paragraph_text = pdf.find_text 'first paragraph'
       (expect first_paragraph_text).to have_size 1
@@ -57,7 +57,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
     end
 
     it 'should style first paragraph of preamble as lead' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
 
       preamble content
@@ -67,7 +67,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       == First Section
 
       section content
-      EOS
+      END
 
       preamble_text = pdf.find_text 'preamble content'
       (expect preamble_text).to have_size 1
@@ -81,7 +81,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
     end
 
     it 'should not style first paragraph of preamble as lead if it already has a role' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
 
       [.nolead]
@@ -92,7 +92,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       == First Section
 
       section content
-      EOS
+      END
 
       preamble_text = pdf.find_text 'preamble content'
       (expect preamble_text).to have_size 1
@@ -105,13 +105,13 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
 
   context 'book' do
     it 'should not style first paragraph of preamble in untitled book with no sections' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :doctype: book
 
       first paragraph
 
       second paragraph
-      EOS
+      END
 
       first_paragraph_text = pdf.find_text 'first paragraph'
       (expect first_paragraph_text).to have_size 1
@@ -122,14 +122,14 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
     end
 
     it 'should not style first paragraph of preamble as lead in book with no sections' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
 
       first paragraph
 
       second paragraph
-      EOS
+      END
 
       first_paragraph_text = pdf.find_text 'first paragraph'
       (expect first_paragraph_text).to have_size 1
@@ -140,7 +140,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
     end
 
     it 'should style first paragraph of preamble as lead in book with at least one chapter' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
 
@@ -151,7 +151,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       == First Chapter
 
       chapter content
-      EOS
+      END
 
       preamble_text = pdf.find_text 'preamble content'
       (expect preamble_text).to have_size 1
@@ -165,7 +165,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
     end
 
     it 'should not style paragraph after abstract as lead in book with an abstract' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
 
@@ -179,7 +179,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       == First Chapter
 
       chapter content
-      EOS
+      END
 
       after_abstract_text = pdf.find_text 'This is the paragraph after the abstract.'
       (expect after_abstract_text).to have_size 1
@@ -190,7 +190,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
     end
 
     it 'should ignore abstract with no blocks' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
 
@@ -205,7 +205,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       == Second Chapter
 
       content
-      EOS
+      END
 
       (expect pdf.pages).to have_size 3
       first_chapter_text = pdf.find_unique_text 'First Chapter'
@@ -214,7 +214,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
     end
 
     it 'should promote preamble to preface if preface-title is set' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :preface-title: Preface
@@ -224,7 +224,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       == First Chapter
 
       chapter content
-      EOS
+      END
 
       (expect pdf.find_text 'Preface', page_number: 2, font_size: 22).to have_size 1
       preamble_text = pdf.find_text 'preamble content'
@@ -242,7 +242,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
         role_lead_font_size: 14,
         role_lead_font_color: '000000',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       = Document Title
 
       preamble content
@@ -252,7 +252,7 @@ describe 'Asciidoctor::PDF::Converter - Preamble' do
       == First Section
 
       section content
-      EOS
+      END
 
       preamble_text = pdf.find_text 'preamble content'
       (expect preamble_text).to have_size 1

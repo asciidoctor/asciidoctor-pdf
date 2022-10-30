@@ -16,14 +16,14 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
   end
 
   it 'should draw background across extent of empty block' do
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     before block
 
     ====
     ====
 
     after block
-    EOS
+    END
 
     pages = pdf.pages
     (expect pages).to have_size 1
@@ -37,7 +37,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
   it 'should not draw backgrounds and borders in scratch document' do
     pdf_theme[:sidebar_border_color] = '222222'
     pdf_theme[:sidebar_border_width] = 0.5
-    input = <<~'EOS'
+    input = <<~'END'
     before
 
     [%unbreakable]
@@ -52,7 +52,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
     example
     ====
     --
-    EOS
+    END
     scratch_pdf = nil
     extensions = proc do
       postprocessor do
@@ -71,7 +71,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
   end
 
   it 'should invoke on_page_create if set on scratch document' do
-    input = <<~'EOS'
+    input = <<~'END'
     scratch_background_color:CCCCCC[]
 
     image::tall.svg[pdfwidth=70mm]
@@ -83,7 +83,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
     block
     ====
-    EOS
+    END
     scratch_pdf = nil
     extensions = proc do
       inline_macro :scratch_background_color do
@@ -129,11 +129,11 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         block_lines << 'content'
         block_lines << style
       end
-      input = <<~EOS
+      input = <<~END
       ******
       #{block_lines * ?\n}
       ******
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
       horizontal_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -146,7 +146,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
   it 'should compute extent of block correctly when indent is applied to section body' do
     pdf_theme[:section_indent] = 36
     pdf = with_content_spacer 10, 650 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
       == Section Title
 
       image::#{spacer_path}[]
@@ -158,7 +158,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
       It contains this very long sentence, which causes the block to become split across two pages.
       ****
-      EOS
+      END
     end
 
     pages = pdf.pages
@@ -176,7 +176,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
     # NOTE: only add tests that verify at top ignores unbreakable option; otherwise, put test in breakable at top
     describe 'at top' do
       it 'should keep block on current page if it fits' do
-        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
         [%unbreakable]
         ====
         This block fits in the remaining space on the page.
@@ -185,7 +185,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ====
 
         after block
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 1
@@ -197,14 +197,14 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
       it 'should split block taller than page across pages, starting from page top' do
         block_content = ['block content'] * 35 * %(\n\n)
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         [%unbreakable]
         ====
         #{block_content}
         ====
 
         after block
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 2
@@ -222,7 +222,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         pdf_theme[:example_border_color] = '0000ff'
         pdf_theme[:example_background_color] = 'ffffff'
         block_content = ['nested block content'] * 35 * %(\n\n)
-        input = <<~EOS
+        input = <<~END
         [%unbreakable]
         ====
 
@@ -237,7 +237,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ====
 
         after block
-        EOS
+        END
 
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -266,14 +266,14 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
       it 'should split block taller than several pages across pages, starting from page top' do
         block_content = ['block content'] * 50 * %(\n\n)
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         [%unbreakable]
         ====
         #{block_content}
         ====
 
         after block
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 3
@@ -291,7 +291,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
     describe 'below top' do
       it 'should keep block on current page if it fits' do
-        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
         before block
 
         [%unbreakable]
@@ -300,7 +300,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
         Therefore, it will not be split or moved to the following page.
         ====
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 1
@@ -313,14 +313,14 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       it 'should advance block shorter than page to next page to avoid breaking' do
         before_block_content = ['before block'] * 15 * %(\n\n)
         block_content = ['block content'] * 15 * %(\n\n)
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         #{before_block_content}
 
         [%unbreakable]
         ====
         #{block_content}
         ====
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 2
@@ -334,7 +334,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       it 'should advance block shorter than page and with caption to next page to avoid breaking' do
         before_block_content = ['before block'] * 15 * %(\n\n)
         block_content = ['block content'] * 15 * %(\n\n)
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         #{before_block_content}
 
         .block title
@@ -342,7 +342,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ====
         #{block_content}
         ====
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 2
@@ -359,7 +359,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         before_block_content = ['before block'] * 15 * %(\n\n)
         block_content = ['block content'] * 15 * %(\n\n)
         block_title = ['block title'] * 20 * ' '
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, attributes: { 'example-caption' => nil }, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, attributes: { 'example-caption' => nil }, analyze: true
         #{before_block_content}
 
         .#{block_title}
@@ -367,7 +367,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ====
         #{block_content}
         ====
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 2
@@ -386,7 +386,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       it 'should advance nested unbreakable block shorter than page to next page to avoid breaking' do
         before_block_content = ['before block'] * 20 * %(\n\n)
         nested_block_content = ['nested block content'] * 5 * %(\n\n)
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         #{before_block_content}
 
         ====
@@ -397,7 +397,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         #{nested_block_content}
         ****
         ====
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 2
@@ -416,7 +416,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       it 'should advance block with only nested unbreakable block shorter than page to next page to avoid breaking' do
         before_block_content = ['before block'] * 20 * %(\n\n)
         nested_block_content = ['nested block content'] * 5 * %(\n\n)
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         #{before_block_content}
 
         ====
@@ -425,7 +425,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         #{nested_block_content}
         ****
         ====
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 2
@@ -440,7 +440,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
       it 'should split block taller than page across pages, starting from current position' do
         block_content = ['block content'] * 35 * %(\n\n)
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         before block
 
         [%unbreakable]
@@ -449,7 +449,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ====
 
         after block
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 2
@@ -481,7 +481,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
           end
         end
         pdf = with_content_spacer 10, 650 do |spacer_path|
-          to_pdf <<~EOS, pdf_theme: pdf_theme, extensions: extensions, analyze: true
+          to_pdf <<~END, pdf_theme: pdf_theme, extensions: extensions, analyze: true
           image::#{spacer_path}[]
 
           ****
@@ -491,7 +491,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
           [spy]
           paragraph
           ****
-          EOS
+          END
         end
 
         (expect pdf.pages).to have_size 2
@@ -519,7 +519,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
             end
           end
         end
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, extensions: extensions, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, extensions: extensions, analyze: true
         before block
 
         [%unbreakable]
@@ -533,7 +533,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ====
 
         after block
-        EOS
+        END
 
         (expect pdf.pages).to have_size 2
         # 1st call: to compute extent of sidebar for example block in scratch document
@@ -563,7 +563,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
             end
           end
         end
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, extensions: extensions, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, extensions: extensions, analyze: true
         [%unbreakable]
         ====
         #{block_content}
@@ -575,7 +575,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ====
 
         after block
-        EOS
+        END
 
         (expect pdf.pages).to have_size 2
         # 1st call: to compute extent of sidebar for example block in scratch document
@@ -605,7 +605,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
             end
           end
         end
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, extensions: extensions, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, extensions: extensions, analyze: true
         before block
 
         [%unbreakable]
@@ -624,7 +624,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ====
 
         after block
-        EOS
+        END
 
         (expect pdf.pages).to have_size 2
         (expect calls).to have_size 7
@@ -650,7 +650,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
             end
           end
         end
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, extensions: extensions, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, extensions: extensions, analyze: true
         before block
 
         [%unbreakable]
@@ -666,7 +666,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ====
 
         after block
-        EOS
+        END
 
         (expect pdf.pages).to have_size 2
         (expect calls).to have_size 7
@@ -677,7 +677,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       it 'should advance block taller than page to next page if only caption fits on current page' do
         before_block_content = ['before block'] * 22 * %(\n\n)
         block_content = ['block content'] * 25 * %(\n\n)
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         ****
         filler
         ****
@@ -689,7 +689,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ====
         #{block_content}
         ====
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 3
@@ -707,7 +707,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       it 'should advance block taller than page to next page if no content fits on current page' do
         before_block_content = ['before block'] * 22 * %(\n\n)
         block_content = ['block content'] * 25 * %(\n\n)
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         ====
         filler
         ====
@@ -719,7 +719,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ****
         #{block_content}
         ****
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 3
@@ -756,7 +756,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         pdf_theme[:example_border_width] = 0.5
         pdf_theme[:example_border_color] = '0000ff'
         pdf_theme[:example_background_color] = 'ffffff'
-        input = <<~EOS
+        input = <<~END
         before block
 
         [%unbreakable]
@@ -774,7 +774,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ========
         ======
         ====
-        EOS
+        END
         pdf = to_pdf input, pdf_theme: pdf_theme, extensions: extensions, analyze: true
         p3_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines.select {|it| it[:page_number] == 3 }
         (expect pdf.pages).to have_size 3
@@ -794,7 +794,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
   describe 'breakable block' do
     describe 'at top' do
       it 'should keep block on current page if it fits' do
-        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
         ====
         This block fits in the remaining space on the page.
 
@@ -802,7 +802,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ====
 
         after block
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 1
@@ -814,13 +814,13 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
       it 'should split block taller than page across pages, starting from page top' do
         block_content = ['block content'] * 35 * %(\n\n)
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         ====
         #{block_content}
         ====
 
         after block
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 2
@@ -838,7 +838,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         pdf_theme[:example_border_color] = '0000ff'
         pdf_theme[:example_background_color] = 'ffffff'
         block_content = ['nested block content'] * 35 * %(\n\n)
-        input = <<~EOS
+        input = <<~END
         ====
 
         block content
@@ -851,7 +851,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ====
 
         after block
-        EOS
+        END
 
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -880,13 +880,13 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
       it 'should split block taller than several pages, starting from page top' do
         block_content = ['block content'] * 50 * %(\n\n)
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         ====
         #{block_content}
         ====
 
         after block
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 3
@@ -903,13 +903,13 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
       it 'should split block across pages that contains image that does not fit in remaining space on current page' do
         block_content = ['block content'] * 10 * %(\n\n)
-        input = <<~EOS
+        input = <<~END
         ====
         #{block_content}
 
         image::tux.png[pdfwidth=100%]
         ====
-        EOS
+        END
 
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
@@ -929,11 +929,11 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
       # NOTE: this scenario renders an example block that starts with an empty page
       it 'should split block across pages that contains image taller than page at start of block', negative: true do
-        input = <<~'EOS'
+        input = <<~'END'
         ====
         image::tall-spacer.png[]
         ====
-        EOS
+        END
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
         pages = pdf.pages
@@ -952,13 +952,13 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       end
 
       it 'should split block across pages that contains image taller than page that follows text' do
-        input = <<~'EOS'
+        input = <<~'END'
         ====
         before image
 
         image::tall-spacer.png[]
         ====
-        EOS
+        END
 
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
@@ -982,7 +982,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
           code_border_radius: 0,
           code_background_color: 'transparent'
         block_content = ['block content with very long lines that do not wrap because the page layout is rotated to landscape'] * 20 * %(\n\n)
-        input = <<~EOS
+        input = <<~END
         first page
 
         [page-layout=landscape]
@@ -991,7 +991,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ....
         #{block_content}
         ....
-        EOS
+        END
 
         block_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines.select {|it| it[:color] == '0000FF' }
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -1014,7 +1014,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
           code_background_color: 'transparent',
           page_margin_rotated: 10
         block_content = ['block content with very long lines that do not wrap because the page layout is rotated to landscape'] * 20 * %(\n\n)
-        input = <<~EOS
+        input = <<~END
         first page
 
         [page-layout=landscape]
@@ -1023,7 +1023,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ....
         #{block_content}
         ....
-        EOS
+        END
 
         block_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines.select {|it| it[:color] == '0000FF' }
         top_line = block_lines[0]
@@ -1045,7 +1045,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
     describe 'below top' do
       it 'should keep block on current page if it fits' do
-        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
         before block
 
         ====
@@ -1053,7 +1053,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
         Therefore, it will not be split or moved to the following page.
         ====
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 1
@@ -1066,14 +1066,14 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       it 'should advance block shorter than page to next page if only caption fits on current page' do
         before_block_content = ['before block'] * 24 * %(\n\n)
         block_content = ['block content'] * 15 * %(\n\n)
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         #{before_block_content}
 
         .block title
         ====
         #{block_content}
         ====
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 2
@@ -1091,7 +1091,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         block_content = ['block content'] * 15 * %(\n\n)
         block_title = ['block title'] * 15 * ' '
         pdf = with_content_spacer 10, 635 do |spacer_path|
-          input = <<~EOS
+          input = <<~END
           image::#{spacer_path}[]
 
           before block
@@ -1100,7 +1100,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
           ====
           #{block_content}
           ====
-          EOS
+          END
           to_pdf input, pdf_theme: pdf_theme, analyze: true
         end
 
@@ -1118,7 +1118,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       it 'should advance block shorter than page to next page if caption fits but advances page' do
         block_content = ['block content'] * 15 * %(\n\n)
         pdf = with_content_spacer 10, 635 do |spacer_path|
-          input = <<~EOS
+          input = <<~END
           image::#{spacer_path}[]
 
           before block
@@ -1127,7 +1127,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
           ====
           #{block_content}
           ====
-          EOS
+          END
           to_pdf input, pdf_theme: pdf_theme, analyze: true
         end
 
@@ -1145,14 +1145,14 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       it 'should advance block shorter than page to next page if no content fits on current page' do
         before_block_content = ['before block'] * 24 * %(\n\n)
         block_content = ['block content'] * 15 * %(\n\n)
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         #{before_block_content}
 
         .block title
         ****
         #{block_content}
         ****
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 2
@@ -1169,14 +1169,14 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       it 'should advance block taller than page to next page if only caption fits on current page' do
         before_block_content = ['before block'] * 24 * %(\n\n)
         block_content = ['block content'] * 30 * %(\n\n)
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         #{before_block_content}
 
         .block title
         ====
         #{block_content}
         ====
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 3
@@ -1194,14 +1194,14 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       it 'should advance block taller than page to next page if no content fits on current page' do
         before_block_content = ['before block'] * 24 * %(\n\n)
         block_content = ['block content'] * 30 * %(\n\n)
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         #{before_block_content}
 
         .block title
         ****
         #{block_content}
         ****
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 3
@@ -1219,13 +1219,13 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       it 'should split block shorter than page across pages, starting from current position if it does not fit on current page' do
         before_block_content = ['before block'] * 15 * %(\n\n)
         block_content = ['block content'] * 15 * %(\n\n)
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         #{before_block_content}
 
         ====
         #{block_content}
         ====
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 2
@@ -1241,13 +1241,13 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       it 'should split block taller than page across pages, starting from current position' do
         before_block_content = ['before block'] * 15 * %(\n\n)
         block_content = ['block content'] * 35 * %(\n\n)
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
         #{before_block_content}
 
         ====
         #{block_content}
         ====
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 3
@@ -1265,7 +1265,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       it 'should split block across pages that contains image that does not fit in remaining space on current page' do
         before_block_content = ['before block'] * 5 * %(\n\n)
         block_content = ['block content'] * 5 * %(\n\n)
-        input = <<~EOS
+        input = <<~END
         #{before_block_content}
 
         ====
@@ -1273,7 +1273,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
         image::tux.png[pdfwidth=100%]
         ====
-        EOS
+        END
 
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
@@ -1294,7 +1294,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
       it 'should advance block that starts with image that does not fit in remaining space on current page to next page' do
         before_block_content = ['before block'] * 10 * %(\n\n)
-        input = <<~EOS
+        input = <<~END
         #{before_block_content}
 
         ====
@@ -1302,7 +1302,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
         after image
         ====
-        EOS
+        END
 
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
@@ -1321,7 +1321,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
       it 'should advance block with caption that starts with image that does not fit in remaining space on current page to next page' do
         before_block_content = ['before block'] * 10 * %(\n\n)
-        input = <<~EOS
+        input = <<~END
         #{before_block_content}
 
         .block title
@@ -1330,7 +1330,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
         after image
         ====
-        EOS
+        END
 
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
@@ -1350,13 +1350,13 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
       # NOTE: this scenario renders an example block that starts with an empty page
       it 'should split block across pages that contains image taller than page at start of block', negative: true do
-        input = <<~'EOS'
+        input = <<~'END'
         before block
 
         ====
         image::tall-spacer.png[]
         ====
-        EOS
+        END
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
         pages = pdf.pages
@@ -1381,7 +1381,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         pdf_theme[:sidebar_border_color] = '0000ff'
         pdf_theme[:sidebar_border_width] = 0.5
         pdf_theme[:heading_margin_top] = 50
-        input = <<~'EOS'
+        input = <<~'END'
         before
 
         ****
@@ -1390,7 +1390,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
         content
         ****
-        EOS
+        END
 
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -1412,7 +1412,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
             end
           end
         end
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, extensions: extensions, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, extensions: extensions, analyze: true
         image::tall.svg[pdfwidth=78mm]
 
         .#{block_title}
@@ -1423,7 +1423,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
         example
         ====
-        EOS
+        END
 
         pages = pdf.pages
         (expect pages).to have_size 2
@@ -1440,7 +1440,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
           code_background_color: 'transparent'
         before_block_content = ['before block'] * 15 * %(\n\n)
         block_content = ['block content with very long lines that do not wrap because the page layout is rotated to landscape'] * 15 * %(\n\n)
-        input = <<~EOS
+        input = <<~END
         first page
 
         [page-layout=landscape]
@@ -1451,7 +1451,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ....
         #{block_content}
         ....
-        EOS
+        END
 
         block_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines.select {|it| it[:color] == '0000FF' }
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -1473,7 +1473,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
           code_background_color: 'transparent'
         before_block_content = ['before block'] * 15 * %(\n\n)
         block_content = ['block content with very long lines that wrap because the page layout is not rotated to landscape'] * 15 * %(\n\n)
-        input = <<~EOS
+        input = <<~END
         first page
 
         [page-layout=landscape]
@@ -1489,7 +1489,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ....
         #{block_content}
         ....
-        EOS
+        END
 
         block_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines.select {|it| it[:color] == '0000FF' }
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -1510,7 +1510,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
     it 'should arrange block after another block has been arranged' do
       before_block_content = ['before block'] * 35 * %(\n\n)
       block_content = ['block content'] * 15 * %(\n\n)
-      pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
       [%unbreakable]
       ====
       #{before_block_content}
@@ -1522,7 +1522,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       ====
       #{block_content}
       ====
-      EOS
+      END
 
       pages = pdf.pages
       (expect pages).to have_size 3
@@ -1547,7 +1547,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         pdf_theme[:example_background_color] = 'ffffff'
         pdf_theme[:table_cell_padding] = 5
         block_content = ['block content'] * 3 * %(\n\n)
-        input = <<~EOS
+        input = <<~END
         |===
         a|
         before block
@@ -1558,7 +1558,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
         after block
         |===
-        EOS
+        END
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
         (expect pdf.pages).to have_size 1
@@ -1577,7 +1577,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         pdf_theme[:example_background_color] = 'ffffff'
         pdf_theme[:table_cell_padding] = [30, 20]
         block_content = ['block content'] * 3 * %(\n\n)
-        input = <<~EOS
+        input = <<~END
         |===
         a|
         before block
@@ -1590,7 +1590,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
         after block
         |===
-        EOS
+        END
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
         (expect pdf.pages).to have_size 1
@@ -1612,7 +1612,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         pdf_theme[:page_margin] = 36
         pdf_theme[:table_cell_padding] = 5
         block_content = ['block content'] * 25 * %(\n\n)
-        input = <<~EOS
+        input = <<~END
         |===
         a|
         table cell
@@ -1623,7 +1623,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
         table cell
         |===
-        EOS
+        END
         (expect do
           pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
           lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -1659,7 +1659,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
             end
           end
         end
-        input = <<~EOS
+        input = <<~END
         before table
 
         |===
@@ -1669,7 +1669,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         [spy]
         beyond of first page
         |===
-        EOS
+        END
         (expect do
           pdf = to_pdf input, pdf_theme: pdf_theme, extensions: extensions, analyze: true
           (expect pdf.pages).to have_size 2
@@ -1701,7 +1701,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
             end
           end
         end
-        input = <<~EOS
+        input = <<~END
         ====
         before table
         |===
@@ -1712,7 +1712,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         beyond of first page
         |===
         ====
-        EOS
+        END
         (expect do
           pdf = to_pdf input, pdf_theme: pdf_theme, extensions: extensions, analyze: true
           lines = (to_pdf input, pdf_theme: pdf_theme, extensions: extensions, analyze: :line).lines
@@ -1741,7 +1741,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         pdf_theme[:block_margin_bottom] = 10
         pdf_theme[:table_font_size] = 5.25
         block_content = ['block content'] * 10 * %(\n\n)
-        input = <<~EOS
+        input = <<~END
         |===
         a|
         ====
@@ -1750,7 +1750,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
 
         table cell
         |===
-        EOS
+        END
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
         border_bottom_y = lines
@@ -1775,7 +1775,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         pdf_theme[:table_cell_padding] = 5
         before_table_content = ['before table'] * 15 * %(\n\n)
         block_content = ['block content'] * 15 * %(\n\n)
-        input = <<~EOS
+        input = <<~END
         #{before_table_content}
 
         |===
@@ -1788,7 +1788,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         |===
 
         after table
-        EOS
+        END
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
         (expect pdf.pages).to have_size 2
@@ -1824,7 +1824,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         pdf_theme[:table_cell_padding] = 5
         before_table_content = ['before table'] * 15 * %(\n\n)
         block_content = ['block content'] * 15 * %(\n\n)
-        input = <<~EOS
+        input = <<~END
         #{before_table_content}
 
         |===
@@ -1840,7 +1840,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         |===
 
         after table
-        EOS
+        END
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
         (expect pdf.pages).to have_size 2
@@ -1877,7 +1877,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         pdf_theme[:table_cell_padding] = 5
         before_table_content = ['before table'] * 15 * %(\n\n)
         block_content = ['block content'] * 25 * %(\n\n)
-        input = <<~EOS
+        input = <<~END
         #{before_table_content}
 
         |===
@@ -1890,7 +1890,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         |===
 
         after table
-        EOS
+        END
         (expect do
           pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
           lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -1929,14 +1929,14 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
     it 'should keep anchor with unbreakable block that is advanced to new page' do
       before_block_content = ['before block'] * 15 * %(\n\n)
       block_content = ['block content'] * 15 * %(\n\n)
-      pdf = to_pdf <<~EOS, pdf_theme: pdf_theme
+      pdf = to_pdf <<~END, pdf_theme: pdf_theme
       #{before_block_content}
 
       [#block-id%unbreakable]
       ====
       #{block_content}
       ====
-      EOS
+      END
 
       pages = pdf.pages
       (expect (pages[0].text.split %r/\n+/).uniq.compact).to eql ['before block']
@@ -1950,7 +1950,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
     it 'should keep anchor with breakable block that is advanced to next page' do
       before_block_content = ['before block'] * 24 * %(\n\n)
       block_content = ['block content'] * 15 * %(\n\n)
-      pdf = to_pdf <<~EOS, pdf_theme: pdf_theme
+      pdf = to_pdf <<~END, pdf_theme: pdf_theme
       #{before_block_content}
 
       .block title
@@ -1958,7 +1958,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       ====
       #{block_content}
       ====
-      EOS
+      END
 
       pages = pdf.pages
       (expect pages).to have_size 2
@@ -1981,12 +1981,12 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
           end
         end
       end
-      input = <<~'EOS'
+      input = <<~'END'
       ....
       $ gem install asciidoctor-pdf asciidoctor-mathematical
       $ asciidoctor-pdf -r asciidoctor-mathematical -a mathematical-format=svg sample.adoc
       ....
-      EOS
+      END
       lines = (to_pdf input, backend: backend, pdf_theme: pdf_theme, analyze: :line).lines
       pdf = to_pdf input, backend: backend, pdf_theme: pdf_theme, analyze: true
       last_line_y = lines.select {|it| it[:from][:y] == it[:to][:y] }.map {|it| it[:from][:y] }.min
@@ -2003,14 +2003,14 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         code_background_color: 'EFEFEF'
 
       pdf = with_content_spacer 10, 675 do |spacer_path|
-        input = <<~EOS
+        input = <<~END
         image::#{spacer_path}[]
 
         ....
         $ gem install asciidoctor-pdf asciidoctor-mathematical
         $ asciidoctor-pdf -r asciidoctor-mathematical -a mathematical-format=svg sample.adoc
         ....
-        EOS
+        END
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         pages = pdf.pages
         (expect pages).to have_size 1
@@ -2023,7 +2023,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       pdf_theme.update page_columns: 2, page_column_gap: 12, admonition_column_rule_color: '0000FF'
 
       pdf = with_content_spacer 10, 400 do |spacer_path|
-        input = <<~EOS
+        input = <<~END
         = Document Title
         :toc:
 
@@ -2035,7 +2035,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ====
         #{lorem_ipsum '4-sentences-2-paragraphs'}
         ====
-        EOS
+        END
 
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         pages = pdf.pages

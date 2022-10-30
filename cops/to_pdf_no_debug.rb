@@ -4,9 +4,9 @@ module RuboCop
   module Cop
     module RSpec
       class ToPDFNoDebug < Base
-        def_node_matcher :to_pdf_with_debug?, <<~'EOS'
+        def_node_matcher :to_pdf_with_debug?, <<~'END'
           (send nil? :to_pdf <(dstr ...) (hash ... (pair (sym :debug) (true)))>)
-        EOS
+        END
 
         MSG = 'debug flag not permitted'
         RESTRICT_ON_SEND = [:to_pdf]

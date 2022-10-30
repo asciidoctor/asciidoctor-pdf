@@ -280,13 +280,13 @@ module RSpec::ExampleHelpers
   end
 
   def with_content_spacer width, height, units = 'pt'
-    contents = <<~EOS
+    contents = <<~END
     <svg width="#{width}#{units}" height="#{height}#{units}" viewBox="0 0 #{width} #{height}" version="1.0" xmlns="http://www.w3.org/2000/svg">
     <g>
     <rect style="fill:#999999" width="#{width}" height="#{height}" x="0" y="0"></rect>
     </g>
     </svg>
-    EOS
+    END
     with_tmp_file '.svg', contents: contents do |spacer_file|
       yield spacer_file.path
     end
@@ -354,12 +354,12 @@ module RSpec::ExampleHelpers
   def with_svg_with_remote_image
     refname = 'main' if ((refname = %(v#{Asciidoctor::PDF::VERSION})).count '[a-z]') > 0
     image_url = "https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor-pdf@#{refname}/spec/fixtures/logo.png"
-    svg_data = <<~EOS
+    svg_data = <<~END
     <svg width="1cm" height="1cm" version="1.1" viewBox="0 0 5 5" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <image x="0" y="0" width="5" height="5" xlink:href="#{image_url}"/>
     <rect x="0.25" y="0.25" width="4.5" height="4.5" fill-opacity="0" stroke="#000" stroke-width="0.5"/>
     </svg>
-    EOS
+    END
     with_tmp_file '.svg', contents: svg_data do |tmp_file|
       yield tmp_file.path, image_url
     end

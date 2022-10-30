@@ -29,7 +29,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should store flattened keys in OpenStruct' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       page:
         size: A4
       base:
@@ -39,7 +39,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       admonition:
         label:
           font_style: bold
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme).to be_an OpenStruct
       (expect theme).to respond_to :page_size
@@ -49,7 +49,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should not flatten admonition icon keys' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       admonition:
         icon:
           tip:
@@ -60,7 +60,7 @@ describe Asciidoctor::PDF::ThemeLoader do
             name: far-sticky-note
             stroke_color: 0000ff
             size: 24
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme).to be_an OpenStruct
       (expect theme.admonition_icon_tip).to be_a Hash
@@ -70,18 +70,18 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should ignore admonition icon type def if value is falsy' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       admonition:
         icon:
           advice: ~
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme).to be_an OpenStruct
       (expect theme.admonition_icon_advice).to be_nil
     end
 
     it 'should replace hyphens in key names with underscores' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       page-size: A4
       base:
         font-family: Times-Roman
@@ -91,7 +91,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         icon:
           tip:
             stroke-color: FFFF00
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme).to be_an OpenStruct
       (expect theme).to respond_to :page_size
@@ -103,14 +103,14 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should not replace hyphens with underscores in role names' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       role:
         flaming-red:
           font-color: ff0000
         so-very-blue:
           font:
             color: 0000ff
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme).to be_an OpenStruct
       (expect theme).to respond_to 'role_flaming-red_font_color'
@@ -120,11 +120,11 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should allow role to contain uppercase characters' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       role:
         BOLD:
           font-style: bold
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme).to be_an OpenStruct
       (expect theme).to respond_to 'role_BOLD_font_style'
@@ -132,7 +132,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should coerce value of keys that end in content to a string' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       menu:
         caret_content:
         - '>'
@@ -146,7 +146,7 @@ describe Asciidoctor::PDF::ThemeLoader do
             content: true
           right:
             content: 2 * 2
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme).to be_an OpenStruct
       (expect theme.menu_caret_content).to eql '[">"]'
@@ -157,7 +157,7 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should remap align keys to text-align keys' do
       (expect do
-        theme_data = YAML.safe_load <<~'EOS'
+        theme_data = YAML.safe_load <<~'END'
         base:
           align: center
         heading:
@@ -170,7 +170,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         caption:
           align: $base-align
           text-align: $heading-align
-        EOS
+        END
         theme = subject.new.load theme_data
         (expect theme).to be_an OpenStruct
         (expect theme.base_align).to be_nil
@@ -188,14 +188,14 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should remap table-caption-side key to table-caption-end' do
       (expect do
-        theme_data = YAML.safe_load <<~'EOS'
+        theme_data = YAML.safe_load <<~'END'
         table:
           caption:
             side: bottom
         image:
           caption:
             end: $table-caption-side
-        EOS
+        END
         theme = subject.new.load theme_data
         (expect theme).to be_an OpenStruct
         (expect theme.table_caption_side).to be_nil
@@ -206,10 +206,10 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should remap kbd-separator key to kbd-separator-content key and warn' do
       (expect do
-        theme_data = YAML.safe_load <<~'EOS'
+        theme_data = YAML.safe_load <<~'END'
         kbd:
           separator: '-'
-        EOS
+        END
         theme = subject.new.load theme_data
         (expect theme).to be_an OpenStruct
         (expect theme.kbd_separator).to be_nil
@@ -219,13 +219,13 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should remap outline-list category to list category and warn' do
       (expect do
-        theme_data = YAML.safe_load <<~'EOS'
+        theme_data = YAML.safe_load <<~'END'
         outline-list:
           item-spacing: 6
         footnotes:
           margin-top: $outline-list-item-spacing
           item-spacing: $outline_list_item_spacing / 2
-        EOS
+        END
         theme = subject.new.load theme_data
         (expect theme).to be_an OpenStruct
         (expect theme.outline_list_item_spacing).to be_nil
@@ -237,13 +237,13 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should remap blockquote category to quote category and warn' do
       (expect do
-        theme_data = YAML.safe_load <<~'EOS'
+        theme_data = YAML.safe_load <<~'END'
         blockquote:
           font-color: 4A4A4A
           border-color: $blockquote-font-color
         verse:
           font-color: $blockquote-font-color
-        EOS
+        END
         theme = subject.new.load theme_data
         (expect theme).to be_an OpenStruct
         (expect theme.blockquote_font_color).to be_nil
@@ -255,12 +255,12 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should remap key category to kbd category and warn' do
       (expect do
-        theme_data = YAML.safe_load <<~'EOS'
+        theme_data = YAML.safe_load <<~'END'
         key:
           border-color: CCCCCC
           background-color: EFEFEF
           font-color: $key-border-color
-        EOS
+        END
         theme = subject.new.load theme_data
         (expect theme).to be_an OpenStruct
         (expect theme.key_border_color).to be_nil
@@ -271,12 +271,12 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should remap literal category to codespan category and warn' do
       (expect do
-        theme_data = YAML.safe_load <<~'EOS'
+        theme_data = YAML.safe_load <<~'END'
         literal:
           font-family: M+ 1mn
         verse:
           font-family: $literal-font-family
-        EOS
+        END
         theme = subject.new.load theme_data
         (expect theme).to be_an OpenStruct
         (expect theme.literal_font_family).to be_nil
@@ -286,7 +286,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should neutralize bottom padding hack on example, quote, sidebar, and verse categories' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       example:
         padding: [12, 12, 0, 12]
       quote:
@@ -295,7 +295,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         padding: [12, 12, 0, 12]
       verse:
         padding: [6, 12, -6, 14]
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme).to be_an OpenStruct
       (expect theme.example_padding).to eql [12, 12, 12, 12]
@@ -305,17 +305,17 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should not neutralize bottom padding hack if top padding is negative' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       quote:
         padding: [-3, 12, -3, 14]
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme).to be_an OpenStruct
       (expect theme.quote_padding).to eql [-3, 12, -3, 14]
     end
 
     it 'should expand variables in value of keys that end in _content' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       page:
         size: A4
       base:
@@ -326,7 +326,7 @@ describe Asciidoctor::PDF::ThemeLoader do
             content: 2 * $base_font_size
           right:
             content: $page_size
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme).to be_an OpenStruct
       (expect theme.footer_verso_left_content).to eql '2 * 12'
@@ -334,28 +334,28 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should ignore font key if value is not a Hash' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       font: ~
       base_font_color: 333333
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.font_catalog).to be_nil
       (expect theme.base_font_color).to eql '333333'
     end
 
     it 'should ignore font_catalog key if value is not a Hash' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       font:
         catalog: ~
       base_font_color: 333333
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.font_catalog).to be_nil
       (expect theme.base_font_color).to eql '333333'
     end
 
     it 'should ignore unrecognized font subkeys' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       font:
         catalog:
           Yolo:
@@ -366,7 +366,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         yin: yang
       base:
         font_family: Yolo
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.foo).to be_nil
       (expect theme.yin).to be_nil
@@ -375,13 +375,13 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should ignore font if value is falsy' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       font:
         catalog:
           Fancy:
             normal: /path/to/fancy.ttf
           Yolo: ~
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.font_catalog).to have_size 1
       (expect theme.font_catalog).to have_key 'Fancy'
@@ -390,11 +390,11 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should allow font to be declared once for all styles using string value' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       font:
         catalog:
           Serif: /path/to/serif-font.ttf
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.font_catalog).to be_a Hash
       (expect theme.font_catalog['Serif']).to be_a Hash
@@ -406,12 +406,12 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should allow font to be declared once for all styles using * style' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       font:
         catalog:
           Serif:
             '*': /path/to/serif-font.ttf
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.font_catalog).to be_a Hash
       (expect theme.font_catalog['Serif']).to be_a Hash
@@ -423,13 +423,13 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should allow single style to be customized for font defined using * key' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       font:
         catalog:
           Serif:
             '*': /path/to/serif-font.ttf
             bold: /path/to/bold-serif-font.ttf
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.font_catalog).to be_a Hash
       (expect theme.font_catalog['Serif']).to be_a Hash
@@ -441,12 +441,12 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should allow regular to be used as alias for normal style when defining fonts' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       font:
         catalog:
           Serif:
             regular: /path/to/serif-regular.ttf
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.font_catalog).to be_a Hash
       (expect theme.font_catalog['Serif']).to be_a Hash
@@ -454,7 +454,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should allow font catalog and font fallbacks to be defined as flat keys' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       font_catalog:
         Serif:
           normal: /path/to/serif-font.ttf
@@ -462,7 +462,7 @@ describe Asciidoctor::PDF::ThemeLoader do
           normal: /path/to/fallback-font.ttf
       font_fallbacks:
       - Fallback
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.font_catalog).to be_a Hash
       (expect theme.font_catalog['Serif']).to be_a Hash
@@ -472,12 +472,12 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should set font fallbacks to empty array if value is falsy' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       font_catalog:
         Serif:
           normal: /path/to/serif-font.ttf
       font_fallbacks: ~
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.font_catalog).to be_a Hash
       (expect theme.font_catalog['Serif']).to be_a Hash
@@ -509,21 +509,21 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should load and extend themes specified by extends array' do
-      with_pdf_theme_file <<~'EOS' do |custom_theme_path|
+      with_pdf_theme_file <<~'END' do |custom_theme_path|
       base:
         font-family: Times-Roman
-      EOS
-        with_pdf_theme_file <<~'EOS' do |red_theme_path|
+      END
+        with_pdf_theme_file <<~'END' do |red_theme_path|
         base:
           font-color: ff0000
-        EOS
-          with_pdf_theme_file <<~EOS do |theme_path|
+        END
+          with_pdf_theme_file <<~END do |theme_path|
           extends:
           - #{File.basename custom_theme_path}
           - ./#{File.basename red_theme_path}
           base:
             text-align: justify
-          EOS
+          END
             theme = subject.load_file theme_path, nil, (File.dirname theme_path)
             (expect theme.base_text_align).to eql 'justify'
             (expect theme.base_font_family).to eql 'Times-Roman'
@@ -534,12 +534,12 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should be able to extend them from absolute path' do
-      with_pdf_theme_file <<~EOS do |theme_path|
+      with_pdf_theme_file <<~END do |theme_path|
       extends:
       - #{fixture_file 'custom-theme.yml'}
       base:
         text-align: justify
-      EOS
+      END
         theme = subject.load_file theme_path
         (expect theme.base_text_align).to eql 'justify'
         (expect theme.base_font_family).to eql 'Times-Roman'
@@ -547,17 +547,17 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should extend built-in default theme if value of extends entry is default' do
-      with_pdf_theme_file <<~'EOS' do |red_theme_path|
+      with_pdf_theme_file <<~'END' do |red_theme_path|
       base:
         font-color: ff0000
-      EOS
-        with_pdf_theme_file <<~EOS do |theme_path|
+      END
+        with_pdf_theme_file <<~END do |theme_path|
         extends:
         - default
         - #{File.basename red_theme_path}
         base:
           font-color: 0000ff
-        EOS
+        END
           theme = subject.load_file theme_path, nil, (File.dirname theme_path)
           (expect theme.base_font_family).to eql 'Noto Serif'
           (expect theme.base_font_color).to eql '0000FF'
@@ -566,15 +566,15 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should extend built-in base theme last if listed last in extends entry' do
-      with_pdf_theme_file <<~'EOS' do |heading_font_color_theme_path|
+      with_pdf_theme_file <<~'END' do |heading_font_color_theme_path|
       heading:
         font-color: #AA0000
-      EOS
-        with_pdf_theme_file <<~EOS do |theme_path|
+      END
+        with_pdf_theme_file <<~END do |theme_path|
           extends:
           - #{File.basename heading_font_color_theme_path}
           - base
-        EOS
+        END
           theme = subject.load_file theme_path, nil, (File.dirname theme_path)
           (expect theme.heading_font_color).to eql 'AA0000'
           (expect theme.base_font_family).to eql 'Helvetica'
@@ -583,21 +583,21 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should only extend theme once by default' do
-      with_pdf_theme_file <<~'EOS' do |extended_default_theme_path|
+      with_pdf_theme_file <<~'END' do |extended_default_theme_path|
       extends: default
       base:
         font-color: 222222
-      EOS
-        with_pdf_theme_file <<~'EOS' do |heading_font_family_theme_path|
+      END
+        with_pdf_theme_file <<~'END' do |heading_font_family_theme_path|
         extends: default
         heading:
           font-family: M+ 1mn
-        EOS
-          with_pdf_theme_file <<~EOS do |theme_path|
+        END
+          with_pdf_theme_file <<~END do |theme_path|
           extends:
           - #{File.basename extended_default_theme_path}
           - #{File.basename heading_font_family_theme_path}
-          EOS
+          END
             theme = subject.load_file theme_path, nil, (File.dirname theme_path)
             (expect theme.base_font_color).to eql '222222'
             (expect theme.heading_font_family).to eql 'M+ 1mn'
@@ -607,19 +607,19 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should only extend base theme once by default' do
-      with_pdf_theme_file <<~'EOS' do |extended_base_theme_path|
+      with_pdf_theme_file <<~'END' do |extended_base_theme_path|
       extends: base
       base:
         font-family: Times-Roman
         font-color: 333333
-      EOS
-        with_pdf_theme_file <<~EOS do |theme_path|
+      END
+        with_pdf_theme_file <<~END do |theme_path|
         extends:
         - #{File.basename extended_base_theme_path}
         - base
         link:
           font-color: 0000FF
-        EOS
+        END
           theme = subject.load_file theme_path, nil, (File.dirname theme_path)
           (expect theme.base_font_color).to eql '333333'
           (expect theme.base_font_family).to eql 'Times-Roman'
@@ -629,17 +629,17 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should force base theme to be loaded if qualified with !important' do
-      with_pdf_theme_file <<~'EOS' do |extended_base_theme_path|
+      with_pdf_theme_file <<~'END' do |extended_base_theme_path|
       extends: base
       base:
         font-color: 222222
         font-family: Times-Roman
-      EOS
-        with_pdf_theme_file <<~EOS do |theme_path|
+      END
+        with_pdf_theme_file <<~END do |theme_path|
         extends:
         - #{File.basename extended_base_theme_path}
         - base !important
-        EOS
+        END
           theme = subject.load_file theme_path, nil, (File.dirname theme_path)
           (expect theme.base_font_color).to eql '000000'
           (expect theme.base_font_family).to eql 'Helvetica'
@@ -648,17 +648,17 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should force default theme to be loaded if qualified with !important' do
-      with_pdf_theme_file <<~'EOS' do |extended_default_theme_path|
+      with_pdf_theme_file <<~'END' do |extended_default_theme_path|
       extends: default
       base:
         font-color: 222222
         font-family: Times-Roman
-      EOS
-        with_pdf_theme_file <<~EOS do |theme_path|
+      END
+        with_pdf_theme_file <<~END do |theme_path|
         extends:
         - #{File.basename extended_default_theme_path}
         - default !important
-        EOS
+        END
           theme = subject.load_file theme_path, nil, (File.dirname theme_path)
           (expect theme.base_font_color).to eql '333333'
           (expect theme.base_font_family).to eql 'Noto Serif'
@@ -667,7 +667,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should allow font catalog to be merged with font catalog from theme being extended' do
-      with_pdf_theme_file <<~'EOS' do |theme_path|
+      with_pdf_theme_file <<~'END' do |theme_path|
       extends: default
       font:
         catalog:
@@ -681,7 +681,7 @@ describe Asciidoctor::PDF::ThemeLoader do
             bold_italic: *VLGothic
         fallbacks:
         - VLGothic
-      EOS
+      END
         theme = subject.load_file theme_path
         (expect theme.font_catalog).to be_a Hash
         (expect theme.font_catalog).to have_size 3
@@ -700,12 +700,12 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should not fail to merge font catalog if inherited theme does not define a font catalog' do
-      with_pdf_theme_file <<~'EOS' do |extends_no_theme_path|
+      with_pdf_theme_file <<~'END' do |extends_no_theme_path|
       extends: ~
       base:
         font_family: Times-Roman
-      EOS
-        with_pdf_theme_file <<~EOS do |theme_path|
+      END
+        with_pdf_theme_file <<~END do |theme_path|
         extends: #{File.basename extends_no_theme_path}
         font:
           catalog:
@@ -721,7 +721,7 @@ describe Asciidoctor::PDF::ThemeLoader do
           - VLGothic
         base:
           font_family: M+ 1p
-        EOS
+        END
           theme = subject.load_file theme_path, nil, (File.dirname theme_path)
           (expect theme.font_catalog).to be_a Hash
           (expect theme.font_catalog).to have_size 2
@@ -770,27 +770,27 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should not inherit from base theme if custom theme extends default' do
-      with_pdf_theme_file <<~'EOS' do |theme_path|
+      with_pdf_theme_file <<~'END' do |theme_path|
       extends: default
       base:
         font-color: 222222
-      EOS
+      END
         theme = subject.load_theme (File.basename theme_path), (File.dirname theme_path)
         (expect theme.table_border_style).to be_nil
       end
     end
 
     it 'should not inherit from base theme if custom theme extends nil' do
-      with_pdf_theme_file <<~'EOS' do |extends_no_theme_path|
+      with_pdf_theme_file <<~'END' do |extends_no_theme_path|
       extends: ~
       base:
         font-family: Times-Roman
-      EOS
-        with_pdf_theme_file <<~EOS do |theme_path|
+      END
+        with_pdf_theme_file <<~END do |theme_path|
         extends: #{File.basename extends_no_theme_path}
         heading:
           font-family: $base-font-family
-        EOS
+        END
           theme = subject.load_theme (File.basename theme_path), (File.dirname theme_path)
           (expect theme.base_font_family).to eql 'Times-Roman'
           (expect theme.heading_font_family).to eql 'Times-Roman'
@@ -809,12 +809,12 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should inherit from base theme if custom theme extends base' do
       base_theme = subject.load_base_theme
-      with_pdf_theme_file <<~'EOS' do |theme_path|
+      with_pdf_theme_file <<~'END' do |theme_path|
       extends: base
       base:
         font_family: Times-Roman
         font_color: 333333
-      EOS
+      END
         theme = subject.load_theme theme_path
         (expect theme.base_font_family).not_to eql base_theme.base_font_family
         (expect theme.base_font_color).not_to eql base_theme.base_font_color
@@ -845,21 +845,21 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should load extended themes relative to theme file if they start with ./' do
-      with_pdf_theme_file <<~'EOS' do |custom_theme_path|
+      with_pdf_theme_file <<~'END' do |custom_theme_path|
       base:
         font-family: Times-Roman
-      EOS
-        with_pdf_theme_file <<~'EOS' do |red_theme_path|
+      END
+        with_pdf_theme_file <<~'END' do |red_theme_path|
         base:
           font-color: ff0000
-        EOS
-          with_pdf_theme_file <<~EOS do |theme_path|
+        END
+          with_pdf_theme_file <<~END do |theme_path|
           extends:
           - ./#{File.basename custom_theme_path}
           - ./#{File.basename red_theme_path}
           base:
             text-align: justify
-          EOS
+          END
             theme = subject.load_theme theme_path, fixtures_dir
             (expect theme.__dir__).to eql fixtures_dir
             (expect theme.base_text_align).to eql 'justify'
@@ -871,21 +871,21 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should load extended themes relative to theme file when theme_dir is not specified' do
-      with_pdf_theme_file <<~'EOS' do |custom_theme_path|
+      with_pdf_theme_file <<~'END' do |custom_theme_path|
       base:
         font-family: Times-Roman
-      EOS
-        with_pdf_theme_file <<~'EOS' do |red_theme_path|
+      END
+        with_pdf_theme_file <<~'END' do |red_theme_path|
         base:
           font-color: ff0000
-        EOS
-          with_pdf_theme_file <<~EOS do |theme_path|
+        END
+          with_pdf_theme_file <<~END do |theme_path|
           extends:
           - #{File.basename custom_theme_path}
           - #{File.basename red_theme_path}
           base:
             text-align: justify
-          EOS
+          END
             theme = subject.load_theme theme_path
             (expect theme.__dir__).to eql File.dirname theme_path
             (expect theme.base_text_align).to eql 'justify'
@@ -909,11 +909,11 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should link code and conum font family to codespan font family by default' do
-      with_pdf_theme_file <<~'EOS' do |theme_path|
+      with_pdf_theme_file <<~'END' do |theme_path|
       extends: ~
       codespan:
         font-family: M+ 1mn
-      EOS
+      END
         theme = subject.load_theme (File.basename theme_path), (File.dirname theme_path)
         (expect theme.__dir__).to eql (File.dirname theme_path)
         (expect theme.codespan_font_family).to eql 'M+ 1mn'
@@ -923,11 +923,11 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should link sidebar and abstract title font family to heading font family if only latter is set' do
-      with_pdf_theme_file <<~'EOS' do |theme_path|
+      with_pdf_theme_file <<~'END' do |theme_path|
       extends: default
       heading:
         font-family: M+ 1mn
-      EOS
+      END
         theme = subject.load_theme (File.basename theme_path), (File.dirname theme_path)
         (expect theme.__dir__).to eql (File.dirname theme_path)
         (expect theme.heading_font_family).to eql 'M+ 1mn'
@@ -937,11 +937,11 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should not overwrite required keys with default values if already set' do
-      with_pdf_theme_file <<~'EOS' do |theme_path|
+      with_pdf_theme_file <<~'END' do |theme_path|
       extends: default
       base:
         font-color: 222222
-      EOS
+      END
         theme = subject.load_theme (File.basename theme_path), (File.dirname theme_path)
         (expect theme.base_text_align).to eql 'justify'
         (expect theme.code_font_family).to eql 'M+ 1mn'
@@ -992,19 +992,19 @@ describe Asciidoctor::PDF::ThemeLoader do
 
   context 'data types' do
     it 'should resolve null color value as nil' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       page:
         background_color: null
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.page_background_color).to be_nil
     end
 
     it 'should resolve transparent color value' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       sidebar:
         background_color: transparent
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.sidebar_background_color).to eql 'transparent'
       (expect theme.sidebar_background_color).to be_a subject::TransparentColorValue
@@ -1021,17 +1021,17 @@ describe Asciidoctor::PDF::ThemeLoader do
         '2222' => '002222',
         '11223344' => '112233',
       }.each do |input, resolved|
-        theme_data = YAML.safe_load <<~EOS
+        theme_data = YAML.safe_load <<~END
         page:
           background_color: #{input}
-        EOS
+        END
         theme = subject.new.load theme_data
         (expect theme.page_background_color).to eql resolved
       end
     end
 
     it 'should wrap cmyk color values in color type if key ends with _color' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       page:
         background_color: [0, 0, 0, 0]
       base:
@@ -1044,7 +1044,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         font-color: [0%, 0%, 0%, 0.87]
       table:
         grid-color: [0, 0, 0, 27]
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.page_background_color).to eql 'FFFFFF'
       (expect theme.page_background_color).to be_a subject::HexColorValue
@@ -1061,7 +1061,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should wrap hex color values in color type if key ends with _color' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       page:
         background_color: 'ffffff'
       base:
@@ -1072,7 +1072,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         font-color: 428bca
       codespan:
         font-color: 222
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.page_background_color).to eql 'FFFFFF'
       (expect theme.page_background_color).to be_a subject::HexColorValue
@@ -1088,7 +1088,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should coerce rgb color values to hex and wrap in color type if key ends with _color' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       page:
         background_color: [255, 255, 255]
       base:
@@ -1101,7 +1101,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         font-color: ['34', '34', '34']
       table:
         grid-color: [187, 187, 187]
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.page_background_color).to eql 'FFFFFF'
       (expect theme.page_background_color).to be_a subject::HexColorValue
@@ -1118,19 +1118,19 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should coerce rgb color values for each axis of table grid' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       table:
         grid-color: [[255, 0, 0], [0, 255, 0]]
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.table_grid_color).to eql %w(FF0000 00FF00)
     end
 
     it 'should coerce cmyk color values for each axis of table grid' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       table:
         grid-color: [[0, 1, 1, 0], [1, 0, 1, 0]]
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.table_grid_color).to eql [[0, 100, 100, 0], [100, 0, 100, 0]]
       (expect theme.table_grid_color[0]).to be_a subject::CMYKColorValue
@@ -1138,12 +1138,12 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should flatten array color value of unsupported length to string if key ends with _color' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       page:
         background_color: ['fff', 'fff']
       base:
         font_color: [0, 0, 0, 0, 0, 0]
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.page_background_color).to eql 'FFFFFF'
       (expect theme.page_background_color).to be_a subject::HexColorValue
@@ -1152,11 +1152,11 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should not wrap value in color type if key does not end with _color' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       menu:
         caret:
           content: 4a4a4a
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.menu_caret_content).to eql '4a4a4a'
       (expect theme.menu_caret_content).not_to be_a subject::HexColorValue
@@ -1181,7 +1181,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should coerce content key to a string' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       vars:
         foo: bar
       footer:
@@ -1190,7 +1190,7 @@ describe Asciidoctor::PDF::ThemeLoader do
             content: $vars_foo
           right:
             content: 10
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.footer_recto_left_content).to eql 'bar'
       (expect theme.footer_recto_right_content).to be_a String
@@ -1199,10 +1199,10 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should not modify value without units' do
       [36, 36.0, 48.24, (20 / 17.0)].each do |val|
-        theme_data = YAML.safe_load <<~EOS
+        theme_data = YAML.safe_load <<~END
         footer:
           padding: #{val}
-        EOS
+        END
         theme = subject.new.load theme_data
         (expect theme.footer_padding).to eql val
       end
@@ -1210,21 +1210,21 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should resolve value with fixed units to PDF point value' do
       ['0.5in', '36pt', '48px', '12.7mm', '1.27cm'].each do |val|
-        theme_data = YAML.safe_load <<~EOS
+        theme_data = YAML.safe_load <<~END
         footer:
           padding: #{val}
-        EOS
+        END
         theme = subject.new.load theme_data
         (expect theme.footer_padding.to_f.round 2).to eql 36.0
       end
     end
 
     it 'should preserve value with relative units' do
-      theme_data = YAML.safe_load <<~EOS
+      theme_data = YAML.safe_load <<~END
       role:
         big:
           font-size: 1.2em
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.role_big_font_size).to eql '1.2em'
     end
@@ -1232,42 +1232,42 @@ describe Asciidoctor::PDF::ThemeLoader do
 
   context 'interpolation' do
     it 'should resolve variable reference with underscores to previously defined key' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       brand:
         blue: '0000FF'
       base:
         font_color: $brand_blue
       heading:
         font_color: $base_font_color
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.base_font_color).to eql '0000FF'
       (expect theme.heading_font_color).to eql theme.base_font_color
     end
 
     it 'should resolve variable reference with hyphens to previously defined key' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       brand:
         blue: '0000FF'
       base:
         font_color: $brand-blue
       heading:
         font_color: $base-font-color
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.base_font_color).to eql '0000FF'
       (expect theme.heading_font_color).to eql theme.base_font_color
     end
 
     it 'should resolve variable reference to previously defined color' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       brand:
         blue-color: '0000FF'
       base:
         font_color: $brand-blue-color
       heading:
         font_color: $base-font-color
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.base_font_color).to eql '0000FF'
       (expect theme.heading_font_color).to eql theme.base_font_color
@@ -1275,12 +1275,12 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should warn if variable reference cannot be resolved' do
       (expect do
-        theme_data = YAML.safe_load <<~'EOS'
+        theme_data = YAML.safe_load <<~'END'
         brand:
           blue: '0000FF'
         base:
           font_color: $brand-red
-        EOS
+        END
         theme = subject.new.load theme_data
         (expect theme.base_font_color).to eql '$BRAND'
       end).to log_message severity: :WARN, message: %(unknown variable reference in PDF theme: $brand-red)
@@ -1288,17 +1288,17 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should warn if negated variable reference cannot be resolved' do
       (expect do
-        theme_data = YAML.safe_load <<~'EOS'
+        theme_data = YAML.safe_load <<~'END'
         block:
           margin-bottom: -$vertical-rhythm
-        EOS
+        END
         theme = subject.new.load theme_data
         (expect theme.block_margin_bottom).to eql '-$vertical-rhythm'
       end).to log_message severity: :WARN, message: %(unknown variable reference in PDF theme: $vertical-rhythm)
     end
 
     it 'should interpolate variables in value' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       brand:
         font_family_name: Noto
         font_family_variant: Serif
@@ -1306,7 +1306,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         font_family: $brand_font_family_name $brand_font_family_variant
       heading:
         font_family: $brand_font_family_name Sans
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.base_font_family).to eql 'Noto Serif'
       (expect theme.heading_font_family).to eql 'Noto Sans'
@@ -1314,19 +1314,19 @@ describe Asciidoctor::PDF::ThemeLoader do
 
     it 'should warn if variable reference cannot be resolved when interpolating value' do
       (expect do
-        theme_data = YAML.safe_load <<~'EOS'
+        theme_data = YAML.safe_load <<~'END'
         brand:
           font_family_name: Noto
         base:
           font_family: $brand-font-family-name $brand-font-family-variant
-        EOS
+        END
         theme = subject.new.load theme_data
         (expect theme.base_font_family).to eql 'Noto $brand-font-family-variant'
       end).to log_message severity: :WARN, message: %(unknown variable reference in PDF theme: $brand-font-family-variant)
     end
 
     it 'should interpolate computed value' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       base:
         font_size: 10
         line_height_length: 12
@@ -1337,7 +1337,7 @@ describe Asciidoctor::PDF::ThemeLoader do
       quote:
         border_width: 5
         padding: [-0.001, $base_line_height_length - 2, $base_line_height_length * -0.75, $base_line_height_length + $quote_border_width / 2]
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.base_line_height).to eql 1.2
       (expect theme.base_font_size_large).to eql 12.5
@@ -1347,32 +1347,32 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should coerce value to numeric if negated variable is a number' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       vertical-rhythm: 12
       block:
         anchor-top: -$vertical-rhythm
-      EOS
+      END
       theme = subject.new.load theme_data
       expected = -12
       (expect theme.block_anchor_top).to eql expected
     end
 
     it 'should allow numeric value with units to be negative' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       footer:
         padding: [0, -0.67in, 0, -0.67in]
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.footer_padding).to eql [0, -48.24, 0, -48.24]
     end
 
     it 'should not compute value if operator is not surrounded by spaces on either side' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       brand:
         ten: 10
         a_string: ten*10
         another_string: ten-10
-      EOS
+      END
 
       theme = subject.new.load theme_data
       (expect theme.brand_ten).to be 10
@@ -1381,64 +1381,64 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should resolve fixed units before computing value' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       title-page:
         title:
           top: 3in / 4
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.title_page_title_top).to eql 54
     end
 
     it 'should preserve em units when computing value' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       title-page:
         title:
           top: 1em / 4
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.title_page_title_top).to eql '0.25em'
     end
 
     it 'should preserve rem units when computing value' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       title-page:
         title:
           top: 3rem / 4
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.title_page_title_top).to eql '0.75rem'
     end
 
     it 'should preserve em units when applying precision to value' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       title-page:
         title:
           top: ceil(3em / 4)
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.title_page_title_top).to eql '1em'
     end
 
     it 'should preserve rem units when applying precision to value' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       title-page:
         title:
           top: floor(4rem / 3)
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.title_page_title_top).to eql '1rem'
     end
 
     it 'should apply precision functions to value' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       base:
         font_size: 10.5
       heading:
         h1_font_size: ceil($base_font_size * 2.6)
         h2_font_size: floor($base_font_size * 2.1)
         h3_font_size: round($base_font_size * 1.5)
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.heading_h1_font_size).to be 28
       (expect theme.heading_h2_font_size).to be 22
@@ -1446,14 +1446,14 @@ describe Asciidoctor::PDF::ThemeLoader do
     end
 
     it 'should resolve variable references in font catalog' do
-      theme_data = YAML.safe_load <<~'EOS'
+      theme_data = YAML.safe_load <<~'END'
       vars:
         serif-font: /path/to/serif-font.ttf
       font:
         catalog:
           Serif:
             normal: $vars-serif-font
-      EOS
+      END
       theme = subject.new.load theme_data
       (expect theme.font_catalog).to be_a Hash
       (expect theme.font_catalog['Serif']).to be_a Hash

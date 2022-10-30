@@ -5,33 +5,33 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - Title Page' do
   context 'book doctype' do
     it 'should not include title page if notitle attribute is set' do
-      pdf = to_pdf <<~'EOS', doctype: :book, analyze: :page
+      pdf = to_pdf <<~'END', doctype: :book, analyze: :page
       = Document Title
       :notitle:
 
       body
-      EOS
+      END
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:strings]).not_to include 'Document Title'
     end
 
     it 'should not include title page if title_page key in theme is false' do
-      pdf = to_pdf <<~'EOS', doctype: :book, pdf_theme: { title_page: false }, analyze: :page
+      pdf = to_pdf <<~'END', doctype: :book, pdf_theme: { title_page: false }, analyze: :page
       = Document Title
 
       body
-      EOS
+      END
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:strings]).not_to include 'Document Title'
     end
 
     it 'should not include title page if showtitle attribute is unset when Asciidoctor >= 2.0.11' do
-      pdf = to_pdf <<~'EOS', doctype: :book, analyze: :page
+      pdf = to_pdf <<~'END', doctype: :book, analyze: :page
       = Document Title
       :!showtitle:
 
       body
-      EOS
+      END
       if (Gem::Version.new Asciidoctor::VERSION) >= (Gem::Version.new '2.0.11')
         (expect pdf.pages[0][:strings]).not_to include 'Document Title'
       else
@@ -40,11 +40,11 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should place document title on title page when doctype is book' do
-      pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+      pdf = to_pdf <<~'END', doctype: :book, analyze: true
       = Document Title
 
       body
-      EOS
+      END
 
       (expect pdf.pages).to have_size 2
       text = pdf.text
@@ -63,24 +63,24 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should include revision number, date, and remark on title page' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       Author Name
       v1.0, 2019-01-01: Draft
       :doctype: book
-      EOS
+      END
 
       (expect pdf.lines).to include 'Version 1.0, 2019-01-01: Draft'
     end
 
     it 'should display author names under document title on title page' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       Doc Writer; Antonín Dvořák
       :doctype: book
 
       body
-      EOS
+      END
 
       title_page_lines = pdf.lines pdf.find_text page_number: 1
       (expect title_page_lines).to eql ['Document Title', 'Doc Writer, Antonín Dvořák']
@@ -91,14 +91,14 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_authors_content_with_email: '{author} // {email}',
         title_page_authors_content_with_url: '{author} // {url}',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       = Document Title
       Doc Writer <https://example.org/doc>; Junior Writer <jr@example.org>
       :doctype: book
       :url: https://opensource.org
 
       {url}
-      EOS
+      END
 
       title_page_lines = pdf.lines pdf.find_text page_number: 1
       (expect title_page_lines).to eql ['Document Title', 'Doc Writer // https://example.org/doc, Junior Writer // jr@example.org']
@@ -108,14 +108,14 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
 
     it 'should not carry over url from one author to the next' do
       pdf_theme = { title_page_authors_content_with_url: '{author} // {url}' }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       = Document Title
       Doc Writer <https://example.org/doc>; Junior Writer
       :doctype: book
       :url: https://opensource.org
 
       {url}
-      EOS
+      END
 
       title_page_lines = pdf.lines pdf.find_text page_number: 1
       (expect title_page_lines).to eql ['Document Title', 'Doc Writer // https://example.org/doc, Junior Writer']
@@ -124,14 +124,14 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should apply base font style when document has title page' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { base_font_style: 'bold' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { base_font_style: 'bold' }, analyze: true
       = Document Title
       Author Name
       v1.0, 2020-01-01
       :doctype: book
 
       bold body
-      EOS
+      END
 
       (expect pdf.pages).to have_size 2
       (expect pdf.text.map {|it| it[:font_name] }.uniq).to eql %w(NotoSerif-Bold)
@@ -140,24 +140,24 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
 
   context 'title-page attribute' do
     it 'should not include title page if notitle attribute is set' do
-      pdf = to_pdf <<~'EOS', analyze: :page
+      pdf = to_pdf <<~'END', analyze: :page
       = Document Title
       :title-page:
       :notitle:
 
       what's it gonna do?
-      EOS
+      END
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:strings]).not_to include 'Document Title'
     end
 
     it 'should place document title on title page if title-page attribute is set' do
-      pdf = to_pdf <<~'EOS', analyze: :page
+      pdf = to_pdf <<~'END', analyze: :page
       = Document Title
       :title-page:
 
       body
-      EOS
+      END
       (expect pdf.pages).to have_size 2
       (expect pdf.pages[0][:strings]).to include 'Document Title'
       (expect pdf.pages[1][:strings]).to include 'body'
@@ -172,11 +172,11 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
 
   context 'Logo' do
     it 'should add logo specified by title-logo-image document attribute to title page' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = Document Title
       :doctype: book
       :title-logo-image: image:tux.png[]
-      EOS
+      END
 
       images = get_images pdf, 1
       (expect images).to have_size 1
@@ -186,26 +186,26 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
 
     it 'should not add border to raster logo image if border is specified for image block in theme' do
       pdf_theme = { image_border_width: 1, image_border_color: '000000' }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       = Document Title
       :doctype: book
       :title-logo-image: image:tux.png[]
 
       content
-      EOS
+      END
 
       (expect pdf.lines).to be_empty
     end
 
     it 'should not add border to SVG logo image if border is specified for image block in theme' do
       pdf_theme = { image_border_width: 1, image_border_color: '0000EE' }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       = Document Title
       :doctype: book
       :title-logo-image: image:square.svg[]
 
       content
-      EOS
+      END
 
       image_border_lines = pdf.lines.select {|it| it[:color] == '0000EE' }
       (expect image_border_lines).to be_empty
@@ -214,11 +214,11 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     it 'should add remote logo specified by title-logo-image document attribute to title page' do
       with_local_webserver do |base_url|
         [%(#{base_url}/tux.png), %(image:#{base_url}/tux.png[])].each do |image_url|
-          pdf = to_pdf <<~EOS, attribute_overrides: { 'allow-uri-read' => '' }
+          pdf = to_pdf <<~END, attribute_overrides: { 'allow-uri-read' => '' }
           = Document Title
           :doctype: book
           :title-logo-image: #{image_url}
-          EOS
+          END
 
           images = get_images pdf, 1
           (expect images).to have_size 1
@@ -232,11 +232,11 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       image_data = File.binread fixture_file 'tux.png'
       encoded_image_data = Base64.strict_encode64 image_data
       image_url = %(image:data:image/jpg;base64,#{encoded_image_data}[])
-      pdf = to_pdf <<~EOS
+      pdf = to_pdf <<~END
       = Document Title
       :doctype: book
       :title-logo-image: #{image_url}
-      EOS
+      END
 
       images = get_images pdf, 1
       (expect images).to have_size 1
@@ -247,11 +247,11 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     it 'should use image format for title logo specified by format attribute' do
       source_file = (dest_file = fixture_file 'square') + '.svg'
       FileUtils.cp source_file, dest_file
-      pdf = to_pdf <<~EOS, enable_footer: true, analyze: :rect
+      pdf = to_pdf <<~END, enable_footer: true, analyze: :rect
       = Document Title
       :title-page:
       :title-logo-image: image:#{dest_file}[format=svg]
-      EOS
+      END
       (expect pdf.rectangles).to have_size 1
       rect = pdf.rectangles[0]
       (expect rect[:width]).to eql 200.0
@@ -262,11 +262,11 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
 
     it 'should not allow PDF to be used as title logo image' do
       (expect do
-        pdf = to_pdf <<~'EOS'
+        pdf = to_pdf <<~'END'
         = Document Title
         :doctype: book
         :title-logo-image: image:red-green-blue.pdf[page=1]
-        EOS
+        END
 
         # QUESTION: should we validate page background color?
         (expect pdf.pages).to have_size 1
@@ -274,11 +274,11 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should position logo using value of top attribute with vh units on image macro in title-logo-image attribute' do
-      pdf = to_pdf <<~'EOS', analyze: :image
+      pdf = to_pdf <<~'END', analyze: :image
       = Document Title
       :doctype: book
       :title-logo-image: image:tux.png[align=left,top=0vh]
-      EOS
+      END
 
       left_margin = 0.67 * 72
       page_height = 841.89 # ~11.69in
@@ -291,11 +291,11 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should position logo using value of top attribute with in units on image macro in title-logo-image attribute' do
-      pdf = to_pdf <<~'EOS', analyze: :image
+      pdf = to_pdf <<~'END', analyze: :image
       = Document Title
       :doctype: book
       :title-logo-image: image:tux.png[align=left,top=1in]
-      EOS
+      END
 
       left_margin = 0.67 * 72
       top_margin = 0.5 * 72
@@ -309,11 +309,11 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should position logo using value of top attribute with unrecognized units on image macro in title-logo-image attribute' do
-      pdf = to_pdf <<~'EOS', analyze: :image
+      pdf = to_pdf <<~'END', analyze: :image
       = Document Title
       :doctype: book
       :title-logo-image: image:tux.png[align=left,top=1ft]
-      EOS
+      END
 
       left_margin = 0.67 * 72
       top_margin = 0.5 * 72
@@ -327,11 +327,11 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should align logo using value of align attribute specified on image macro', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'title-page-logo-align-attribute.pdf'
+      to_file = to_pdf_file <<~'END', 'title-page-logo-align-attribute.pdf'
       = Document Title
       :doctype: book
       :title-logo-image: image:tux.png[align=left]
-      EOS
+      END
 
       (expect to_file).to visually_match 'title-page-logo-align-left.pdf'
     end
@@ -341,11 +341,11 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_logo_align: nil,
         title_page_text_align: 'center',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :image
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :image
       = Document Title
       :doctype: book
       :title-logo-image: image:tux.png[]
-      EOS
+      END
 
       images = pdf.images
       (expect images).to have_size 1
@@ -357,11 +357,11 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_logo_align: nil,
         title_page_text_align: 'left',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :image
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :image
       = Document Title
       :doctype: book
       :title-logo-image: image:tux.png[align=foo]
-      EOS
+      END
 
       images = pdf.images
       (expect images).to have_size 1
@@ -369,11 +369,11 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should allow left margin to be set for left-aligned logo image' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_logo_margin_left: 10 }, analyze: :image
+      pdf = to_pdf <<~'END', pdf_theme: { title_page_logo_margin_left: 10 }, analyze: :image
       = Document Title
       :doctype: book
       :title-logo-image: image:tux.png[align=left]
-      EOS
+      END
 
       left_margin = 0.67 * 72
 
@@ -385,11 +385,11 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should allow right margin to be set for right-aligned logo image' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_logo_margin_right: 10 }, analyze: :image
+      pdf = to_pdf <<~'END', pdf_theme: { title_page_logo_margin_right: 10 }, analyze: :image
       = Document Title
       :doctype: book
       :title-logo-image: image:tux.png[align=right]
-      EOS
+      END
 
       right_margin = (8.27 - 0.67) * 72
 
@@ -401,13 +401,13 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should resize raster logo to keep it on title page' do
-      pdf = to_pdf <<~'EOS', analyze: :image
+      pdf = to_pdf <<~'END', analyze: :image
       = Document Title
       :title-page:
       :title-logo-image: image:cover.jpg[pdfwidth=100%,top=70%]
 
       content
-      EOS
+      END
 
       (expect pdf.page_count).to eql 2
       images = pdf.images
@@ -418,13 +418,13 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should resize SVG logo to keep it on title page' do
-      pdf = to_pdf <<~'EOS', analyze: :line
+      pdf = to_pdf <<~'END', analyze: :line
       = Document Title
       :title-page:
       :title-logo-image: image:red-blue-squares.svg[pdfwidth=50%,top=70%]
 
       content
-      EOS
+      END
 
       (expect pdf.lines.map {|it| it[:page_number] }.uniq).to eql [1]
     end
@@ -432,7 +432,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
 
   context 'Background' do
     it 'should set background image of title page from title-page-background-image attribute' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = The Amazing
       Author Name
       :doctype: book
@@ -447,7 +447,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       <<<
 
       end
-      EOS
+      END
 
       (expect pdf.pages).to have_size 4
       [1, 0, 0, 0].each_with_index do |expected_num_images, idx|
@@ -457,7 +457,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should set background image of title page when document has image cover page' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = The Amazing
       Author Name
       :doctype: book
@@ -473,7 +473,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       <<<
 
       end
-      EOS
+      END
 
       (expect pdf.pages).to have_size 5
       [1, 1, 0, 0, 0].each_with_index do |expected_num_images, idx|
@@ -483,7 +483,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should set background image of title page and body pages when document has PDF cover page' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = The Amazing
       Author Name
       :doctype: book
@@ -500,7 +500,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       <<<
 
       end
-      EOS
+      END
 
       images_by_page = []
       (expect pdf.pages).to have_size 5
@@ -517,14 +517,14 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     it 'should not create extra blank page when document has cover page and raster page background image' do
       image_data = File.binread fixture_file 'cover.jpg'
 
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = The Amazing
       Author Name
       :doctype: book
       :front-cover-image: image:blue-letter.pdf[]
       :title-page-background-image: image:cover.jpg[]
       :page-background-image: image:tux.png[]
-      EOS
+      END
 
       (expect pdf.pages).to have_size 2
       images_by_page = []
@@ -539,7 +539,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should not create extra blank page when document has cover page and SVG page background image', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'title-page-background-image-svg-with-cover.pdf'
+      to_file = to_pdf_file <<~'END', 'title-page-background-image-svg-with-cover.pdf'
       = The Amazing
       Author Name
       :doctype: book
@@ -548,17 +548,17 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       :page-background-image: image:watermark.svg[]
 
       content
-      EOS
+      END
 
       (expect to_file).to visually_match 'title-page-background-image-svg-with-cover.pdf'
     end
 
     it 'should not create extra blank page when document has PDF cover page and doctype is book' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :front-cover-image: image:red-green-blue.pdf[page=1]
-      EOS
+      END
 
       (expect pdf.pages).to have_size 2
       doctitle_text = pdf.find_unique_text 'Document Title'
@@ -566,13 +566,13 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should be able to set size and position of title page background image', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'title-page-background-image-size-position.pdf'
+      to_file = to_pdf_file <<~'END', 'title-page-background-image-size-position.pdf'
       = Document Title
       :doctype: book
       :title-page-background-image: image:tux.png[fit=none,position=bottom left]
 
       content
-      EOS
+      END
 
       (expect to_file).to visually_match 'title-page-background-image-size-position.pdf'
     end
@@ -596,12 +596,12 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_revision_margin_bottom: 10,
       }
 
-      input = <<~'EOS'
+      input = <<~'END'
       = Document Title: Subtitle
       :doctype: book
       Author Name
       v1.0
-      EOS
+      END
 
       reference_pdf = to_pdf input, pdf_theme: reference_pdf_theme, analyze: true
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -616,13 +616,13 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should allow theme to customize content of authors line' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_authors_content: '{url}[{author}]' }
+      pdf = to_pdf <<~'END', pdf_theme: { title_page_authors_content: '{url}[{author}]' }
       = Document Title
       Doc Writer <doc@example.org>; Junior Writer <https://github.com/ghost>
       :doctype: book
 
       body
-      EOS
+      END
 
       (expect (pdf.page 1).text).to include 'Doc Writer, Junior Writer'
       annotations = get_annotations pdf, 1
@@ -636,37 +636,37 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should normalize whitespace in authors content' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_authors_content: %({url}\n[{author}]) }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { title_page_authors_content: %({url}\n[{author}]) }, analyze: true
       = Document Title
       Doc Writer <doc@example.org>
       :doctype: book
 
       body
-      EOS
+      END
 
       (expect pdf.lines).to include 'mailto:doc@example.org [Doc Writer]'
     end
 
     it 'should drop lines with missing attribute reference in authors content' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_authors_content: %(keep: {firstname}\ndrop{no-such-attr}\nkeep: {lastname}) }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { title_page_authors_content: %(keep: {firstname}\ndrop{no-such-attr}\nkeep: {lastname}) }, analyze: true
       = Document Title
       Doc Writer <doc@example.org>
       :doctype: book
 
       body
-      EOS
+      END
 
       (expect pdf.lines).to include 'keep: Doc keep: Writer'
     end
 
     it 'should honor explicit hard line breaks in authors content' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_authors_content: %({firstname} +\n{lastname}) }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { title_page_authors_content: %({firstname} +\n{lastname}) }, analyze: true
       = Document Title
       Doc Writer <doc@example.org>
       :doctype: book
 
       body
-      EOS
+      END
 
       title_page_lines = pdf.lines pdf.find_text page_number: 1
       (expect title_page_lines).to eql ['Document Title', 'Doc', 'Writer']
@@ -679,13 +679,13 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_authors_content_with_url: '{url}[{author}]',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme
       = Document Title
       Doc Writer <doc@example.org>; Junior Writer <https://github.com/ghost>; Jane Doe
       :doctype: book
 
       body
-      EOS
+      END
 
       (expect (pdf.page 1).text).to include 'Writer, Doc <doc@example.org>, Junior Writer, JD'
       annotations = get_annotations pdf, 1
@@ -703,13 +703,13 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         role_author_font_color: '00AA00',
         title_page_authors_content: '{url}[{author},role=author]',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       = Document Title
       Junior Writer <https://github.com/ghost>
       :doctype: book
 
       body
-      EOS
+      END
 
       author_text = (pdf.find_text 'Junior Writer')[0]
       (expect author_text[:font_color]).to eql '00AA00'
@@ -720,14 +720,14 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_authors_content: '{author} {url}[icon:twitter[]]',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       = Document Title
       Doc Writer <https://twitter.com/asciidoctor>
       :icons: font
       :doctype: book
 
       body
-      EOS
+      END
 
       title_page_lines = pdf.lines pdf.find_text page_number: 1
       (expect title_page_lines).to include %(Doc Writer \uf099)
@@ -739,14 +739,14 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_revision_delimiter: ' - ',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       = Document Title
       Doc Writer; Junior Writer
       v1.0, 2019-01-01
       :doctype: book
 
       content
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to include 'Doc Writer / Junior Writer'
@@ -754,33 +754,33 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should allow theme to customize content of revision line' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_revision_content: '{revdate} (*v{revnumber}*)' }
+      pdf = to_pdf <<~'END', pdf_theme: { title_page_revision_content: '{revdate} (*v{revnumber}*)' }
       = Document Title
       Author Name
       v1.0, 2022-10-22
       :doctype: book
 
       body
-      EOS
+      END
 
       (expect (pdf.page 1).text).to include '2022-10-22 (v1.0)'
     end
 
     it 'should include version label in revision line if revnumber attribute is set' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       Author Name
       v1.0, 2022-10-22
       :doctype: book
 
       body
-      EOS
+      END
 
       (expect pdf.lines).to include 'Version 1.0, 2022-10-22'
     end
 
     it 'should not include version label in revision line if version-label attribute is unset' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       Author Name
       v1.0, 2022-10-22
@@ -788,16 +788,16 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       :!version-label:
 
       body
-      EOS
+      END
 
       (expect pdf.lines).to include '1.0, 2022-10-22'
     end
 
     it 'should add logo specified by title_page_logo_image theme key to title page' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_logo_image: 'image:{docdir}/tux.png[]' }, attribute_overrides: { 'docdir' => fixtures_dir }
+      pdf = to_pdf <<~'END', pdf_theme: { title_page_logo_image: 'image:{docdir}/tux.png[]' }, attribute_overrides: { 'docdir' => fixtures_dir }
       = Document Title
       :doctype: book
-      EOS
+      END
 
       images = get_images pdf, 1
       (expect images).to have_size 1
@@ -810,10 +810,10 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         __dir__: fixtures_dir,
         title_page_logo_image: 'tux.png',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme
       = Document Title
       :doctype: book
-      EOS
+      END
 
       images = get_images pdf, 1
       (expect images).to have_size 1
@@ -823,10 +823,10 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
 
     it 'should resolve title page logo image specified using path in theme relative to themesdir in classloader', if: RUBY_ENGINE == 'jruby' do
       require fixture_file 'pdf-themes.jar'
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => 'uri:classloader:/pdf-themes/title-page-logo-image-theme.yml' }
+      pdf = to_pdf <<~'END', attribute_overrides: { 'pdf-theme' => 'uri:classloader:/pdf-themes/title-page-logo-image-theme.yml' }
       = Document Title
       :doctype: book
-      EOS
+      END
 
       images = get_images pdf, 1
       (expect images).to have_size 1
@@ -836,10 +836,10 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
 
     it 'should resolve title page logo image with absolute path for theme loaded from classloader', if: RUBY_ENGINE == 'jruby' do
       require fixture_file 'pdf-themes.jar'
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => 'uri:classloader:/pdf-themes/title-page-logo-image-from-fixturesdir-theme.yml', 'fixturesdir' => fixtures_dir }
+      pdf = to_pdf <<~'END', attribute_overrides: { 'pdf-theme' => 'uri:classloader:/pdf-themes/title-page-logo-image-from-fixturesdir-theme.yml', 'fixturesdir' => fixtures_dir }
       = Document Title
       :doctype: book
-      EOS
+      END
 
       images = get_images pdf, 1
       (expect images).to have_size 1
@@ -849,20 +849,20 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
 
     it 'should ignore missing attribute reference when resolve title page logo image from theme' do
       (expect do
-        to_pdf <<~'EOS', pdf_theme: { title_page_logo_image: 'image:{no-such-attribute}{attribute-missing}.png[]' }, attribute_overrides: { 'attribute-missing' => 'warn' }
+        to_pdf <<~'END', pdf_theme: { title_page_logo_image: 'image:{no-such-attribute}{attribute-missing}.png[]' }, attribute_overrides: { 'attribute-missing' => 'warn' }
         = Document Title
         :doctype: book
-        EOS
+        END
       end).to log_message severity: :WARN, message: '~skip.png'
     end
 
     it 'should add remote logo specified by title_page_logo_image theme key to title page' do
       with_local_webserver do |base_url|
         [%(#{base_url}/tux.png), %(image:#{base_url}/tux.png[])].each do |image_url|
-          pdf = to_pdf <<~'EOS', pdf_theme: { title_page_logo_image: image_url }, attribute_overrides: { 'allow-uri-read' => '' }
+          pdf = to_pdf <<~'END', pdf_theme: { title_page_logo_image: image_url }, attribute_overrides: { 'allow-uri-read' => '' }
           = Document Title
           :doctype: book
-          EOS
+          END
 
           images = get_images pdf, 1
           (expect images).to have_size 1
@@ -876,10 +876,10 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       image_data = File.binread fixture_file 'tux.png'
       encoded_image_data = Base64.strict_encode64 image_data
       image_url = %(image:data:image/jpg;base64,#{encoded_image_data}[])
-      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_logo_image: image_url }
+      pdf = to_pdf <<~'END', pdf_theme: { title_page_logo_image: image_url }
       = Document Title
       :doctype: book
-      EOS
+      END
 
       images = get_images pdf, 1
       (expect images).to have_size 1
@@ -892,10 +892,10 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         __dir__: examples_dir,
         title_page_logo_image: 'image:sample-logo.jpg[]',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme
       = Document Title
       :doctype: book
-      EOS
+      END
 
       images = get_images pdf, 1
       (expect images).to have_size 1
@@ -909,13 +909,13 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
           title_page_logo_top: top,
         }
 
-        pdf = to_pdf <<~'EOS', analyze: :image, pdf_theme: pdf_theme
+        pdf = to_pdf <<~'END', analyze: :image, pdf_theme: pdf_theme
         = Document Title
         :doctype: book
         :title-logo-image: image:tux.png[align=left]
 
         image::tux.png[]
-        EOS
+        END
 
         left_margin = 0.67 * 72
         top_margin = 0.5 * 72
@@ -939,13 +939,13 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     it 'should move logo down from top margin of page by numeric value of title_page_logo_top key' do
       pdf_theme = { title_page_logo_top: 20 }
 
-      pdf = to_pdf <<~'EOS', analyze: :image, pdf_theme: pdf_theme
+      pdf = to_pdf <<~'END', analyze: :image, pdf_theme: pdf_theme
       = Document Title
       :doctype: book
       :title-logo-image: image:tux.png[align=left]
 
       image::tux.png[]
-      EOS
+      END
 
       left_margin = 0.67 * 72
 
@@ -966,13 +966,13 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_logo_top: '20pt',
       }
 
-      pdf = to_pdf <<~'EOS', analyze: :image, pdf_theme: pdf_theme
+      pdf = to_pdf <<~'END', analyze: :image, pdf_theme: pdf_theme
       = Document Title
       :doctype: book
       :title-logo-image: image:tux.png[align=left]
 
       image::tux.png[]
-      EOS
+      END
 
       left_margin = 0.67 * 72
 
@@ -993,11 +993,11 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_logo_top: '5vh',
       }
 
-      pdf = to_pdf <<~'EOS', analyze: :image, pdf_theme: pdf_theme
+      pdf = to_pdf <<~'END', analyze: :image, pdf_theme: pdf_theme
       = Document Title
       :doctype: book
       :title-logo-image: image:tux.png[align=left]
-      EOS
+      END
 
       left_margin = 0.67 * 72
       page_height = 841.89 # ~11.69in
@@ -1016,12 +1016,12 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_title_top: '10%',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
 
       content
-      EOS
+      END
 
       page_height = 841.89 # ~11.69in
       top_margin = 0.5 * 72
@@ -1037,12 +1037,12 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     it 'should move title down from top margin by numeric value of title_page_title_top key' do
       pdf_theme = { title_page_title_top: 20 }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
 
       content
-      EOS
+      END
 
       page_height = 841.89 # ~11.69in
       top_margin = 0.5 * 72
@@ -1058,12 +1058,12 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_title_top: '20pt',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
 
       content
-      EOS
+      END
 
       page_height = 841.89 # ~11.69in
       top_margin = 0.5 * 72
@@ -1079,12 +1079,12 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_title_top: '0vh',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
 
       content
-      EOS
+      END
 
       page_height = 841.89 # ~11.69in
 
@@ -1094,13 +1094,13 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should allow left margin of elements on title page to be configured' do
-      input = <<~'EOS'
+      input = <<~'END'
       = Book Title: Bring Out Your Dead Trees
       Author Name
       v1.0, 2001-01-01
 
       body
-      EOS
+      END
 
       pdf_theme = { title_page_text_align: 'left' }
 
@@ -1121,13 +1121,13 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should allow right margin of elements on title page to be configured' do
-      input = <<~'EOS'
+      input = <<~'END'
       = Book Title: Bring Out Your Dead Trees
       Author Name
       v1.0, 2001-01-01
 
       body
-      EOS
+      END
 
       pdf = to_pdf input, doctype: :book, analyze: true
 
@@ -1153,19 +1153,19 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_authors_font_color: 'DBDBDB',
       }
 
-      to_file = to_pdf_file <<~'EOS', 'title-page-background-color.pdf', pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'title-page-background-color.pdf', pdf_theme: pdf_theme
       = Dark and Stormy
       Author Name
       :doctype: book
 
       body
-      EOS
+      END
 
       (expect to_file).to visually_match 'title-page-background-color.pdf'
     end
 
     it 'should set background color when document has PDF cover page' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_background_color: 'eeeeee' }
+      pdf = to_pdf <<~'END', pdf_theme: { title_page_background_color: 'eeeeee' }
       = The Amazing
       Author Name
       :doctype: book
@@ -1182,7 +1182,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       <<<
 
       end
-      EOS
+      END
 
       images_by_page = []
       (expect pdf.pages).to have_size 5
@@ -1201,12 +1201,12 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
           __dir__: fixtures_dir,
           title_page_background_image: (macro ? 'image:bg.png[]' : 'bg.png'),
         }
-        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+        pdf = to_pdf <<~'END', pdf_theme: pdf_theme
         = Document Title
         :doctype: book
 
         content
-        EOS
+        END
 
         (expect pdf.pages).to have_size 2
         (expect get_images pdf, 1).to have_size 1
@@ -1219,13 +1219,13 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_background_image: %(image:#{fixture_file 'bg.png'}[]),
       }
       [' none', ''].each do |val|
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme
         = Document Title
         :doctype: book
         :title-page-background-image:#{val}
 
         content
-        EOS
+        END
 
         (expect pdf.pages).to have_size 2
         (expect get_images pdf).to be_empty
@@ -1237,7 +1237,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         page_background_image: %(image:#{fixture_file 'bg.png'}[]),
         title_page_background_image: 'none',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme
       = Document Title
       :doctype: book
 
@@ -1248,7 +1248,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       == Chapter 2
 
       content
-      EOS
+      END
 
       (expect pdf.pages).to have_size 3
       (expect get_images pdf, 1).to have_size 0
@@ -1264,7 +1264,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_logo_display: 'none',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme
       = Document Title: Subtitle
       :doctype: book
       :title-logo-image: image:tux.png[]
@@ -1272,7 +1272,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       v1.0, 2020-01-01
 
       first page of content
-      EOS
+      END
 
       (expect pdf.pages).to have_size 2
       (expect (pdf.page 1).text).to eql 'Document Title'
@@ -1284,12 +1284,12 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_title_display: 'none',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       = Document Title: Subtitle
       :doctype: book
 
       first page of content
-      EOS
+      END
 
       title_page_lines = pdf.lines pdf.find_text page_number: 1
       (expect title_page_lines).to eql %w(Subtitle)
@@ -1303,7 +1303,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_revision_display: 'none',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme
       = Document Title: Subtitle
       :doctype: book
       :title-page-background-image: image:cover.jpg[]
@@ -1311,7 +1311,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       v1.0, 2020-01-01
 
       first page of content
-      EOS
+      END
 
       (expect pdf.pages).to have_size 2
       title_page_text = (pdf.page 1).text
@@ -1331,13 +1331,13 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         title_page_revision_display: 'none',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme
       = Document Title: Subtitle
       :doctype: book
       :title-page-background-image: image:cover.jpg[]
       Author Name
       v1.0, 2020-01-01
-      EOS
+      END
 
       (expect pdf.pages).to have_size 1
       title_page_text = (pdf.page 1).text
@@ -1359,7 +1359,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
 
       pdf = nil
       (expect do
-        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
         = Document Title
         Author Name
         v1.0
@@ -1368,7 +1368,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
         == First Chapter
 
         content
-        EOS
+        END
       end).to log_message severity: :WARN, message: 'the title page contents has been truncated to prevent it from overrunning the bounds of a single page'
 
       (expect pdf.pages).to have_size 2

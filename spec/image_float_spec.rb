@@ -17,11 +17,11 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should ignore float attribute is value is unknown' do
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=3in,float=center]
 
     #{lorem_ipsum '1-sentence'}
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -31,11 +31,11 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should wrap paragraph around left of image with float right' do
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=3in,float=right]
 
     #{lorem_ipsum '1-sentence'}
-    EOS
+    END
 
     images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
     (expect images).to have_size 1
@@ -50,11 +50,11 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should ignore align attribute if float attribute is set' do
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=3in,align=left,float=right]
 
     #{lorem_ipsum '1-sentence'}
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     (expect image[:x].to_f).to eql page_width - page_margin - image[:width].to_f
@@ -66,11 +66,11 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should wrap paragraph around right of image with float left' do
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=3in,float=left]
 
     #{lorem_ipsum '1-sentence'}
-    EOS
+    END
 
     images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
     (expect images).to have_size 1
@@ -83,13 +83,13 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should apply hyphenation to paragraph in float box if hyphens is set', if: (gem_available? 'text-hyphen'), &(proc do
-    input = <<~EOS
+    input = <<~END
     :hyphens:
 
     image::rect.png[pdfwidth=3in,float=right]
 
     This story chronicles the inexplicable hazards and tremendously vicious beasts the team must conquer and vanquish.
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
     lines = pdf.lines
@@ -100,23 +100,23 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
 
   it 'should apply base font color to text within float box' do
     pdf_theme[:base_font_color] = '0000AA'
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=3in,float=right]
 
     #{lorem_ipsum '1-sentence'}
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
     (expect pdf.text[0][:font_color]).to eql pdf_theme[:base_font_color]
   end
 
   it 'should fit single paragraph within float box' do
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=3in,float=right]
 
     #{lorem_ipsum '1-sentence'}
     *fin*
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -129,11 +129,11 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   it 'should fit multiple paragraphs within float box' do
     ref_input = lorem_ipsum '2-sentences-2-paragraphs'
 
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=3in,float=left]
 
     #{ref_input}
-    EOS
+    END
 
     pdf = to_pdf ref_input, pdf_theme: (pdf_theme.merge section_indent: [228, 0]), analyze: true
     fragments = pdf.text
@@ -153,11 +153,11 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should wrap current paragraph around bottom of image if it extends beyond image' do
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=3in,float=left]
 
     #{lorem_ipsum '4-sentences-1-paragraph'}
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -174,11 +174,11 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should wrap second paragraph around bottom of image if it extends beyond image' do
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=3in,float=left]
 
     #{lorem_ipsum '4-sentences-2-paragraphs'}
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -192,12 +192,12 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
 
   it 'should wrap around single-line caption on bottom of image' do
     pdf_theme[:image_caption_font_color] = 'AA0000'
-    input = <<~EOS
+    input = <<~END
     .Image description
     image::rect.png[pdfwidth=2in,float=left]
 
     #{lorem_ipsum '4-sentences-2-paragraphs'}
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -216,12 +216,12 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
 
   it 'should wrap around multi-line caption on bottom of image' do
     pdf_theme[:image_caption_font_color] = 'AA0000'
-    input = <<~EOS
+    input = <<~END
     .Long image description
     image::rect.png[pdfwidth=2in,float=left]
 
     #{lorem_ipsum '4-sentences-2-paragraphs'}
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -241,12 +241,12 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   it 'should wrap around bottom of image when image has single-line caption on top' do
     pdf_theme[:image_caption_end] = 'top'
     pdf_theme[:image_caption_font_color] = 'AA0000'
-    input = <<~EOS
+    input = <<~END
     .Image description
     image::rect.png[pdfwidth=2in,float=left]
 
     #{lorem_ipsum '4-sentences-2-paragraphs'}
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -264,12 +264,12 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   it 'should wrap around bottom of image when image has multi-line caption on top' do
     pdf_theme[:image_caption_end] = 'top'
     pdf_theme[:image_caption_font_color] = 'AA0000'
-    input = <<~EOS
+    input = <<~END
     .Long image description
     image::rect.png[pdfwidth=2in,float=left]
 
     #{lorem_ipsum '4-sentences-2-paragraphs'}
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -285,12 +285,12 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should place caption directly under image when image floats to the right' do
-    input = <<~EOS
+    input = <<~END
     .Image description
     image::rect.png[pdfwidth=3in,float=right]
 
     #{lorem_ipsum '1-sentence'}
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -300,11 +300,11 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
 
   it 'should allow theme to specify float gap using single value' do
     pdf_theme[:image_float_gap] = 24
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=3in,float=left]
 
     #{lorem_ipsum '4-sentences-2-paragraphs'}
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -321,11 +321,11 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
 
   it 'should allow theme to specify float gap using array value (side, bottom)' do
     pdf_theme[:image_float_gap] = [0, 0]
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=3in,float=left]
 
     #{lorem_ipsum '4-sentences-2-paragraphs'}
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -342,18 +342,18 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
 
   it 'should apply base font color to text that extends beyond image' do
     pdf_theme[:base_font_color] = '0000AA'
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=3in,float=right]
 
     #{lorem_ipsum '4-sentences-1-paragraph'}
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
     (expect pdf.text[-1][:font_color]).to eql pdf_theme[:base_font_color]
   end
 
   it 'should add anchors to paragraphs in float box' do
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=3in,float=right]
 
     [#first]
@@ -361,7 +361,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
 
     [#second]
     #{lorem_ipsum '1-sentence'}
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme
     names = get_names pdf
@@ -370,12 +370,12 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should apply text-align to text within float box' do
-    input = <<~'EOS'
+    input = <<~'END'
     image::rect.png[pdfwidth=3in,float=right]
 
     [.text-center]
     center me
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     text = (to_pdf input, pdf_theme: pdf_theme, analyze: true).text[0]
@@ -389,12 +389,12 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
     pdf_theme[:role_important_text_align] = 'center'
     pdf_theme[:role_important_font_color] = 'AA0000'
     pdf_theme[:role_important_text_transform] = 'uppercase'
-    input = <<~'EOS'
+    input = <<~'END'
     image::rect.png[pdfwidth=3in,float=right]
 
     [.important]
     center me
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     text = (to_pdf input, pdf_theme: pdf_theme, analyze: true).text[0]
@@ -407,11 +407,11 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should apply text formatting to wrapped text' do
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=3in,float=left]
 
     #{((lorem_ipsum '4-sentences-1-paragraph').sub 'Lorem', '*Lorem*').sub 'tempor', '_tempor_'}
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
     bold_text = pdf.find_text font_name: 'NotoSerif-Bold'
@@ -426,7 +426,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
     pdf_theme[:role_lead_line_height] = 1.5
     pdf_theme[:role_lead_font_family] = 'M+ 1p Fallback'
     pdf_theme[:role_muted_font_color] = '999999'
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=2.25in,float=left]
 
     [.muted]
@@ -437,7 +437,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
 
     [.muted]
     #{lorem_ipsum '1-sentence'}
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -458,13 +458,13 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
     pdf_theme.update \
       prose_text_indent_inner: 18,
       prose_margin_inner: 0
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=50%,float=right]
 
     #{lorem_ipsum '4-sentences-2-paragraphs'}
 
     fin.
-    EOS
+    END
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
     first_line_first_para_text = pdf.find_unique_text %r/^Lorem/
@@ -482,7 +482,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
 
   it 'should not end float box if next unstyled paragraph will fit' do
     with_content_spacer 180, 220 do |spacer_path|
-      input = <<~EOS
+      input = <<~END
       image::#{spacer_path}[float=left]
 
       #{lorem_ipsum '1-sentence'}
@@ -491,7 +491,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
       #{lorem_ipsum '2-sentences-1-paragraph'}
 
       #{lorem_ipsum '1-sentence'}
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
       expected_x = 228.0
@@ -502,20 +502,20 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   it 'should position next block below wrapped content when wrapped content extends past image' do
     pdf_theme.update code_border_radius: 0, code_border_color: '0000EE', code_border_width: [0.5, 0, 0, 0]
 
-    ref_input = <<~'EOS'
+    ref_input = <<~'END'
     para
 
     ----
     code block
     ----
-    EOS
+    END
 
     expected_margin = (
       ((to_pdf ref_input, pdf_theme: pdf_theme, analyze: true).find_unique_text 'para')[:y] -
       (to_pdf ref_input, pdf_theme: pdf_theme, analyze: :line).lines[0][:from][:y]
     ).round 5
 
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=1.75in,float=left]
 
     #{lorem_ipsum '2-paragraphs'}
@@ -523,7 +523,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
     ----
     code block
     ----
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     code_block_top = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines[0][:from][:y]
@@ -539,13 +539,13 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should end float box after first paragraph if next block is not a paragraph' do
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=3in,float=left]
 
     #{lorem_ipsum '1-sentence'}
 
     term:: desc
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -559,11 +559,11 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should not create float box if next block is not a paragraph' do
-    input = <<~'EOS'
+    input = <<~'END'
     image::rect.png[pdfwidth=50%,float=right]
 
     term:: desc
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -579,11 +579,11 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   it 'should continue below image if next paragraph does not fit in remaining height' do
     pdf_theme[:role_outline_border_width] = 0.5
     pdf_theme[:role_outline_border_color] = '0000EE'
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=1.5in,float=left]
 
     #{(lorem_ipsum '4-sentences-2-paragraphs').gsub %r/non|nam/, '[.outline]#\\0#'}
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -597,11 +597,11 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
 
   it 'should indent and align next paragraph if next paragraph does not fit in remaining height and prose-text-indent is set' do
     pdf_theme[:prose_text_indent] = 18
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=1.5in,float=left]
 
     #{(lorem_ipsum '4-sentences-2-paragraphs').sub 'Blandit', %([.text-left]\nBlandit)}
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -614,13 +614,13 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   it 'should advance cursor to block bottom if next paragraph does not fit and cursor is above block bottom' do
     pdf_theme[:role_outline_border_width] = 0.5
     pdf_theme[:role_outline_border_color] = '0000EE'
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=110.6pt,float=left]
 
     #{lorem_ipsum '2-sentences-1-paragraph'}
 
     [.outline]#fin#.
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     expected_y = image[:y] - image[:height] - float_gap_b
@@ -630,7 +630,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should end float box if inked text depletes float box' do
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=1.2in,float=left]
 
     #{lorem_ipsum '2-sentences-1-paragraph'}
@@ -638,7 +638,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
     after
 
     after that
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -651,11 +651,11 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
     pdf_theme[:role_outline_border_width] = 0.5
     pdf_theme[:role_outline_border_color] = '0000EE'
     [[116.5, 6], [117, 22]].each do |pdfwidth, expected_gap|
-      input = <<~EOS
+      input = <<~END
       image::rect.png[pdfwidth=#{pdfwidth}pt,float=left]
 
       #{(lorem_ipsum '4-sentences-1-paragraph').sub 'lobortis', '[.outline]#lobortis#'}
-      EOS
+      END
 
       image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
       rects = (to_pdf input, pdf_theme: pdf_theme, analyze: :rect).rectangles
@@ -668,7 +668,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
 
   it 'should allow paragraph that starts in float box to extend to next page' do
     with_content_spacer 10, 596 do |spacer_path|
-      input = <<~EOS
+      input = <<~END
       image::#{spacer_path}[]
 
       image::rect.png[pdfwidth=2in,float=left]
@@ -678,7 +678,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
       <<<
 
       at top
-      EOS
+      END
 
       image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -698,7 +698,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
 
   it 'should run float box to bottom of page if taller than remaining space on page' do
     with_content_spacer 10, 605 do |spacer_path|
-      input = <<~EOS
+      input = <<~END
       image::#{spacer_path}[]
 
       image::rect.png[pdfwidth=2in,float=left]
@@ -708,7 +708,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
       <<<
 
       at top
-      EOS
+      END
 
       image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -728,7 +728,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
 
   it 'should not continue float box if bottom margin of last paragraph starts new page' do
     with_content_spacer 10, 630 do |spacer_path|
-      input = <<~EOS
+      input = <<~END
       image::#{spacer_path}[]
 
       image::rect.png[pdfwidth=1.5in,float=left]
@@ -736,7 +736,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
       #{lorem_ipsum '2-sentences-2-paragraphs'}
 
       at top
-      EOS
+      END
 
       image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -752,13 +752,13 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should float image inside a delimited block' do
-    input = <<~EOS
+    input = <<~END
     ****
     image::rect.png[pdfwidth=3in,float=left]
 
     #{lorem_ipsum '4-sentences-2-paragraphs'}
     ****
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -772,7 +772,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should support multiple image floats in same document', visual: true do
-    input = <<~EOS
+    input = <<~END
     Start.
 
     image::rect.png[pdfwidth=2.5in,float=left]
@@ -798,7 +798,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
     |===
 
     fin.
-    EOS
+    END
 
     to_file = to_pdf_file input, 'image-float.pdf', pdf_theme: pdf_theme
     (expect to_file).to visually_match 'image-float.pdf'
@@ -810,13 +810,13 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
       sidebar_border_width: [0.5, 0],
       sidebar_border_color: '0000EE',
       sidebar_background_color: 'transparent'
-    input = <<~EOS
+    input = <<~END
     ****
     image::rect.png[pdfwidth=3in,float=right]
 
     #{lorem_ipsum '2-sentences-1-paragraph'}
     ****
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -832,13 +832,13 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
       sidebar_border_width: [0.5, 0],
       sidebar_border_color: '0000EE',
       sidebar_background_color: 'transparent'
-    input = <<~EOS
+    input = <<~END
     ****
     image::rect.png[pdfwidth=3in,float=right]
 
     #{lorem_ipsum '4-sentences-2-paragraphs'}
     ****
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -852,13 +852,13 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
       sidebar_border_width: [0.5, 0],
       sidebar_border_color: '0000EE',
       sidebar_background_color: 'transparent'
-    input = <<~EOS
+    input = <<~END
     ****
     image::rect.png[pdfwidth=2.25in,float=right]
 
     #{lorem_ipsum '2-paragraphs'}
     ****
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -867,22 +867,22 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should not process paragraph preceded by paragraph without an active float box' do
-    input = <<~'EOS'
+    input = <<~'END'
     paragraph
 
     another paragraph
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
     pdf.text.each {|fragment| (expect fragment[:x]).to eql page_margin }
   end
 
   it 'should not process paragraph preceded by image without float attribute' do
-    input = <<~'EOS'
+    input = <<~'END'
     image::rect.png[pdfwidth=3in]
 
     paragraph
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -894,11 +894,11 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
   end
 
   it 'should not process paragraph preceded by image with float attribute that spans width of content area' do
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=100%,float=left]
 
     #{lorem_ipsum '1-sentence'}
-    EOS
+    END
 
     image = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -916,7 +916,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
     backend = %(pdf#{ext_class.object_id})
     source_lines[0] = %(  register_for '#{backend}'\n)
     ext_class.class_eval source_lines.join, source_file
-    input = <<~EOS
+    input = <<~END
     image::rect.png[pdfwidth=50%,float=left]
 
     #{lorem_ipsum '1-sentence'}
@@ -927,7 +927,7 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
     ----
 
     #{lorem_ipsum '1-sentence'}
-    EOS
+    END
 
     image = (to_pdf input, backend: backend, pdf_theme: pdf_theme, analyze: :image).images[0]
     pdf = to_pdf input, backend: backend, pdf_theme: pdf_theme, analyze: true

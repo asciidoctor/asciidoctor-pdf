@@ -25,7 +25,7 @@ module Asciidoctor
           author = sanitize doc.attr 'author'
         end
         # see https://www.adobe.com/content/dam/acom/en/devnet/acrobat/pdfs/pdfmark_reference.pdf
-        <<~EOS
+        <<~END
         [ /Title #{(sanitize doc.header? ? doc.doctitle : (doc.attr 'untitled-label')).to_pdf_object}
           /Author #{author.to_pdf_object}
           /Subject #{((doc.attr? 'subject') ? (sanitize doc.attr 'subject') : nil).to_pdf_object}
@@ -35,7 +35,7 @@ module Asciidoctor
           /Creator (Asciidoctor PDF #{::Asciidoctor::PDF::VERSION}, based on Prawn #{::Prawn::VERSION})
           /Producer #{((doc.attr? 'publisher') ? (sanitize doc.attr 'publisher') : nil).to_pdf_object}
           /DOCINFO pdfmark
-        EOS
+        END
       end
 
       def generate_file pdf_file

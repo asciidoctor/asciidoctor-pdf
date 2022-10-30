@@ -4,7 +4,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Section' do
   it 'should apply font size according to section level' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Document Title
 
     == Level 1
@@ -14,7 +14,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     section content
 
     == Back To Level 1
-    EOS
+    END
 
     expected_text = [
       ['Document Title', 27],
@@ -27,7 +27,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should render section titles in bold by default' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Document Title
 
     == Level 1
@@ -37,7 +37,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     section content
 
     == Back To Level 1
-    EOS
+    END
 
     expected_text = [
       ['Document Title', 'NotoSerif-Bold'],
@@ -50,11 +50,11 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should apply text formatting in section title' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     == Section Title with Some _Oomph_
 
     text
-    EOS
+    END
 
     (expect pdf.lines[0]).to eql 'Section Title with Some Oomph'
     text_with_emphasis = pdf.find_unique_text 'Oomph'
@@ -63,7 +63,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should ignore hard line break at end of section title' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     == Reference Title
 
     reference text
@@ -71,7 +71,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == Section Title +
 
     section text
-    EOS
+    END
 
     expected_gap = ((pdf.find_unique_text 'Reference Title')[:y] - (pdf.find_unique_text 'reference text')[:y]).round 4
     actual_gap = ((pdf.find_unique_text 'Section Title')[:y] - (pdf.find_unique_text 'section text')[:y]).round 4
@@ -82,13 +82,13 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     pdf_theme = {
       heading_font_family: 'Helvetica',
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     = Document Title
 
     == Helvetica-Bold
 
     Noto Serif
-    EOS
+    END
 
     heading_text = pdf.find_unique_text 'Helvetica-Bold'
     (expect heading_text[:font_name]).to eql 'Helvetica-Bold'
@@ -101,13 +101,13 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       heading_font_family: 'Helvetica',
       heading_h3_font_family: 'Times-Roman',
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     = Document Title
 
     == Helvetica-Bold
 
     === Times-Bold
-    EOS
+    END
 
     h2_text = pdf.find_unique_text 'Helvetica-Bold'
     (expect h2_text[:font_name]).to eql 'Helvetica-Bold'
@@ -116,11 +116,11 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should allow theme to set font kerning for headings' do
-    input = <<~'EOS'
+    input = <<~'END'
     == Wave__|__
 
     content
-    EOS
+    END
 
     pdf_theme = { heading_text_transform: 'uppercase' }
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -140,11 +140,11 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       heading_h3_font_size: 22,
       heading_h3_font_kerning: 'none',
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     == Wave__|__
 
     === Wave__|__
-    EOS
+    END
 
     kerning_positions = (pdf.find_text '|').map {|it| it[:x] }
 
@@ -152,9 +152,9 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should add text formatting styles to styles defined in theme' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_font_style: 'bold' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { heading_font_style: 'bold' }, analyze: true
     == Get Started _Quickly_
-    EOS
+    END
 
     text = pdf.text
     (expect text).to have_size 2
@@ -163,9 +163,9 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should add text formatting styles to styles defined in theme for specific level' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_font_style: nil, heading_h2_font_style: 'bold' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { heading_font_style: nil, heading_h2_font_style: 'bold' }, analyze: true
     == Get Started _Quickly_
-    EOS
+    END
 
     text = pdf.text
     (expect text).to have_size 2
@@ -174,7 +174,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should allow theme to align all section titles' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_align: 'center' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { heading_text_align: 'center' }, analyze: true
     == Drill
 
     content
@@ -184,7 +184,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     content
 
     ==== Deep
-    EOS
+    END
 
     midpoint = pdf.pages[0][:size][0] * 0.5
     content_left_margin = (pdf.find_text 'content')[0][:x]
@@ -200,7 +200,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should allow theme to align section title for specific level' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_h1_text_align: 'center' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { heading_h1_text_align: 'center' }, analyze: true
     = Document Title
     :notitle:
     :doctype: book
@@ -216,7 +216,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == Last Chapter
 
     content
-    EOS
+    END
 
     midpoint = pdf.pages[0][:size][0] * 0.5
     left_content_margin = (pdf.find_text 'content')[0][:x]
@@ -234,7 +234,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       heading_h2_font_size: 20,
       heading_h3_font_size: 20,
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     before
 
     == Drill
@@ -244,7 +244,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     === Down
 
     content
-    EOS
+    END
 
     drill_title_text = pdf.find_unique_text 'Drill'
     down_title_text = pdf.find_unique_text 'Down'
@@ -261,7 +261,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       heading_h3_border_color: 'DDDDDD',
     }
 
-    input = <<~'EOS'
+    input = <<~'END'
     = Document Title
 
     == Section Level 1
@@ -271,7 +271,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     === Section Level 2
 
     content
-    EOS
+    END
 
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -300,11 +300,11 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       heading_h2_border_color: 'EEEEEE',
     }
 
-    input = <<~'EOS'
+    input = <<~'END'
     == Section Title
 
     content
-    EOS
+    END
 
     pdf_a_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
     pdf_b_lines = (to_pdf input, pdf_theme: (pdf_theme.merge heading_h2_padding: [0, 0, 5, 10]), analyze: :line).lines
@@ -321,11 +321,11 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       heading_h2_border_width: [1, 0, 0, 0],
       heading_h2_border_color: 'EEEEEE',
     }
-    input = <<~'EOS'
+    input = <<~'END'
     == Section Title
 
     content
-    EOS
+    END
 
     pdf_a_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
     pdf_a = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -344,13 +344,13 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       heading_h2_border_color: '0000FF',
     }
     pdf = with_content_spacer 10, 700 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: :line
+      to_pdf <<~END, pdf_theme: pdf_theme, analyze: :line
       image::#{spacer_path}[]
 
       == Pushed to Next Page
 
       content
-      EOS
+      END
     end
 
     heading_lines = pdf.lines.select {|it| it[:color] == '0000FF' }
@@ -360,9 +360,9 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not partition section title by default' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     == Title: Subtitle
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 1
@@ -370,11 +370,11 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should partition section title if title-separator document attribute is set and present in title' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :title-separator: :
 
     == The Title: The Subtitle
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 2
@@ -387,10 +387,10 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should partition section title if separator block attribute is set and present in title' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     [separator=:]
     == The Title: The Subtitle
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 2
@@ -403,11 +403,11 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should partition title on last occurrence of separator' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :title-separator: :
 
     == Foo: Bar: Baz
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 2
@@ -415,10 +415,10 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not partition section title if separator is not followed by space' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     [separator=:]
     == Title:Subtitle
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 1
@@ -426,12 +426,12 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not partition section title if separator block attribute is empty' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :title-separator: :
 
     [separator=]
     == Title: Subtitle
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 1
@@ -460,7 +460,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       heading_h1_margin_page_top: 100,
       heading_h2_font_size: 20,
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     = Document Title
     :doctype: book
 
@@ -475,7 +475,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == Last Chapter
 
     content
-    EOS
+    END
 
     part_a_text = pdf.find_unique_text 'Part A'
     first_chapter_text = pdf.find_unique_text 'First Chapter'
@@ -491,7 +491,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       heading_h3_margin_top: 5,
       heading_h3_margin_bottom: 5,
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     preamble
 
     == Level 1
@@ -501,7 +501,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     === Level 2
 
     content for level 2
-    EOS
+    END
 
     l1_title_text = pdf.find_unique_text 'Level 1'
     l1_content_text = pdf.find_unique_text 'content for level 1'
@@ -513,7 +513,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should uppercase section titles if text_transform key in theme is set to uppercase' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
     = Document Title
 
     == Beginning
@@ -521,7 +521,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == Middle
 
     == End
-    EOS
+    END
 
     pdf.text.each do |text|
       (expect text[:string]).to eql text[:string].upcase
@@ -529,9 +529,9 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not alter character references when text transform is uppercase' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
     == &lt;Tom &amp; Jerry&gt;
-    EOS
+    END
 
     (expect pdf.text[0][:string]).to eql '<TOM & JERRY>'
   end
@@ -571,11 +571,11 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
   it 'should be able to set text decoration properties per heading level' do
     pdf_theme = { heading_h3_text_decoration: 'underline', heading_h3_text_decoration_color: 'cccccc', heading_h3_text_decoration_width: 0.5 }
-    input = <<~'EOS'
+    input = <<~'END'
     == Plain Title
 
     === Decorated Title
-    EOS
+    END
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
     lines = pdf.lines
     (expect lines).to have_size 1
@@ -590,86 +590,86 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should support hexadecimal character reference in section title' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     == &#xb5;Services
-    EOS
+    END
 
     (expect pdf.text[0][:string]).to eql %(\u00b5Services)
   end
 
   it 'should not alter HTML tags when text transform is uppercase' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
     == _Quick_ Start
-    EOS
+    END
 
     (expect pdf.text[0][:string]).to eql 'QUICK'
   end
 
   it 'should transform non-ASCII letters when text transform is uppercase' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
     == über étudier
-    EOS
+    END
 
     (expect pdf.lines[0]).to eql 'ÜBER ÉTUDIER'
   end
 
   it 'should ignore letters in hexadecimal character reference in section title when transforming to uppercase' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
     == &#xb5;Services
-    EOS
+    END
 
     (expect pdf.text[0][:string]).to eql %(\u00b5SERVICES)
   end
 
   it 'should not apply text transform if value of text_transform key is none' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_text_transform: 'uppercase', heading_h3_text_transform: 'none' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { heading_text_transform: 'uppercase', heading_h3_text_transform: 'none' }, analyze: true
     == Uppercase
 
     === Title Case
-    EOS
+    END
 
     (expect pdf.find_text 'UPPERCASE').to have_size 1
     (expect pdf.find_text 'Title Case').to have_size 1
   end
 
   it 'should not crash if menu macro is used in section title' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :experimental:
 
     == The menu:File[] menu
 
     Describe the file menu.
-    EOS
+    END
 
     (expect pdf.lines[0]).to eql 'The File menu'
   end
 
   it 'should not crash if kbd macro is used in section title' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :experimental:
 
     == The magic of kbd:[Ctrl,p]
 
     Describe the magic of paste.
-    EOS
+    END
 
     (expect pdf.lines[0]).to eql %(The magic of Ctrl \u202f+\u202f p)
   end
 
   it 'should not crash if btn macro is used in section title' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :experimental:
 
     == The btn:[Save] button
 
     Describe the save button.
-    EOS
+    END
 
     (expect pdf.lines[0]).to eql %(The [\u2009Save\u2009] button)
   end
 
   it 'should add part signifier and part number to part if part numbering is enabled' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Book Title
     :doctype: book
     :sectnums:
@@ -682,14 +682,14 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     = B
 
     == Bar
-    EOS
+    END
 
     titles = (pdf.find_text font_size: 27).map {|it| it[:string] }.reject {|it| it == 'Book Title' }
     (expect titles).to eql ['Part I: A', 'Part II: B']
   end
 
   it 'should use specified part signifier if part numbering is enabled and part-signifier attribute is set' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Book Title
     :doctype: book
     :sectnums:
@@ -703,7 +703,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     = B
 
     == Bar
-    EOS
+    END
 
     titles = (pdf.find_text font_size: 27).map {|it| it[:string] }.reject {|it| it == 'Book Title' }
     (expect titles).to eql ['P I: A', 'P II: B']
@@ -711,7 +711,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
   it 'should not add part signifier to part title if partnums is enabled and part-signifier attribute is unset or empty' do
     %w(!part-signifier part-signifier).each do |attr_name|
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       = Book Title
       :doctype: book
       :sectnums:
@@ -725,7 +725,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       = Z
 
       == The End
-      EOS
+      END
 
       part_titles = (pdf.find_text font_size: 27).map {|it| it[:string] }.reject {|it| it == 'Book Title' }
       (expect part_titles).to eql ['I: A', 'II: Z']
@@ -733,7 +733,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should add default chapter signifier to chapter title if section numbering is enabled' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Book Title
     :doctype: book
     :sectnums:
@@ -741,7 +741,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == The Beginning
 
     == The End
-    EOS
+    END
 
     chapter_titles = (pdf.find_text font_size: 22).map {|it| it[:string] }
     (expect chapter_titles).to eql ['Chapter 1. The Beginning', 'Chapter 2. The End']
@@ -749,7 +749,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
   it 'should add chapter signifier to chapter title if section numbering is enabled and chapter-signifier attribute is set' do
     { 'chapter-signifier' => 'Ch' }.each do |attr_name, attr_val|
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       = Book Title
       :doctype: book
       :sectnums:
@@ -758,7 +758,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       == The Beginning
 
       == The End
-      EOS
+      END
 
       chapter_titles = (pdf.find_text font_size: 22).map {|it| it[:string] }
       (expect chapter_titles).to eql ['Ch 1. The Beginning', 'Ch 2. The End']
@@ -767,7 +767,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
   it 'should add chapter signifier to chapter title if section numbering and toc are enabled and chapter-signifier attribute is set' do
     { 'chapter-signifier' => 'Ch' }.each do |attr_name, attr_val|
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       = Book Title
       :doctype: book
       :sectnums:
@@ -777,7 +777,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       == The Beginning
 
       == The End
-      EOS
+      END
 
       chapter_titles = (pdf.find_text font_size: 22).select {|it| it[:page_number] >= 3 }.map {|it| it[:string] }
       (expect chapter_titles).to eql ['Ch 1. The Beginning', 'Ch 2. The End']
@@ -786,7 +786,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
   it 'should not add chapter signifier to chapter title if sectnums is enabled and chapter-signifier attribute is unset or empty' do
     %w(!chapter-signifier chapter-signifier).each do |attr_name|
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       = Book Title
       :doctype: book
       :sectnums:
@@ -795,7 +795,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       == The Beginning
 
       == The End
-      EOS
+      END
 
       chapter_titles = (pdf.find_text font_size: 22).map {|it| it[:string] }
       (expect chapter_titles).to eql ['1. The Beginning', '2. The End']
@@ -803,7 +803,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should number sections in article when sectnums attribute is set' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Document Title
     :sectnums:
 
@@ -816,14 +816,14 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     === More Detail
 
     == End
-    EOS
+    END
 
     (expect pdf.find_unique_text '1. Beginning', font_size: 22).not_to be_nil
     (expect pdf.find_unique_text '2.1. Detail', font_size: 18).not_to be_nil
   end
 
   it 'should number subsection of appendix based on appendix letter' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Book Title
     :doctype: book
     :sectnums:
@@ -840,13 +840,13 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     === Appendix Subsection
 
     content
-    EOS
+    END
 
     (expect pdf.lines).to include 'A.1. Appendix Subsection'
   end
 
   it 'should treat level-0 special section as chapter in multipart book' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_h2_font_color: 'AA0000' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { heading_h2_font_color: 'AA0000' }, analyze: true
     = Document Title
     :doctype: book
 
@@ -860,7 +860,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     = Details
 
     We let you know.
-    EOS
+    END
 
     chapter_texts = pdf.find_text font_color: 'AA0000'
     (expect chapter_texts).to have_size 2
@@ -873,7 +873,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not output section title for section marked with notitle option' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Document Title
     :doctype: book
 
@@ -889,7 +889,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == Conclusion
 
     Wrapping it up.
-    EOS
+    END
 
     middle_chapter_text = pdf.find_text page_number: 3
     (expect middle_chapter_text).to have_size 1
@@ -897,7 +897,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should add entry to toc for section with notitle option' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Document Title
     :doctype: book
     :toc:
@@ -914,7 +914,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == Conclusion
 
     Wrapping it up.
-    EOS
+    END
 
     toc_lines = pdf.lines pdf.find_text page_number: 2
     middle_entry = toc_lines.find {|it| it.start_with? 'Middle' }
@@ -923,7 +923,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not output section title for special section marked with notitle option' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_h2_font_color: 'AA0000' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { heading_h2_font_color: 'AA0000' }, analyze: true
     = Document Title
     :doctype: book
 
@@ -942,7 +942,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     = Details
 
     We let you know.
-    EOS
+    END
 
     colophon_page_text = pdf.find_text page_number: 2
     (expect colophon_page_text).to have_size 1
@@ -958,7 +958,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not leave behind dest for empty section marked with notitle option' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     = Document Title
     :doctype: book
 
@@ -968,7 +968,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     [colophon%notitle]
     == Hidden
-    EOS
+    END
 
     (expect pdf.pages).to have_size 2
     all_text = pdf.pages.map(&:text).join ?\n
@@ -977,7 +977,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not add entry to toc for section marked with notitle option when no content follows it' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     = Document Title
     :doctype: book
     :toc:
@@ -988,7 +988,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     [colophon%notitle]
     == Hidden
-    EOS
+    END
 
     (expect pdf.pages).to have_size 3
     all_text = pdf.pages.map(&:text).join ?\n
@@ -996,7 +996,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not promote anonymous preface in book doctype to preface section if preface-title attribute is not set' do
-    input = <<~'EOS'
+    input = <<~'END'
     = Book Title
     :doctype: book
 
@@ -1005,7 +1005,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == First Chapter
 
     chapter content
-    EOS
+    END
 
     pdf = to_pdf input
     names = get_names pdf
@@ -1018,7 +1018,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
   # QUESTION: is this the right behavior? should the value default to Preface instead?
   it 'should not promote anonymous preface in book doctype to preface section if preface-title attribute is empty' do
-    input = <<~'EOS'
+    input = <<~'END'
     = Book Title
     :doctype: book
     :preface-title:
@@ -1028,7 +1028,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == First Chapter
 
     chapter content
-    EOS
+    END
 
     pdf = to_pdf input
     names = get_names pdf
@@ -1040,7 +1040,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should promote anonymous preface in book doctype to preface section if preface-title attribute is non-empty' do
-    input = <<~'EOS'
+    input = <<~'END'
     = Book Title
     :doctype: book
     :preface-title: Prelude
@@ -1050,7 +1050,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == First Chapter
 
     chapter content
-    EOS
+    END
 
     pdf = to_pdf input
     (expect (preface_dest = get_dest pdf, '_prelude')).not_to be_nil
@@ -1065,7 +1065,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should only show preface title in TOC if notitle option is set on first child block of anonymous preface' do
-    input = <<~'EOS'
+    input = <<~'END'
     = Book Title
     :doctype: book
     :preface-title: Preface
@@ -1077,7 +1077,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == First Chapter
 
     chapter content
-    EOS
+    END
 
     pdf = to_pdf input
     (expect (preface_dest = get_dest pdf, '_preface')).not_to be_nil
@@ -1092,21 +1092,21 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not force title of empty section to next page if it fits on page' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     == Section A
 
     [%hardbreaks]
     #{(['filler'] * 41).join ?\n}
 
     == Section B
-    EOS
+    END
 
     section_b_text = (pdf.find_text 'Section B')[0]
     (expect section_b_text[:page_number]).to be 1
   end
 
   it 'should force section title to next page to keep with first line of section content' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     == Section A
 
     [%hardbreaks]
@@ -1115,7 +1115,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == Section B
 
     content
-    EOS
+    END
 
     section_b_text = (pdf.find_text 'Section B')[0]
     (expect section_b_text[:page_number]).to be 2
@@ -1125,13 +1125,13 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
   it 'should force section title of non-empty section to next page if wrapped line does not fit on current page' do
     pdf = with_content_spacer 10, 690 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: { heading_min_height_after: nil, heading_font_color: 'AA0000' }, analyze: true
+      to_pdf <<~END, pdf_theme: { heading_min_height_after: nil, heading_font_color: 'AA0000' }, analyze: true
       image::#{spacer_path}[]
 
       == This is a long heading that wraps to a second line
 
       content
-      EOS
+      END
     end
 
     heading_texts = pdf.find_text font_color: 'AA0000'
@@ -1141,11 +1141,11 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
   it 'should force section title of empty section to next page if wrapped line does not fit on current page' do
     pdf = with_content_spacer 10, 690 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: { heading_font_color: 'AA0000' }, analyze: true
+      to_pdf <<~END, pdf_theme: { heading_font_color: 'AA0000' }, analyze: true
       image::#{spacer_path}[]
 
       == This is a long heading that wraps to a second line
-      EOS
+      END
     end
 
     heading_texts = pdf.find_text font_color: 'AA0000'
@@ -1155,13 +1155,13 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
   it 'should not require space for bottom margin between section title and bottom of page if min-height-after is 0' do
     pdf = with_content_spacer 10, 710 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 0, heading_font_color: 'AA0000' }, analyze: true
+      to_pdf <<~END, pdf_theme: { heading_min_height_after: 0, heading_font_color: 'AA0000' }, analyze: true
       image::#{spacer_path}[]
 
       == Heading Fits
 
       content
-      EOS
+      END
     end
 
     heading_text = pdf.find_unique_text font_color: 'AA0000'
@@ -1170,11 +1170,11 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
   it 'should ignore heading-min-height-after if section is empty' do
     pdf = with_content_spacer 10, 650 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 100, heading_font_color: 'AA0000' }, analyze: true
+      to_pdf <<~END, pdf_theme: { heading_min_height_after: 100, heading_font_color: 'AA0000' }, analyze: true
       image::#{spacer_path}[]
 
       == Heading Fits
-      EOS
+      END
     end
 
     (expect pdf.pages).to have_size 1
@@ -1183,13 +1183,13 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should force section title with text transform to next page to keep with first line of section content' do
-    pdf = to_pdf <<~EOS, pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
+    pdf = to_pdf <<~END, pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
     image::tall.svg[pdfwidth=80mm]
 
     == A long heading with uppercase characters
 
     content
-    EOS
+    END
 
     section_text = pdf.find_unique_text %r/^A LONG HEADING/
     (expect section_text[:page_number]).to be 2
@@ -1198,13 +1198,13 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not force section title with inline formatting to next page if text formatting does not affect height' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     image::tall.svg[pdfwidth=80mm]
 
     == A long heading with some inline #markup#
 
     content
-    EOS
+    END
 
     section_text = pdf.find_unique_text %r/^A long heading/
     (expect section_text[:page_number]).to be 1
@@ -1213,7 +1213,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not force section title to next page to keep with content if heading-min-height-after theme key is zero' do
-    pdf = to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 0 }, analyze: true
+    pdf = to_pdf <<~END, pdf_theme: { heading_min_height_after: 0 }, analyze: true
     == Section A
 
     [%hardbreaks]
@@ -1222,7 +1222,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == Section B
 
     content
-    EOS
+    END
 
     section_b_text = (pdf.find_text 'Section B')[0]
     (expect section_b_text[:page_number]).to be 1
@@ -1237,7 +1237,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     backend = %(pdf#{ext_class.object_id})
     source_lines[0] = %(  register_for '#{backend}'\n)
     ext_class.class_eval source_lines.join, source_file
-    pdf = to_pdf <<~EOS, backend: backend, analyze: true
+    pdf = to_pdf <<~END, backend: backend, analyze: true
     == Section A
 
     image::tall.svg[pdfwidth=70mm]
@@ -1252,7 +1252,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     together
     --
-    EOS
+    END
 
     section_b_text = pdf.find_unique_text 'Section B'
     (expect section_b_text[:page_number]).to be 2
@@ -1261,7 +1261,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should keep section with first block of content if breakable option is set on section' do
-    pdf = to_pdf <<~EOS, pdf_theme: { heading_min_height_after: nil }, analyze: true
+    pdf = to_pdf <<~END, pdf_theme: { heading_min_height_after: nil }, analyze: true
     == Section A
 
     image::tall.svg[pdfwidth=70mm]
@@ -1277,7 +1277,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     together
     --
-    EOS
+    END
 
     section_b_text = pdf.find_unique_text 'Section B'
     (expect section_b_text[:page_number]).to be 2
@@ -1286,7 +1286,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should keep section with first block of content if heading-min-height-after theme key is auto' do
-    pdf = to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 'auto' }, analyze: true
+    pdf = to_pdf <<~END, pdf_theme: { heading_min_height_after: 'auto' }, analyze: true
     == Section A
 
     image::tall.svg[pdfwidth=70mm]
@@ -1301,7 +1301,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
     together
     --
-    EOS
+    END
 
     section_b_text = pdf.find_unique_text 'Section B'
     (expect section_b_text[:page_number]).to be 2
@@ -1310,7 +1310,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not alter document state when arranging heading' do
-    input = <<~'EOS'
+    input = <<~'END'
     == Section A
 
     image::tall.svg[pdfwidth=75mm]
@@ -1321,7 +1321,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     This is the first paragraph of Section B.footnote:[This paragraph falls on the first page.]
 
     This paragraph falls on the second page.
-    EOS
+    END
 
     pdf = to_pdf input, analyze: true
     (expect (pdf.find_unique_text 'This is the first paragraph of Section B.')[:page_number]).to eql 1
@@ -1341,14 +1341,14 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not add break before chapter if heading-chapter-break-before key in theme is auto' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_chapter_break_before: 'auto' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { heading_chapter_break_before: 'auto' }, analyze: true
     = Document Title
     :doctype: book
 
     == Chapter A
 
     == Chapter B
-    EOS
+    END
 
     chapter_a_text = (pdf.find_text 'Chapter A')[0]
     chapter_b_text = (pdf.find_text 'Chapter B')[0]
@@ -1357,7 +1357,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not add break before part if heading-part-break-before key in theme is auto' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_part_break_before: 'auto', heading_chapter_break_before: 'auto' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { heading_part_break_before: 'auto', heading_chapter_break_before: 'auto' }, analyze: true
     = Document Title
     :doctype: book
 
@@ -1368,7 +1368,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     = Part II
 
     == Chapter in Part II
-    EOS
+    END
 
     part1_text = (pdf.find_text 'Part I')[0]
     part2_text = (pdf.find_text 'Part II')[0]
@@ -1377,7 +1377,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should add break after part if heading-part-break-after key in theme is always' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_part_break_after: 'always', heading_chapter_break_before: 'auto' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { heading_part_break_after: 'always', heading_chapter_break_before: 'auto' }, analyze: true
     = Document Title
     :doctype: book
 
@@ -1390,7 +1390,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     = Part II
 
     == Chapter in Part II
-    EOS
+    END
 
     part1_text = (pdf.find_text 'Part I')[0]
     part2_text = (pdf.find_text 'Part II')[0]
@@ -1403,14 +1403,14 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should not add page break after part if heading-part-break-after key in theme is avoid' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { heading_part_break_after: 'avoid' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { heading_part_break_after: 'avoid' }, analyze: true
     = Document Title
     :doctype: book
 
     = Part I
 
     == Chapter in Part I
-    EOS
+    END
 
     (expect pdf.pages).to have_size 2
     part1_text = (pdf.find_text 'Part I')[0]
@@ -1421,7 +1421,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should support abstract defined as special section' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Document Title
     :toc:
 
@@ -1433,7 +1433,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     == Body
 
     What came to pass.
-    EOS
+    END
 
     abstract_title_text = (pdf.find_text 'Abstract')[0]
     (expect abstract_title_text[:x]).to be > 48.24
@@ -1447,7 +1447,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
   context 'Section indent' do
     it 'should indent section body if section_indent is set to single value in theme' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { section_indent: 36 }, analyze: true
       = Document Title
 
       == Section Title
@@ -1456,7 +1456,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
       [.text-right]
       paragraph
-      EOS
+      END
 
       section_text = (pdf.find_text 'Section Title')[0]
       paragraph_text = pdf.find_text 'paragraph'
@@ -1467,7 +1467,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     end
 
     it 'should indent section body if section_indent is set to array in theme' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: [36, 0] }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { section_indent: [36, 0] }, analyze: true
       = Document Title
 
       == Section Title
@@ -1476,7 +1476,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
       [.text-right]
       paragraph
-      EOS
+      END
 
       section_text = (pdf.find_text 'Section Title')[0]
       paragraph_text = pdf.find_text 'paragraph'
@@ -1487,7 +1487,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     end
 
     it 'should indent toc entries if section_indent is set in theme' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { section_indent: 36 }, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -1495,7 +1495,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       == Chapter
 
       == Another Chapter
-      EOS
+      END
 
       toc_texts = pdf.find_text page_number: 2
       toc_title_text = toc_texts.find {|it| it[:string] == 'Table of Contents' }
@@ -1505,7 +1505,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     end
 
     it 'should indent preamble if section_indent is set in theme' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { section_indent: 36 }, analyze: true
       = Document Title
 
       preamble
@@ -1513,7 +1513,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       == Section
 
       content
-      EOS
+      END
 
       preamble_text = (pdf.find_text 'preamble')[0]
       (expect preamble_text[:x]).to eql 84.24
@@ -1522,7 +1522,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     end
 
     it 'should not reapply section indent to nested sections' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { section_indent: 36 }, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -1534,7 +1534,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
       === Section
 
       section body
-      EOS
+      END
 
       chapter_title_text = (pdf.find_text 'Chapter')[0]
       section_title_text = (pdf.find_text 'Section')[0]
@@ -1548,13 +1548,13 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     end
 
     it 'should outdent footnotes in article' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { section_indent: 36 }, analyze: true
       = Document Title
 
       == Section
 
       paragraph{blank}footnote:[About this paragraph]
-      EOS
+      END
 
       paragraph_text = (pdf.find_text 'paragraph')[0]
       footnote_text_fragments = pdf.text.select {|it| it[:y] < paragraph_text[:y] }
@@ -1563,14 +1563,14 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     end
 
     it 'should outdent footnotes in book' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { section_indent: 36 }, analyze: true
       = Document Title
       :doctype: book
 
       == Chapter
 
       paragraph{blank}footnote:[About this paragraph]
-      EOS
+      END
 
       paragraph_text = (pdf.find_text 'paragraph')[0]
       footnote_text_fragments = (pdf.find_text page_number: 2).select {|it| it[:y] < paragraph_text[:y] }
@@ -1579,7 +1579,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     end
 
     it 'should not indent body of index section' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { section_indent: 36 }, analyze: true
       = Document Title
       :doctype: book
 
@@ -1589,7 +1589,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
       [index]
       == Index
-      EOS
+      END
 
       index_page_texts = pdf.find_text page_number: 3
       index_title_text = index_page_texts.find {|it| it[:string] == 'Index' }

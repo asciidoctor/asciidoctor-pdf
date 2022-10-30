@@ -76,9 +76,9 @@ describe 'Asciidoctor::PDF::Converter - Link' do
     end
 
     it 'should not break on last character of bare URL' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       https://this.is.a.very.long.url.that.is.going.to.be.split.at.a.breakable.location.com/verylongpathname?a[]
-      EOS
+      END
       lines = pdf.lines
       (expect lines).to have_size 2
       (expect lines[0]).to end_with '/'
@@ -93,18 +93,18 @@ describe 'Asciidoctor::PDF::Converter - Link' do
     end
 
     it 'should not split bare URL when using an AFM font' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { base_font_family: 'Helvetica' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { base_font_family: 'Helvetica' }, analyze: true
       this line contains a URL that falls at the end of the line and yet cannot be split https://goo.gl/search/asciidoctor
-      EOS
+      END
       lines = pdf.lines
       (expect lines).to have_size 2
       (expect lines[1]).to eql 'https://goo.gl/search/asciidoctor'
     end
 
     it 'should not split bare URL after scheme' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       this line contains a URL that falls at the end of the line that is not split after the scheme https://goo.gl/search/asciidoctor
-      EOS
+      END
       lines = pdf.lines
       (expect lines).to have_size 2
       (expect lines[1]).to eql 'https://goo.gl/search/asciidoctor'
@@ -112,31 +112,31 @@ describe 'Asciidoctor::PDF::Converter - Link' do
 
     it 'should reveal URL of link when media=print or media=prepress' do
       %w(print prepress).each do |media|
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'media' => media }, analyze: true
+        pdf = to_pdf <<~'END', attribute_overrides: { 'media' => media }, analyze: true
         https://asciidoctor.org[Asciidoctor] is a text processor.
-        EOS
+        END
 
         (expect pdf.lines).to eql ['Asciidoctor [https://asciidoctor.org] is a text processor.']
       end
     end
 
     it 'should reveal URL of link when show-link-uri is set' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :show-link-uri:
 
       https://asciidoctor.org[Asciidoctor] is a text processor.
-      EOS
+      END
 
       (expect pdf.lines).to eql ['Asciidoctor [https://asciidoctor.org] is a text processor.']
     end
 
     it 'should not reveal URL of link when show-link-uri is unset in document even when media is print or prepress' do
       %w(print prepress).each do |media|
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'media' => media }, analyze: true
+        pdf = to_pdf <<~'END', attribute_overrides: { 'media' => media }, analyze: true
         :!show-link-uri:
 
         https://asciidoctor.org[Asciidoctor] is a text processor.
-        EOS
+        END
 
         (expect pdf.lines).to eql ['Asciidoctor is a text processor.']
       end
@@ -144,9 +144,9 @@ describe 'Asciidoctor::PDF::Converter - Link' do
 
     it 'should not reveal URL of link when show-link-uri is unset from API even media is print or prepress' do
       %w(print prepress).each do |media|
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'media' => media, 'show-link-uri' => nil }, analyze: true
+        pdf = to_pdf <<~'END', attribute_overrides: { 'media' => media, 'show-link-uri' => nil }, analyze: true
         https://asciidoctor.org[Asciidoctor] is a text processor.
-        EOS
+        END
 
         (expect pdf.lines).to eql ['Asciidoctor is a text processor.']
       end

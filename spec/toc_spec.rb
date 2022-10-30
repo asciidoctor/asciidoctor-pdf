@@ -5,7 +5,7 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - TOC' do
   context 'book' do
     it 'should not generate toc by default' do
-      pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+      pdf = to_pdf <<~'END', doctype: :book, analyze: true
       = Document Title
 
       == Introduction
@@ -13,13 +13,13 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Main
 
       == Conclusion
-      EOS
+      END
       (expect pdf.pages).to have_size 4
       (expect pdf.find_text 'Table of Contents').to be_empty
     end
 
     it 'should insert toc between title page and first page of body when toc is set' do
-      pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+      pdf = to_pdf <<~'END', doctype: :book, analyze: true
       = Document Title
       :toc:
 
@@ -28,7 +28,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Main
 
       == Conclusion
-      EOS
+      END
       (expect pdf.pages).to have_size 5
       (expect pdf.find_text 'Document Title', page_number: 1).not_to be_empty
       (expect pdf.find_text 'Table of Contents', page_number: 2).not_to be_empty
@@ -39,7 +39,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should space items in toc evently even if title is entirely monospace' do
-      pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+      pdf = to_pdf <<~'END', doctype: :book, analyze: true
       = Document Title
       :toc:
 
@@ -48,7 +48,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == `Middle`
 
       == End
-      EOS
+      END
       (expect pdf.find_text 'Table of Contents', page_number: 2).not_to be_empty
       beginning_pagenum_text = (pdf.find_text '1', page_number: 2)[0]
       middle_pagenum_text = (pdf.find_text '2', page_number: 2)[0]
@@ -59,7 +59,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should only include preface in toc if preface-title is set' do
-      input = <<~'EOS'
+      input = <<~'END'
       = Document Title
 
       [preface]
@@ -68,7 +68,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Chapter 1
 
       And away we go!
-      EOS
+      END
 
       [{ 'toc' => '' }, { 'toc' => '', 'preface-title' => 'Preface' }].each do |attrs|
         pdf = to_pdf input, doctype: :book, attributes: attrs, analyze: :page
@@ -91,7 +91,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should output toc with depth specified by toclevels' do
-      pdf = to_pdf <<~'EOS', doctype: :book, analyze: :page
+      pdf = to_pdf <<~'END', doctype: :book, analyze: :page
       = Document Title
       :toc:
       :toclevels: 1
@@ -101,7 +101,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       === Level 2
 
       ==== Level 3
-      EOS
+      END
       (expect pdf.pages).to have_size 3
       (expect pdf.pages[0][:strings]).to include 'Document Title'
       (expect pdf.pages[1][:strings]).to include 'Table of Contents'
@@ -112,7 +112,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should only show parts in toc if toclevels attribute is 0' do
-      pdf = to_pdf <<~'EOS', doctype: :book, analyze: :page
+      pdf = to_pdf <<~'END', doctype: :book, analyze: :page
       = Document Title
       :toc:
       :toclevels: 0
@@ -124,7 +124,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       = Part Two
 
       == Chapter B
-      EOS
+      END
       (expect pdf.pages).to have_size 6
       (expect pdf.pages[1][:strings]).to include 'Table of Contents'
       (expect pdf.pages[1][:strings]).to include 'Part One'
@@ -134,7 +134,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should not show any section titles when toclevels is less than 0' do
-      pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+      pdf = to_pdf <<~'END', doctype: :book, analyze: true
       = Document Title
       :toc:
       :toclevels: -1
@@ -146,14 +146,14 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       = Part Two
 
       == Chapter B
-      EOS
+      END
       (expect pdf.pages).to have_size 6
       toc_lines = pdf.lines pdf.find_text page_number: 2
       (expect toc_lines).to eql ['Table of Contents']
     end
 
     it 'should allow section to override toclevels for descendant sections' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -171,7 +171,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       === Appendix Section
 
       ==== Appendix Subsection
-      EOS
+      END
 
       (expect pdf.find_text page_number: 2, string: 'Chapter').to have_size 1
       (expect pdf.find_text page_number: 2, string: 'Chapter Section').to have_size 1
@@ -181,7 +181,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should allow section to remove itself from toc by setting toclevels to less than section level' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -199,7 +199,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       === Appendix Section
 
       ==== Appendix Subsection
-      EOS
+      END
 
       (expect pdf.find_text page_number: 2, string: 'Chapter').to have_size 1
       (expect pdf.find_text page_number: 2, string: 'Chapter Section').to have_size 1
@@ -209,12 +209,12 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
     it 'should reserve enough pages for toc if it spans more than one page' do
       sections = (1..40).map {|num| %(\n\n=== Section #{num}) }
-      pdf = to_pdf <<~EOS, doctype: :book, analyze: :page
+      pdf = to_pdf <<~END, doctype: :book, analyze: :page
       = Document Title
       :toc:
 
       == Chapter 1#{sections.join}
-      EOS
+      END
       (expect pdf.pages).to have_size 6
       (expect pdf.pages[0][:strings]).to include 'Document Title'
       (expect pdf.pages[1][:strings]).to include 'Table of Contents'
@@ -222,7 +222,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should render all TOC entries when computing extent of TOC when sectids is unset' do
-      input = <<~EOS
+      input = <<~END
       = Document Title
       :doctype: book
       :pdf-page-size: A5
@@ -232,7 +232,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       the preface
 
       #{30.times.map {|idx| %(== Chapter #{idx + 1}) }.join ?\n}
-      EOS
+      END
 
       pdf = to_pdf input, analyze: true
       preface_text = pdf.find_unique_text 'the preface'
@@ -241,7 +241,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should render descendants of section without ID when computing extent of TOC' do
-      input = <<~EOS
+      input = <<~END
       = Document Title
       :doctype: book
       :pdf-page-size: A5
@@ -256,7 +256,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       #{5.times.map {|idx| %(=== Section #{idx + 1}) }.join ?\n}
 
       #{21.times.map {|idx| %(== Chapter #{idx + 2}) }.join ?\n}
-      EOS
+      END
 
       pdf = to_pdf input, analyze: true
       preface_text = pdf.find_unique_text 'the preface'
@@ -265,7 +265,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should insert toc after preamble if toc attribute is preamble' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :toc: preamble
 
@@ -278,7 +278,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Conclusion
 
       content
-      EOS
+      END
 
       toc_title_text = pdf.find_unique_text 'Table of Contents'
       (expect toc_title_text[:page_number]).to be 1
@@ -290,7 +290,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
     it 'should insert toc at location of toc macro if toc attribute is macro' do
       lorem = ['lorem ipsum'] * 10 * %(\n\n)
-      input = <<~EOS
+      input = <<~END
       = Document Title
       :doctype: book
       :toc: macro
@@ -310,7 +310,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Conclusion
 
       #{lorem}
-      EOS
+      END
       pdf = to_pdf input, analyze: true
       (expect pdf.pages).to have_size 6
       toc_title_text = (pdf.find_text 'Table of Contents')[0]
@@ -327,7 +327,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should insert macro toc in outline as sibling of section in which it is contained' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = Document Title
       :doctype: book
       :toc: macro
@@ -339,7 +339,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       toc::[]
 
       === Another Section
-      EOS
+      END
 
       outline = extract_outline pdf
       chapter_entry = outline[1]
@@ -353,7 +353,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should not toc at default location if document has no sections' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :toc:
 
@@ -362,7 +362,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       No sections here either.
 
       Fin.
-      EOS
+      END
 
       (expect pdf.lines).to eql ['Document Title', 'No sections here.', 'No sections here either.', 'Fin.']
       p1_text = pdf.find_unique_text 'No sections here.'
@@ -380,7 +380,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
         end
       end
 
-      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+      pdf = to_pdf <<~'END', backend: backend, analyze: true
       = Document Title
       :toc:
 
@@ -391,14 +391,14 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == End
 
       content
-      EOS
+      END
 
       (expect (pdf.find_unique_text 'Table of Contents')).to be_nil
       (expect (pdf.find_text 'Beginning')).to have_size 1
     end
 
     it 'should not insert toc at location of toc macro if document has no sections' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :toc: macro
 
       No sections here.
@@ -408,7 +408,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       No sections here either.
 
       Fin.
-      EOS
+      END
 
       (expect pdf.lines).to eql ['No sections here.', 'No sections here either.', 'Fin.']
       p1_text = pdf.find_unique_text 'No sections here.'
@@ -426,7 +426,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
         end
       end
 
-      pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+      pdf = to_pdf <<~'END', backend: backend, analyze: true
       = Document Title
       :toc: macro
 
@@ -439,7 +439,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == End
 
       content
-      EOS
+      END
 
       (expect (pdf.find_unique_text 'Table of Contents')).to be_nil
       (expect (pdf.find_text 'Beginning')).to have_size 1
@@ -447,7 +447,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
     it 'should only insert macro toc at location of first toc macro' do
       lorem = ['lorem ipsum'] * 10 * %(\n\n)
-      input = <<~EOS
+      input = <<~END
       = Document Title
       :doctype: book
       :toc: macro
@@ -469,7 +469,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Conclusion
 
       #{lorem}
-      EOS
+      END
 
       pdf = to_pdf input, analyze: true
       (expect pdf.pages).to have_size 6
@@ -483,19 +483,19 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should not insert toc at location of toc macro if toc attribute is not set' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       == Before
 
       toc::[]
 
       == After
-      EOS
+      END
 
       (expect pdf.lines).to eql %w(Before After)
     end
 
     it 'should not insert toc at location of toc macro if toc-placement attribute is set but not toc attribute' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :toc-placement: macro
 
       == Before
@@ -503,13 +503,13 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       toc::[]
 
       == After
-      EOS
+      END
 
       (expect pdf.lines).to eql %w(Before After)
     end
 
     it 'should not insert toc at location of toc macro if value of toc attribute is not macro' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :doctype: book
       :toc:
 
@@ -518,14 +518,14 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       toc::[]
 
       text
-      EOS
+      END
 
       (expect pdf.find_unique_text 'Table of Contents').not_to be_nil
       (expect pdf.lines pdf.find_text page_number: 2).to eql %w(Chapter text)
     end
 
     it 'should not start new page for toc in book if already at top of page' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       = Document Title
       :doctype: book
       :toc: macro
@@ -539,7 +539,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Last Chapter
 
       Fin.
-      EOS
+      END
 
       (expect pdf.pages).to have_size 4
       toc_heading_text = pdf.find_unique_text 'Table of Contents'
@@ -547,7 +547,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should add top margin specified by theme to toc contents when toc has a title' do
-      input = <<~'EOS'
+      input = <<~'END'
       = Document Title
       :toc:
 
@@ -556,7 +556,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       === Subsection
 
       == Section B
-      EOS
+      END
 
       toc_top_without_margin_top = ((to_pdf input, analyze: true).find_text 'Section A')[0][:y]
       toc_top_with_margin_top = ((to_pdf input, pdf_theme: { toc_margin_top: 50 }, analyze: true).find_text 'Section A')[0][:y]
@@ -564,7 +564,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should add top margin specified by theme to toc contents when toc has no title and not at page top' do
-      input = <<~'EOS'
+      input = <<~'END'
       = Document Title
       :toc:
       :!toc-title:
@@ -574,7 +574,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       === Subsection
 
       == Section B
-      EOS
+      END
 
       toc_top_without_margin_top = ((to_pdf input, analyze: true).find_text 'Section A')[0][:y]
       toc_top_with_margin_top = ((to_pdf input, pdf_theme: { toc_margin_top: 50 }, analyze: true).find_text 'Section A')[0][:y]
@@ -582,7 +582,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should not add top margin specified by theme to toc contents when toc contents is at top of page' do
-      input = <<~'EOS'
+      input = <<~'END'
       = Document Title
       :doctype: book
       :toc:
@@ -593,7 +593,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       === Subsection
 
       == Section B
-      EOS
+      END
 
       toc_top_without_margin_top = ((to_pdf input, analyze: true).find_text 'Section A')[0][:y]
       toc_top_with_margin_top = ((to_pdf input, pdf_theme: { toc_margin_top: 50 }, analyze: true).find_text 'Section A')[0][:y]
@@ -601,7 +601,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should start preamble toc on recto page for prepress book' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :media: prepress
@@ -616,7 +616,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Last Chapter
 
       Fin.
-      EOS
+      END
 
       (expect pdf.pages).to have_size 9
       toc_heading_text = pdf.find_unique_text 'Table of Contents'
@@ -624,7 +624,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should start macro toc on recto page for prepress book' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       = Document Title
       :doctype: book
       :media: prepress
@@ -639,7 +639,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Last Chapter
 
       Fin.
-      EOS
+      END
 
       (expect pdf.pages).to have_size 7
       toc_heading_text = pdf.find_unique_text 'Table of Contents'
@@ -647,7 +647,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should not advance toc to recto page for prepress book when nonfacing option is specified on macro' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       = Document Title
       :doctype: book
       :media: prepress
@@ -662,7 +662,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Last Chapter
 
       Fin.
-      EOS
+      END
 
       (expect pdf.pages).to have_size 5
       toc_heading_text = pdf.find_unique_text 'Table of Contents'
@@ -670,7 +670,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should not advance toc in preamble to recto page for prepress book when nonfacing option is specified on macro' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       = Document Title
       :doctype: book
       :media: prepress
@@ -686,7 +686,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Last Chapter
 
       Fin.
-      EOS
+      END
 
       (expect pdf.pages).to have_size 5
       toc_heading_text = pdf.find_unique_text 'Table of Contents'
@@ -705,7 +705,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       }
 
       sections = (1..37).map {|num| %(== Section #{num}) }.join %(\n\n)
-      pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      pdf = to_pdf <<~END, pdf_theme: pdf_theme, enable_footer: true, analyze: true
       = Document Title
       :doctype: book
       :toc: macro
@@ -718,7 +718,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       toc::[]
 
       == Last Chapter
-      EOS
+      END
 
       toc_text = (pdf.find_text 'Table of Contents')[0]
       (expect toc_text).not_to be_nil
@@ -739,7 +739,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should not add toc title to page or outline if toc-title is unset' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = Document Title
       :doctype: book
       :toc:
@@ -750,7 +750,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Middle
 
       == End
-      EOS
+      END
 
       (expect pdf.pages).to have_size 5
       (expect pdf.pages[1].text).to start_with 'Beginning'
@@ -763,12 +763,12 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
     it 'should not attempt to create dots if number of dots is less than 0' do
       section_title = (%w(verylongsectiontitle) * 5).join
-      pdf = to_pdf <<~EOS, doctype: :book, analyze: true
+      pdf = to_pdf <<~END, doctype: :book, analyze: true
       :toc:
       :toc-max-pagenum-digits: 0
 
       == #{section_title}
-      EOS
+      END
 
       toc_lines = pdf.lines pdf.find_text page_number: 1
       (expect toc_lines).to have_size 2
@@ -777,14 +777,14 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should line up dots and page number with wrapped line' do
-      pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
+      pdf = to_pdf <<~'END', doctype: :book, analyze: true
       = Document Title
       :toc:
 
       == This Here is an Absurdly Long Section Title That Exceeds the Length of a Single Line and Therefore Wraps
 
       content
-      EOS
+      END
 
       toc_text = pdf.find_text page_number: 2
       (expect toc_text.size).to be > 1
@@ -800,7 +800,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
     it 'should line up dots and page number with wrapped line when section title gets split across a page boundary' do
       sections = (1..37).map {|num| %(\n\n== Section #{num}) }.join
-      pdf = to_pdf <<~EOS, doctype: :book, analyze: true
+      pdf = to_pdf <<~END, doctype: :book, analyze: true
       = Document Title
       :toc:
       #{sections}
@@ -808,7 +808,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == This is a unbelievably long section title that probably shouldn't be a section title at all but here we are
 
       content
-      EOS
+      END
 
       page_2_lines = pdf.lines pdf.find_text page_number: 2
       (expect page_2_lines).to include 'Table of Contents'
@@ -820,7 +820,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
     it 'should not crash if last fragment in toc entry is not rendered' do
       (expect do
-        pdf = to_pdf <<~EOS, analyze: true
+        pdf = to_pdf <<~END, analyze: true
         = Document Title
         :notitle:
         :!toc-title:
@@ -830,7 +830,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
         == Chapter
 
         == #{(['foo bar'] * 12).join ' '} foo +++<span><br></span>+++
-        EOS
+        END
 
         toc_lines = pdf.lines pdf.find_text page_number: 1
         (expect toc_lines).to have_size 2
@@ -840,7 +840,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
     it 'should not crash if last fragment in toc entry that wraps is not rendered' do
       (expect do
-        pdf = to_pdf <<~EOS, analyze: true
+        pdf = to_pdf <<~END, analyze: true
         = Document Title
         :notitle:
         :!toc-title:
@@ -850,7 +850,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
         == Chapter
 
         == #{(['foo bar'] * 24).join ' '} foo foo +++<span><br></span>+++
-        EOS
+        END
 
         toc_lines = pdf.lines pdf.find_text page_number: 1
         (expect toc_lines).to have_size 3
@@ -860,12 +860,12 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
     it 'should not crash if theme does not specify toc_indent' do
       (expect do
-        pdf = to_pdf <<~'EOS', attributes: { 'pdf-theme' => (fixture_file 'custom-theme.yml') }, analyze: true
+        pdf = to_pdf <<~'END', attributes: { 'pdf-theme' => (fixture_file 'custom-theme.yml') }, analyze: true
         = Document Title
         :toc:
 
         == Section
-        EOS
+        END
 
         toc_text = pdf.find_unique_text %r/Table of Contents/
         (expect toc_text).not_to be_nil
@@ -874,14 +874,14 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should allow hanging indent to be applied to lines that wrap' do
-      pdf = to_pdf <<~'EOS', doctype: :book, pdf_theme: { toc_hanging_indent: 36 }, analyze: true
+      pdf = to_pdf <<~'END', doctype: :book, pdf_theme: { toc_hanging_indent: 36 }, analyze: true
       = Document Title
       :toc:
 
       == This Here is an Absurdly Long Section Title That Exceeds the Length of a Single Line and Therefore Wraps
 
       content
-      EOS
+      END
 
       toc_text = pdf.find_text page_number: 2
       (expect toc_text.size).to be > 1
@@ -896,7 +896,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should allow theme to control font size of dot leader' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { toc_dot_leader_font_size: '0.5em' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { toc_dot_leader_font_size: '0.5em' }, analyze: true
       = Book Title
       :doctype: book
       :toc:
@@ -904,7 +904,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Foo
 
       == Bar
-      EOS
+      END
 
       reference_text = pdf.find_unique_text 'Foo', page_number: 2
       dot_leader_texts = pdf.find_text %r/(?:\. )+/, page_number: 2
@@ -915,20 +915,20 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should allow theme to control font style of dot leader' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { toc_dot_leader_font_style: 'bold' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { toc_dot_leader_font_style: 'bold' }, analyze: true
       = Book Title
       :doctype: book
       :toc:
 
       == Foo
-      EOS
+      END
 
       dot_leader_text = pdf.find_unique_text %r/(?:\. )+/
       (expect dot_leader_text[:font_name]).to eql 'NotoSerif-Bold'
     end
 
     it 'should allow theme to disable dot leader by setting content to empty string' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { toc_dot_leader_content: '' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { toc_dot_leader_content: '' }, analyze: true
       = Book Title
       :doctype: book
       :toc:
@@ -938,7 +938,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Bar
 
       == Baz
-      EOS
+      END
 
       toc_lines = (pdf.lines pdf.find_text page_number: 2).join ?\n
       (expect toc_lines).to include 'Foo'
@@ -948,7 +948,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should allow theme to disable dot leader by setting levels to none' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { toc_dot_leader_levels: 'none' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { toc_dot_leader_levels: 'none' }, analyze: true
       = Book Title
       :doctype: book
       :toc:
@@ -958,7 +958,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Bar
 
       == Baz
-      EOS
+      END
 
       toc_lines = (pdf.lines pdf.find_text page_number: 2).join ?\n
       (expect toc_lines).to include 'Foo'
@@ -968,7 +968,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should allow theme to disable dot leader for nested levels' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { toc_dot_leader_levels: 1 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { toc_dot_leader_levels: 1 }, analyze: true
       = Book Title
       :doctype: book
       :toc:
@@ -984,7 +984,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Baz
 
       === Baz Subsection
-      EOS
+      END
 
       toc_lines = pdf.lines.select {|it| it.include? 'Subsection' }.join ?\n
       (expect toc_lines).to include 'Foo Subsection'
@@ -994,7 +994,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should allow theme to enable dot leader per level' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { toc_dot_leader_levels: '1 3' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { toc_dot_leader_levels: '1 3' }, analyze: true
       = Book Title
       :doctype: book
       :toc:
@@ -1017,7 +1017,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       === Baz Subsection
 
       ==== Baz Deep
-      EOS
+      END
 
       lines = pdf.lines
 
@@ -1041,7 +1041,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should not use part or chapter signifier in toc' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Book Title
       :doctype: book
       :sectnums:
@@ -1055,7 +1055,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       = P2
 
       == C2
-      EOS
+      END
 
       lines = pdf.lines pdf.find_text page_number: 2
       (expect lines).to have_size 5
@@ -1069,7 +1069,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should reserve enough room for toc when page number forces section title in toc to wrap' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -1082,7 +1082,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       #{(['== Chapter'] * 27).join ?\n}
 
       == Last Chapter
-      EOS
+      END
 
       (expect pdf.find_text page_number: 2, string: 'Last Chapter').to have_size 1
       (expect pdf.find_text page_number: 2, string: 'Chapter').to be_empty
@@ -1091,7 +1091,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
   context 'article' do
     it 'should not generate toc by default' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
 
       == Introduction
@@ -1099,14 +1099,14 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Main
 
       == Conclusion
-      EOS
+      END
       (expect pdf.pages).to have_size 1
       (expect pdf.find_text 'Table of Contents').to be_empty
     end
 
     it 'should insert toc between document title and content when toc is set' do
       lorem = ['lorem ipsum'] * 10 * %(\n\n)
-      input = <<~EOS
+      input = <<~END
       = Document Title
       :toc:
 
@@ -1123,7 +1123,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Conclusion
 
       #{lorem}
-      EOS
+      END
       pdf = to_pdf input, analyze: true
       (expect pdf.pages).to have_size 2
       (expect pdf.find_text 'Table of Contents', page_number: 1).to have_size 1
@@ -1140,13 +1140,13 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should insert toc at top of first page if toc is set and document has no doctitle' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :toc:
 
       == Section A
 
       == Section B
-      EOS
+      END
 
       toc_title_text = (pdf.find_text 'Table of Contents')[0]
       sect_a_text = (pdf.find_text 'Section A', font_size: 22)[0]
@@ -1155,12 +1155,12 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
     it 'should reserve enough pages for toc if it spans more than one page' do
       sections = (1..40).map {|num| %(\n\n== Section #{num}) }
-      input = <<~EOS
+      input = <<~END
       = Document Title
       :toc:
 
       #{sections.join}
-      EOS
+      END
       pdf = to_pdf input, analyze: :page
       (expect pdf.pages).to have_size 4
       (expect pdf.pages[0][:strings]).to include 'Document Title'
@@ -1182,7 +1182,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should insert toc between title page and first page of body when toc and title-page are set' do
-      pdf = to_pdf <<~'EOS', analyze: :page
+      pdf = to_pdf <<~'END', analyze: :page
       = Document Title
       :toc:
       :title-page:
@@ -1192,7 +1192,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Main
 
       == Conclusion
-      EOS
+      END
       (expect pdf.pages).to have_size 3
       (expect pdf.pages[0][:strings]).to include 'Document Title'
       (expect pdf.pages[1][:strings]).to include 'Table of Contents'
@@ -1202,7 +1202,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should not force page break after toc when title-page attribute is set and toc-break-after is auto' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { toc_break_after: 'auto' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { toc_break_after: 'auto' }, analyze: true
       = Document Title
       :title-page:
       :toc:
@@ -1212,7 +1212,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Main
 
       == Conclusion
-      EOS
+      END
       (expect pdf.pages).to have_size 2
       (expect pdf.find_unique_text 'Document Title', page_number: 1).not_to be_nil
       (expect pdf.find_unique_text 'Table of Contents', page_number: 2).not_to be_nil
@@ -1224,7 +1224,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
 
     it 'should insert toc at location of toc macro if toc attribute is macro' do
       lorem = ['lorem ipsum'] * 10 * %(\n\n)
-      input = <<~EOS
+      input = <<~END
       = Document Title
       :toc: macro
 
@@ -1243,7 +1243,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Conclusion
 
       #{lorem}
-      EOS
+      END
       pdf = to_pdf input, analyze: true
       (expect pdf.pages).to have_size 2
       (expect pdf.find_text 'Table of Contents', page_number: 1).to have_size 1
@@ -1269,7 +1269,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should insert macro toc in outline as sibling of section in which it is contained' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = Document Title
       :toc: macro
 
@@ -1280,7 +1280,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       toc::[]
 
       === Another Subsection
-      EOS
+      END
 
       outline = extract_outline pdf
       section_entry = outline[1]
@@ -1294,7 +1294,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should insert macro toc in outline before other sections if macro proceeds sections' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = Document Title
       :toc: macro
 
@@ -1305,7 +1305,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       === Subsection
 
       === Another Subsection
-      EOS
+      END
 
       outline = extract_outline pdf
       toc_entry = outline[1]
@@ -1326,7 +1326,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       toc_dot_leader_font_color: 'CCCCCC',
       running_content_start_at: 'toc',
     }
-    to_file = to_pdf_file <<~'EOS', 'toc-running-content-font-color.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~'END', 'toc-running-content-font-color.pdf', pdf_theme: pdf_theme
     = Document Title
     Author Name
     :doctype: book
@@ -1339,7 +1339,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     == B
 
     text
-    EOS
+    END
 
     (expect to_file).to visually_match 'toc-running-content-font-color.pdf'
   end
@@ -1349,7 +1349,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       extends: 'base',
       toc_font_color: '4a4a4a',
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     = Document Title
     Author Name
     :doctype: book
@@ -1362,7 +1362,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     == Conclusion
 
     text
-    EOS
+    END
 
     intro_entry_font_color = (pdf.find_unique_text 'Intro', page_number: 2)[:font_color]
     dot_leader_font_color = (pdf.find_text page_number: 2).select {|it| it[:string].start_with? '.' }.map {|it| it[:font_color] }.uniq[0]
@@ -1374,13 +1374,13 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       toc_font_style: 'bold',
     }
 
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     = Document Title
     :doctype: book
     :toc:
 
     == Get Started _Quickly_
-    EOS
+    END
 
     get_started_text = (pdf.find_text page_number: 2, string: /^Get Started/)[0]
     quickly_text = (pdf.find_text page_number: 2, string: 'Quickly')[0]
@@ -1392,13 +1392,13 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     pdf_theme = {
       toc_text_decoration: 'underline',
     }
-    input = <<~'EOS'
+    input = <<~'END'
     = Document Title
     :toc:
     :title-page:
 
     == Underline Me
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
     lines = pdf.lines
@@ -1417,13 +1417,13 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       toc_text_decoration_color: 'cccccc',
       toc_text_decoration_width: 0.5,
     }
-    input = <<~'EOS'
+    input = <<~'END'
     = Document Title
     :toc:
     :title-page:
 
     == Underline Me
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
     lines = pdf.lines
@@ -1457,7 +1457,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
         base_text_align: 'center',
       },
     ].each do |pdf_theme|
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       = Document Title
       :toc:
       :doctype: book
@@ -1465,7 +1465,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       == Section A
 
       == Section B
-      EOS
+      END
       toc_title_text = pdf.find_unique_text 'Table of Contents'
       (expect toc_title_text[:x]).to be > 48.24
     end
@@ -1477,7 +1477,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       toc_h3_text_decoration_color: 'cccccc',
       toc_h3_text_decoration_width: 0.5,
     }
-    input = <<~'EOS'
+    input = <<~'END'
     = Document Title
     :toc:
     :title-page:
@@ -1485,7 +1485,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     == Plain Title
 
     === Decorated Title
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
     lines = pdf.lines
@@ -1503,13 +1503,13 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     pdf_theme = {
       toc_text_transform: 'uppercase',
     }
-    input = <<~'EOS'
+    input = <<~'END'
     = Document Title
     :doctype: book
     :toc:
 
     == Transform Me
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
     toc_lines = pdf.lines pdf.find_text page_number: 2
@@ -1517,24 +1517,24 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
   end
 
   it 'should decode character references in toc entries' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Document Title
     :toc:
 
     == Paper Clips &#x2116;&nbsp;4
-    EOS
+    END
 
     (expect pdf.find_text %(Paper Clips \u2116\u00a04)).to have_size 2
   end
 
   it 'should not crash if section title is empty' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :toc:
 
     == {empty}
 
     content
-    EOS
+    END
 
     (expect pdf.text).to have_size 2
     (expect pdf.find_unique_text 'content').not_to be_nil
@@ -1542,7 +1542,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
   end
 
   it 'should not include section title or its children in toc if title is empty' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Document Title
     :toc:
     :title-page:
@@ -1554,7 +1554,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     === Child Section
 
     content
-    EOS
+    END
 
     toc_lines = pdf.lines pdf.find_text page_number: 2
     (expect toc_lines).to have_size 2
@@ -1565,13 +1565,13 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
   it 'should allocate correct number of pages for toc if line numbers cause lines to wrap' do
     chapter_title = %(\n\n== A long chapter title that wraps to a second line in the toc when the page number exceeds one digit)
 
-    input = <<~EOS
+    input = <<~END
     = Document Title
     :doctype: book
     :toc:
     :nofooter:
     #{chapter_title * 38}
-    EOS
+    END
 
     pdf = to_pdf input, analyze: true
     last_pagenum_text = (pdf.find_text '38')[0]
@@ -1580,13 +1580,13 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
   end
 
   it 'should render image at end of section title in toc entry' do
-    pdf = to_pdf <<~'EOS', analyze: :image
+    pdf = to_pdf <<~'END', analyze: :image
     = Document Title
     :doctype: book
     :toc:
 
     == Chapter image:tux.png[,16]
-    EOS
+    END
 
     images = pdf.images
     (expect images).to have_size 2
@@ -1614,7 +1614,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       end
     end
 
-    input = <<~'EOS'
+    input = <<~'END'
     = Document Title
     :doctype: book
     :toc:
@@ -1622,7 +1622,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     == Chapter A
 
     == Chapter B
-    EOS
+    END
 
     pdf = to_pdf input, backend: backend, analyze: true
     (expect pdf.pages).to have_size 5
@@ -1644,7 +1644,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       end
     end
 
-    input = <<~'EOS'
+    input = <<~'END'
     = Document Title
     :doctype: book
     :toc:
@@ -1667,7 +1667,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     image::tux.png[]
 
     === Another Section
-    EOS
+    END
 
     pdf = to_pdf input, backend: backend, analyze: true
     (expect pdf.pages).to have_size 5
@@ -1692,7 +1692,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     backend = %(pdf#{ext_class.object_id})
     source_lines[0] = %(  register_for '#{backend}'\n)
     ext_class.class_eval source_lines.join, source_file
-    pdf = to_pdf <<~'EOS', backend: backend, analyze: true
+    pdf = to_pdf <<~'END', backend: backend, analyze: true
     = Document Title
     :doctype: book
     :toc:
@@ -1711,7 +1711,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     === Last Section
 
     == Another Chapter
-    EOS
+    END
 
     toc_text = pdf.find_text page_number: 2
     toc_lines = toc_text

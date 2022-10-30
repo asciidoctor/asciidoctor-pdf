@@ -7,12 +7,12 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
     pdf_theme = {
       heading_text_align: 'center',
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     [discrete]
     == Discrete Heading
 
     main content
-    EOS
+    END
 
     discrete_heading_text = pdf.find_unique_text 'Discrete Heading'
     main_text = pdf.find_unique_text 'main content'
@@ -24,12 +24,12 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
       heading_text_align: 'left',
       heading_h2_text_align: 'center',
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     [discrete]
     == Discrete Heading
 
     main content
-    EOS
+    END
 
     discrete_heading_text = pdf.find_unique_text 'Discrete Heading'
     main_text = pdf.find_unique_text 'main content'
@@ -42,13 +42,13 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
       heading_h2_text_align: nil,
       heading_text_align: nil,
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     [discrete]
     == Discrete Heading
 
     [.text-left]
     main content
-    EOS
+    END
 
     discrete_heading_text = pdf.find_unique_text 'Discrete Heading'
     main_text = pdf.find_unique_text 'main content'
@@ -57,14 +57,14 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
 
   it 'should force discrete heading to next page if space below is less than heading-min-height-after value' do
     pdf = with_content_spacer 10, 690 do |spacer_path|
-      to_pdf <<~EOS
+      to_pdf <<~END
       image::#{spacer_path}[]
 
       [discrete#buddy]
       == Discrete Heading
 
       Don't abandon me!
-      EOS
+      END
     end
 
     (expect pdf.pages).to have_size 2
@@ -76,7 +76,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
 
   it 'should force discrete heading with breakable option to next page if no content is inked below it' do
     pdf = with_content_spacer 10, 675 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: { heading_min_height_after: nil }
+      to_pdf <<~END, pdf_theme: { heading_min_height_after: nil }
       image::#{spacer_path}[]
 
       [discrete#buddy%breakable]
@@ -85,7 +85,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
       ----
       Do it like this.
       ----
-      EOS
+      END
     end
 
     (expect pdf.pages).to have_size 2
@@ -97,7 +97,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
 
   it 'should force discrete heading to next page when heading-min-height-after is auto if no content is inked below it' do
     pdf = with_content_spacer 10, 675 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 'auto' }
+      to_pdf <<~END, pdf_theme: { heading_min_height_after: 'auto' }
       image::#{spacer_path}[]
 
       [discrete#buddy]
@@ -106,7 +106,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
       ----
       Do it like this.
       ----
-      EOS
+      END
     end
 
     (expect pdf.pages).to have_size 2
@@ -118,12 +118,12 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
 
   it 'should ignore heading-min-height-after if heading is last child' do
     pdf = with_content_spacer 10, 650 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: { heading_min_height_after: 100, heading_font_color: 'AA0000' }, analyze: true
+      to_pdf <<~END, pdf_theme: { heading_min_height_after: 100, heading_font_color: 'AA0000' }, analyze: true
       image::#{spacer_path}[]
 
       [discrete]
       == Heading Fits
-      EOS
+      END
     end
 
     (expect pdf.pages).to have_size 1
@@ -138,7 +138,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
     backend = %(pdf#{ext_class.object_id})
     source_lines[0] = %(  register_for '#{backend}'\n)
     ext_class.class_eval source_lines.join, source_file
-    pdf = to_pdf <<~EOS, backend: backend, analyze: true
+    pdf = to_pdf <<~END, backend: backend, analyze: true
     [discrete]
     == Heading A
 
@@ -158,7 +158,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
 
     together
     --
-    EOS
+    END
 
     heading_c_text = pdf.find_unique_text 'Heading C'
     (expect heading_c_text[:page_number]).to be 2
@@ -168,14 +168,14 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
 
   it 'should not force discrete heading to next page if heading-min-height-after value is not set' do
     pdf = with_content_spacer 10, 690 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: { heading_min_height_after: nil }
+      to_pdf <<~END, pdf_theme: { heading_min_height_after: nil }
       image::#{spacer_path}[]
 
       [discrete#buddy]
       == Discrete Heading
 
       Don't abandon me!
-      EOS
+      END
     end
 
     (expect pdf.pages).to have_size 2
@@ -189,7 +189,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
 
   it 'should not force discrete heading without breakable option to next page if no content is inked below it' do
     pdf = with_content_spacer 10, 675 do |spacer_path|
-      to_pdf <<~EOS
+      to_pdf <<~END
       image::#{spacer_path}[]
 
       [discrete#buddy]
@@ -198,7 +198,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
       ----
       Do it like this.
       ----
-      EOS
+      END
     end
 
     (expect pdf.pages).to have_size 2
@@ -212,12 +212,12 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
 
   it 'should not force discrete heading to next page if it has no next sibling' do
     pdf = with_content_spacer 10, 690 do |spacer_path|
-      to_pdf <<~EOS
+      to_pdf <<~END
       image::#{spacer_path}[]
 
       [discrete#buddy]
       == Discrete Heading
-      EOS
+      END
     end
 
     (expect pdf.pages).to have_size 1
@@ -228,7 +228,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
   end
 
   it 'should outdent discrete heading' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { section_indent: 36 }, analyze: true
     = Document Title
 
     == Section
@@ -248,7 +248,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
     ==== Another Discrete Heading
 
     paragraph
-    EOS
+    END
 
     discrete_heading_texts = pdf.find_text %r/Discrete/
     (expect discrete_heading_texts).to have_size 2
@@ -259,7 +259,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
   end
 
   it 'should not outdent discrete heading inside block' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { section_indent: 36 }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { section_indent: 36 }, analyze: true
     == Section
 
     ****
@@ -268,7 +268,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
     [discrete]
     == Discrete Heading
     ****
-    EOS
+    END
 
     sidebar_content_text = (pdf.find_text 'sidebar content')[0]
     discrete_heading_text = (pdf.find_text 'Discrete Heading')[0]
@@ -276,16 +276,16 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
   end
 
   it 'should honor text alignment role on discrete heading' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     [discrete]
     == Discrete Heading
-    EOS
+    END
     left_x = (pdf.find_text 'Discrete Heading')[0][:x]
 
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     [discrete.text-right]
     == Discrete Heading
-    EOS
+    END
     right_x = (pdf.find_text 'Discrete Heading')[0][:x]
 
     (expect right_x).to be > left_x
@@ -304,7 +304,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
       heading_h3_padding: [0, 0, 5],
     }
 
-    input = <<~'EOS'
+    input = <<~'END'
     [discrete]
     == Heading Level 1
 
@@ -314,7 +314,7 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
     === Heading Level 2
 
     content
-    EOS
+    END
 
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true

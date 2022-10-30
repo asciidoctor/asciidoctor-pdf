@@ -281,12 +281,12 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should not allow use of fallback font after hard line break to alter line height' do
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => 'default-with-font-fallbacks' }, analyze: true
+      pdf = to_pdf <<~'END', attribute_overrides: { 'pdf-theme' => 'default-with-font-fallbacks' }, analyze: true
       [%hardbreaks]
       けふこえて
       あさきゆめみし
       ゑひもせす
-      EOS
+      END
 
       text = pdf.text
       (expect text).to have_size 3
@@ -446,11 +446,11 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should add background and border to kbd as defined in theme', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'text-formatter-kbd.pdf', attribute_overrides: { 'experimental' => '' }
+      to_file = to_pdf_file <<~'END', 'text-formatter-kbd.pdf', attribute_overrides: { 'experimental' => '' }
       Press kbd:[q] to exit.
 
       Press kbd:[Ctrl,c] to kill the process.
-      EOS
+      END
       (expect to_file).to visually_match 'text-formatter-kbd.pdf'
     end
 
@@ -460,11 +460,11 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         kbd_border_color: nil,
       }
 
-      to_file = to_pdf_file <<~'EOS', 'text-formatter-kbd.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'experimental' => '' }
+      to_file = to_pdf_file <<~'END', 'text-formatter-kbd.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'experimental' => '' }
       Press kbd:[q] to exit.
 
       Press kbd:[Ctrl,c] to kill the process.
-      EOS
+      END
       (expect to_file).to visually_match 'text-formatter-kbd.pdf'
     end
 
@@ -474,9 +474,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         kbd_border_width: 0,
         kbd_border_offset: 0,
       }
-      pdf = to_pdf <<~'EOS', analyze: true, pdf_theme: pdf_theme, attribute_overrides: { 'experimental' => '' }
+      pdf = to_pdf <<~'END', analyze: true, pdf_theme: pdf_theme, attribute_overrides: { 'experimental' => '' }
       Press kbd:[Ctrl,c] to kill the process.
-      EOS
+      END
       (expect pdf.lines).to eql ['Press Ctrl+c to kill the process.']
     end
 
@@ -486,16 +486,16 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         kbd_border_width: 0,
         kbd_border_offset: 0,
       }
-      pdf = to_pdf <<~'EOS', analyze: true, pdf_theme: pdf_theme, attribute_overrides: { 'experimental' => '' }
+      pdf = to_pdf <<~'END', analyze: true, pdf_theme: pdf_theme, attribute_overrides: { 'experimental' => '' }
       Press kbd:[Ctrl,c] to kill the process.
-      EOS
+      END
       (expect pdf.lines).to eql ['Press Ctrl-c to kill the process.']
     end
 
     it 'should convert menu macro' do
-      pdf = to_pdf <<~'EOS', analyze: true, attribute_overrides: { 'experimental' => '' }
+      pdf = to_pdf <<~'END', analyze: true, attribute_overrides: { 'experimental' => '' }
       Select menu:File[Quit] to exit.
-      EOS
+      END
       menu_texts = pdf.find_text font_name: 'NotoSerif-Bold'
       (expect menu_texts).to have_size 3
       (expect menu_texts[0][:string]).to eql %(File\u00a0)
@@ -508,9 +508,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should support menu macro with only the root level' do
-      pdf = to_pdf <<~'EOS', analyze: true, attribute_overrides: { 'experimental' => '' }
+      pdf = to_pdf <<~'END', analyze: true, attribute_overrides: { 'experimental' => '' }
       The menu:File[] menu is where all the useful stuff is.
-      EOS
+      END
       menu_texts = pdf.find_text font_name: 'NotoSerif-Bold'
       (expect menu_texts).to have_size 1
       (expect menu_texts[0][:string]).to eql 'File'
@@ -519,9 +519,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should support menu macro with multiple levels' do
-      pdf = to_pdf <<~'EOS', analyze: true, attribute_overrides: { 'experimental' => '' }
+      pdf = to_pdf <<~'END', analyze: true, attribute_overrides: { 'experimental' => '' }
       Select menu:File[New,Class] to create a new Java class.
-      EOS
+      END
       menu_texts = pdf.find_text font_name: 'NotoSerif-Bold'
       (expect menu_texts).to have_size 5
       (expect menu_texts[0][:string]).to eql %(File\u00a0)
@@ -538,9 +538,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should use default caret content for menu if not specified by theme' do
-      pdf = to_pdf <<~'EOS', analyze: true, pdf_theme: { menu_caret_content: nil }, attribute_overrides: { 'experimental' => '' }
+      pdf = to_pdf <<~'END', analyze: true, pdf_theme: { menu_caret_content: nil }, attribute_overrides: { 'experimental' => '' }
       Select menu:File[Quit] to exit.
-      EOS
+      END
       menu_texts = pdf.find_text font_name: 'NotoSerif-Bold'
       (expect menu_texts).to have_size 1
       (expect menu_texts[0][:string]).to eql %(File\u00a0\u203a Quit)
@@ -549,9 +549,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should allow theme to control font properties for menu' do
-      pdf = to_pdf <<~'EOS', analyze: true, pdf_theme: { menu_font_color: 'AA0000', menu_font_size: 10, menu_font_style: 'bold_italic', menu_caret_content: ' > ' }, attribute_overrides: { 'experimental' => '' }
+      pdf = to_pdf <<~'END', analyze: true, pdf_theme: { menu_font_color: 'AA0000', menu_font_size: 10, menu_font_style: 'bold_italic', menu_caret_content: ' > ' }, attribute_overrides: { 'experimental' => '' }
       Select menu:File[Quit] to exit.
-      EOS
+      END
       menu_texts = pdf.find_text font_name: 'NotoSerif-BoldItalic'
       (expect menu_texts).to have_size 1
       (expect menu_texts[0][:string]).to eql %(File > Quit)
@@ -561,11 +561,11 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should keep caret with previous item if menu wraps' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :experimental:
 
       This is a long-winded explanation that finally gets to the point by instructing you to use menu:File[Make,Class] to create a new class.
-      EOS
+      END
       lines = pdf.lines
       (expect lines).to have_size 2
       (expect lines[1]).not_to start_with ?\u203a
@@ -578,14 +578,14 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should be able to reference section title containing icon' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :icons: font
 
       [#reference]
       == icon:cogs[] Heading
 
       See <<reference>>.
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 2
@@ -634,42 +634,42 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should not lowercase tags when applying lowercase text transform' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { sidebar_text_transform: 'lowercase' }
+      pdf = to_pdf <<~'END', pdf_theme: { sidebar_text_transform: 'lowercase' }
       ****
       image:TuxTheLinuxPenguin.png[width=20] <= How this fella came to be the Linux mascot.
       ****
-      EOS
+      END
 
       (expect get_images pdf).to have_size 1
     end
 
     it 'should apply width and alignment specified by span tag', visual: true do
       %w(left center right).each do |align|
-        to_file = to_pdf_file <<~EOS, %(text-formatter-align-#{align}-within-width.pdf)
+        to_file = to_pdf_file <<~END, %(text-formatter-align-#{align}-within-width.pdf)
         |+++<span style="width: 1in; align: #{align}; background-color: #ffff00">hi</span>+++|
-        EOS
+        END
         (expect to_file).to visually_match %(text-formatter-align-#{align}-within-width.pdf)
       end
     end
 
     it 'should preserve word spacing in multi-word phrase that has a border offset', visual: true do
       pdf_theme = { role_wild_background_color: 'CCCCCC', role_wild_border_offset: 1.5 }
-      to_file = to_pdf_file <<~EOS, 'text-formatter-marked-phrase-word-spacing.pdf', pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~END, 'text-formatter-marked-phrase-word-spacing.pdf', pdf_theme: pdf_theme
       To tame the [.wild]#extremely wild and dangerous wolpertingers#, we needed to build a *charm*.
       But ultimate victory could only be won if we divined the true name of the warlock.
-      EOS
+      END
       (expect to_file).to visually_match 'text-formatter-marked-phrase-word-spacing.pdf'
     end
 
     it 'should not warn if text contains invalid markup in scratch document' do
       # NOTE: this assertion will fail if the message is logged multiple times
       (expect do
-        pdf = to_pdf <<~'EOS', analyze: true
+        pdf = to_pdf <<~'END', analyze: true
         [%unbreakable]
         --
         before +++<foo>bar</foo>+++ after
         --
-        EOS
+        END
 
         (expect pdf.lines).to eql ['before <foo>bar</foo> after']
       end).to log_message severity: :ERROR, message: /^failed to parse formatted text:/
@@ -735,11 +735,11 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         role_underline_text_decoration_color: '0000AA',
         role_underline_text_decoration_width: 0.5,
       }
-      input = <<~'EOS'
+      input = <<~'END'
       [.underline]#underline#
 
       [.line-through]#line-through#
-      EOS
+      END
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
       lines = pdf.lines
       (expect lines).to have_size 2
@@ -829,9 +829,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should support built-in pre-wrap role on phrase' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [.pre-wrap]`0 1  2   3     5`
-      EOS
+      END
 
       shout_text = pdf.text[0]
       (expect shout_text[:string]).to eql '0 1  2   3     5'
@@ -901,11 +901,11 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         role_important_text_decoration_color: '0000AA',
         role_important_text_decoration_width: 0.5,
       }
-      input = <<~'EOS'
+      input = <<~'END'
       [.important]#important#
 
       [.delete]#delete#
-      EOS
+      END
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: :line
       lines = pdf.lines
       (expect lines).to have_size 2
@@ -937,9 +937,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         role_capital_text_transform: 'capitalize',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       [.lower]#WHISPER# [.upper]#shout# [.capital]#here me roar#
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 1
@@ -952,9 +952,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         role_upper_text_transform: 'uppercase',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       [.upper.red]#shout#
-      EOS
+      END
 
       shout_text = pdf.text[0]
       (expect shout_text[:font_color]).to eql 'FF0000'
@@ -962,11 +962,11 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should apply text transform to value of attribute reference' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { role_upper_text_transform: 'uppercase' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { role_upper_text_transform: 'uppercase' }, analyze: true
       :brandname: acme
 
       [.upper]#{brandname}#
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 1
@@ -974,10 +974,10 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should apply text transform to enclosed formatted text' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { role_upper_text_transform: 'uppercase' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { role_upper_text_transform: 'uppercase' }, analyze: true
       [.upper]#_please_ transform *bob &amp; carl* +
       to `uppercase`#
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 2
@@ -992,9 +992,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
     end
 
     it 'should apply smallcaps text transform to phrase' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { role_sc_text_transform: 'smallcaps' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { role_sc_text_transform: 'smallcaps' }, analyze: true
       HTML stands for [.sc]#HyperText Markup Language#
-      EOS
+      END
       (expect pdf.lines).to eql ['HTML stands for HʏᴘᴇʀTᴇxᴛ Mᴀʀᴋᴜᴘ Lᴀɴɢᴜᴀɢᴇ']
     end
 
@@ -1004,9 +1004,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         codespan_font_size: '0.75em',
         role_mono_font_size: '0.875em',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       == `MIN` and [.mono]`MAX`
-      EOS
+      END
 
       min_text = (pdf.find_text 'MIN')[0]
       normal_text = (pdf.find_text ' and ')[0]
@@ -1031,9 +1031,9 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         link_font_color: '0000AA',
         role_hlink_font_color: '00AA00',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       == https://asciidoctor.org[Asciidoctor,role=hlink]
-      EOS
+      END
 
       link_text = (pdf.find_text 'Asciidoctor')[0]
       (expect link_text[:font_color]).to eql '00AA00'
@@ -1184,7 +1184,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
         role_red_font_color: 'FF0000',
         role_blue_font_color: '0000FF',
       }
-      pdf = to_pdf <<~'EOS', analyze: true, pdf_theme: pdf_theme
+      pdf = to_pdf <<~'END', analyze: true, pdf_theme: pdf_theme
       = Document Title
       :doctype: book
       :notitle:
@@ -1195,7 +1195,7 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       == [.blue]#Blue Chapter#
 
       == Default Chapter
-      EOS
+      END
 
       red_section_text = pdf.find_text 'Red Chapter'
       blue_section_text = pdf.find_text 'Blue Chapter'
@@ -1249,15 +1249,15 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
 
     it 'should not use the closing single quotation mark as apostrophe' do
       pdf_theme = { quotes: %w(&#x00ab; &#x00bb; &#x2039; &#x203a;) }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       Apostrophes`' substitution shouldn`'t match '`single quoted`'
-      EOS
+      END
       (expect pdf.text[0][:string]).to eql %(Apostrophes\u2019 substitution shouldn\u2019t match \u2039single quoted\u203a)
     end
 
     it 'should use user-defined quotation marks in the TOC' do
       pdf_theme = { quotes: %w(&#x00ab; &#x00bb; &#x2039; &#x203a;) }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       = Document '`Title`'
       :doctype: book
       :toc:
@@ -1266,25 +1266,25 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
 
       == '`Single Quoted`'
 
-      EOS
+      END
       (expect (pdf.find_text %(Document \u2039Title\u203a))).to have_size 1
       (expect (pdf.find_text %(\u00abDouble Quoted\u00bb))).to have_size 2
       (expect (pdf.find_text %(\u2039Single Quoted\u203a))).to have_size 2
     end
 
     it 'should keep closing double quote attached to trailing ellipsis' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       #{(['filler'] * 15).join ' '} ||||| "`and then...`"
-      EOS
+      END
       lines = pdf.lines
       (expect lines).to have_size 2
       (expect lines[1]).to start_with 'then'
     end
 
     it 'should keep closing single quote attached to trailing ellipsis' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       #{(['filler'] * 15).join ' '} .|||||. '`and then...`'
-      EOS
+      END
       lines = pdf.lines
       (expect lines).to have_size 2
       (expect lines[1]).to start_with 'then'

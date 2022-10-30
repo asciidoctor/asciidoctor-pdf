@@ -5,50 +5,50 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - Page' do
   context 'Size' do
     it 'should set page size specified by theme by default' do
-      pdf = to_pdf <<~'EOS', analyze: :page
+      pdf = to_pdf <<~'END', analyze: :page
       content
-      EOS
+      END
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
     end
 
     it 'should set page size specified by page_size key in theme with predefined name' do
       ['LEGAL', 'legal', :LEGAL, :legal].each do |page_size|
-        pdf = to_pdf <<~'EOS', pdf_theme: { page_size: page_size }, analyze: :page
+        pdf = to_pdf <<~'END', pdf_theme: { page_size: page_size }, analyze: :page
         content
-        EOS
+        END
         (expect pdf.pages).to have_size 1
         (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LEGAL']
       end
     end
 
     it 'should set page size specified by pdf-page-size attribute using predefined name' do
-      pdf = to_pdf <<~'EOS', analyze: :page
+      pdf = to_pdf <<~'END', analyze: :page
       :pdf-page-size: Letter
 
       content
-      EOS
+      END
       (expect pdf.pages).to have_size 1
       # NOTE: pdf-core 0.8 coerces whole number floats to integers
       (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     end
 
     it 'should ignore pdf-page-size attribute if value is unrecognized name' do
-      pdf = to_pdf <<~'EOS', analyze: :page
+      pdf = to_pdf <<~'END', analyze: :page
       :pdf-page-size: Huge
 
       content
-      EOS
+      END
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
     end
 
     it 'should set page size specified by pdf-page-size attribute using dimension array in points' do
-      pdf = to_pdf <<~'EOS', analyze: :page
+      pdf = to_pdf <<~'END', analyze: :page
       :pdf-page-size: [600, 800]
 
       content
-      EOS
+      END
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:size].map(&:to_f)).to eql [600.0, 800.0]
     end
@@ -97,38 +97,38 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should use default page size if one of dimensions in page size array is 0' do
       [[800, 0], ['8.5in', '0in']].each do |page_size|
-        pdf = to_pdf <<~'EOS', pdf_theme: { page_size: page_size }, analyze: :page
+        pdf = to_pdf <<~'END', pdf_theme: { page_size: page_size }, analyze: :page
         content
-        EOS
+        END
         (expect pdf.pages).to have_size 1
         (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['A4']
       end
     end
 
     it 'should set page size specified by pdf-page-size attribute using dimension array in inches' do
-      pdf = to_pdf <<~'EOS', analyze: :page
+      pdf = to_pdf <<~'END', analyze: :page
       :pdf-page-size: [8.5in, 11in]
 
       content
-      EOS
+      END
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     end
 
     it 'should set page size specified by pdf-page-size attribute using dimension string in inches' do
-      pdf = to_pdf <<~'EOS', analyze: :page
+      pdf = to_pdf <<~'END', analyze: :page
       :pdf-page-size: 8.5in x 11in
 
       content
-      EOS
+      END
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     end
 
     it 'should set page size specified by page_size theme key using dimension array in inches' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_size: ['8.5in', '11in'] }, analyze: :page
+      pdf = to_pdf <<~'END', pdf_theme: { page_size: ['8.5in', '11in'] }, analyze: :page
       content
-      EOS
+      END
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
     end
@@ -136,19 +136,19 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
   context 'Layout' do
     it 'should use layout specified in theme by default' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       content
-      EOS
+      END
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0].orientation).to eql 'portrait'
     end
 
     it 'should use layout specified by pdf-page-layout attribute' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       :pdf-page-layout: landscape
 
       content
-      EOS
+      END
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0].orientation).to eql 'landscape'
     end
@@ -323,22 +323,22 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should use the margin specified by the pdf-page-margin attribute as array' do
       ['0.5in, 1in, 0.5in, 1in', '36pt, 72pt, 36pt, 72pt'].each do |val|
-        pdf = to_pdf <<~EOS, analyze: true
+        pdf = to_pdf <<~END, analyze: true
         :pdf-page-margin: [#{val}]
 
         content
-        EOS
+        END
         (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 72.0, 793.926]
       end
     end
 
     it 'should use the margin specified by the pdf-page-margin attribute as string' do
       %w(1in 72pt 25.4mm 2.54cm 96px).each do |val|
-        pdf = to_pdf <<~EOS, analyze: true
+        pdf = to_pdf <<~END, analyze: true
         :pdf-page-margin: #{val}
 
         content
-        EOS
+        END
         (expect pdf.text[0].values_at :string, :page_number, :x, :y).to eql ['content', 1, 72.0, 757.926]
       end
     end
@@ -364,7 +364,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         page_margin: [18, 36, 36, 36],
         page_margin_rotated: [18, 18, 36, 18],
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       first page
 
       [page-layout=landscape]
@@ -376,7 +376,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       last page
-      EOS
+      END
 
       (expect pdf.pages).to have_size 3
       first_page_text = pdf.find_unique_text 'first page'
@@ -388,7 +388,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should allow margins of rotated page to be configured independently using AsciiDoc attribute' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, analyze: true
       :pdf-page-layout: landscape
       :pdf-page-margin: [18, 18, 36, 18]
       // NOTE: verify margin is expanded
@@ -405,7 +405,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       last page
-      EOS
+      END
 
       (expect pdf.pages).to have_size 3
       first_page_text = pdf.find_unique_text 'first page'
@@ -417,7 +417,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should use same margin for all pages if rotated page margin is not specified' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :pdf-page-margin: [18, 36, 36, 36]
 
       first page
@@ -431,7 +431,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       last page
-      EOS
+      END
 
       (expect pdf.pages).to have_size 3
       first_page_text = pdf.find_unique_text 'first page'
@@ -443,7 +443,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should use recto/verso margins when media=prepress', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-prepress-margins.pdf', enable_footer: true
+      to_file = to_pdf_file <<~'END', 'page-prepress-margins.pdf', enable_footer: true
       = Book Title
       :media: prepress
       :pdf-theme: default
@@ -462,7 +462,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       === B Section
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-prepress-margins.pdf'
     end
@@ -472,7 +472,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         page_margin_inner: 72,
         page_margin_outer: 54,
       }
-      to_file = to_pdf_file <<~'EOS', 'page-prepress-custom-margins.pdf', pdf_theme: pdf_theme, enable_footer: true
+      to_file = to_pdf_file <<~'END', 'page-prepress-custom-margins.pdf', pdf_theme: pdf_theme, enable_footer: true
       = Book Title
       :media: prepress
       :doctype: book
@@ -489,7 +489,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       === B Section
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-prepress-custom-margins.pdf'
     end
@@ -499,7 +499,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         page_margin_inner: nil,
         page_margin_outer: nil,
       }
-      to_file = to_pdf_file <<~'EOS', 'page-prepress-normal-margins.pdf', pdf_theme: pdf_theme, enable_footer: true
+      to_file = to_pdf_file <<~'END', 'page-prepress-normal-margins.pdf', pdf_theme: pdf_theme, enable_footer: true
       = Book Title
       :media: prepress
       :doctype: book
@@ -516,7 +516,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       === B Section
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-prepress-normal-margins.pdf'
     end
@@ -526,7 +526,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         page_margin_inner: 72,
         page_margin_outer: 54,
       }
-      to_file = to_pdf_file <<~'EOS', 'page-prepress-margins-no-cover.pdf', pdf_theme: pdf_theme, enable_footer: true
+      to_file = to_pdf_file <<~'END', 'page-prepress-margins-no-cover.pdf', pdf_theme: pdf_theme, enable_footer: true
       = Book Title
       :media: prepress
       :doctype: book
@@ -542,7 +542,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       === B Section
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-prepress-margins-no-cover.pdf'
     end
@@ -552,7 +552,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         page_margin_inner: 72,
         page_margin_outer: 54,
       }
-      to_file = to_pdf_file <<~'EOS', 'page-prepress-margins-body-only.pdf', pdf_theme: pdf_theme, enable_footer: true
+      to_file = to_pdf_file <<~'END', 'page-prepress-margins-body-only.pdf', pdf_theme: pdf_theme, enable_footer: true
       :media: prepress
       :doctype: book
 
@@ -567,7 +567,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       === B Section
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-prepress-margins-body-only.pdf'
     end
@@ -582,7 +582,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         footer_verso_left_content: 'p{page-number}',
         footer_padding: [6, 0, 0, 0],
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, enable_footer: true, analyze: true
       = Book Title
       :media: prepress
       :doctype: book
@@ -599,7 +599,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       == Last Chapter
 
       content
-      EOS
+      END
 
       first_chapter_text = pdf.find_unique_text 'First Chapter'
       (expect first_chapter_text[:page_number]).to eql 3
@@ -624,7 +624,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
   context 'Columns' do
     it 'should ignore columns for book doctype' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { page_columns: 2 }, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -636,7 +636,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       second page
-      EOS
+      END
 
       midpoint = (get_page_size pdf)[0] * 0.5
       (expect pdf.pages).to have_size 2
@@ -646,7 +646,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should ignore columns if less than 2' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 1 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { page_columns: 1 }, analyze: true
       = Document Title
       :notitle:
 
@@ -656,7 +656,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       second page
-      EOS
+      END
 
       (expect pdf.pages).to have_size 2
       (expect (pdf.find_unique_text 'first page')[:page_number]).to eql 1
@@ -664,7 +664,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should arrange article body into columns' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { page_columns: 2 }, analyze: true
       first column
 
       [.column]
@@ -677,7 +677,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       [.text-right]
       first column again
-      EOS
+      END
 
       midpoint = (get_page_size pdf)[0] * 0.5
       (expect pdf.pages).to have_size 2
@@ -689,14 +689,14 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should put footnotes at bottom of last column with content' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { page_columns: 2 }, analyze: true
       first columnfootnote:[This page has two columns.]
 
       [.column]
       <<<
 
       second column
-      EOS
+      END
 
       midpoint = (get_page_size pdf)[0] * 0.5
       (expect pdf.pages).to have_size 1
@@ -708,7 +708,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should place document title outside of column box' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { page_columns: 2 }, analyze: true
       = Article Title Goes Here
 
       first column
@@ -717,7 +717,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       second column
-      EOS
+      END
 
       midpoint = (get_page_size pdf)[0] * 0.5
       (expect pdf.pages).to have_size 1
@@ -728,7 +728,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should place TOC outside of column box' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { page_columns: 2 }, analyze: true
       = Article Title Goes Here
       :toc:
 
@@ -738,7 +738,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       == Second Column
-      EOS
+      END
 
       midpoint = (get_page_size pdf)[0] * 0.5
       (expect pdf.pages).to have_size 1
@@ -756,7 +756,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should allow theme to control number of columns' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 4 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { page_columns: 4 }, analyze: true
       one
 
       [.column]
@@ -773,7 +773,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<<
 
       four
-      EOS
+      END
 
       midpoint = (get_page_size pdf)[0] * 0.5
       (expect pdf.pages).to have_size 1
@@ -788,14 +788,14 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should allow theme to control column gap' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2, page_column_gap: 12 }, analyze: :image
+      pdf = to_pdf <<~'END', pdf_theme: { page_columns: 2, page_column_gap: 12 }, analyze: :image
       image::square.png[pdfwidth=100%]
 
       [.column]
       <<<
 
       image::square.png[pdfwidth=100%]
-      EOS
+      END
 
       images = pdf.images
       (expect images).to have_size 2
@@ -804,7 +804,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should restore columns following imported page' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2, page_column_gap: 12 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { page_columns: 2, page_column_gap: 12 }, analyze: true
       = Document Title
 
       left column
@@ -817,7 +817,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       right column
-      EOS
+      END
 
       midpoint = pdf.pages[0][:size][0] * 0.5
       (expect pdf.pages).to have_size 3
@@ -836,7 +836,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should reset column index following imported page' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2, page_column_gap: 12 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { page_columns: 2, page_column_gap: 12 }, analyze: true
       = Document Title
 
       left column
@@ -854,7 +854,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       right column
-      EOS
+      END
 
       midpoint = pdf.pages[0][:size][0] * 0.5
       (expect pdf.pages).to have_size 3
@@ -873,7 +873,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should restore column layout following missing imported page' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2, page_column_gap: 12 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { page_columns: 2, page_column_gap: 12 }, analyze: true
       = Document Title
 
       left column
@@ -891,7 +891,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       right column
-      EOS
+      END
 
       midpoint = pdf.pages[0][:size][0] * 0.5
       (expect pdf.pages).to have_size 2
@@ -911,7 +911,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     # NOTE: assert current behavior
     it 'should stop column layout at page layout change' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { page_columns: 2 }, analyze: true
       left column
 
       [.column]
@@ -936,7 +936,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       portrait
-      EOS
+      END
 
       (expect pdf.pages).to have_size 5
       (expect (pdf.find_unique_text 'right column')[:x]).to be > 48.24
@@ -952,50 +952,50 @@ describe 'Asciidoctor::PDF::Converter - Page' do
   context 'Background' do
     it 'should set page background to white if value is not defined or transparent', visual: true do
       [nil, 'transparent'].each do |bg_color|
-        to_file = to_pdf_file <<~'EOS', %(page-background-color-#{bg_color || 'undefined'}.pdf), pdf_theme: { page_background_color: bg_color }
+        to_file = to_pdf_file <<~'END', %(page-background-color-#{bg_color || 'undefined'}.pdf), pdf_theme: { page_background_color: bg_color }
         = Document Title
         :doctype: book
 
         content
-        EOS
+        END
 
         (expect to_file).to visually_match 'page-background-color-default.pdf'
       end
     end
 
     it 'should set page background color specified by page_background_color key in theme', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-color.pdf', pdf_theme: { page_background_color: 'ECFBF4' }
+      to_file = to_pdf_file <<~'END', 'page-background-color.pdf', pdf_theme: { page_background_color: 'ECFBF4' }
       = Document Title
       :doctype: book
 
       content
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-color.pdf'
     end
 
     it 'should not set page background if value of page-background-image is none or empty', visual: true do
       [' none', ''].each do |val|
-        to_file = to_pdf_file <<~EOS, %(page-background-image-#{val.empty? ? 'empty' : 'none'}.pdf)
+        to_file = to_pdf_file <<~END, %(page-background-image-#{val.empty? ? 'empty' : 'none'}.pdf)
         = Document Title
         :doctype: book
         :page-background-image:#{val}
 
         content
-        EOS
+        END
 
         (expect to_file).to visually_match 'page-background-color-default.pdf'
       end
     end
 
     it 'should set the background image using target of macro specified in page-background-image attribute', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-inline-macro.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-inline-macro.pdf'
       = Document Title
       :doctype: book
       :page-background-image: image:bg.png[]
 
       content
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image.pdf'
     end
@@ -1004,13 +1004,13 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       with_local_webserver do |base_url|
         [%(#{base_url}/bg.png), %(image:#{base_url}/bg.png[])].each_with_index do |image_url, idx|
           to_file = output_file %(page-background-image-remote-#{idx}.pdf)
-          doc = to_pdf <<~EOS, analyze: :document, to_file: to_file, attribute_overrides: { 'allow-uri-read' => '' }
+          doc = to_pdf <<~END, analyze: :document, to_file: to_file, attribute_overrides: { 'allow-uri-read' => '' }
           = Document Title
           :doctype: book
           :page-background-image: #{image_url}
 
           content
-          EOS
+          END
 
           (expect to_file).to visually_match 'page-background-image.pdf'
           # NOTE: we could assert no log messages instead, but that assumes the remove_tmp_files method is even called
@@ -1022,12 +1022,12 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     it 'should use remote image specified in theme as page background', visual: true do
       with_local_webserver do |base_url|
         [%(#{base_url}/bg.png), %(image:#{base_url}/bg.png[])].each_with_index do |image_url, idx|
-          to_file = to_pdf_file <<~EOS, %(page-background-image-remote-#{idx}.pdf), attribute_overrides: { 'allow-uri-read' => '' }, pdf_theme: { page_background_image: image_url }
+          to_file = to_pdf_file <<~END, %(page-background-image-remote-#{idx}.pdf), attribute_overrides: { 'allow-uri-read' => '' }, pdf_theme: { page_background_image: image_url }
           = Document Title
           :doctype: book
 
           content
-          EOS
+          END
 
           (expect to_file).to visually_match 'page-background-image.pdf'
         end
@@ -1037,12 +1037,12 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     it 'should use data URI specified by page-background-image attribute as page background', visual: true do
       image_data = File.binread fixture_file 'square.png'
       encoded_image_data = Base64.strict_encode64 image_data
-      to_file = to_pdf_file <<~EOS, %(page-background-image-attr-data-uri.pdf)
+      to_file = to_pdf_file <<~END, %(page-background-image-attr-data-uri.pdf)
       = Document Title
       :page-background-image: image:data:image/png;base64,#{encoded_image_data}[fit=fill]
 
       This page has a background image that is rather loud.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-fill.pdf'
     end
@@ -1051,11 +1051,11 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       image_data = File.binread fixture_file 'square.png'
       encoded_image_data = Base64.strict_encode64 image_data
       pdf_theme = { page_background_image: %(image:data:image/png;base64,#{encoded_image_data}[fit=fill]) }
-      to_file = to_pdf_file <<~EOS, %(page-background-image-attr-data-uri.pdf), pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~END, %(page-background-image-attr-data-uri.pdf), pdf_theme: pdf_theme
       = Document Title
 
       This page has a background image that is rather loud.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-fill.pdf'
     end
@@ -1066,12 +1066,12 @@ describe 'Asciidoctor::PDF::Converter - Page' do
           __dir__: fixtures_dir,
           page_background_image: (macro ? 'image:bg.png[]' : 'bg.png'),
         }
-        to_file = to_pdf_file <<~'EOS', %(page-background-image-#{macro ? 'macro' : 'bare'}.pdf), pdf_theme: pdf_theme
+        to_file = to_pdf_file <<~'END', %(page-background-image-#{macro ? 'macro' : 'bare'}.pdf), pdf_theme: pdf_theme
         = Document Title
         :doctype: book
 
         content
-        EOS
+        END
 
         (expect to_file).to visually_match 'page-background-image.pdf'
       end
@@ -1079,12 +1079,12 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should resolve background image in theme relative to themesdir in classloader', if: RUBY_ENGINE == 'jruby' do
       require fixture_file 'pdf-themes.jar'
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => 'uri:classloader:/pdf-themes/page-background-image-theme.yml' }
+      pdf = to_pdf <<~'END', attribute_overrides: { 'pdf-theme' => 'uri:classloader:/pdf-themes/page-background-image-theme.yml' }
       = Document Title
       :doctype: book
 
       content
-      EOS
+      END
 
       images = get_images pdf, 1
       (expect images).to have_size 1
@@ -1092,12 +1092,12 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should resolve background image with absolute path for theme loaded from classloader', if: RUBY_ENGINE == 'jruby' do
       require fixture_file 'pdf-themes.jar'
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => 'uri:classloader:/pdf-themes/page-background-image-from-fixturesdir-theme.yml', 'fixturesdir' => fixtures_dir }
+      pdf = to_pdf <<~'END', attribute_overrides: { 'pdf-theme' => 'uri:classloader:/pdf-themes/page-background-image-from-fixturesdir-theme.yml', 'fixturesdir' => fixtures_dir }
       = Document Title
       :doctype: book
 
       content
-      EOS
+      END
 
       images = get_images pdf, 1
       (expect images).to have_size 1
@@ -1108,12 +1108,12 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         'pdf-theme' => 'page-background-image',
         'pdf-themesdir' => fixtures_dir,
       }
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-bare-in-theme-file.pdf', attribute_overrides: attribute_overrides
+      to_file = to_pdf_file <<~'END', 'page-background-image-bare-in-theme-file.pdf', attribute_overrides: attribute_overrides
       = Document Title
       :doctype: book
 
       content
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image.pdf'
     end
@@ -1159,225 +1159,225 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should recognize attribute value that use block macro syntax', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-block-macro.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-block-macro.pdf'
       = Document Title
       :doctype: book
       :page-background-image: image:bg.png[]
 
       content
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image.pdf'
     end
 
     it 'should not crash if background image is a URI and the allow-uri-read attribute is not set' do
       (expect do
-        to_pdf <<~'EOS'
+        to_pdf <<~'END'
         = Document Title
         :page-background-image: image:https://example.org/bg.svg[]
 
         content
-        EOS
+        END
       end).to not_raise_exception & (log_message severity: :WARN, message: '~allow-uri-read attribute not enabled')
     end
 
     it 'should set the background image using path specified in page-background-image attribute', visual: true do
-      to_file = to_pdf_file <<~EOS, 'page-background-image-path.pdf'
+      to_file = to_pdf_file <<~END, 'page-background-image-path.pdf'
       = Document Title
       :doctype: book
       :page-background-image: #{fixture_file 'bg.png', relative: true}
 
       content
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image.pdf'
     end
 
     it 'should scale background image until it reaches shortest side', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-max-height.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-max-height.pdf'
       = Document Title
       :pdf-page-layout: landscape
       :page-background-image: image:square.png[]
 
       This page has a background image that is rather loud.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-max-height.pdf'
     end
 
     it 'should set width of background image according to width attribute when fit=none', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-width.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-width.pdf'
       = Document Title
       :page-background-image: image:square.png[bg,200,fit=none]
 
       This page has a background image that is rather loud.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-width.pdf'
     end
 
     it 'should scale down background PNG to fit boundaries of page if fit is scale-down and width slightly exceeds available width', visual: true do
-      reference_file = to_pdf_file <<~'EOS', 'page-background-image-fit-scale-down-reference.pdf'
+      reference_file = to_pdf_file <<~'END', 'page-background-image-fit-scale-down-reference.pdf'
       = Document Title
       :page-background-image: image:wide.png[fit=contain]
 
       content
-      EOS
+      END
 
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-fit-scale-down-slightly.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-fit-scale-down-slightly.pdf'
       = Document Title
       :page-background-image: image:wide.png[fit=scale-down]
 
       content
-      EOS
+      END
 
       (expect to_file).to visually_match reference_file
     end
 
     it 'should scale up background SVG to fit boundaries of page if value is path', visual: true do
-      to_file = to_pdf_file <<~EOS, 'page-background-image-svg-scale-up-from-path.pdf'
+      to_file = to_pdf_file <<~END, 'page-background-image-svg-scale-up-from-path.pdf'
       = Document Title
       :page-background-image: #{fixture_file 'square.svg', relative: true}
 
       This page has a background image that is rather loud.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-svg-scale-up.pdf'
     end
 
     it 'should scale up background SVG to fit boundaries of page if value is macro', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-scale-up-from-macro.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-svg-scale-up-from-macro.pdf'
       = Document Title
       :page-background-image: image:square.svg[]
 
       This page has a background image that is rather loud.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-svg-scale-up.pdf'
     end
 
     it 'should scale up background SVG to fit boundaries of page if fit is contain', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-contain.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-svg-fit-contain.pdf'
       = Document Title
       :page-background-image: image:square.svg[fit=contain]
 
       This page has a background image that is rather loud.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-svg-scale-up.pdf'
     end
 
     it 'should scale up background SVG to fit boundaries of page if fit is fill', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-fill.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-svg-fit-fill.pdf'
       = Document Title
       :page-background-image: image:square.svg[fit=fill]
 
       This page has a background image that is rather loud.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-svg-scale-up.pdf'
     end
 
     it 'should scale up background SVG to fit boundaries of page if pdfwidth is 100% and fit=none', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-pdfwidth.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-svg-pdfwidth.pdf'
       = Document Title
       :pdf-page-layout: landscape
       :page-background-image: image:square.svg[fit=none,pdfwidth=100%]
 
       This page has a background image that is rather loud.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-svg-contain.pdf'
     end
 
     it 'should scale down background SVG to fit boundaries of page if value is path', visual: true do
-      to_file = to_pdf_file <<~EOS, 'page-background-image-svg-scale-down-from-path.pdf'
+      to_file = to_pdf_file <<~END, 'page-background-image-svg-scale-down-from-path.pdf'
       = Document Title
       :page-background-image: #{fixture_file 'example-stamp.svg', relative: true}
 
       This page has a background image.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-svg-scale-down.pdf'
     end
 
     it 'should scale down background SVG to fit boundaries of page if value is macro', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-scale-down-from-macro.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-svg-scale-down-from-macro.pdf'
       = Document Title
       :page-background-image: image:example-stamp.svg[]
 
       This page has a background image.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-svg-scale-down.pdf'
     end
 
     it 'should scale down background SVG to fit boundaries of page if fit is scale-down', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-scale-down.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-svg-fit-scale-down.pdf'
       = Document Title
       :page-background-image: image:example-stamp.svg[fit=scale-down]
 
       This page has a background image.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-svg-scale-down.pdf'
     end
 
     it 'should scale down background SVG to fit boundaries of page if fit is scale-down and width slightly exceeds available width', visual: true do
-      reference_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-scale-down-reference.pdf'
+      reference_file = to_pdf_file <<~'END', 'page-background-image-svg-fit-scale-down-reference.pdf'
       = Document Title
       :page-background-image: image:wide.svg[fit=contain]
 
       content
-      EOS
+      END
 
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-scale-down-slightly.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-svg-fit-scale-down-slightly.pdf'
       = Document Title
       :page-background-image: image:wide.svg[fit=scale-down]
 
       content
-      EOS
+      END
 
       (expect to_file).to visually_match reference_file
     end
 
     it 'should scale down background SVG to fit boundaries of page if computed height is greater than page height', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-scale-down-computed-height.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-svg-fit-scale-down-computed-height.pdf'
       :pdf-page-size: A6
       :page-background-image: image:tall.svg[pdfwidth=200,fit=scale-down]
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-svg-fit-scale-down-height.pdf'
     end
 
     it 'should scale down background SVG to fit boundaries of page if intrinsic height is greater than page height', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-scale-down-intrinsic-height.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-svg-fit-scale-down-intrinsic-height.pdf'
       :pdf-page-size: A6
       :page-background-image: image:tall.svg[fit=scale-down]
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-svg-fit-scale-down-height.pdf'
     end
 
     it 'should not scale background SVG with explicit width to fit boundaries of page if fit is scale-down and image fits', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-prescaled.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-svg-prescaled.pdf'
       = Document Title
       :pdf-page-layout: landscape
       :page-background-image: image:green-bar.svg[pdfwidth=50%,fit=scale-down]
 
       This page has a background image.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-svg-prescaled.pdf'
     end
 
     it 'should not scale background image without explicit width to fit boundaries of page if fit is scale-down and image fits' do
-      pdf = to_pdf <<~'EOS', analyze: :image
+      pdf = to_pdf <<~'END', analyze: :image
       = Document Title
       :page-background-image: image:square.png[fit=scale-down]
 
       This page has a background image.
-      EOS
+      END
 
       (expect pdf.images).to have_size 1
       bg_image = pdf.images[0]
@@ -1386,45 +1386,45 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should not scale background SVG to fit boundaries of page if fit is none', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-fit-none.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-svg-fit-none.pdf'
       = Document Title
       :page-background-image: image:example-stamp.svg[fit=none]
 
       This page has a background image.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-svg-unscaled.pdf'
     end
 
     it 'should scale up background SVG until it covers page if fit=cover', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-cover.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-svg-cover.pdf'
       = Document Title
       :page-background-image: image:square.svg[fit=cover]
 
       This page has a background image that is rather loud.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-svg-cover.pdf'
     end
 
     it 'should scale background PNG to fill page if fit=fill', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-fill.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-fill.pdf'
       = Document Title
       :page-background-image: image:square.png[fit=fill]
 
       This page has a background image that is rather loud.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-fill.pdf'
     end
 
     it 'should allow remote image in SVG to be read if allow-uri-read attribute is set', network: true, visual: true do
       with_svg_with_remote_image do |image_path|
-        to_file = to_pdf_file <<~EOS, 'page-background-image-svg-with-remote-image.pdf', attribute_overrides: { 'allow-uri-read' => '' }
+        to_file = to_pdf_file <<~END, 'page-background-image-svg-with-remote-image.pdf', attribute_overrides: { 'allow-uri-read' => '' }
         :page-background-image: image:#{image_path}[fit=none,position=top]
 
         Asciidoctor
-        EOS
+        END
 
         (expect to_file).to visually_match 'page-background-image-svg-with-image.pdf'
       end
@@ -1433,11 +1433,11 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     it 'should not allow remote image in SVG to be read if allow-uri-read attribute is not set', visual: true do
       with_svg_with_remote_image do |image_path|
         (expect do
-          to_file = to_pdf_file <<~EOS, 'page-background-image-svg-with-remote-image-disabled.pdf'
+          to_file = to_pdf_file <<~END, 'page-background-image-svg-with-remote-image-disabled.pdf'
           :page-background-image: image:#{image_path}[fit=none,position=top]
 
           Asciidoctor
-          EOS
+          END
 
           (expect to_file).to visually_match 'page-background-image-svg-with-image-disabled.pdf'
         end).to log_message severity: :WARN, message: '~No handler available for this URL scheme'
@@ -1446,55 +1446,55 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should not warn if background SVG has warnings', visual: true do
       (expect do
-        to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-faulty.pdf'
+        to_file = to_pdf_file <<~'END', 'page-background-image-svg-faulty.pdf'
         = Document Title
         :page-background-image: image:faulty.svg[]
 
         This page has a background image that is rather loud.
-        EOS
+        END
         (expect to_file).to visually_match 'page-background-image-svg-scale-up.pdf'
       end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'faulty.svg'}; Unknown tag 'foobar')
     end
 
     it 'should read local image relative to SVG', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-svg-with-local-image.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-svg-with-local-image.pdf'
       :page-background-image: image:svg-with-local-image.svg[fit=none,pdfwidth=1cm,position=top]
 
       Asciidoctor
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-svg-with-image.pdf'
     end
 
     it 'should position background image according to value of position attribute on macro', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-position.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-position.pdf'
       = Document Title
       :page-background-image: image:example-stamp.svg[fit=none,pdfwidth=50%,position=bottom center]
 
       content
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-position.pdf'
     end
 
     it 'should position page background in center if position value is unrecognized' do
-      pdf = to_pdf <<~'EOS', analyze: :image
+      pdf = to_pdf <<~'END', analyze: :image
       = Document Title
       :page-background-image: image:tux.png[fit=none,pdfwidth=4in,position=center]
 
       content
-      EOS
+      END
 
       bg_image = pdf.images[0]
       center_coords = [bg_image[:x], bg_image[:y]]
 
       ['droit', 'haut droit'].each do |position|
-        pdf = to_pdf <<~EOS, analyze: :image
+        pdf = to_pdf <<~END, analyze: :image
         = Document Title
         :page-background-image: image:tux.png[fit=none,pdfwidth=4in,position=#{position}]
 
         content
-        EOS
+        END
 
         bg_image = pdf.images[0]
         actual_coords = [bg_image[:x], bg_image[:y]]
@@ -1503,7 +1503,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should alternate page background if both verso and recto background images are specified', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-alt.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-alt.pdf'
       = Document Title
       :doctype: book
       :page-background-image-recto: image:recto-bg.png[]
@@ -1518,13 +1518,13 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       the end
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-alt.pdf'
     end
 
     it 'should swap recto and verso background images when pdf-folio-placement is inverted', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-alt.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-alt.pdf'
       = Document Title
       :doctype: book
       :page-background-image-recto: image:verso-bg.png[]
@@ -1540,13 +1540,13 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       the end
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-alt.pdf'
     end
 
     it 'should alternate page background in landscape if both verso and recto background images are specified', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-alt-landscape.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-alt-landscape.pdf'
       = Document Title
       :doctype: book
       :pdf-page-layout: landscape
@@ -1562,13 +1562,13 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       the end
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-alt-landscape.pdf'
     end
 
     it 'should use background image as fallback if background image for side not specified', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-alt.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-alt.pdf'
       = Document Title
       :doctype: book
       :page-background-image: image:recto-bg.png[]
@@ -1583,7 +1583,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       the end
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-alt.pdf'
     end
@@ -1594,7 +1594,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         { 'page-background-image' => 'image:recto-bg.png[]', 'page-background-image-verso' => '' },
         { 'page-background-image-recto' => 'image:recto-bg.png[]' },
       ].each do |attribute_overrides|
-        to_file = to_pdf_file <<~'EOS', 'page-background-image-recto-only.pdf', attribute_overrides: attribute_overrides
+        to_file = to_pdf_file <<~'END', 'page-background-image-recto-only.pdf', attribute_overrides: attribute_overrides
         = Document Title
         :doctype: book
 
@@ -1607,7 +1607,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         <<<
 
         the end
-        EOS
+        END
 
         (expect to_file).to visually_match 'page-background-image-recto-only.pdf'
       end
@@ -1618,7 +1618,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         { 'page-background-image' => 'image:verso-bg.png[]', 'page-background-image-recto' => 'none' },
         { 'page-background-image-verso' => 'image:verso-bg.png[]' },
       ].each do |attribute_overrides|
-        to_file = to_pdf_file <<~'EOS', 'page-background-image-verso-only.pdf', attribute_overrides: attribute_overrides
+        to_file = to_pdf_file <<~'END', 'page-background-image-verso-only.pdf', attribute_overrides: attribute_overrides
         = Document Title
         :doctype: book
 
@@ -1631,7 +1631,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         <<<
 
         the end
-        EOS
+        END
 
         (expect to_file).to visually_match 'page-background-image-verso-only.pdf'
       end
@@ -1639,14 +1639,14 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should allow page background image in theme to be specified per layout using page-layout attribute reference in path' do
       pdf_theme = { __dir__: fixtures_dir, page_background_image: 'image:square-{page-layout}.svg[fit=fill]' }
-      rects = (to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :rect).rects
+      rects = (to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :rect).rects
       portrait page
 
       [page-layout=landscape]
       <<<
 
       landscape page
-      EOS
+      END
       (expect rects).to have_size 2
       (expect rects[0][:fill_color]).to eql 'FF0000'
       (expect rects[0][:point][0]).to eql 0.0
@@ -1654,7 +1654,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should allow page background image in doc to be specified per layout using page-layout attribute reference in path' do
-      rects = (to_pdf <<~'EOS', analyze: :rect).rects
+      rects = (to_pdf <<~'END', analyze: :rect).rects
       :page-background-image: image:square-\{page-layout}.svg[fit=fill]
       portrait page
 
@@ -1662,7 +1662,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       landscape page
-      EOS
+      END
       (expect rects).to have_size 2
       (expect rects[0][:fill_color]).to eql 'FF0000'
       (expect rects[0][:point][0]).to eql 0.0
@@ -1672,12 +1672,12 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     it 'should use the specified image format', visual: true do
       source_file = (dest_file = fixture_file 'square') + '.svg'
       FileUtils.cp source_file, dest_file
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-format.pdf'
+      to_file = to_pdf_file <<~'END', 'page-background-image-format.pdf'
       = Document Title
       :page-background-image: image:square[format=svg]
 
       This page has a background image that is rather loud.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-svg-scale-up.pdf'
     ensure
@@ -1686,43 +1686,43 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should warn instead of crash if image is unreadable' do
       (expect do
-        pdf = to_pdf <<~'EOS', analyze: :image
+        pdf = to_pdf <<~'END', analyze: :image
         = Document Title
         :page-background-image: image:does-not-exist.png[fit=cover]
 
         content
-        EOS
+        END
         (expect pdf.images).to be_empty
       end).to log_message severity: :WARN, message: '~page background image not found or readable'
     end
 
     it 'should warn instead of crash if background image is invalid' do
       (expect do
-        pdf = to_pdf <<~'EOS', analyze: :image
+        pdf = to_pdf <<~'END', analyze: :image
         = Document Title
         :page-background-image: image:corrupt.png[fit=cover]
 
         content
-        EOS
+        END
         (expect pdf.images).to be_empty
       end).to log_message severity: :WARN, message: '~image file is an unrecognised format'
     end
 
     it 'should warn instead of crash if background image cannot be parsed' do
       (expect do
-        pdf = to_pdf <<~'EOS', analyze: :image
+        pdf = to_pdf <<~'END', analyze: :image
         = Document Title
         :page-background-image: image:broken.svg[fit=cover]
 
         content
-        EOS
+        END
         (expect pdf.images).to be_empty
       end).to log_message severity: :WARN, message: %(~Missing end tag for 'rect')
     end
 
     it 'should only warn once if background image cannot be loaded' do
       (expect do
-        pdf = to_pdf <<~'EOS', analyze: :image
+        pdf = to_pdf <<~'END', analyze: :image
         = Document Title
         :page-background-image: image:corrupt.png[fit=cover]
 
@@ -1735,14 +1735,14 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         <<<
 
         even more content
-        EOS
+        END
         (expect pdf.images).to be_empty
       end).to log_message severity: :WARN, message: '~image file is an unrecognised format'
     end
 
     it 'should still render different facing background image when background image cannot be loaded' do
       (expect do
-        pdf = to_pdf <<~'EOS', analyze: :image
+        pdf = to_pdf <<~'END', analyze: :image
         = Document Title
         :page-background-image: image:corrupt.png[fit=cover]
         :page-background-image-verso: image:bg.png[]
@@ -1756,7 +1756,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         <<<
 
         even more content
-        EOS
+        END
         (expect pdf.images).to have_size 1
         (expect pdf.images[0][:page_number]).to be 2
       end).to log_message severity: :WARN, message: '~image file is an unrecognised format'
@@ -1764,7 +1764,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should support PDF as background image', visual: true do
       # NOTE: the running content is automatically disabled since this becomes an imported page
-      to_file = to_pdf_file <<~'EOS', 'page-background-image-pdf.pdf', enable_footer: true
+      to_file = to_pdf_file <<~'END', 'page-background-image-pdf.pdf', enable_footer: true
       :page-background-image-recto: image:tux-bg.pdf[]
 
       Tux has left his mark on this page.
@@ -1772,14 +1772,14 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       <<<
 
       But not on this page.
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-background-image-pdf.pdf'
     end
 
     it 'should only warn once if PDF for background image cannot be found' do
       (expect do
-        pdf = to_pdf <<~'EOS', analyze: :image
+        pdf = to_pdf <<~'END', analyze: :image
         = Document Title
         :page-background-image: image:no-such-file.pdf[]
 
@@ -1792,7 +1792,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         <<<
 
         even more content
-        EOS
+        END
         (expect pdf.images).to be_empty
       end).to log_message severity: :WARN, message: '~page background image not found or readable'
     end
@@ -1800,7 +1800,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
   context 'Watermark' do
     it 'should stamp watermark image on the top of all pages if page-foreground-image is specified', visual: true do
-      to_file = to_pdf_file <<~EOS, 'page-watermark.pdf'
+      to_file = to_pdf_file <<~END, 'page-watermark.pdf'
       = Document Title
       :doctype: book
       :page-foreground-image: image:watermark.svg[]
@@ -1812,13 +1812,13 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       [.text-left]
       #{['lots of rambling'] * 150 * ?\n}
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-watermark.pdf'
     end
 
     it 'should no apply watermark image to front cover, back cover, or imported page', visual: true do
-      to_file = to_pdf_file <<~EOS, 'page-watermark-content-only.pdf'
+      to_file = to_pdf_file <<~END, 'page-watermark-content-only.pdf'
       = Document Title
       :doctype: book
       :front-cover-image: image:cover.jpg[]
@@ -1833,7 +1833,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       [.text-left]
       #{['lots of rambling'] * 150 * ?\n}
-      EOS
+      END
 
       (expect to_file).to visually_match 'page-watermark-content-only.pdf'
     end

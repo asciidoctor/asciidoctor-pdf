@@ -4,12 +4,12 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Cover Page' do
   it 'should add front cover page if front-cover-image attribute is set to bare path' do
-    pdf = to_pdf <<~EOS
+    pdf = to_pdf <<~END
     = Document Title
     :front-cover-image: #{fixture_file 'cover.jpg', relative: true}
 
     content page
-    EOS
+    END
 
     (expect pdf.pages).to have_size 2
     (expect pdf.pages[0].text).to be_empty
@@ -19,12 +19,12 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should add front cover page if front-cover-image attribute is set to image macro' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     = Document Title
     :front-cover-image: image:cover.jpg[]
 
     content page
-    EOS
+    END
 
     (expect pdf.pages).to have_size 2
     (expect pdf.pages[0].text).to be_empty
@@ -36,12 +36,12 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   it 'should add front cover page if front-cover-image attribute is set to data URI' do
     image_data = File.binread fixture_file 'cover.jpg'
     encoded_image_data = Base64.strict_encode64 image_data
-    pdf = to_pdf <<~EOS
+    pdf = to_pdf <<~END
     = Document Title
     :front-cover-image: image:data:image/jpg;base64,#{encoded_image_data}[]
 
     content page
-    EOS
+    END
 
     (expect pdf.pages).to have_size 2
     (expect pdf.pages[0].text).to be_empty
@@ -52,13 +52,13 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
 
   it 'should not add cover page if file cannot be resolved' do
     (expect do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :front-cover-image: image:no-such-file.jpg[]
 
       content page
-      EOS
+      END
 
       (expect pdf.pages).to have_size 2
       (expect pdf.lines pdf.find_text page_number: 1).to eql ['Document Title']
@@ -67,11 +67,11 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
 
   it 'should not add cover page if image cannot be embedded' do
     (expect do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :front-cover-image: image:broken.svg[]
 
       content page
-      EOS
+      END
 
       (expect pdf.pages).to have_size 1
       (expect pdf.lines pdf.find_text page_number: 1).to eql ['content page']
@@ -79,20 +79,20 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should not add cover page if value is ~' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     = Document Title
     :doctype: book
     :front-cover-image: ~
 
     content page
-    EOS
+    END
 
     (expect pdf.pages).to have_size 2
     (expect pdf.lines pdf.find_text page_number: 1).to eql ['Document Title']
   end
 
   it 'should apply recto margin to title page of prepress book when value of front-cover-image attribute is ~' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { title_page_text_align: 'left' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { title_page_text_align: 'left' }, analyze: true
     = Document Title
     :doctype: book
     :media: prepress
@@ -103,7 +103,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     <<<
 
     second page
-    EOS
+    END
 
     (expect pdf.pages).to have_size 4
     doctitle_text = pdf.find_unique_text 'Document Title'
@@ -122,13 +122,13 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
       title_page_text_align: 'left',
       cover_front_image: '~',
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     = Document Title
     :doctype: book
     :media: prepress
 
     content
-    EOS
+    END
 
     (expect pdf.pages).to have_size 3
     doctitle_text = pdf.find_unique_text 'Document Title'
@@ -138,11 +138,11 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
 
   it 'should add front cover page if cover_front_image theme key is set' do
     pdf_theme = { cover_front_image: (fixture_file 'cover.jpg') }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme
     = Document Title
 
     content page
-    EOS
+    END
 
     (expect pdf.pages).to have_size 2
     (expect pdf.pages[0].text).to be_empty
@@ -152,13 +152,13 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should add back cover page if back-cover-image attribute is set to raw path' do
-    pdf = to_pdf <<~EOS
+    pdf = to_pdf <<~END
     = Document Title
     :front-cover-image: #{fixture_file 'cover.jpg', relative: true}
     :back-cover-image: #{fixture_file 'cover.jpg', relative: true}
 
     content page
-    EOS
+    END
 
     (expect pdf.pages).to have_size 3
     (expect pdf.pages[0].text).to be_empty
@@ -169,13 +169,13 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should add back cover page if back-cover-image attribute is set to image macro' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     = Document Title
     :front-cover-image: image:cover.jpg[]
     :back-cover-image: image:cover.jpg[]
 
     content page
-    EOS
+    END
 
     (expect pdf.pages).to have_size 3
     (expect pdf.pages[0].text).to be_empty
@@ -188,13 +188,13 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   it 'should add back cover page if back-cover-image attribute is set to data URI' do
     image_data = File.binread fixture_file 'cover.jpg'
     encoded_image_data = Base64.strict_encode64 image_data
-    pdf = to_pdf <<~EOS
+    pdf = to_pdf <<~END
     = Document Title
     :front-cover-image: image:data:image/jpg;base64,#{encoded_image_data}[]
     :back-cover-image: image:data:image/jpg;base64,#{encoded_image_data}[]
 
     content page
-    EOS
+    END
 
     (expect pdf.pages).to have_size 3
     (expect pdf.pages[0].text).to be_empty
@@ -209,11 +209,11 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
       cover_front_image: (fixture_file 'cover.jpg'),
       cover_back_image: (fixture_file 'cover.jpg'),
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme
     = Document Title
 
     content page
-    EOS
+    END
 
     (expect pdf.pages).to have_size 3
     (expect pdf.pages[0].text).to be_empty
@@ -225,12 +225,12 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
 
   it 'should prefer attribute over theme key' do
     pdf_theme = { cover_back_image: (fixture_file 'not-this-one.jpg') }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme
     = Document Title
     :back-cover-image: image:cover.jpg[]
 
     content page
-    EOS
+    END
 
     (expect pdf.pages).to have_size 2
     (expect pdf.pages[1].text).to be_empty
@@ -240,7 +240,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should create blank page if front or back cover image is empty' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     = Book Title
     :doctype: book
     :front-cover-image:
@@ -249,7 +249,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     == Chapter
 
     text
-    EOS
+    END
 
     (expect pdf.pages).to have_size 4
     (expect (pdf.page 1).text).to be_empty
@@ -272,12 +272,12 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   it 'should not crash if front cover image is a URI and the allow-uri-read attribute is not set' do
     pdf = nil
     (expect do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :front-cover-image: https://example.org/cover.svg
 
       content
-      EOS
+      END
     end).to not_raise_exception & (log_message severity: :WARN, message: '~allow-uri-read attribute not enabled')
     (expect pdf.pages).to have_size 1
     (expect pdf.find_text 'Document Title').to have_size 1
@@ -285,13 +285,13 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
 
   it 'should recognize attribute value that uses image macro syntax and resolve relative to imagesdir', visual: true do
     %w(block inline).each do |type|
-      to_file = to_pdf_file <<~EOS, %(cover-page-front-cover-#{type}-image-macro.pdf)
+      to_file = to_pdf_file <<~END, %(cover-page-front-cover-#{type}-image-macro.pdf)
       = Document Title
       :doctype: book
       :front-cover-image: image:#{type == 'block' ? ':' : ''}cover.jpg[]
 
       content page
-      EOS
+      END
 
       (expect to_file).to visually_match 'cover-page-front-cover-image-contain.pdf'
     end
@@ -305,63 +305,63 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
 
   it 'should scale front cover image to boundaries of page by default', visual: true do
     ['', 'fit=contain'].each do |image_opts|
-      to_file = to_pdf_file <<~EOS, %(cover-page-front-cover-image-#{image_opts.empty? ? 'default' : 'contain'}.pdf)
+      to_file = to_pdf_file <<~END, %(cover-page-front-cover-image-#{image_opts.empty? ? 'default' : 'contain'}.pdf)
       = Document Title
       :doctype: book
       :front-cover-image: image:cover.jpg[#{image_opts}]
 
       content page
-      EOS
+      END
 
       (expect to_file).to visually_match 'cover-page-front-cover-image-contain.pdf'
     end
   end
 
   it 'should stretch front cover image to boundaries of page if fit=fill', visual: true do
-    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-fill.pdf'
+    to_file = to_pdf_file <<~'END', 'cover-page-front-cover-image-fill.pdf'
     = Document Title
     :doctype: book
     :front-cover-image: image:cover.jpg[fit=fill]
     :pdf-page-size: Letter
 
     content page
-    EOS
+    END
 
     (expect to_file).to visually_match 'cover-page-front-cover-image-fill.pdf'
   end
 
   it 'should not scale front cover image to fit page if fit is none', visual: true do
-    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-unscaled.pdf'
+    to_file = to_pdf_file <<~'END', 'cover-page-front-cover-image-unscaled.pdf'
     = Document Title
     :doctype: book
     :front-cover-image: image:cover.jpg[fit=none]
 
     content page
-    EOS
+    END
 
     (expect to_file).to visually_match 'cover-page-front-cover-image-unscaled.pdf'
   end
 
   it 'should scale front cover down until it is contained within the boundaries of the page', visual: true do
     ['', 'fit=scale-down'].each do |image_opts|
-      to_file = to_pdf_file <<~EOS, %(cover-page-front-cover-image-#{image_opts.empty? ? 'max' : 'scale-down'}.pdf)
+      to_file = to_pdf_file <<~END, %(cover-page-front-cover-image-#{image_opts.empty? ? 'max' : 'scale-down'}.pdf)
       :front-cover-image: image:cover.jpg[#{image_opts}]
       :pdf-page-size: A7
 
       content page
-      EOS
+      END
 
       (expect to_file).to visually_match 'cover-page-front-cover-image-max.pdf'
     end
   end
 
   it 'should scale front cover image until it covers page if fit=cover', visual: true do
-    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-cover.pdf'
+    to_file = to_pdf_file <<~'END', 'cover-page-front-cover-image-cover.pdf'
     = Document Title
     :front-cover-image: image:cover.jpg[fit=cover]
 
     content page
-    EOS
+    END
 
     (expect to_file).to visually_match 'cover-page-front-cover-image-cover.pdf'
   end
@@ -369,13 +369,13 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   it 'should scale front cover image with aspect ratio taller than page until it covers page if fit=cover' do
     pdf_page_size = get_page_size (to_pdf 'content', attribute_overrides: { 'pdf-page-size' => 'Letter' }), 1
 
-    pdf = to_pdf <<~'EOS', analyze: :image
+    pdf = to_pdf <<~'END', analyze: :image
     = Document Title
     :pdf-page-size: Letter
     :front-cover-image: image:cover.jpg[fit=cover]
 
     content page
-    EOS
+    END
 
     images = pdf.images
     (expect images).to have_size 1
@@ -387,12 +387,12 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should position front cover image as specified by position attribute', visual: true do
-    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-positioned.pdf'
+    to_file = to_pdf_file <<~'END', 'cover-page-front-cover-image-positioned.pdf'
     = Document Title
     :front-cover-image: image:square.svg[fit=none,pdfwidth=50%,position=top right]
 
     content page
-    EOS
+    END
 
     (expect to_file).to visually_match 'cover-page-front-cover-image-positioned.pdf'
   end
@@ -400,12 +400,12 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   it 'should use specified image format', visual: true do
     source_file = (dest_file = fixture_file 'square') + '.svg'
     FileUtils.cp source_file, dest_file
-    to_file = to_pdf_file <<~'EOS', 'cover-page-front-cover-image-format.pdf'
+    to_file = to_pdf_file <<~'END', 'cover-page-front-cover-image-format.pdf'
     = Document Title
     :front-cover-image: image:square[format=svg]
 
     content page
-    EOS
+    END
 
     (expect to_file).to visually_match 'cover-page-front-cover-image-format.pdf'
   ensure
@@ -413,36 +413,36 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should set the base font for a book when front cover image is a PDF and title page is off' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     = Document Title
     :front-cover-image: #{fixture_file 'blue-letter.pdf', relative: true}
     :doctype: book
     :notitle:
 
     content
-    EOS
+    END
 
     (expect (pdf.find_unique_text 'content')[:font_name]).to eql 'NotoSerif'
   end
 
   it 'should set the base font for an article when front cover image is a PDF and title page is off' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     = Document Title
     :front-cover-image: #{fixture_file 'blue-letter.pdf', relative: true}
 
     content
-    EOS
+    END
 
     (expect (pdf.find_unique_text 'content')[:font_name]).to eql 'NotoSerif'
   end
 
   it 'should not allow page size of PDF cover page to affect page size of document' do
-    input = <<~EOS
+    input = <<~END
     = Document Title
     :front-cover-image: #{fixture_file 'blue-letter.pdf', relative: true}
 
     content
-    EOS
+    END
 
     pdf = to_pdf input, analyze: :rect
     rects = pdf.rectangles
@@ -458,11 +458,11 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should import specified page from PDF file defined using front-cover-image attribute' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     :front-cover-image: image:red-green-blue.pdf[page=3]
 
     content
-    EOS
+    END
     (expect pdf.pages).to have_size 2
     page_contents = pdf.objects[(pdf.page 1).page_object[:Contents][0]].data
     (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 1.0 scn']
@@ -477,7 +477,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should not add front cover if reference page in PDF file does not exist' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     :front-cover-image: image:red-green-blue.pdf[page=10]
 
     one
@@ -485,7 +485,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     <<<
 
     two
-    EOS
+    END
 
     (expect pdf.pages).to have_size 2
     (expect (pdf.page 1).text).to eql 'one'
@@ -495,11 +495,11 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should add back cover using referenced page in PDF file' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     :back-cover-image: image:red-green-blue.pdf[page=3]
 
     content
-    EOS
+    END
 
     (expect pdf.pages).to have_size 2
     (expect (pdf.page 1).text).to eql 'content'
@@ -508,18 +508,18 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should not add back cover if referenced page in PDF file does not exist' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     :back-cover-image: image:red-green-blue.pdf[page=10]
 
     content
-    EOS
+    END
 
     (expect pdf.pages).to have_size 1
     (expect (pdf.page 1).text).to eql 'content'
   end
 
   it 'should not add front cover if PDF file has no pages' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     :front-cover-image: image:no-pages.pdf[]
 
     one
@@ -527,7 +527,7 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
     <<<
 
     two
-    EOS
+    END
 
     (expect pdf.pages).to have_size 2
     (expect (pdf.page 1).text).to eql 'one'
@@ -537,11 +537,11 @@ describe 'Asciidoctor::PDF::Converter - Cover Page' do
   end
 
   it 'should not add back cover if PDF file has no pages' do
-    pdf = to_pdf <<~'EOS'
+    pdf = to_pdf <<~'END'
     :back-cover-image: image:no-pages.pdf[]
 
     content
-    EOS
+    END
 
     (expect pdf.pages).to have_size 1
     (expect (pdf.page 1).text).to eql 'content'

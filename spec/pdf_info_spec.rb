@@ -33,12 +33,12 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
 
     it 'should set Author and Producer field to value of author attribute if set' do
       ['Author Name', ':author: Author Name'].each do |author_line|
-        pdf = to_pdf <<~EOS
+        pdf = to_pdf <<~END
         = Document Title
         #{author_line}
 
         content
-        EOS
+        END
         (expect pdf.info[:Producer]).to eql pdf.info[:Author]
         (expect pdf.info[:Author]).to eql 'Author Name'
       end
@@ -46,14 +46,14 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
 
     it 'should set Author and Producer field to value of author attribute if set to multiple authors' do
       ['Author Name; Assistant Name', ':authors: Author Name; Assistant Name'].each do |author_line|
-        pdf = to_pdf <<~EOS
+        pdf = to_pdf <<~END
         = Document Title
         #{author_line}
 
         [%hardbreaks]
         First Author: {author_1}
         Second Author: {author_2}
-        EOS
+        END
         lines = ((pdf.page 1).text.split ?\n).map(&:strip)
         (expect pdf.info[:Producer]).to eql pdf.info[:Author]
         (expect pdf.info[:Author]).to eql 'Author Name, Assistant Name'
@@ -64,14 +64,14 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
 
     it 'should set Author and Producer field using authors attribute with non-Latin characters' do
       ['Doc Writer; Antonín Dvořák', ':authors: Doc Writer; Antonín Dvořák'].each do |author_line|
-        pdf = to_pdf <<~EOS
+        pdf = to_pdf <<~END
         = Document Title
         #{author_line}
 
         [%hardbreaks]
         First Author: {author_1}
         Second Author: {author_2}
-        EOS
+        END
         lines = ((pdf.page 1).text.split ?\n).map(&:strip)
         (expect pdf.info[:Producer]).to eql pdf.info[:Author]
         (expect pdf.info[:Author]).to eql 'Doc Writer, Antonín Dvořák'
@@ -81,91 +81,91 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
     end
 
     it 'should set Author field to value of author attribute if locked by the API' do
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'author' => 'Doc Writer' }
+      pdf = to_pdf <<~'END', attribute_overrides: { 'author' => 'Doc Writer' }
       = Document Title
       Author Name
 
       content
-      EOS
+      END
       (expect pdf.info[:Author]).to eql 'Doc Writer'
     end
 
     it 'should set Author field to value of authors attribute if locked by the API' do
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'authors' => 'Doc Writer' }
+      pdf = to_pdf <<~'END', attribute_overrides: { 'authors' => 'Doc Writer' }
       = Document Title
       Author Name
 
       content
-      EOS
+      END
       (expect pdf.info[:Author]).to eql 'Doc Writer'
     end
 
     it 'should set Author field to value of authors attribute if both author and authors attributes are locked by the API' do
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'authors' => 'Doc Writer', 'author' => 'Anonymous' }
+      pdf = to_pdf <<~'END', attribute_overrides: { 'authors' => 'Doc Writer', 'author' => 'Anonymous' }
       = Document Title
       Author Name
 
       content
-      EOS
+      END
       (expect pdf.info[:Author]).to eql 'Doc Writer'
     end
 
     it 'should set Author field to value of author attribute if document has no doctitle' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       :author: Author Name
 
       == Section Title
 
       content
-      EOS
+      END
       (expect pdf.info[:Author]).to eql 'Author Name'
     end
 
     it 'should set Author field to value of authors attribute if document has no doctitle' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       :authors: Author Name
 
       == Section Title
 
       content
-      EOS
+      END
       (expect pdf.info[:Author]).to eql 'Author Name'
     end
 
     it 'should set Producer field to value of publisher attribute if set' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = Document Title
       Author Name
       :publisher: Big Cheese
 
       content
-      EOS
+      END
       (expect pdf.info[:Author]).to eql 'Author Name'
       (expect pdf.info[:Producer]).to eql 'Big Cheese'
     end
 
     it 'should set Subject field to value of subject attribute if set' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = Document Title
       :subject: Cooking
 
       content
-      EOS
+      END
       (expect pdf.info[:Subject]).to eql 'Cooking'
     end
 
     it 'should set Keywords field to value of subject attribute if set' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = Document Title
       :keywords: cooking, diet, plants
 
       content
-      EOS
+      END
       (expect pdf.info[:Keywords]).to eql 'cooking, diet, plants'
     end
 
     it 'should sanitize values of Author, Subject, Keywords, and Producer fields' do
-      pdf = to_pdf <<~'EOS'
+      pdf = to_pdf <<~'END'
       = Document Title
       D&#95;J Allen
       :subject: Science &amp; Math
@@ -173,7 +173,7 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       :publisher: Schr&#246;dinger&#8217;s Cat
 
       content
-      EOS
+      END
 
       pdf_info = pdf.info
       (expect pdf_info[:Author]).to eql 'D_J Allen'
@@ -220,24 +220,24 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
     end
 
     it 'should not add dates to document if reproducible attribute is set' do
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'reproducible' => '' }
+      pdf = to_pdf <<~'END', attribute_overrides: { 'reproducible' => '' }
       = Document Title
       Author Name
 
       content
-      EOS
+      END
 
       (expect pdf.info[:ModDate]).to be_nil
       (expect pdf.info[:CreationDate]).to be_nil
     end
 
     it 'should not add software versions to document if reproducible attribute is set' do
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'reproducible' => '' }
+      pdf = to_pdf <<~'END', attribute_overrides: { 'reproducible' => '' }
       = Document Title
       Author Name
 
       content
-      EOS
+      END
 
       (expect pdf.info[:Creator]).to eql 'Asciidoctor PDF, based on Prawn'
     end
@@ -312,13 +312,13 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
     end
 
     it 'should not compress streams when compress attribute is set on document and page is imported' do
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'compress' => '' }
+      pdf = to_pdf <<~'END', attribute_overrides: { 'compress' => '' }
       before
 
       image::red-green-blue.pdf[page=1]
 
       after
-      EOS
+      END
       objects = pdf.objects
       pages = pdf.objects.values.find {|it| Hash === it && it[:Type] == :Pages }
       objects[pages[:Kids][1]][:Contents].map {|it| objects[it] }.each do |stream|

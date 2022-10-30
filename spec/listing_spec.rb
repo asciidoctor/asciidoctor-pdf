@@ -10,10 +10,10 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_border_width: 1,
       code_border_radius: 0,
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
     ----
     ----
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 4
@@ -21,14 +21,14 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should wrap text consistently regardless of whether the characters contain diacritics' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :pdf-page-size: A5
 
     ....
     aàbècìdòeùf gáhéiíjókúlým nâoêpîqôrûs tñuõvãw xäyëzïaöbücÿd
     aabbccddeef gghhiijjkkllm nnooppqqrrs ttuuvvw xxyyzzaabbccd
     ....
-    EOS
+    END
 
     text = pdf.text
     (expect text).to have_size 4
@@ -37,14 +37,14 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should move unbreakable block shorter than page to next page to avoid splitting it' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     #{(['paragraph'] * 20).join (?\n * 2)}
 
     [%unbreakable]
     ----
     #{(['listing'] * 20).join ?\n}
     ----
-    EOS
+    END
 
     listing_page_numbers = (pdf.find_text 'listing').map {|it| it[:page_number] }.uniq
     (expect listing_page_numbers).to eql [2]
@@ -52,14 +52,14 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
 
   it 'should not split block that has less lines than breakable_min_lines value' do
     pdf = with_content_spacer 10, 700 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: { code_border_color: 'FF0000', code_breakable_min_lines: 3 }, analyze: :line
+      to_pdf <<~END, pdf_theme: { code_border_color: 'FF0000', code_breakable_min_lines: 3 }, analyze: :line
       image::#{spacer_path}[]
 
       ----
       not
       breakable
       ----
-      EOS
+      END
     end
 
     lines = pdf.lines.select {|it| it[:color] == 'FF0000' }
@@ -72,7 +72,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_border_color: 'FF0000',
     }
     pdf = with_content_spacer 10, 700 do |spacer_path|
-      input = <<~EOS
+      input = <<~END
       image::#{spacer_path}[]
 
       ----
@@ -82,7 +82,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       not
       break
       ----
-      EOS
+      END
 
       (expect ((to_pdf input, analyze: true).find_unique_text 'this')[:page_number]).to eql 1
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
@@ -95,14 +95,14 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should keep anchor together with block when block is moved to next page' do
-    pdf = to_pdf <<~EOS
+    pdf = to_pdf <<~END
     #{(['paragraph'] * 20).join (?\n * 2)}
 
     [#listing-1%unbreakable]
     ----
     #{(['listing'] * 20).join ?\n}
     ----
-    EOS
+    END
 
     (expect (pdf.page 1).text).not_to include 'listing'
     (expect (pdf.page 2).text).to include 'listing'
@@ -112,14 +112,14 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should place anchor directly at top of block' do
-    input = <<~'EOS'
+    input = <<~'END'
     paragraph
 
     [#listing-1]
     ----
     listing
     ----
-    EOS
+    END
 
     lines = (to_pdf input, analyze: :line).lines
     pdf = to_pdf input
@@ -129,14 +129,14 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should offset anchor from top of block by value of block_anchor_top' do
-    input = <<~'EOS'
+    input = <<~'END'
     paragraph
 
     [#listing-1]
     ----
     listing
     ----
-    EOS
+    END
 
     pdf_theme = { block_anchor_top: -12 }
 
@@ -148,14 +148,14 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should place anchor at top of block if advanced to next page' do
-    input = <<~EOS
+    input = <<~END
     paragraph
 
     [#listing-1%unbreakable]
     ----
     #{(['filler'] * 25).join %(\n\n)}
     ----
-    EOS
+    END
 
     lines = (to_pdf input, analyze: :line).lines
     pdf = to_pdf input
@@ -165,13 +165,13 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should split block if it cannot fit on a whole page' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     #{(['paragraph'] * 20).join (?\n * 2)}
 
     ----
     #{(['listing'] * 60).join ?\n}
     ----
-    EOS
+    END
 
     (expect pdf.pages).to have_size 2
     listing_texts = pdf.find_text 'listing'
@@ -180,7 +180,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should use dashed border to indicate where block is split across a page boundary', visual: true do
-    to_file = to_pdf_file <<~EOS, 'listing-page-split.pdf'
+    to_file = to_pdf_file <<~END, 'listing-page-split.pdf'
     ----
     #{(['listing'] * 60).join ?\n}
     ----
@@ -188,7 +188,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     ----
     #{(['more listing'] * 2).join ?\n}
     ----
-    EOS
+    END
 
     (expect to_file).to visually_match 'listing-page-split.pdf'
   end
@@ -201,14 +201,14 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_border_radius: 0,
     }
     pdf = with_content_spacer 10, 695 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
       image::#{spacer_path}[]
 
       ----
       $ gem install asciidoctor-pdf
       $ asciidoctor-pdf doc.adoc
       ----
-      EOS
+      END
     end
 
     pages = pdf.pages
@@ -219,14 +219,14 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect last_text_y - pdf_theme[:code_padding]).to be > 48.24
 
     pdf = with_content_spacer 10, 696 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
       image::#{spacer_path}[]
 
       ----
       $ gem install asciidoctor-pdf
       $ asciidoctor-pdf doc.adoc
       ----
-      EOS
+      END
     end
 
     pages = pdf.pages
@@ -249,7 +249,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       sidebar_border_color: '0000EE',
       sidebar_background_color: 'transparent',
     }
-    input = <<~EOS
+    input = <<~END
     ****
     before
 
@@ -261,7 +261,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
 
     after
     ****
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
     (expect pdf.find_text %r/^ooo/).to have_size 3
@@ -275,48 +275,48 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should resize font to prevent wrapping if autofit option is set' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { code_font_size: 12 }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { code_font_size: 12 }, analyze: true
     [%autofit]
     ----
     @themesdir = ::File.expand_path theme.__dir__ || (doc.attr 'pdf-themesdir') || ::Dir.pwd
     ----
-    EOS
+    END
 
     (expect pdf.text).to have_size 1
     (expect pdf.text[0][:font_size]).to be < 12
   end
 
   it 'should not resize font if not necessary' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     [%autofit]
     ----
     puts 'Hello, World!'
     ----
-    EOS
+    END
 
     (expect pdf.text).to have_size 1
     (expect pdf.text[0][:font_size]).to eql 11
   end
 
   it 'should not resize font more than base minimum font size' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { base_font_size_min: 8 }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { base_font_size_min: 8 }, analyze: true
     [%autofit]
     ----
     play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
     ----
-    EOS
+    END
 
     (expect pdf.text).to have_size 2
     (expect pdf.text[0][:font_size]).to be 8
   end
 
   it 'should not resize font more than code minimum font size' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { base_font_size_min: 0, code_font_size_min: 8 }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { base_font_size_min: 0, code_font_size_min: 8 }, analyze: true
     [%autofit]
     ----
     play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
     ----
-    EOS
+    END
 
     (expect pdf.text).to have_size 2
     (expect pdf.text[0][:font_size]).to be 8
@@ -324,14 +324,14 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
 
   it 'should allow autofit to shrink text as much as it needs if the minimum font size is 0 or nil' do
     [0, nil].each do |size|
-      pdf = to_pdf <<~'EOS', pdf_theme: { base_font_size_min: size }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { base_font_size_min: size }, analyze: true
       [%autofit]
       ----
       +--------------------------------------+----------------------------------------------------+-----------------------------------------------------+
       | id                                   | name                                               | subnets                                             |
       +--------------------------------------+----------------------------------------------------+-----------------------------------------------------+
       ----
-      EOS
+      END
 
       expected_line = '+--------------------------------------+----------------------------------------------------+-----------------------------------------------------+'
       lines = pdf.lines
@@ -342,13 +342,13 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should use base font color if font color is not specified' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { base_font_color: 'AA0000', code_font_color: nil }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { base_font_color: 'AA0000', code_font_color: nil }, analyze: true
     before
 
     ----
     in the mix
     ----
-    EOS
+    END
 
     before_text = pdf.find_unique_text 'before'
     (expect before_text[:font_color]).to eql 'AA0000'
@@ -364,13 +364,13 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_background_color: nil,
     }
 
-    input = <<~EOS
+    input = <<~END
     [%autofit]
     ----
     downloading#{(%w(.) * 100).join}
     done
     ----
-    EOS
+    END
 
     text = (to_pdf input, pdf_theme: pdf_theme, analyze: true).text
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -386,31 +386,31 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should guard indentation using no-break space character' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     ----
     flush
       indented
     flush
     ----
-    EOS
+    END
 
     (expect pdf.lines).to eql ['flush', %(\u00a0 indented), 'flush']
   end
 
   it 'should guard indentation using no-break space character if string starts with indented line' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     ----
       indented
     flush
       indented
     ----
-    EOS
+    END
 
     (expect pdf.lines).to eql [%(\u00a0 indented), 'flush', %(\u00a0 indented)]
   end
 
   it 'should expand tabs if tabsize attribute is not specified' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     ----
     flush
       lead space
@@ -420,7 +420,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
 
     flush\t\t\tcolumn tab
     ----
-    EOS
+    END
 
     expected_lines = [
       'flush',
@@ -439,7 +439,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should expand tabs if tabsize is specified as block attribute' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     [tabsize=4]
     ----
     flush
@@ -450,7 +450,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
 
     flush\t\t\tcolumn tab
     ----
-    EOS
+    END
 
     expected_lines = [
       'flush',
@@ -469,7 +469,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should expand tabs if tabsize is specified as document attribute' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     :tabsize: 4
 
     ----
@@ -481,7 +481,7 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
 
     flush\t\t\tcolumn tab
     ----
-    EOS
+    END
 
     expected_lines = [
       'flush',
@@ -500,14 +500,14 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should add numbered label to block title if listing-caption attribute is set' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :listing-caption: Listing
 
     .Title
     ----
     content
     ----
-    EOS
+    END
 
     title_text = pdf.find_unique_text font_name: 'NotoSerif-Italic'
     (expect title_text[:string]).to eql 'Listing 1. Title'
@@ -519,12 +519,12 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_caption_font_style: 'bold',
     }
 
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     .Title
     ----
     content
     ----
-    EOS
+    END
 
     title_text = (pdf.find_text 'Title')[0]
     (expect title_text[:font_color]).to eql '0000FF'
@@ -541,12 +541,12 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_border_radius: 0,
     }
 
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     .Caption with background color
     ----
     content
     ----
-    EOS
+    END
 
     title_text = pdf.find_unique_text 'Caption with background color'
     (expect title_text[:font_color]).to eql 'FFFFFF'
@@ -567,14 +567,14 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_border_radius: 0,
     }
 
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     before
 
     .Caption with background color
     ----
     content
     ----
-    EOS
+    END
 
     title_text = pdf.find_unique_text 'Caption with background color'
     (expect title_text[:font_color]).to eql 'FFFFFF'
@@ -594,12 +594,12 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_caption_margin_outside: 10,
     }
 
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     .Caption with background color that spans multiple lines because of the text transform
     ----
     content
     ----
-    EOS
+    END
 
     title_text = pdf.find_unique_text %r/^CAPTION WITH BACKGROUND COLOR/
     (expect title_text[:font_color]).to eql 'FFFFFF'
@@ -618,12 +618,12 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_caption_margin_outside: 10,
     }
 
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     .Caption with background color that contains _inline formatting_ but does not wrap
     ----
     content
     ----
-    EOS
+    END
 
     title_text = pdf.find_unique_text %r/^Caption with background color/
     (expect title_text[:font_color]).to eql 'FFFFFF'
@@ -638,12 +638,12 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   it 'should allow theme to place caption below block' do
     pdf_theme = { code_caption_end: 'bottom' }
 
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     .Look out below!
     ----
     code
     ----
-    EOS
+    END
 
     content_text = pdf.find_unique_text 'code'
     title_text = pdf.find_unique_text 'Look out below!'
@@ -651,13 +651,13 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should apply inline formatting if quotes subs is enabled' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     [subs=+quotes]
     ----
     _1_ skipped
     *99* passing
     ----
-    EOS
+    END
 
     italic_text = (pdf.find_text '1')[0]
     (expect italic_text[:font_name]).to eql 'mplus1mn-italic'
@@ -666,13 +666,13 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should honor font family set on conum category in theme for conum in listing block' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { code_font_family: 'Courier' }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { code_font_family: 'Courier' }, analyze: true
     ----
     fe <1>
     fi <2>
     fo <3>
     ----
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines[0]).to end_with ' ①'
@@ -684,12 +684,12 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
 
   it 'should allow theme to set conum color using CMYK value' do
     cmyk_color = [0, 100, 100, 60].extend Asciidoctor::PDF::ThemeLoader::CMYKColorValue
-    pdf = to_pdf <<~'EOS', pdf_theme: { conum_font_color: cmyk_color }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { conum_font_color: cmyk_color }, analyze: true
     ----
     foo <1>
     ----
     <1> the counterpart of bar
-    EOS
+    END
 
     conum_texts = pdf.find_text '①'
     (expect conum_texts).to have_size 2
@@ -703,13 +703,13 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_border_color: 'AA0000',
       code_border_width: [1, nil],
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
     ----
     foo
     bar
     baz
     ----
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 2
@@ -722,13 +722,13 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_border_color: 'AA0000',
       code_border_width: [nil, 1],
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
     ----
     foo
     bar
     baz
     ----
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 2
@@ -741,13 +741,13 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_border_color: 'AA0000',
       code_border_width: [2, 1],
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
     ----
     foo
     bar
     baz
     ----
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 4
@@ -762,13 +762,13 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_border_color: 'AA0000',
       code_border_width: [1, 0, 0, 0],
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
     ----
     foo
     bar
     baz
     ----
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 1
@@ -781,13 +781,13 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_border_color: 'AA0000',
       code_border_width: [0.5, 0],
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
     ----
     foo
     bar
     baz
     ----
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 2
@@ -803,11 +803,11 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_border_width: [1, 0],
     }
 
-    to_file = to_pdf_file <<~EOS, 'listing-page-split-border-ends.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~END, 'listing-page-split-border-ends.pdf', pdf_theme: pdf_theme
     ----
     #{(['listing'] * 60).join ?\n}
     ----
-    EOS
+    END
 
     (expect to_file).to visually_match 'listing-page-split-border-ends.pdf'
   end
@@ -819,11 +819,11 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_background_color: nil,
     }
 
-    input = <<~EOS
+    input = <<~END
     ----
     downloading#{(%w(.) * 100).join}done
     ----
-    EOS
+    END
 
     text = (to_pdf input, pdf_theme: pdf_theme, analyze: true).text
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -843,11 +843,11 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_background_color: nil,
     }
 
-    input = <<~EOS
+    input = <<~END
     ----
     source code here
     ----
-    EOS
+    END
 
     text = (to_pdf input, pdf_theme: pdf_theme, analyze: true).text
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -868,11 +868,11 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       code_border_width: [1, 0],
     }
 
-    input = <<~EOS
+    input = <<~END
     ----
     source code here
     ----
-    EOS
+    END
 
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
     text = (to_pdf input, pdf_theme: pdf_theme, analyze: true).text
@@ -884,12 +884,12 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
   end
 
   it 'should not substitute conums if callouts sub is absent' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     [subs=-callouts]
     ----
     not a conum <1>
     ----
-    EOS
+    END
 
     (expect pdf.lines).to include 'not a conum <1>'
     (expect pdf.find_text '①').to be_empty

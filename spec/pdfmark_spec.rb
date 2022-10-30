@@ -7,7 +7,7 @@ describe Asciidoctor::PDF::Pdfmark do
 
   context 'generator' do
     it 'should generate pdfmark info from document' do
-      doc = Asciidoctor.load <<~'EOS', safe: :safe
+      doc = Asciidoctor.load <<~'END', safe: :safe
       = Materials Science and Engineering: An Introduction
       William D. Callister
       :doctype: book
@@ -15,7 +15,7 @@ describe Asciidoctor::PDF::Pdfmark do
       :localdatetime: 2018-01-17
       :subject: Materials Science
       :keywords: semiconductors, band gap
-      EOS
+      END
 
       contents = (subject.new doc).generate
       (expect contents).to include '/Title (Materials Science and Engineering: An Introduction)'
@@ -29,11 +29,11 @@ describe Asciidoctor::PDF::Pdfmark do
     end
 
     it 'should use value of untitled-label as title if document has no header' do
-      doc = Asciidoctor.load <<~'EOS', safe: :safe
+      doc = Asciidoctor.load <<~'END', safe: :safe
       == Section
 
       content
-      EOS
+      END
 
       contents = (subject.new doc).generate
       (expect contents).to include '/Title (Untitled)'
@@ -41,7 +41,7 @@ describe Asciidoctor::PDF::Pdfmark do
     end
 
     it 'should sanitize values of Author, Subject, Keywords, and Producer fields' do
-      doc = Asciidoctor.load <<~'EOS', safe: :safe
+      doc = Asciidoctor.load <<~'END', safe: :safe
       = Document Title
       D&#95;J Allen
       :subject: Science &amp; Math
@@ -49,7 +49,7 @@ describe Asciidoctor::PDF::Pdfmark do
       :publisher: Schr&#246;dinger&#8217;s Cat
 
       content
-      EOS
+      END
 
       contents = (subject.new doc).generate
       (expect contents).to include '/Author (D_J Allen)'
@@ -60,12 +60,12 @@ describe Asciidoctor::PDF::Pdfmark do
     end
 
     it 'should set Author field to value of author attribute if locked by the API' do
-      doc = Asciidoctor.load <<~'EOS', safe: :safe, attributes: { 'author' => 'Doc Writer' }
+      doc = Asciidoctor.load <<~'END', safe: :safe, attributes: { 'author' => 'Doc Writer' }
       = Document Title
       Author Name
 
       content
-      EOS
+      END
 
       contents = (subject.new doc).generate
       (expect contents).to include '/Author (Doc Writer)'
@@ -73,12 +73,12 @@ describe Asciidoctor::PDF::Pdfmark do
     end
 
     it 'should set Author field to value of authors attribute if locked by the API' do
-      doc = Asciidoctor.load <<~'EOS', safe: :safe, attributes: { 'authors' => 'Doc Writer' }
+      doc = Asciidoctor.load <<~'END', safe: :safe, attributes: { 'authors' => 'Doc Writer' }
       = Document Title
       Author Name
 
       content
-      EOS
+      END
 
       contents = (subject.new doc).generate
       (expect contents).to include '/Author (Doc Writer)'
@@ -86,12 +86,12 @@ describe Asciidoctor::PDF::Pdfmark do
     end
 
     it 'should set Author field to value of authors attribute if both author and authors attribute locked by the API' do
-      doc = Asciidoctor.load <<~'EOS', safe: :safe, attributes: { 'authors' => 'Doc Writer', 'author' => 'Anonymous' }
+      doc = Asciidoctor.load <<~'END', safe: :safe, attributes: { 'authors' => 'Doc Writer', 'author' => 'Anonymous' }
       = Document Title
       Author Name
 
       content
-      EOS
+      END
 
       contents = (subject.new doc).generate
       (expect contents).to include '/Author (Doc Writer)'
@@ -99,13 +99,13 @@ describe Asciidoctor::PDF::Pdfmark do
     end
 
     it 'should set Author field to value of author attribute if document has no doctitle' do
-      doc = Asciidoctor.load <<~'EOS', safe: :safe
+      doc = Asciidoctor.load <<~'END', safe: :safe
       :author: Author Name
 
       == Section Title
 
       content
-      EOS
+      END
 
       contents = (subject.new doc).generate
       (expect contents).to include '/Author (Author Name)'
@@ -113,13 +113,13 @@ describe Asciidoctor::PDF::Pdfmark do
     end
 
     it 'should set Author field to value of authors attribute if document has no doctitle' do
-      doc = Asciidoctor.load <<~'EOS', safe: :safe
+      doc = Asciidoctor.load <<~'END', safe: :safe
       :authors: Author Name
 
       == Section Title
 
       content
-      EOS
+      END
 
       contents = (subject.new doc).generate
       (expect contents).to include '/Author (Author Name)'
@@ -127,13 +127,13 @@ describe Asciidoctor::PDF::Pdfmark do
     end
 
     it 'should set date to Unix epoch in UTC if reproducible attribute is set' do
-      doc = Asciidoctor.load <<~'EOS', safe: :safe
+      doc = Asciidoctor.load <<~'END', safe: :safe
       = Document Title
       Author Name
       :reproducible:
 
       body
-      EOS
+      END
 
       contents = (subject.new doc).generate
       (expect contents).to include '/Title (Document Title)'
@@ -143,14 +143,14 @@ describe Asciidoctor::PDF::Pdfmark do
     end
 
     it 'should fallback to current date if dates are not parsable' do
-      doc = Asciidoctor.load <<~'EOS', safe: :safe
+      doc = Asciidoctor.load <<~'END', safe: :safe
       = Document Title
       Author Name
       :docdatetime: garbage
       :localdatetime: garbage
 
       body
-      EOS
+      END
 
       expected_date = Time.now.to_pdf_object.slice 0, 11
       contents = (subject.new doc).generate
@@ -161,13 +161,13 @@ describe Asciidoctor::PDF::Pdfmark do
     end
 
     it 'should fallback to current date if only localdatetime is not parsable' do
-      doc = Asciidoctor.load <<~'EOS', safe: :safe
+      doc = Asciidoctor.load <<~'END', safe: :safe
       = Document Title
       Author Name
       :localdatetime: garbage
 
       body
-      EOS
+      END
 
       expected_date = Time.now.to_pdf_object.slice 0, 11
       contents = (subject.new doc).generate

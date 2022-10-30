@@ -5,10 +5,10 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - Running Content' do
   context 'Activation' do
     it 'should not attempt to add running content if document has no body' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, analyze: true
       = Document Title
       :doctype: book
-      EOS
+      END
 
       text = pdf.text
       (expect text).to have_size 1
@@ -23,11 +23,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start adding running content to page after imported page' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, analyze: true
       image::blue-letter.pdf[]
 
       first non-imported page
-      EOS
+      END
 
       pages = pdf.pages
       (expect pages).to have_size 2
@@ -41,13 +41,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should not add running content if all pages are imported' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, analyze: true
       image::red-green-blue.pdf[page=1]
 
       image::red-green-blue.pdf[page=2]
 
       image::red-green-blue.pdf[page=3]
-      EOS
+      END
 
       pages = pdf.pages
       (expect pages).to have_size 3
@@ -57,7 +57,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
   context 'Footer' do
     it 'should add running footer showing virtual page number starting at body by default' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, analyze: true
       = Document Title
       :doctype: book
 
@@ -74,7 +74,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       fourth page
-      EOS
+      END
 
       expected_page_numbers = %w(1 2 3 4)
       expected_x_positions = [541.009, 49.24]
@@ -91,7 +91,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should add running footer by default when using base theme' do
-      input = <<~'EOS'
+      input = <<~'END'
       = Document Title
       :doctype: book
 
@@ -104,7 +104,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       third page
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: { extends: 'base' }, enable_footer: true, analyze: true
       expected_page_numbers = %w(1 2 3)
@@ -163,7 +163,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should hide page number if pagenums attribute is unset in document' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, analyze: true
       = Document Title
       :doctype: book
       :!pagenums:
@@ -173,14 +173,14 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       second page
-      EOS
+      END
 
       (expect pdf.find_text '1').to be_empty
       (expect pdf.find_text '2').to be_empty
     end
 
     it 'should hide page number if pagenums attribute is unset via API' do
-      pdf = to_pdf <<~'EOS', attribute_overrides: { 'pagenums' => nil }, enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', attribute_overrides: { 'pagenums' => nil }, enable_footer: true, analyze: true
       = Document Title
       :doctype: book
 
@@ -189,7 +189,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       second page
-      EOS
+      END
 
       (expect pdf.find_text '1').to be_empty
       (expect pdf.find_text '2').to be_empty
@@ -200,7 +200,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: %({page-number} hide me +\nrecto right),
         footer_verso_left_content: %({page-number} hide me +\nverso left),
       }
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :!pagenums:
@@ -210,7 +210,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       second page
-      EOS
+      END
 
       (expect pdf.find_text %r/\d+ hide me/).to be_empty
       (expect pdf.find_text %r/recto right/, page_number: 2).to have_size 1
@@ -218,24 +218,24 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should not add running footer if nofooter attribute is set' do
-      pdf = to_pdf <<~'EOS', enable_footer: false, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: false, analyze: true
       = Document Title
       :nofooter:
       :doctype: book
 
       body
-      EOS
+      END
 
       (expect pdf.find_text %r/^\d+$/).to be_empty
     end
 
     it 'should not add running footer if height is nil' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { footer_height: nil }, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { footer_height: nil }, analyze: true
       = Document Title
       :doctype: book
 
       body
-      EOS
+      END
 
       (expect pdf.find_text %r/^\d+$/).to be_empty
     end
@@ -245,14 +245,14 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         extends: 'base',
         footer_height: 36,
       }
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
 
       == Beginning
 
       == End
-      EOS
+      END
 
       pagenum1_text = (pdf.find_text '1')[0]
       pagenum2_text = (pdf.find_text '2')[0]
@@ -275,7 +275,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         header_verso_right_content: '({document-title})',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
 
@@ -284,7 +284,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       second page
-      EOS
+      END
 
       expected_page_numbers = %w(1 2)
 
@@ -309,12 +309,12 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         header_verso_right_content: '({document-title})',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, attribute_overrides: { 'noheader' => '' }, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, attribute_overrides: { 'noheader' => '' }, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
 
       body
-      EOS
+      END
 
       (expect pdf.find_text '(Document Title)').to be_empty
     end
@@ -322,7 +322,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
   context 'Start at' do
     it 'should start running content at body by default' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -332,7 +332,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       (expect pdf.pages).to have_size 5
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
@@ -342,7 +342,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at body when start at is after-toc and toc is not enabled' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { running_content_start_at: 'after-toc' }, enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { running_content_start_at: 'after-toc' }, enable_footer: true, analyze: true
       = Document Title
       :doctype: book
 
@@ -351,7 +351,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       (expect pdf.pages).to have_size 4
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
@@ -361,7 +361,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at body when start at is after-toc and toc is enabled with default placement' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { running_content_start_at: 'after-toc' }, enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { running_content_start_at: 'after-toc' }, enable_footer: true, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -371,7 +371,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       (expect pdf.pages).to have_size 5
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
@@ -382,7 +382,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     it 'should start running content after toc in body of book when start at is after-toc and macro toc is used' do
       filler = (1..20).map {|it| %(== #{['Filler'] * 20 * ' '} #{it}\n\ncontent) }.join %(\n\n)
-      pdf = to_pdf <<~EOS, pdf_theme: { running_content_start_at: 'after-toc' }, enable_footer: true, analyze: true
+      pdf = to_pdf <<~END, pdf_theme: { running_content_start_at: 'after-toc' }, enable_footer: true, analyze: true
       = Document Title
       :doctype: book
       :toc: macro
@@ -396,7 +396,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
 
       #{filler}
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
@@ -406,7 +406,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     it 'should start running content after toc in body of article with title page when start at is after-toc and macro toc is used' do
       filler = (1..20).map {|it| %(== #{['Filler'] * 20 * ' '} #{it}\n\ncontent) }.join %(\n\n)
-      pdf = to_pdf <<~EOS, pdf_theme: { running_content_start_at: 'after-toc' }, enable_footer: true, analyze: true
+      pdf = to_pdf <<~END, pdf_theme: { running_content_start_at: 'after-toc' }, enable_footer: true, analyze: true
       = Document Title
       :title-page:
       :toc: macro
@@ -420,7 +420,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Section
 
       #{filler}
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
@@ -430,7 +430,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     it 'should start running content and page numbering after toc in body when both start at keys are after-toc and macro toc is used' do
       filler = (1..20).map {|it| %(== #{['Filler'] * 20 * ' '} #{it}\n\ncontent) }.join %(\n\n)
-      pdf = to_pdf <<~EOS, pdf_theme: { running_content_start_at: 'after-toc', page_numbering_start_at: 'after-toc' }, enable_footer: true, analyze: true
+      pdf = to_pdf <<~END, pdf_theme: { running_content_start_at: 'after-toc', page_numbering_start_at: 'after-toc' }, enable_footer: true, analyze: true
       = Document Title
       :doctype: book
       :toc: macro
@@ -444,7 +444,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Third Chapter
 
       #{filler}
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
@@ -453,7 +453,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at title page if running_content_start_at key is title' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'title' }, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { running_content_start_at: 'title' }, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -463,7 +463,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
@@ -472,7 +472,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at title page if running_content_start_at key is title and document has front cover' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'title' }, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { running_content_start_at: 'title' }, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -483,7 +483,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       (expect pdf.find_text page_number: 1).to be_empty
       pgnum_labels = (2.upto pdf.pages.size).each_with_object [] do |page_number, accum|
@@ -493,7 +493,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at toc page if running_content_start_at key is title and title page is disabled' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'title' }, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { running_content_start_at: 'title' }, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -504,7 +504,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
@@ -513,7 +513,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at body if running_content_start_at key is title and title page and toc are disabled' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'title' }, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { running_content_start_at: 'title' }, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -523,7 +523,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
@@ -532,7 +532,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at toc page if running_content_start_at key is toc' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'toc' }, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { running_content_start_at: 'toc' }, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -542,7 +542,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
@@ -551,7 +551,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at toc page if running_content_start_at key is toc and title page is disabled' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'toc' }, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { running_content_start_at: 'toc' }, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -562,7 +562,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
@@ -571,7 +571,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at body if running_content_start_at key is toc and toc is disabled' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'toc' }, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { running_content_start_at: 'toc' }, analyze: true
       = Document Title
       :doctype: book
 
@@ -580,7 +580,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
@@ -589,7 +589,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at body if running_content_start_at key is after-toc and toc is disabled' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'after-toc' }, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { running_content_start_at: 'after-toc' }, analyze: true
       = Document Title
       :doctype: book
 
@@ -598,7 +598,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
@@ -607,7 +607,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at specified page of body of book if running_content_start_at is an integer' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 3 }, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { running_content_start_at: 3 }, analyze: true
       = Book Title
       :doctype: book
       :toc:
@@ -623,7 +623,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Chapter One
 
       content
-      EOS
+      END
 
       (expect pdf.pages).to have_size 5
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
@@ -637,7 +637,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         running_content_start_at: 3,
         footer_font_color: '0000FF',
       }
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Article Title
 
       page one
@@ -649,7 +649,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       page three
-      EOS
+      END
 
       (expect pdf.pages).to have_size 3
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
@@ -659,7 +659,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering at body by default' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, analyze: true
       = Book Title
       :doctype: book
       :toc:
@@ -675,7 +675,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Chapter One
 
       content
-      EOS
+      END
 
       (expect pdf.pages).to have_size 5
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
@@ -685,7 +685,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering at body when start at is after-toc and toc is enabled' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: 'after-toc' }, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { page_numbering_start_at: 'after-toc' }, analyze: true
       = Book Title
       :doctype: book
       :toc:
@@ -701,7 +701,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Chapter One
 
       content
-      EOS
+      END
 
       (expect pdf.pages).to have_size 5
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
@@ -711,7 +711,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering at body when start at is after-toc and toc is not enabled' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: 'after-toc' }, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { page_numbering_start_at: 'after-toc' }, analyze: true
       = Book Title
       :doctype: book
 
@@ -726,7 +726,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Chapter One
 
       content
-      EOS
+      END
 
       (expect pdf.pages).to have_size 4
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
@@ -737,7 +737,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     it 'should start page numbering after toc in body of book when start at is after-toc and toc macro is used' do
       filler = (1..20).map {|it| %(== #{['Filler'] * 20 * ' '} #{it}\n\ncontent) }.join %(\n\n)
-      pdf = to_pdf <<~EOS, enable_footer: true, pdf_theme: { page_numbering_start_at: 'after-toc' }, analyze: true
+      pdf = to_pdf <<~END, enable_footer: true, pdf_theme: { page_numbering_start_at: 'after-toc' }, analyze: true
       = Book Title
       :doctype: book
       :toc: macro
@@ -757,7 +757,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       content
 
       #{filler}
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
@@ -767,7 +767,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     it 'should start page numbering after toc in body of article with title page when start at is after-toc and toc macro is used' do
       filler = (1..20).map {|it| %(== #{['Filler'] * 20 * ' '} #{it}\n\ncontent) }.join %(\n\n)
-      pdf = to_pdf <<~EOS, enable_footer: true, pdf_theme: { page_numbering_start_at: 'after-toc' }, analyze: true
+      pdf = to_pdf <<~END, enable_footer: true, pdf_theme: { page_numbering_start_at: 'after-toc' }, analyze: true
       = Document Title
       :title-page:
       :toc: macro
@@ -787,7 +787,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       content
 
       #{filler}
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
@@ -797,7 +797,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     it 'should start page numbering and running content at first page of article body if start-at value is body or 1' do
       [1, 'body'].each do |start_at|
-        pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: start_at, running_content_start_at: start_at }, analyze: true
+        pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { page_numbering_start_at: start_at, running_content_start_at: start_at }, analyze: true
         = Article Title
 
         page one
@@ -809,7 +809,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         <<<
 
         page three
-        EOS
+        END
 
         (expect pdf.pages).to have_size 3
         pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
@@ -821,7 +821,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     it 'should start page numbering and running content at first page of book body if start-at value is body or 1' do
       [1, 'body'].each do |start_at|
-        pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: start_at, running_content_start_at: start_at }, analyze: true
+        pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { page_numbering_start_at: start_at, running_content_start_at: start_at }, analyze: true
         = Book Title
         :doctype: book
 
@@ -836,7 +836,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         == Chapter One
 
         content
-        EOS
+        END
 
         (expect pdf.pages).to have_size 4
         pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
@@ -847,7 +847,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering and running content on page before first chapter in prepress book if start-at is 0' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: 0, running_content_start_at: 0 }, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { page_numbering_start_at: 0, running_content_start_at: 0 }, analyze: true
       = Book Title
       :doctype: book
       :media: prepress
@@ -855,7 +855,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Chapter One
 
       content
-      EOS
+      END
 
       (expect pdf.pages).to have_size 3
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
@@ -865,7 +865,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering and running content at specified page of body' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: 3, running_content_start_at: 3 }, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { page_numbering_start_at: 3, running_content_start_at: 3 }, analyze: true
       = Book Title
       :doctype: book
       :toc:
@@ -881,7 +881,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Chapter One
 
       content
-      EOS
+      END
 
       (expect pdf.pages).to have_size 5
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
@@ -896,7 +896,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         page_numbering_start_at: 3,
         footer_font_color: '0000FF',
       }
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Article Title
 
       page one
@@ -908,7 +908,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       page three
-      EOS
+      END
 
       (expect pdf.pages).to have_size 3
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
@@ -920,7 +920,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
   context 'Page numbering' do
     it 'should start page numbering at body if title page and toc are disabled' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -930,7 +930,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
@@ -940,7 +940,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     it 'should start page numbering at body if title page is disabled and toc is enabled' do
       pdf_theme = { running_content_start_at: 'toc' }
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -951,7 +951,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
@@ -960,7 +960,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering at cover page of article if page_numbering_start_at is cover' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: 'cover' }
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { page_numbering_start_at: 'cover' }
       = Document Title
       :front-cover-image: image:tux.png[]
 
@@ -969,14 +969,14 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Section
 
       == Third Section
-      EOS
+      END
 
       page_labels = get_page_labels pdf
       (expect page_labels).to eql %w(1 2)
     end
 
     it 'should start page numbering at cover page of book if page_numbering_start_at is cover' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: 'cover' }
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { page_numbering_start_at: 'cover' }
       = Document Title
       :doctype: book
       :front-cover-image: image:tux.png[]
@@ -987,14 +987,14 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       page_labels = get_page_labels pdf
       (expect page_labels).to eql %w(1 2 3 4 5 6)
     end
 
     it 'should start page numbering at title page of book if page_numbering_start_at is cover and document has no cover' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: 'cover' }
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { page_numbering_start_at: 'cover' }
       = Document Title
       :doctype: book
       :toc:
@@ -1004,14 +1004,14 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       page_labels = get_page_labels pdf
       (expect page_labels).to eql %w(1 2 3 4 5)
     end
 
     it 'should start page numbering at body of article if page_numbering_start_at is cover and document has no cover' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: 'cover' }
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { page_numbering_start_at: 'cover' }
       = Document Title
 
       == First Section
@@ -1019,7 +1019,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Section
 
       == Third Section
-      EOS
+      END
 
       page_labels = get_page_labels pdf
       (expect page_labels).to eql %w(1)
@@ -1028,7 +1028,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     it 'should start page numbering at title page if page_numbering_start_at is title' do
       pdf_theme = { page_numbering_start_at: 'title', running_content_start_at: 'title' }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -1038,7 +1038,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
@@ -1049,7 +1049,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     it 'should start page numbering at toc page if page_numbering_start_at is title and title page is disabled' do
       pdf_theme = { page_numbering_start_at: 'title', running_content_start_at: 'title' }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -1060,7 +1060,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
@@ -1071,7 +1071,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     it 'should start page numbering at body if page_numbering_start_at is title and title page and toc are disabled' do
       pdf_theme = { page_numbering_start_at: 'title', running_content_start_at: 'title' }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -1081,7 +1081,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
@@ -1092,7 +1092,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     it 'should start page numbering at toc page if page_numbering_start_at is toc' do
       pdf_theme = { page_numbering_start_at: 'toc', running_content_start_at: 'title' }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -1102,7 +1102,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
@@ -1113,7 +1113,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     it 'should start page numbering at body if page_numbering_start_at is toc and toc is disabled' do
       pdf_theme = { page_numbering_start_at: 'toc', running_content_start_at: 'title' }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
 
@@ -1122,7 +1122,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
@@ -1133,7 +1133,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     it 'should start page numbering at toc page if page_numbering_start_at is toc and title page is disabled' do
       pdf_theme = { page_numbering_start_at: 'toc', running_content_start_at: 'title' }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -1144,7 +1144,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Second Chapter
 
       == Third Chapter
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
@@ -1153,7 +1153,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering at specified page of body of book if page_numbering_start_at is an integer' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { running_content_start_at: 'title', page_numbering_start_at: 3 }, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { running_content_start_at: 'title', page_numbering_start_at: 3 }, analyze: true
       = Book Title
       :doctype: book
       :toc:
@@ -1172,7 +1172,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
       [index]
       == Index
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, y: 14.263)[-1][:string]
@@ -1189,7 +1189,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_font_color: '0000FF',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Article Title
 
       page one
@@ -1201,7 +1201,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       page three
-      EOS
+      END
 
       pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
         accum << (pdf.find_text page_number: page_number, font_color: '0000FF')[0][:string]
@@ -1218,7 +1218,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_font_color: 'AA0000',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -1226,7 +1226,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Beginning
 
       == End
-      EOS
+      END
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 2
@@ -1245,7 +1245,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_font_color: 'AA0000',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -1253,7 +1253,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Beginning
 
       == End
-      EOS
+      END
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 3
@@ -1281,7 +1281,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_right_text_transform: 'uppercase',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
 
       Preamble text.
@@ -1297,7 +1297,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       == End
-      EOS
+      END
 
       (expect pdf.find_text font_size: 7.5, page_number: 1, string: '1', font_color: '00FF00').to have_size 1
       (expect pdf.find_text font_size: 7.5, page_number: 2, string: 'BEGINNING', font_color: 'FF0000').to have_size 1
@@ -1309,7 +1309,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should expand footer padding from single value' do
-      pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, analyze: true
       = Document Title
 
       first page
@@ -1317,7 +1317,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       second page
-      EOS
+      END
 
       p2_text = pdf.find_text page_number: 2
       (expect p2_text[1][:x]).to be > p2_text[0][:x]
@@ -1334,7 +1334,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         header_verso_left_content: '{page-number}',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       = Document Title
 
       first page
@@ -1342,7 +1342,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       second page
-      EOS
+      END
 
       p2_text = pdf.find_text page_number: 2
       (expect p2_text[1][:x]).to be > p2_text[0][:x]
@@ -1358,13 +1358,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_center_content: '{page-number}',
         footer_verso_center_content: '{page-number}',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, enable_footer: true, analyze: true
       first page
 
       <<<
 
       second page
-      EOS
+      END
 
       footer_texts = pdf.find_text font_color: 'FF0000'
       (expect footer_texts).to have_size 2
@@ -1384,7 +1384,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         header_verso_left_content: 99,
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       = Document Title
 
       first page
@@ -1392,7 +1392,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       second page
-      EOS
+      END
 
       p2_text = pdf.find_text page_number: 2
       (expect p2_text[1][:x]).to be > p2_text[0][:x]
@@ -1408,12 +1408,12 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_vertical_align: 'middle',
       }
 
-      to_file = to_pdf_file <<~'EOS', 'running-content-negative-padding.pdf', pdf_theme: pdf_theme, enable_footer: true
+      to_file = to_pdf_file <<~'END', 'running-content-negative-padding.pdf', pdf_theme: pdf_theme, enable_footer: true
       text left
 
       [.text-right]
       text right
-      EOS
+      END
 
       (expect to_file).to visually_match 'running-content-negative-padding.pdf'
     end
@@ -1506,13 +1506,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: 'footer: *bold* _italic_ `mono`',
         footer_verso_left_content: 'https://asciidoctor.org[Asciidoctor] AsciiDoc -> PDF',
       }
-      input = <<~'EOS'
+      input = <<~'END'
       page 1
 
       <<<
 
       page 2
-      EOS
+      END
 
       pdf = to_pdf input, enable_footer: true, pdf_theme: pdf_theme, analyze: true
 
@@ -1543,13 +1543,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_left_content: 'offset:{page-number}[2]',
       }
 
-      input = <<~'EOS'
+      input = <<~'END'
       first
 
       <<<
 
       last
-      EOS
+      END
 
       extension_registry = Asciidoctor::Extensions.create do
         inline_macro :offset do
@@ -1663,11 +1663,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_vertical_align: 'middle',
       }
 
-      to_file = to_pdf_file <<~'EOS', 'running-content-background-image.pdf', enable_footer: true, pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'running-content-background-image.pdf', enable_footer: true, pdf_theme: pdf_theme
       :pdf-page-size: Letter
 
       Hello, World!
-      EOS
+      END
 
       (expect to_file).to visually_match 'running-content-background-image.pdf'
     end
@@ -1690,11 +1690,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_vertical_align: 'middle',
       }
 
-      to_file = to_pdf_file <<~'EOS', 'running-content-background-image-full.pdf', enable_footer: true, pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'running-content-background-image-full.pdf', enable_footer: true, pdf_theme: pdf_theme
       :pdf-page-size: Letter
 
       Hello, World!
-      EOS
+      END
 
       (expect to_file).to visually_match 'running-content-background-image-full.pdf'
     end
@@ -1709,10 +1709,10 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       }
 
       (expect do
-        pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme
+        pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme
 
         Hello, World!
-        EOS
+        END
 
         images = get_images pdf, 1
         (expect images).to be_empty
@@ -1731,13 +1731,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_center_content: '',
       }
 
-      to_file = to_pdf_file <<~'EOS', 'running-content-background-image-per-side.pdf', pdf_theme: pdf_theme, enable_footer: true
+      to_file = to_pdf_file <<~'END', 'running-content-background-image-per-side.pdf', pdf_theme: pdf_theme, enable_footer: true
       recto
 
       <<<
 
       verso
-      EOS
+      END
 
       (expect to_file).to visually_match 'running-content-background-image-per-side.pdf'
     end
@@ -1745,7 +1745,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     it 'should be able to reference page layout in background image path', visual: true do
       pdf_theme = { __dir__: fixtures_dir, footer_background_image: 'image:square-{page-layout}.svg[]' }
 
-      to_file = to_pdf_file <<~'EOS', 'running-content-background-image-per-layout.pdf', pdf_theme: pdf_theme, enable_footer: true
+      to_file = to_pdf_file <<~'END', 'running-content-background-image-per-layout.pdf', pdf_theme: pdf_theme, enable_footer: true
       page 1
 
       [.landscape]
@@ -1757,7 +1757,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       page 3
-      EOS
+      END
       (expect to_file).to visually_match 'running-content-background-image-per-layout.pdf'
     end
 
@@ -1780,13 +1780,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_right_content: 'F',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       page one
 
       <<<
 
       page two
-      EOS
+      END
 
       page_width = (get_page_size pdf)[0]
       p1_header_text = (pdf.find_text 'H', page_number: 1)[0]
@@ -1814,13 +1814,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_right_content: 'F',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       page one
 
       <<<
 
       page two
-      EOS
+      END
 
       page_width = (get_page_size pdf)[0]
       p1_header_text = (pdf.find_text 'H', page_number: 1)[0]
@@ -1852,13 +1852,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_right_content: 'F',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       page one
 
       <<<
 
       page two
-      EOS
+      END
 
       page_width = (get_page_size pdf)[0]
       p1_header_text = (pdf.find_text 'H', page_number: 1)[0]
@@ -1890,13 +1890,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_right_content: 'F',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       page one
 
       <<<
 
       page two
-      EOS
+      END
 
       page_width = (get_page_size pdf)[0]
       p1_header_text = (pdf.find_text 'H', page_number: 1)[0]
@@ -1927,13 +1927,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_margin: [0, 0, 6],
       }
 
-      to_file = to_pdf_file <<~'EOS', 'running-content-end-margin.pdf', enable_footer: true, pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'running-content-end-margin.pdf', enable_footer: true, pdf_theme: pdf_theme
       page one
 
       <<<
 
       page two
-      EOS
+      END
 
       (expect to_file).to visually_match 'running-content-end-margin.pdf'
     end
@@ -1954,13 +1954,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         header_verso_right_content: %(image:#{fixture_file 'square.png'}[fit=contain]),
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :image
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :image
       page one
 
       <<<
 
       page two
-      EOS
+      END
 
       recto_image, verso_image = pdf.images
       (expect recto_image[:width]).to eql 36.0
@@ -1993,11 +1993,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: 'right',
       }
 
-      to_file = to_pdf_file <<~'EOS', 'running-content-column-rule.pdf', enable_footer: true, pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'running-content-column-rule.pdf', enable_footer: true, pdf_theme: pdf_theme
       = Document Title
 
       content
-      EOS
+      END
 
       (expect to_file).to visually_match 'running-content-column-rule.pdf'
     end
@@ -2016,11 +2016,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: 'right',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: :line
       = Document Title
 
       content
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 2
@@ -2042,11 +2042,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: 'right',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: :line
       = Document Title
 
       content
-      EOS
+      END
 
       (expect pdf.lines).to have_size 0
     end
@@ -2063,11 +2063,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: 'right',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: :line
       = Document Title
 
       content
-      EOS
+      END
 
       (expect pdf.lines).to have_size 0
     end
@@ -2090,11 +2090,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: 'right',
       }
 
-      to_file = to_pdf_file <<~'EOS', 'running-content-no-column-rule.pdf', enable_footer: true, pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'running-content-no-column-rule.pdf', enable_footer: true, pdf_theme: pdf_theme
       = Document Title
 
       content
-      EOS
+      END
 
       (expect to_file).to visually_match 'running-content-no-column-rule.pdf'
     end
@@ -2109,11 +2109,11 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: 'recto',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, enable_footer: true, analyze: true
       :pdf-folio-placement: virtual-inverted
 
       content
-      EOS
+      END
 
       footer_text = pdf.find_text font_size: 9
       (expect footer_text).to have_size 2
@@ -2129,14 +2129,14 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: 'recto',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, enable_footer: true, analyze: true
       = Document Title
       :pdf-folio-placement: physical-inverted
       :media: print
       :doctype: book
 
       content
-      EOS
+      END
 
       footer_text = pdf.find_text font_size: 9
       (expect footer_text).to have_size 2
@@ -2153,7 +2153,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       }
 
       { 'physical' => 'verso', 'physical-inverted' => 'recto' }.each do |placement, side|
-        pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, enable_footer: true, analyze: true
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, enable_footer: true, analyze: true
         = Document Title
         :pdf-folio-placement: #{placement}
         :doctype: book
@@ -2162,7 +2162,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         == Chapter
 
         #{40.times.map {|it| %(=== Section #{it + 1}) }.join %(\n\n)}
-        EOS
+        END
 
         (expect pdf.find_text page_number: 4, string: 'Chapter').to have_size 1
         body_start_footer_text = pdf.find_text font_size: 9, page_number: 4
@@ -2179,13 +2179,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: 'recto',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, enable_footer: true, analyze: true
       = Document Title
       :media: prepress
       :doctype: book
 
       content
-      EOS
+      END
 
       footer_text = pdf.find_text font_size: 9
       (expect footer_text).to have_size 2
@@ -2201,14 +2201,14 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: 'recto',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, enable_footer: true, analyze: true
       = Document Title
       :media: prepress
       :pdf-folio-placement: physical-inverted
       :doctype: book
 
       content
-      EOS
+      END
 
       footer_text = pdf.find_text font_size: 9
       (expect footer_text).to have_size 2
@@ -2227,7 +2227,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: nil,
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       portrait
 
       [.landscape]
@@ -2238,7 +2238,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       [.portrait]
 
       portrait
-      EOS
+      END
 
       (expect pdf.text.size).to be 5
       pdf.text.each do |text|
@@ -2255,7 +2255,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_right_content: '{section-title}',
       }
 
-      to_file = to_pdf_file <<~EOS, 'running-content-alt-layouts.pdf', enable_footer: true, pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~END, 'running-content-alt-layouts.pdf', enable_footer: true, pdf_theme: pdf_theme
       = Alternating Page Layouts
 
       This document demonstrates that the running content is adjusted to fit the page layout as the page layout alternates.
@@ -2275,7 +2275,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Portrait Page
 
       #{filler}
-      EOS
+      END
 
       (expect to_file).to visually_match 'running-content-alt-layouts.pdf'
     end
@@ -2289,13 +2289,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       }
 
       (expect do
-        pdf = to_pdf <<~'EOS', enable_footer: true, attribute_overrides: { 'doctitle' => 'The Chronicles of <Foo> & &#166;' }, pdf_theme: pdf_theme, analyze: true
+        pdf = to_pdf <<~'END', enable_footer: true, attribute_overrides: { 'doctitle' => 'The Chronicles of <Foo> & &#166;' }, pdf_theme: pdf_theme, analyze: true
         :doctype: book
 
         == Chapter 1
 
         content
-        EOS
+        END
 
         running_text = pdf.find_text %(The Chronicles of <Foo> & \u00a6)
         (expect running_text).to have_size 1
@@ -2310,14 +2310,14 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_right_content: '[{document-subtitle}]',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title: Subtitle
       :doctype: book
 
       == Beginning
 
       == End
-      EOS
+      END
 
       [2, 3].each do |pgnum|
         main_title_text = (pdf.find_text page_number: pgnum, string: '(Document Title)')[0]
@@ -2334,13 +2334,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_left_content: '({document-title})',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       :doctype: book
 
       == Beginning
 
       == End
-      EOS
+      END
 
       [1, 2].each do |pgnum|
         doctitle_text = pdf.find_unique_text page_number: pgnum, font_color: 'CCCCCC', string: '(Untitled)'
@@ -2357,7 +2357,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_right_content: '[{part-title}|{chapter-title}|{section-title}]',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
 
@@ -2376,7 +2376,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       = Part II
 
       == Chapter C
-      EOS
+      END
 
       footer_y = (pdf.find_text 'FOOTER')[0][:y]
       titles_by_page = (pdf.find_text y: footer_y).each_with_object({}) do |it, accum|
@@ -2397,7 +2397,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_left_content: '{part-title} ({page-number})',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, enable_footer: true, analyze: true
       = Document Title
       :doctype: book
 
@@ -2413,7 +2413,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       = Installation
 
       Describe installation procedure.
-      EOS
+      END
 
       footer_texts = pdf.find_text page_number: 5, font_color: '0000FF'
       (expect footer_texts).to have_size 1
@@ -2431,7 +2431,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_left_content: %(({chapter-numeral})\n{chapter-title} | {page-number}),
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, enable_footer: true, analyze: true
       = Document Title
       :doctype: book
       :sectnums:
@@ -2449,7 +2449,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == B
 
       content
-      EOS
+      END
 
       footer_texts = pdf.find_text font_color: '0000FF'
       (expect footer_texts).to have_size 4
@@ -2465,7 +2465,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_left_content: %(({chapter-numeral})\n{chapter-title} | {page-number}),
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, enable_footer: true, analyze: true
       = Document Title
       :doctype: book
 
@@ -2482,7 +2482,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == B
 
       content
-      EOS
+      END
 
       footer_texts = pdf.find_text font_color: '0000FF'
       (expect footer_texts).to have_size 4
@@ -2498,7 +2498,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_left_content: %(P{part-numeral} |\n{page-number}),
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, enable_footer: true, analyze: true
       = Document Title
       :doctype: book
       :partnums:
@@ -2516,7 +2516,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Moar Chapter
 
       content
-      EOS
+      END
 
       footer_texts = pdf.find_text font_color: '0000FF'
       (expect footer_texts).to have_size 5
@@ -2532,7 +2532,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_left_content: %(P{part-numeral} |\n{page-number}),
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, enable_footer: true, analyze: true
       = Document Title
       :doctype: book
 
@@ -2541,7 +2541,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Chapter
 
       content
-      EOS
+      END
 
       footer_texts = pdf.find_text font_color: '0000FF'
       (expect footer_texts).to have_size 2
@@ -2555,7 +2555,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: '[{section-title}]',
         footer_verso_left_content: '[{section-title}]',
       }
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
 
       First page of preamble.
@@ -2565,7 +2565,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       Second page of preamble.
 
       == Section Title
-      EOS
+      END
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 2
@@ -2579,13 +2579,13 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: '[{section-title}]',
         footer_verso_left_content: '[{section-title}]',
       }
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       first page
 
       <<<
 
       last page
-      EOS
+      END
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 2
@@ -2599,7 +2599,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: '{chapter-title}',
         footer_verso_left_content: '{chapter-title}',
       }
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :preface-title: PREFACE
@@ -2611,7 +2611,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       Second page of preface.
 
       == First Chapter
-      EOS
+      END
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 3
@@ -2629,7 +2629,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: '{chapter-title}',
         footer_verso_left_content: '{chapter-title}',
       }
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :notitle:
@@ -2641,7 +2641,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       Second page of preface.
 
       == First Chapter
-      EOS
+      END
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 3
@@ -2660,7 +2660,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: '{page-number} | {chapter-title}',
         footer_verso_left_content: '{chapter-title} | {page-number}',
       }
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -2669,7 +2669,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Beginning
 
       == End
-      EOS
+      END
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 3
@@ -2685,7 +2685,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: '{page-number} | {chapter-title}',
         footer_verso_left_content: '{chapter-title} | {page-number}',
       }
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :toc: macro
@@ -2696,7 +2696,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       toc::[]
 
       == End
-      EOS
+      END
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 3
@@ -2714,7 +2714,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: '{page-number} | {section-title}',
         footer_verso_left_content: '{section-title} | {page-number}',
       }
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :toc: macro
       :toc-title: Contents
@@ -2728,7 +2728,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       == End
-      EOS
+      END
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 3
@@ -2746,7 +2746,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: '{page-number} | {section-title}',
         footer_verso_left_content: '{section-title} | {page-number}',
       }
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :toc: macro
       :toc-title: Contents
@@ -2758,7 +2758,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       == End
-      EOS
+      END
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 2
@@ -2769,7 +2769,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should assign section titles down to sectlevels defined in theme' do
-      input = <<~'EOS'
+      input = <<~'END'
       = Document Title
       :doctype: book
 
@@ -2788,7 +2788,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       ===== Level 4
 
       == B
-      EOS
+      END
 
       {
         nil => ['A', 'Level 2', 'Level 2', 'Level 2', 'B'],
@@ -2816,7 +2816,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_left_content: '{chapter-title}',
       }
 
-      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -2826,7 +2826,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       == Chapter 1
 
       content
-      EOS
+      END
 
       expected_running_content_by_page = { 1 => 'Document Title', 2 => 'Table of Contents', 3 => 'Preface', 4 => 'Chapter 1' }
       running_content_by_page = (pdf.find_text y: 14.263).each_with_object({}) {|text, accum| accum[text[:page_number]] = text[:string] }
@@ -2834,14 +2834,14 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should allow style of title-related attributes to be customized using the title-style key' do
-      input = <<~'EOS'
+      input = <<~'END'
       = Document Title
       :doctype: book
       :sectnums:
       :notitle:
 
       == Beginning
-      EOS
+      END
 
       pdf_theme = {
         footer_recto_left_content: '[{chapter-title}]',
@@ -2981,14 +2981,14 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_left_content: nil,
       }
 
-      input = <<~'EOS'
+      input = <<~'END'
       portrait
 
       [page-layout=landscape]
       <<<
 
       landscape
-      EOS
+      END
       rects = (to_pdf input, pdf_theme: pdf_theme, enable_footer: true, analyze: :rect).rectangles
       (expect rects).to have_size 2
       (expect rects[0][:page_number]).to eql 1
@@ -3154,7 +3154,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_verso_right_content: %(image:#{fixture_file 'tux.png'}[pdfwidth=100px]),
       }
 
-      to_file = to_pdf_file <<~'EOS', 'running-content-image-overrun.pdf', enable_footer: true, pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'running-content-image-overrun.pdf', enable_footer: true, pdf_theme: pdf_theme
       = Article Title
 
       content
@@ -3162,7 +3162,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       content
-      EOS
+      END
 
       (expect to_file).to visually_match 'running-content-image-overrun.pdf'
     end
@@ -3178,20 +3178,20 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
           'pdf-themesdir' => (File.dirname fixtures_dir),
         },
       ].each_with_index do |attribute_overrides, idx|
-        to_file = to_pdf_file <<~'EOS', %(running-content-image-from-themesdir-#{idx}.pdf), attribute_overrides: attribute_overrides
+        to_file = to_pdf_file <<~'END', %(running-content-image-from-themesdir-#{idx}.pdf), attribute_overrides: attribute_overrides
         [.text-center]
         content
-        EOS
+        END
         (expect to_file).to visually_match 'running-content-image.pdf'
       end
     end
 
     it 'should resolve image target relative to theme file when themesdir is not set', visual: true do
       attribute_overrides = { 'pdf-theme' => (fixture_file 'running-header-theme.yml', relative: true) }
-      to_file = to_pdf_file <<~'EOS', 'running-content-image-from-theme.pdf', attribute_overrides: attribute_overrides
+      to_file = to_pdf_file <<~'END', 'running-content-image-from-theme.pdf', attribute_overrides: attribute_overrides
       [.text-center]
       content
-      EOS
+      END
 
       (expect to_file).to visually_match 'running-content-image.pdf'
     end
@@ -3394,9 +3394,9 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: 'image:svg-with-local-image.svg[fit=contain]',
         footer_verso_left_content: 'image:svg-with-local-image.svg[fit=contain]',
       }
-      to_file = to_pdf_file <<~'EOS', 'running-content-svg-with-local-image.pdf', enable_footer: true, pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'running-content-svg-with-local-image.pdf', enable_footer: true, pdf_theme: pdf_theme
       body
-      EOS
+      END
 
       (expect to_file).to visually_match 'running-content-svg-with-local-image.pdf'
     end

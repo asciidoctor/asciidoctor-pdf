@@ -4,14 +4,14 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Verse' do
   it 'should show caption above block if title is specified' do
-    input = <<~'EOS'
+    input = <<~'END'
     .Fog
     [verse]
     ____
     The fog comes
     on little cat feet.
     ____
-    EOS
+    END
 
     pdf = to_pdf input, analyze: :line
     lines = pdf.lines
@@ -29,13 +29,13 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
   end
 
   it 'should show attribution line below text of verse' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     [verse,Robert Frost,'Fire & Ice']
     ____
     Some say the world will end in fire,
     Some say in ice.
     ____
-    EOS
+    END
 
     last_verse_text = pdf.text[-2]
     attribution_text = (pdf.find_text %r/Robert Frost/)[0]
@@ -48,7 +48,7 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
   end
 
   it 'should expand tabs and preserve indentation' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     [verse]
     ____
     here
@@ -56,7 +56,7 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
     \t\tgo
     again
     ____
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 4
@@ -65,58 +65,58 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
   end
 
   it 'should honor text alignment role' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     [verse.text-right]
     ____
     Over here.
     ____
-    EOS
+    END
 
     midpoint = pdf.pages[0][:size][0] * 0.5
     (expect (pdf.find_unique_text 'Over here.')[:x]).to be > midpoint
   end
 
   it 'should not draw left border if border_left_width is 0' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { verse_border_left_width: 0 }, analyze: :line
+    pdf = to_pdf <<~'END', pdf_theme: { verse_border_left_width: 0 }, analyze: :line
     [verse]
     ____
     here
     we
     go
     ____
-    EOS
+    END
 
     (expect pdf.lines).to be_empty
   end
 
   it 'should not draw left border if border_left_width is nil' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { verse_border_left_width: nil, verse_border_width: nil }, analyze: :line
+    pdf = to_pdf <<~'END', pdf_theme: { verse_border_left_width: nil, verse_border_width: nil }, analyze: :line
     [verse]
     ____
     here
     we
     go
     ____
-    EOS
+    END
 
     (expect pdf.lines).to be_empty
   end
 
   it 'should not draw left border if color is transparent' do
-    lines = (to_pdf <<~'EOS', pdf_theme: { verse_border_color: 'transparent' }, analyze: :line).lines
+    lines = (to_pdf <<~'END', pdf_theme: { verse_border_color: 'transparent' }, analyze: :line).lines
     [verse]
     ____
     here
     we
     go
     ____
-    EOS
+    END
 
     (expect lines).to be_empty
   end
 
   it 'should not draw left border if color is nil and base border color is nil' do
-    lines = (to_pdf <<~'EOS', pdf_theme: { base_border_color: nil, verse_border_color: nil }, analyze: :line).lines
+    lines = (to_pdf <<~'END', pdf_theme: { base_border_color: nil, verse_border_color: nil }, analyze: :line).lines
     before
 
     [verse]
@@ -125,7 +125,7 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
     we
     go
     ____
-    EOS
+    END
 
     (expect lines).to be_empty
   end
@@ -137,13 +137,13 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
       verse_font_color: '555555',
     }
 
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     [verse]
     ____
     The fog comes
     on little cat feet.
     ____
-    EOS
+    END
 
     text = pdf.text
     (expect text).to have_size 2
@@ -157,13 +157,13 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
       verse_background_color: 'dddddd',
       verse_border_color: 'aa0000',
     }
-    to_file = to_pdf_file <<~'EOS', 'verse-background-color.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~'END', 'verse-background-color.pdf', pdf_theme: pdf_theme
     [verse]
     ____
     Let it be.
     Let it be.
     ____
-    EOS
+    END
 
     (expect to_file).to visually_match 'verse-background-color.pdf'
   end
@@ -176,26 +176,26 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
       verse_background_color: 'dddddd',
       quote_padding: [12, 15],
     }
-    to_file = to_pdf_file <<~'EOS', 'verse-border-and-background-color.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~'END', 'verse-border-and-background-color.pdf', pdf_theme: pdf_theme
     [verse,Paul McCartney]
     ____
     Let it be.
     Let it be.
     ____
-    EOS
+    END
 
     (expect to_file).to visually_match 'verse-border-and-background-color.pdf'
   end
 
   it 'should apply correct padding around content' do
-    input = <<~'EOS'
+    input = <<~'END'
     [verse]
     ____
     first
 
     last
     ____
-    EOS
+    END
 
     pdf = to_pdf input, analyze: true
     lines = (to_pdf input, analyze: :line).lines
@@ -212,14 +212,14 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
   end
 
   it 'should apply correct padding around content when using base theme' do
-    input = <<~'EOS'
+    input = <<~'END'
     [verse]
     ____
     first
 
     last
     ____
-    EOS
+    END
 
     pdf = to_pdf input, attribute_overrides: { 'pdf-theme' => 'base' }, analyze: true
     lines = (to_pdf input, attribute_overrides: { 'pdf-theme' => 'base' }, analyze: :line).lines
@@ -243,12 +243,12 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
       verse_background_color: 'EEEEEE',
       verse_padding: [6, 10, 12, 10],
     }
-    to_file = to_pdf_file <<~EOS, 'verse-page-split.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~END, 'verse-page-split.pdf', pdf_theme: pdf_theme
     [verse]
     ____
     #{(['Let it be.'] * 50).join ?\n}
     ____
-    EOS
+    END
 
     (expect to_file).to visually_match 'verse-page-split.pdf'
   end
@@ -261,7 +261,7 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
       verse_border_left_width: 0,
     }
     pdf = with_content_spacer 10, 690 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
       image::#{spacer_path}[]
 
       [verse]
@@ -269,7 +269,7 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
       content
       that wraps
       ____
-      EOS
+      END
     end
 
     pages = pdf.pages
@@ -280,7 +280,7 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
     (expect last_text_y - pdf_theme[:verse_padding]).to be > 48.24
 
     pdf = with_content_spacer 10, 692 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
       image::#{spacer_path}[]
 
       [verse]
@@ -288,7 +288,7 @@ describe 'Asciidoctor::PDF::Converter - Verse' do
       content
       that wraps
       ____
-      EOS
+      END
     end
 
     pages = pdf.pages

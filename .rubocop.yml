@@ -193,7 +193,9 @@ Naming/ConstantName:
 Naming/FileName:
   Enabled: false # reason: needed to conform to Prawn ecosystem
 Naming/HeredocDelimiterNaming:
-  Enabled: false # reason: EOS is meaningful
+  Enabled: true
+  ForbiddenDelimiters:
+  - !ruby/regexp '/^\s*EO[A-Z]\s*$/'
 Naming/InclusiveLanguage:
   Enabled: true
 Naming/MethodParameterName:

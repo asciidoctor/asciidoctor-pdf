@@ -4,7 +4,7 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Footnote' do
   it 'should place footnotes at the end of each chapter when doctype is book' do
-    pdf = to_pdf <<~'EOS', doctype: :book, attribute_overrides: { 'notitle' => '' }, analyze: true
+    pdf = to_pdf <<~'END', doctype: :book, attribute_overrides: { 'notitle' => '' }, analyze: true
     == Chapter A
 
     About this thing.footnote:[More about that thing.] And so on.
@@ -12,7 +12,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     == Chapter B
 
     Yada yada yada.
-    EOS
+    END
     strings, text = pdf.strings, pdf.text
     (expect strings[2]).to eql '[1]'
     # superscript
@@ -33,7 +33,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should reset footnote number per chapter' do
-    pdf = to_pdf <<~'EOS', doctype: :book, attribute_overrides: { 'notitle' => '' }, analyze: true
+    pdf = to_pdf <<~'END', doctype: :book, attribute_overrides: { 'notitle' => '' }, analyze: true
     == Chapter A
 
     About this thing.footnote:[More about that thing.] And so on.
@@ -41,7 +41,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     == Chapter B
 
     Yada yada yada.footnote:[What does it all mean?]
-    EOS
+    END
 
     chapter_a_lines = pdf.lines pdf.find_text page_number: 1
     (expect chapter_a_lines).to include 'About this thing.[1] And so on.'
@@ -53,7 +53,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should add xreftext of chapter to footnote reference to footnote in previous chapter' do
-    pdf = to_pdf <<~'EOS', doctype: :book, pdf_theme: { footnotes_font_color: 'AA0000' }, analyze: true
+    pdf = to_pdf <<~'END', doctype: :book, pdf_theme: { footnotes_font_color: 'AA0000' }, analyze: true
     = Document Title
     :notitle:
     :xrefstyle: short
@@ -66,7 +66,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     == B
 
     Yada yada yada.footnote:fn1[]
-    EOS
+    END
 
     footnote_texts = pdf.find_text font_color: 'AA0000'
     (expect footnote_texts.map {|it| it[:page_number] }.uniq).to eql [1]
@@ -87,7 +87,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
       warnings << str
     end
 
-    input = <<~'EOS'
+    input = <<~'END'
     = Document Title
     :doctype: book
     :notitle:
@@ -100,7 +100,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     == Chapter B
 
     Yada yada yada.footnote:fn1[]
-    EOS
+    END
 
     doc = Asciidoctor.convert input, backend: 'pdf', safe: :safe, to_file: (pdf_io = StringIO.new), standalone: true
     pdf_io.truncate 0
@@ -115,7 +115,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should place footnotes at the end of document when doctype is not book' do
-    pdf = to_pdf <<~'EOS', attributes_overrides: { 'notitle' => '' }, analyze: true
+    pdf = to_pdf <<~'END', attributes_overrides: { 'notitle' => '' }, analyze: true
     == Section A
 
     About this thing.footnote:[More about that thing.] And so on.
@@ -125,7 +125,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     == Section B
 
     Yada yada yada.
-    EOS
+    END
 
     strings, text = pdf.strings, pdf.text
     (expect strings[2]).to eql '[1]'
@@ -144,13 +144,13 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
 
   it 'should place footnotes at bottom of page if start on following page' do
     pdf = with_content_spacer 10, 700 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: { page_margin: 50 }, analyze: true
+      to_pdf <<~END, pdf_theme: { page_margin: 50 }, analyze: true
       image::#{spacer_path}[]
 
       About this thing.footnote:[More about this thing.]
       About that thing.footnote:[More about that thing.]
       And so on.
-      EOS
+      END
     end
 
     (expect pdf.pages).to have_size 2
@@ -165,13 +165,13 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
 
   it 'should put footnotes directly below last block if footnotes_margin_top is 0' do
     pdf_theme = { footnotes_margin_top: 0 }
-    input = <<~'EOS'
+    input = <<~'END'
     About this thing.footnote:[More about this thing.]
 
     ****
     sidebar
     ****
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
     horizontal_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -186,11 +186,11 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
 
   it 'should push footnotes to bottom of page if footnotes_margin_top is auto' do
     pdf_theme = { page_margin: 36, footnotes_margin_top: 'auto', footnotes_item_spacing: 0 }
-    input = <<~'EOS'
+    input = <<~'END'
     About this thing.footnote:[More about this thing.]
 
     more content
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
     footnote_text = pdf.find_unique_text %r/More about /
@@ -199,7 +199,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
 
   it 'should put footnotes beyond margin below last block of content' do
     pdf_theme = { sidebar_background_color: 'transparent' }
-    input = <<~'EOS'
+    input = <<~'END'
     About this thing.footnote:[More about this thing.]
 
     image::tall.svg[pdfwidth=76.98mm]
@@ -207,7 +207,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     ****
     sidebar
     ****
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
     horizontal_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
@@ -221,13 +221,13 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should not allow footnotes to collapse margin below last block of content' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     About this thing.footnote:[More about this thing.]
 
     image::tall.svg[pdfwidth=80mm]
 
     Some other content.
-    EOS
+    END
 
     (expect pdf.pages).to have_size 2
     main_text = pdf.find_unique_text %r/^About /
@@ -238,9 +238,9 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
 
   it 'should not move footnotes down if height exceeds height of page' do
     footnotes = ['footnote:[Lots more about this thing.]'] * 50
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     About this thing.#{footnotes}
-    EOS
+    END
 
     (expect pdf.pages).to have_size 2
     main_text = (pdf.find_text %r/About this thing\./)[0]
@@ -250,28 +250,28 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should allow footnote to be externalized so it can be used multiple times' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :fn-disclaimer: footnote:disclaimer[Opinions are my own.]
 
     A bold statement.{fn-disclaimer}
 
     Another audacious statement.{fn-disclaimer}
-    EOS
+    END
 
     if (Gem::Version.new Asciidoctor::VERSION) < (Gem::Version.new '2.0.11')
-      expected_lines = <<~'EOS'.lines.map(&:chomp)
+      expected_lines = <<~'END'.lines.map(&:chomp)
       A bold statement.[1]
       Another audacious statement.[2]
       1. Opinions are my own.
       2. Opinions are my own.
-      EOS
+      END
       footnote_text = (pdf.find_text %r/Opinions/)[-1]
     else
-      expected_lines = <<~'EOS'.lines.map(&:chomp)
+      expected_lines = <<~'END'.lines.map(&:chomp)
       A bold statement.[1]
       Another audacious statement.[1]
       1. Opinions are my own.
-      EOS
+      END
       footnote_text = pdf.find_unique_text %r/Opinions/
     end
 
@@ -280,9 +280,9 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should keep footnote label with previous adjacent text' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. Go.footnote:a[This is note A.]
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 3
@@ -291,9 +291,9 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should not keep footnote label with previous text if separated by a space' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. Go. footnote:a[This is note A.]
-    EOS
+    END
 
     text = pdf.text
     (expect text[1][:string]).to start_with '['
@@ -306,11 +306,11 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should keep footnote label with previous text when line wraps to next page' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     image::tall.svg[pdfwidth=85mm]
 
     The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. Go.footnote:a[This is note A.]
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 3
@@ -321,14 +321,14 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should keep formatted footnote label with previous text' do
-    expected_y = ((to_pdf <<~'EOS', analyze: true).find_unique_text '[1]')[:y]
+    expected_y = ((to_pdf <<~'END', analyze: true).find_unique_text '[1]')[:y]
     The +
     Go.^[1]^
-    EOS
+    END
 
-    pdf = to_pdf <<~'EOS', pdf_theme: { mark_border_offset: 0 }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { mark_border_offset: 0 }, analyze: true
     The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. Go.#footnote:a[This is note A.]#
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 3
@@ -338,9 +338,9 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should support text formatting in a footnote' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     You can download patches from the product page.footnote:[Only available if you have an _active_ subscription.]
-    EOS
+    END
 
     (expect pdf.lines[-1]).to eql '1. Only available if you have an active subscription.'
     active_text = pdf.find_unique_text 'active'
@@ -348,28 +348,28 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should support text formatting in an externalized footnote' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :fn-disclaimer: pass:q[footnote:disclaimer[Only available if you have an _active_ subscription.]]
 
     You will receive notifications of all product updates.{fn-disclaimer}
 
     You can download patches from the product page.{fn-disclaimer}
-    EOS
+    END
 
     if (Gem::Version.new Asciidoctor::VERSION) < (Gem::Version.new '2.0.11')
-      expected_lines = <<~'EOS'.lines.map(&:chomp)
+      expected_lines = <<~'END'.lines.map(&:chomp)
       You will receive notifications of all product updates.[1]
       You can download patches from the product page.[2]
       1. Only available if you have an active subscription.
       2. Only available if you have an active subscription.
-      EOS
+      END
       active_text = (pdf.find_text 'active')[-1]
     else
-      expected_lines = <<~'EOS'.lines.map(&:chomp)
+      expected_lines = <<~'END'.lines.map(&:chomp)
       You will receive notifications of all product updates.[1]
       You can download patches from the product page.[1]
       1. Only available if you have an active subscription.
-      EOS
+      END
       active_text = pdf.find_unique_text 'active'
     end
 
@@ -379,9 +379,9 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
 
   it 'should show unresolved footnote reference in red text' do
     (expect do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       text.footnote:foo[]
-      EOS
+      END
 
       foo_text = pdf.find_unique_text '[foo]'
       (expect foo_text).not_to be_nil
@@ -393,9 +393,9 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
 
   it 'should allow theme to configure color of unresolved footnote reference using unresolved role' do
     (expect do
-      pdf = to_pdf <<~'EOS', pdf_theme: { role_unresolved_font_color: 'AA0000' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { role_unresolved_font_color: 'AA0000' }, analyze: true
       text.footnote:foo[]
-      EOS
+      END
 
       foo_text = pdf.find_unique_text '[foo]'
       (expect foo_text).not_to be_nil
@@ -414,17 +414,17 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     end
     opts = { extension_registry: Asciidoctor::Extensions.create { inline_macro(&fn_inline_macro_impl) } }
     (expect do
-      pdf = to_pdf <<~'EOS', (opts.merge analyze: true)
+      pdf = to_pdf <<~'END', (opts.merge analyze: true)
       before fn:foo[] after
-      EOS
+      END
       (expect pdf.lines).to eql ['before after']
     end).to log_message severity: :WARN, message: 'unknown footnote type: :unknown'
   end
 
   it 'should not crash if footnote is defined in section title with autogenerated ID' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     == Section Titlefootnote:[Footnote about this section title.]
-    EOS
+    END
 
     (expect pdf.lines[-1]).to eql '1. Footnote about this section title.'
   end
@@ -436,10 +436,10 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
       footnotes_font_size: 10,
       footnotes_item_spacing: 3,
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     line a{empty}footnote:[Footnote on line a] +
     line b{empty}footnote:[Footnote on line b]
-    EOS
+    END
 
     line_a_text = (pdf.find_text 'line a')[0]
     line_b_text = (pdf.find_text 'line b')[0]
@@ -456,10 +456,10 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
       footnotes_font_size: 10,
       footnotes_item_spacing: nil,
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     line a{empty}footnote:[Footnote on line a] +
     line b{empty}footnote:[Footnote on line b]
-    EOS
+    END
 
     line_a_text = (pdf.find_text 'line a')[0]
     line_b_text = (pdf.find_text 'line b')[0]
@@ -470,11 +470,11 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should add title to footnotes block if footnotes-title is set' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :footnotes-title: Footnotes
 
     main content.footnote:[This is a footnote, just so you know.]
-    EOS
+    END
 
     footnotes_title_text = (pdf.find_text 'Footnotes')[0]
     (expect footnotes_title_text).not_to be_nil
@@ -488,11 +488,11 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
       footnotes_caption_font_size: '24',
       footnotes_caption_font_color: '222222',
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     :footnotes-title: Footnotes
 
     main content.footnote:[This is a footnote, just so you know.]
-    EOS
+    END
 
     footnotes_title_text = (pdf.find_text 'Footnotes')[0]
     (expect footnotes_title_text).not_to be_nil
@@ -502,13 +502,13 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should create bidirectional links between footnote ref and def' do
-    pdf = to_pdf <<~'EOS', doctype: :book, attribute_overrides: { 'notitle' => '' }
+    pdf = to_pdf <<~'END', doctype: :book, attribute_overrides: { 'notitle' => '' }
     = Document Title
 
     == Chapter A
 
     About this thing.footnote:[More about that thing.] And so on.
-    EOS
+    END
     annotations = (get_annotations pdf, 1).sort_by {|it| it[:Rect][1] }.reverse
     (expect annotations).to have_size 2
     footnote_label_y = annotations[0][:Rect][3]
@@ -520,22 +520,22 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should render footnotes in table cell that are directly adjacent to text' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     |===
     |``German``footnote:[Other non-English languages may be supported in the future depending on demand.]
     | 80footnote:[Width and Length is overridden by the actual terminal or window size, if available.]
     |===
-    EOS
+    END
 
     (expect pdf.lines.slice 0, 2).to eql ['German[1]', '80[2]']
   end
 
   it 'should use number of target footnote in footnote reference' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     You can download patches from the product page.footnote:sub[Only available if you have an active subscription.]
 
     If you have problems running the software, you can submit a support request.footnote:sub[]
-    EOS
+    END
 
     text = pdf.text
     p1 = pdf.find_unique_text %r/download/
@@ -549,7 +549,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should not duplicate footnotes that are included in unbreakable blocks' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     Here we go.
 
     [%unbreakable]
@@ -561,7 +561,7 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
     ****
 
     Make it snow.footnote:[dollar bills]
-    EOS
+    END
 
     combined_text = pdf.strings.join
     (expect combined_text).to include 'Make it rain.[1]'
@@ -574,28 +574,28 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should not duplicate footnotes included in the desc of a horizontal dlist' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     [horizontal]
     ctrl-r::
     Make it rain.footnote:[money]
 
     ctrl-d::
     Make it snow.footnote:[dollar bills]
-    EOS
+    END
 
     lines = pdf.lines pdf.text
     (expect lines).to eql ['ctrl-r Make it rain.[1]', 'ctrl-d Make it snow.[2]', '1. money', '2. dollar bills']
   end
 
   it 'should allow a bibliography ref to be used inside the text of a footnote' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     There are lots of things to know.footnote:[Be sure to read <<wells>> to learn about it.]
 
     [bibliography]
     == Bibliography
 
     * [[[wells]]] Ashley Wells. 'Stuff About Stuff'. Publishistas. 2010.
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines[0]).to eql 'There are lots of things to know.[1]'
@@ -603,9 +603,9 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should allow a link to be used in footnote when media is print' do
-    pdf = to_pdf <<~'EOS', attribute_overrides: { 'media' => 'print' }, analyze: true
+    pdf = to_pdf <<~'END', attribute_overrides: { 'media' => 'print' }, analyze: true
     When in doubt, search.footnote:[Use a search engine like https://google.com[Google]]
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines[0]).to eql 'When in doubt, search.[1]'
@@ -624,9 +624,9 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
       base_font_family: 'Missing Null',
     }
 
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     foo{empty}footnote:[Note about foo.]
-    EOS
+    END
 
     foo_text = pdf.find_unique_text 'foo'
     foo_text_end = foo_text[:x] + foo_text[:width]
@@ -636,9 +636,9 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
 
   it 'should show missing footnote reference as ID in red text' do
     (expect do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       bla bla bla.footnote:no-such-id[]
-      EOS
+      END
       (expect pdf.lines).to eql ['bla bla bla.[no-such-id]']
       annotation_text = pdf.find_unique_text font_color: 'FF0000'
       (expect annotation_text).not_to be_nil

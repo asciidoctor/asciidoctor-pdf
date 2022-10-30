@@ -12,12 +12,12 @@ describe 'asciidoctor-pdf' do
 
     it 'should enable sourcemap if --sourcemap option is specified', cli: true do
       with_tmp_file '.adoc', tmpdir: output_dir do |tmp_file|
-        tmp_file.write <<~'EOS'
+        tmp_file.write <<~'END'
         before
 
         ****
         content
-        EOS
+        END
         tmp_file.close
         out, err, res = run_command asciidoctor_pdf_bin, '--sourcemap', tmp_file.path
         (expect res.exitstatus).to be 0

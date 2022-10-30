@@ -81,23 +81,23 @@ describe 'Asciidoctor::PDF::Converter - Font' do
     end
 
     it 'should render emoji when using default theme with fallback font', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'font-emoji.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-font-fallbacks' }
+      to_file = to_pdf_file <<~'END', 'font-emoji.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-font-fallbacks' }
       Don't 😢 over spilled 🍺.
 
       Asciidoctor is 👍.
-      EOS
+      END
 
       (expect to_file).to visually_match 'font-emoji.pdf'
     end
 
     it 'should use sans base font when using sans theme with fallback font', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'font-sans-emoji.pdf', attribute_overrides: { 'pdf-theme' => 'default-sans-with-font-fallbacks' }
+      to_file = to_pdf_file <<~'END', 'font-sans-emoji.pdf', attribute_overrides: { 'pdf-theme' => 'default-sans-with-font-fallbacks' }
       == Lessons
 
       Don't 😢 over spilled 🍺.
 
       Asciidoctor is 👍.
-      EOS
+      END
 
       (expect to_file).to visually_match 'font-sans-emoji.pdf'
     end
@@ -129,7 +129,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
 
     it 'should replace essential characters with suitable replacements to avoid warnings' do
       (expect do
-        pdf = to_pdf <<~'EOS', pdf_theme: { base_font_family: 'Helvetica' }, analyze: true
+        pdf = to_pdf <<~'END', pdf_theme: { base_font_family: 'Helvetica' }, analyze: true
         :experimental:
 
         * disc
@@ -139,7 +139,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
         no{zwsp}space
 
         button:[Save]
-        EOS
+        END
         (expect pdf.find_text font_name: 'Helvetica').to have_size pdf.text.size
         (expect pdf.lines).to eql [%(\u2022 disc), '- circle', %(\u00b7 square), 'nospace', 'button:[Save]']
       end).to not_log_message
@@ -148,11 +148,11 @@ describe 'Asciidoctor::PDF::Converter - Font' do
 
   context 'OTF' do
     it 'should allow theme to specify an OTF font', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'font-otf.pdf', enable_footer: true, attribute_overrides: { 'pdf-theme' => (fixture_file 'otf-theme.yml'), 'pdf-fontsdir' => fixtures_dir }
+      to_file = to_pdf_file <<~'END', 'font-otf.pdf', enable_footer: true, attribute_overrides: { 'pdf-theme' => (fixture_file 'otf-theme.yml'), 'pdf-fontsdir' => fixtures_dir }
       == OTF
 
       You're looking at an OTF font!
-      EOS
+      END
       (expect to_file).to visually_match 'font-otf.pdf'
     end
   end
@@ -256,11 +256,11 @@ describe 'Asciidoctor::PDF::Converter - Font' do
 
     it 'should throw error that reports font name and style when font is not registered' do
       (expect do
-        to_pdf <<~'EOS', pdf_theme: { base_font_family: 'Lato' }
+        to_pdf <<~'END', pdf_theme: { base_font_family: 'Lato' }
         == Section Title
 
         paragraph
-        EOS
+        END
       end).to raise_exception Prawn::Errors::UnknownFont, 'Lato (normal) is not a known font.'
     end
 
@@ -274,51 +274,51 @@ describe 'Asciidoctor::PDF::Converter - Font' do
         base_font_family: 'Quicksand',
       }
       (expect do
-        to_pdf <<~'EOS', pdf_theme: pdf_theme
+        to_pdf <<~'END', pdf_theme: pdf_theme
         == Section Title
 
         paragraph
-        EOS
+        END
       end).to raise_exception Prawn::Errors::UnknownFont, 'Quicksand (bold) is not a known font.'
     end
   end
 
   context 'Kerning' do
     it 'should enable kerning when using default theme', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'font-kerning-default.pdf'
+      to_file = to_pdf_file <<~'END', 'font-kerning-default.pdf'
       [%hardbreaks]
       AVA
       Aya
       WAWA
       WeWork
       DYI
-      EOS
+      END
 
       (expect to_file).to visually_match 'font-kerning-default.pdf'
     end
 
     it 'should enable kerning when using base theme', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'font-kerning-base.pdf', attribute_overrides: { 'pdf-theme' => 'base' }
+      to_file = to_pdf_file <<~'END', 'font-kerning-base.pdf', attribute_overrides: { 'pdf-theme' => 'base' }
       [%hardbreaks]
       AVA
       Aya
       WAWA
       WeWork
       DYI
-      EOS
+      END
 
       (expect to_file).to visually_match 'font-kerning-base.pdf'
     end
 
     it 'should allow theme to disable kerning globally', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'font-kerning-disabled.pdf', pdf_theme: { base_font_kerning: 'none' }
+      to_file = to_pdf_file <<~'END', 'font-kerning-disabled.pdf', pdf_theme: { base_font_kerning: 'none' }
       [%hardbreaks]
       AVA
       Aya
       WAWA
       WeWork
       DYI
-      EOS
+      END
 
       (expect to_file).to visually_match 'font-kerning-disabled.pdf'
     end
@@ -345,14 +345,14 @@ describe 'Asciidoctor::PDF::Converter - Font' do
 
   context 'Line breaks' do
     it 'should break line on any CJK character if value of scripts attribute is cjk' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :scripts: cjk
       :pdf-theme: default-with-font-fallbacks
 
       AsciiDoc 是一个人类可读的文件格式，语义上等同于 DocBook 的 XML，但使用纯文本标记了约定。可以使用任何文本编辑器创建文件把 AsciiDoc 和阅读“原样”，或呈现为HTML 或由 DocBook 的工具链支持的任何其他格式，如 PDF，TeX 的，Unix 的手册页，电子书，幻灯片演示等。
 
       AsciiDoc は、意味的には DocBook XML のに相当するが、プレーン·テキスト·マークアップの規則を使用して、人間が読めるドキュメントフォーマット、である。 AsciiDoc は文書は、任意のテキストエディタを使用して作成され、「そのまま"または、HTML や DocBook のツールチェーンでサポートされている他のフォーマット、すなわち PDF、TeX の、Unix の man ページ、電子書籍、スライドプレゼンテーションなどにレンダリングすることができます。
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 8
@@ -364,12 +364,12 @@ describe 'Asciidoctor::PDF::Converter - Font' do
 
     # intentionally use the deprecated alias for this test
     it 'should not break line immediately before an ideographic full stop' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :scripts: cjk
       :pdf-theme: default-with-fallback-font
 
       Asciidoctor PDF 是一个 Asciidoctor 转换器，可将 AsciiDoc 文档转换为PDF文档。填料填料。转换器不会创建临时格式。
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 2
@@ -377,9 +377,9 @@ describe 'Asciidoctor::PDF::Converter - Font' do
     end
 
     it 'should not break line where no-break hyphen is adjacent to formatted text' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar **foo**&#8209;bar&#8209;**foo**
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 2
@@ -388,9 +388,9 @@ describe 'Asciidoctor::PDF::Converter - Font' do
 
     # NOTE: this test demonstrates a bug in Prawn
     it 'should break line if no-break hyphen is isolated into its own fragment' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar foo bar **foo**&#8209;**bar**&#8209;**foo**
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 2
@@ -437,11 +437,11 @@ describe 'Asciidoctor::PDF::Converter - Font' do
         sidebar_font_size: 10,
         link_font_size: '0.75em',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       ****
       Check out https://asciidoctor.org[Asciidoctor]'
       ****
-      EOS
+      END
       normal_text = pdf.find_unique_text 'Check out '
       (expect normal_text[:font_size].to_f).to eql 10.0
       linked_text = pdf.find_unique_text 'Asciidoctor'
@@ -454,11 +454,11 @@ describe 'Asciidoctor::PDF::Converter - Font' do
         sidebar_font_size: 10,
         link_font_size: 0.75,
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       ****
       Check out https://asciidoctor.org[Asciidoctor]'
       ****
-      EOS
+      END
       normal_text = pdf.find_unique_text 'Check out '
       (expect normal_text[:font_size].to_f).to eql 10.0
       linked_text = pdf.find_unique_text 'Asciidoctor'
@@ -471,11 +471,11 @@ describe 'Asciidoctor::PDF::Converter - Font' do
         sidebar_font_size: 10,
         link_font_size: '0.75rem',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       ****
       https://asciidoctor.org[Asciidoctor]
       ****
-      EOS
+      END
       linked_text = pdf.find_unique_text 'Asciidoctor'
       (expect linked_text[:font_size].to_f).to eql 9.0
     end

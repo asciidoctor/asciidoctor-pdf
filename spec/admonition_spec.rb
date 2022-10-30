@@ -4,28 +4,28 @@ require_relative 'spec_helper'
 
 describe 'Asciidoctor::PDF::Converter - Admonition' do
   it 'should advance unbreakable block shorter than page to next page to avoid splitting it' do
-    pdf = to_pdf <<~EOS, analyze: true
+    pdf = to_pdf <<~END, analyze: true
     #{(['paragraph'] * 20).join %(\n\n)}
 
     [NOTE%unbreakable]
     ====
     #{(['admonition'] * 20).join %(\n\n)}
     ====
-    EOS
+    END
 
     admon_page_numbers = (pdf.find_text 'admonition').map {|it| it[:page_number] }.uniq
     (expect admon_page_numbers).to eql [2]
   end
 
   it 'should place anchor directly at top of block' do
-    input = <<~EOS
+    input = <<~END
     paragraph
 
     [NOTE#admon-1]
     ====
     filler
     ====
-    EOS
+    END
 
     lines = (to_pdf input, analyze: :line).lines
     pdf = to_pdf input
@@ -36,14 +36,14 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
   it 'should offset anchor from top of block by amount of block_anchor_top' do
     pdf_theme = { block_anchor_top: -12 }
 
-    input = <<~EOS
+    input = <<~END
     paragraph
 
     [NOTE#admon-1]
     ====
     filler
     ====
-    EOS
+    END
 
     lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
     pdf = to_pdf input, pdf_theme: pdf_theme
@@ -52,14 +52,14 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
   end
 
   it 'should keep anchor with block if block is advanced to next page' do
-    input = <<~EOS
+    input = <<~END
     paragraph
 
     [NOTE#admon-1%unbreakable]
     ====
     #{(['filler'] * 27).join %(\n\n)}
     ====
-    EOS
+    END
 
     lines = (to_pdf input, analyze: :line).lines
     pdf = to_pdf input
@@ -69,12 +69,12 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
   end
 
   it 'should vertically center label on first page if block is split across pages' do
-    pdf = to_pdf <<~EOS, pdf_theme: { page_margin: '0.5in' }, analyze: true
+    pdf = to_pdf <<~END, pdf_theme: { page_margin: '0.5in' }, analyze: true
     [NOTE]
     ====
     #{(['admonition'] * 40).join %(\n\n)}
     ====
-    EOS
+    END
 
     (expect pdf.pages).to have_size 2
     page_height = (get_page_size pdf)[1]
@@ -84,12 +84,12 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
   end
 
   it 'should draw vertical rule on all pages if block is split across pages' do
-    pdf = to_pdf <<~EOS, pdf_theme: { page_margin: '0.5in' }, analyze: :line
+    pdf = to_pdf <<~END, pdf_theme: { page_margin: '0.5in' }, analyze: :line
     [NOTE]
     ====
     #{(['admonition'] * 40).join %(\n\n)}
     ====
-    EOS
+    END
 
     lines = pdf.lines
     (expect lines).to have_size 2
@@ -106,7 +106,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       admonition_rule_color: 'FFFFFF',
     }
 
-    to_file = to_pdf_file <<~EOS, 'admonition-page-split.pdf', pdf_theme: pdf_theme
+    to_file = to_pdf_file <<~END, 'admonition-page-split.pdf', pdf_theme: pdf_theme
     before
 
     [NOTE]
@@ -115,7 +115,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     ====
 
     after
-    EOS
+    END
 
     (expect to_file).to visually_match 'admonition-page-split.pdf'
   end
@@ -127,7 +127,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       admonition_column_rule_width: 0,
     }
     pdf = with_content_spacer 10, 690 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
       image::#{spacer_path}[]
 
       [NOTE]
@@ -135,7 +135,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       content +
       that wraps
       ====
-      EOS
+      END
     end
 
     pages = pdf.pages
@@ -146,7 +146,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     (expect last_text_y - pdf_theme[:admonition_padding]).to be > 48.24
 
     pdf = with_content_spacer 10, 692 do |spacer_path|
-      to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
       image::#{spacer_path}[]
 
       [NOTE]
@@ -154,7 +154,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       content +
       that wraps
       ====
-      EOS
+      END
     end
 
     pages = pdf.pages
@@ -170,23 +170,23 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     pdf_theme = {
       admonition_caption_font_color: '00AA00',
     }
-    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
     .Admonition title
     [NOTE]
     ====
     There's something you should know.
     ====
-    EOS
+    END
 
     title_text = (pdf.find_text 'Admonition title')[0]
     (expect title_text[:font_color]).to eql '00AA00'
   end
 
   it 'should use value of caption attribute as label' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     [NOTE,caption=Pro Tip]
     Use bundler!
-    EOS
+    END
 
     label_text = pdf.text[0]
     (expect label_text[:font_name]).to eql 'NotoSerif-Bold'
@@ -195,10 +195,10 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
   it 'should not transform label text if admonition_label_text_transform key is nil, none, or invalid' do
     [nil, 'none', 'invalid'].each do |transform|
-      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_label_text_transform: transform }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { admonition_label_text_transform: transform }, analyze: true
       [NOTE,caption=Pro Tip]
       Use bundler!
-      EOS
+      END
 
       label_text = pdf.text[0]
       (expect label_text[:font_name]).to eql 'NotoSerif-Bold'
@@ -208,10 +208,10 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
   # TODO: this could use a deeper assertion
   it 'should compute width of label even when glyph is missing' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     [TIP,caption=⏻ Tip]
     Use bundler!
-    EOS
+    END
 
     label_text = pdf.text[0]
     (expect label_text[:font_name]).to eql 'NotoSerif-Bold'
@@ -219,10 +219,10 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
   end
 
   it 'should resize label text to fit if it overflows available space' do
-    pdf = to_pdf <<~'EOS', pdf_theme: { admonition_label_font_size: 18 }, analyze: true
+    pdf = to_pdf <<~'END', pdf_theme: { admonition_label_font_size: 18 }, analyze: true
     [IMPORTANT]
     Make sure the device is powered off before servicing it.
-    EOS
+    END
 
     label_text = pdf.find_unique_text 'IMPORTANT'
     (expect label_text).not_to be_nil
@@ -230,10 +230,10 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
   end
 
   it 'should allow padding to be specified for label and content using single value' do
-    input = <<~'EOS'
+    input = <<~'END'
     [IMPORTANT]
     Make sure the device is powered off before servicing it.
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: { admonition_padding: 0, admonition_label_padding: 0 }, analyze: true
     ref_label_text = pdf.find_unique_text 'IMPORTANT'
@@ -248,10 +248,10 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
   end
 
   it 'should allow padding to be specified for label and content using array value' do
-    input = <<~'EOS'
+    input = <<~'END'
     [IMPORTANT]
     Make sure the device is powered off before servicing it.
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: { admonition_padding: 0, admonition_label_padding: 0 }, analyze: true
     ref_label_text = pdf.find_unique_text 'IMPORTANT'
@@ -266,7 +266,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
   end
 
   it 'should not move cursor below block if block ends at top of page' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     top of page
 
     [NOTE]
@@ -277,7 +277,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     ====
 
     top of page
-    EOS
+    END
 
     top_of_page_texts = pdf.find_text 'top of page'
     (expect top_of_page_texts).to have_size 2
@@ -285,9 +285,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
   end
 
   it 'should not allow prose_margin_bottom to impact padding' do
-    input = <<~'EOS'
+    input = <<~'END'
     NOTE: The prose_margin_bottom value does not impact the padding around the content box.
-    EOS
+    END
 
     pdf = to_pdf input, pdf_theme: { prose_margin_bottom: 12 }, analyze: :line
     reference_line = pdf.lines[0]
@@ -303,7 +303,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
   end
 
   it 'should not increment counter in admonition content more times than expected' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     == Initial value
 
     Current number is {counter:my-count:0}.
@@ -328,7 +328,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     == Five is expected
 
     Current number is {counter:my-count}.
-    EOS
+    END
 
     expected = (0.upto 5).map {|it| %(Current number is #{it}.) }
     number_texts = pdf.find_text %r/^Current number is/
@@ -337,9 +337,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
   context 'Text' do
     it 'should show admonition label in bold by default' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       TIP: Look for the warp zone under the bridge.
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 1
@@ -359,7 +359,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         admonition_label_text_align: 'right',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       NOTE: Remember the milk.
 
       TIP: Look for the warp zone under the bridge.
@@ -369,7 +369,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       WARNING: Beware of dog!
 
       IMPORTANT: Sign off before stepping away from the computer.
-      EOS
+      END
 
       label_texts = pdf.find_text font_name: 'NotoSerif-Bold'
       label_right_reference = nil
@@ -383,7 +383,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should allow theme to control vertical alignment of label' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_label_vertical_align: 'top' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { admonition_label_vertical_align: 'top' }, analyze: true
       [NOTE]
       ====
       There are lots of things you need to know.
@@ -391,7 +391,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       And those things that you don't know that you do not know.
       This documentation seeks to close the gaps between them.
       ====
-      EOS
+      END
 
       label_text = (pdf.find_text 'NOTE')[0]
       content_text = (pdf.find_text font_name: 'NotoSerif')[0]
@@ -399,12 +399,12 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should resolve character references in label' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_label_font_color: '000000' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { admonition_label_font_color: '000000' }, analyze: true
       [NOTE,caption=&#174;]
       ====
       Christoph and sons.
       ====
-      EOS
+      END
 
       label_text = (pdf.find_text font_color: '000000')[0]
       (expect label_text[:string]).to eql ?\u00ae
@@ -415,11 +415,11 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
   context 'Icon' do
     it 'should show font-based icon in place of label when icons=font' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       :icons: font
 
       TIP: Look for the warp zone under the bridge.
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 1
@@ -436,7 +436,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should not reduce font size of icon if specified size fits within available space' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_important: { size: 50, scale: 1 } }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { admonition_icon_important: { size: 50, scale: 1 } }, analyze: true
       :icons: font
 
       [IMPORTANT]
@@ -445,7 +445,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
       And when you do that, always do this too!
       ====
-      EOS
+      END
 
       label_text = pdf.find_unique_text ?\uf06a
       (expect label_text[:font_size]).to eql 50
@@ -457,7 +457,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         admonition_label_text_align: 'right',
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       :icons: font
 
       NOTE: Remember the milk.
@@ -469,7 +469,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       WARNING: Beware of dog!
 
       IMPORTANT: Sign off before stepping away from the computer.
-      EOS
+      END
 
       label_texts = pdf.text.select {|it| it[:font_name].start_with? 'FontAwesome' }
       (expect label_texts[0][:x]).to be > 100
@@ -484,7 +484,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should allow theme to control vertical alignment of icon' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_label_vertical_align: 'top' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { admonition_label_vertical_align: 'top' }, analyze: true
       :icons: font
 
       [NOTE]
@@ -494,7 +494,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       And those things that you don't know that you do not know.
       This documentation seeks to close the gaps between them.
       ====
-      EOS
+      END
 
       icon_text = (pdf.find_text ?\uf05a)[0]
       content_text = (pdf.find_text font_color: '333333')[1]
@@ -502,11 +502,11 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should assume icon name with no icon set prefix is a legacy FontAwesome icon name' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_tip: { name: 'smile-wink' } }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { admonition_icon_tip: { name: 'smile-wink' } }, analyze: true
       :icons: font
 
       TIP: Time to upgrade your icon set.
-      EOS
+      END
 
       icon_text = pdf.text[0]
       (expect icon_text[:font_name]).to eql 'FontAwesome5Free-Solid'
@@ -515,11 +515,11 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should be able to use fa- prefix to reference icon in legacy FontAwesome set' do
       (expect do
-        pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_tip: { name: 'fa-smile-wink' } }, analyze: true
+        pdf = to_pdf <<~'END', pdf_theme: { admonition_icon_tip: { name: 'fa-smile-wink' } }, analyze: true
         :icons: font
 
         TIP: Time to upgrade your icon set.
-        EOS
+        END
 
         icon_text = pdf.text[0]
         (expect icon_text[:font_name]).to eql 'FontAwesome5Free-Solid'
@@ -528,11 +528,11 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should allow icon to come from Foundation icon set' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_warning: { name: 'fi-alert' } }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { admonition_icon_warning: { name: 'fi-alert' } }, analyze: true
       :icons: font
 
       WARNING: Just don't do it.
-      EOS
+      END
 
       icon_text = pdf.text[0]
       (expect icon_text[:font_name]).to eql 'fontcustom'
@@ -540,11 +540,11 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should fall back to note icon if icon name cannot be resolved' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_warning: { name: nil } }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { admonition_icon_warning: { name: nil } }, analyze: true
       :icons: font
 
       WARNING: If the icon name is nil, the default note icon will be used.
-      EOS
+      END
 
       icon_text = pdf.text[0]
       (expect icon_text[:font_name]).to eql 'FontAwesome5Free-Solid'
@@ -552,22 +552,22 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should set color of icon to value of stroke_color key specified in theme' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_note: { stroke_color: '00ff00' } }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { admonition_icon_note: { stroke_color: '00ff00' } }, analyze: true
       :icons: font
 
       NOTE: This icon is green.
-      EOS
+      END
 
       icon_text = (pdf.find_text ?\uf05a)[0]
       (expect icon_text[:font_color]).to eql '00FF00'
     end
 
     it 'should use icon glyph specified in theme' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { admonition_icon_tip: { name: 'far-money-bill-alt' } }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { admonition_icon_tip: { name: 'far-money-bill-alt' } }, analyze: true
       :icons: font
 
       TIP: Look for the warp zone under the bridge.
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 1
@@ -582,7 +582,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should use SVG icon specified by icon attribute when icons attribute is set', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'admonition-custom-svg-icon.pdf', attribute_overrides: { 'docdir' => fixtures_dir }
+      to_file = to_pdf_file <<~'END', 'admonition-custom-svg-icon.pdf', attribute_overrides: { 'docdir' => fixtures_dir }
       :icons: font
       :iconsdir:
       :icontype: svg
@@ -591,7 +591,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       ====
       Use the icon attribute to customize the image for an admonition block.
       ====
-      EOS
+      END
 
       (expect to_file).to visually_match 'admonition-custom-svg-icon.pdf'
     end
@@ -604,7 +604,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         admonition_column_rule_width: 0,
         admonition_icon_tip: { width: 24, scale: 1 },
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       :icons: svg
       :iconsdir: {imagesdir}
 
@@ -617,7 +617,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
       [icon=square]
       TIP: Use the icon attribute to customize the image for an admonition block.
-      EOS
+      END
 
       expected_icon_x = (pdf.find_unique_text 'right column')[:x]
       expected_content_x = expected_icon_x + 24
@@ -628,12 +628,12 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should warn if SVG icon specified by icon attribute is missing' do
       (expect do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }
+        pdf = to_pdf <<~'END', attribute_overrides: { 'iconsdir' => fixtures_dir }
         :icons: font
 
         [TIP,icon=missing]
         Use the icon attribute to customize the image for an admonition block.
-        EOS
+        END
         (expect get_images pdf, 1).to be_empty
         (expect (pdf.page 1).text).to include 'TIP'
       end).to log_message severity: :WARN, message: %(admonition icon image not found or not readable: #{fixture_file 'missing.png'})
@@ -641,7 +641,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should warn if SVG icon specified by icon attribute has errors' do
       (expect do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: :rect
+        pdf = to_pdf <<~'END', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: :rect
         :icons: font
         :icontype: svg
 
@@ -649,7 +649,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         ====
         Use the icon attribute to customize the image for an admonition block.
         ====
-        EOS
+        END
         (expect pdf.rectangles).to have_size 1
         # NOTE: width and height of rectangle match what's defined in SVG
         (expect pdf.rectangles[0][:width]).to eql 200.0
@@ -659,7 +659,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should not warn if SVG icon specified by icon attribute in scratch document has errors' do
       (expect do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: :rect
+        pdf = to_pdf <<~'END', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: :rect
         :icons: font
         :icontype: svg
 
@@ -670,7 +670,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         Use the icon attribute to customize the image for an admonition block.
         ====
         --
-        EOS
+        END
         (expect pdf.rectangles).to have_size 1
         # NOTE: width and height of rectangle match what's defined in SVG
         (expect pdf.rectangles[0][:width]).to eql 200.0
@@ -680,7 +680,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should warn and fall back to admonition label if SVG icon cannot be found' do
       (expect do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: true
+        pdf = to_pdf <<~'END', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: true
         :icons:
         :icontype: svg
 
@@ -688,7 +688,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         ====
         The admonition label will be used if the image cannot be resolved.
         ====
-        EOS
+        END
         label_text = pdf.find_unique_text 'WARNING'
         (expect label_text).not_to be_nil
         (expect label_text[:font_name]).to include 'Bold'
@@ -697,7 +697,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should warn and fall back to admonition label if SVG icon specified by icon attribute cannot be embedded' do
       (expect do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: true
+        pdf = to_pdf <<~'END', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: true
         :icons: font
         :icontype: svg
 
@@ -705,7 +705,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         ====
         Use the icon attribute to customize the image for an admonition block.
         ====
-        EOS
+        END
         label_text = pdf.find_unique_text 'TIP'
         (expect label_text).not_to be_nil
         (expect label_text[:font_name]).to include 'Bold'
@@ -714,7 +714,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should resize fallback admonition label to fit in available space if icon fails to embed' do
       (expect do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: true
+        pdf = to_pdf <<~'END', attribute_overrides: { 'iconsdir' => fixtures_dir }, analyze: true
         :icons: font
         :icontype: svg
 
@@ -722,7 +722,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         ====
         Use the icon attribute to customize the image for an admonition block.
         ====
-        EOS
+        END
         label_text = pdf.find_unique_text 'WARNING'
         (expect label_text).not_to be_nil
         (expect label_text[:font_size]).to be < 10.5
@@ -732,14 +732,14 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     # NOTE: this test also verifies the text transform is applied as requested by theme
     it 'should warn and fall back to admonition label if raster icon cannot be found' do
       (expect do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, pdf_theme: { admonition_label_text_transform: 'uppercase' }, analyze: true
+        pdf = to_pdf <<~'END', attribute_overrides: { 'iconsdir' => fixtures_dir }, pdf_theme: { admonition_label_text_transform: 'uppercase' }, analyze: true
         :icons:
 
         [WARNING]
         ====
         The admonition label will be used if the image cannot be resolved.
         ====
-        EOS
+        END
         label_text = pdf.find_unique_text 'WARNING'
         (expect label_text).not_to be_nil
         (expect label_text[:font_name]).to include 'Bold'
@@ -749,14 +749,14 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     # NOTE: this test also verifies the text transform is not applied if disabled by the theme
     it 'should warn and fall back to admonition label if raster icon specified by icon attribute cannot be embedded' do
       (expect do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => fixtures_dir }, pdf_theme: { admonition_label_text_transform: 'none' }, analyze: true
+        pdf = to_pdf <<~'END', attribute_overrides: { 'iconsdir' => fixtures_dir }, pdf_theme: { admonition_label_text_transform: 'none' }, analyze: true
         :icons:
 
         [TIP,icon=corrupt.png]
         ====
         Use the icon attribute to customize the image for an admonition block.
         ====
-        EOS
+        END
         label_text = pdf.find_unique_text 'Tip'
         (expect label_text).not_to be_nil
         (expect label_text[:font_name]).to include 'Bold'
@@ -765,7 +765,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should embed remote image in icon if allow-uri-read attribute is set', network: true, visual: true do
       with_svg_with_remote_image do |image_path|
-        to_file = to_pdf_file <<~EOS, 'admonition-custom-svg-icon-with-remote-image.pdf', attribute_overrides: { 'docdir' => tmp_dir, 'allow-uri-read' => '' }
+        to_file = to_pdf_file <<~END, 'admonition-custom-svg-icon-with-remote-image.pdf', attribute_overrides: { 'docdir' => tmp_dir, 'allow-uri-read' => '' }
         :icons: font
         :iconsdir:
 
@@ -773,7 +773,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         ====
         AsciiDoc is awesome!
         ====
-        EOS
+        END
 
         (expect to_file).to visually_match 'admonition-custom-svg-icon-with-remote-image.pdf'
       end
@@ -781,7 +781,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should use original width of SVG icon if height is less than height of admonition block', visual: true do
       pdf_theme = { admonition_icon_note: { width: 36, scale: 1 } }
-      to_file = to_pdf_file <<~'EOS', 'admonition-custom-svg-fit.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }
+      to_file = to_pdf_file <<~'END', 'admonition-custom-svg-fit.pdf', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }
       :icons: font
       :iconsdir:
 
@@ -789,13 +789,13 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       ====
       When you see this icon, it means there's additional advice about passing tests.
       ====
-      EOS
+      END
 
       (expect to_file).to visually_match 'admonition-custom-svg-fit.pdf'
     end
 
     it 'should use raster icon specified by icon attribute when icons attribute is set', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'admonition-custom-raster-icon.pdf', attribute_overrides: { 'docdir' => fixtures_dir }
+      to_file = to_pdf_file <<~'END', 'admonition-custom-raster-icon.pdf', attribute_overrides: { 'docdir' => fixtures_dir }
       :icons: font
       :iconsdir:
 
@@ -803,14 +803,14 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       ====
       Use the icon attribute to customize the image for an admonition block.
       ====
-      EOS
+      END
 
       (expect to_file).to visually_match 'admonition-custom-raster-icon.pdf'
     end
 
     it 'should allow theme to control width of admonition icon image using width key' do
       pdf_theme = { admonition_icon_tip: { scale: 0.6, width: 40 } }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
       :icons: font
       :iconsdir:
 
@@ -820,7 +820,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
       Use the admonition_label_min_width key to control the image width.
       ====
-      EOS
+      END
 
       images = pdf.images
       (expect images).to have_size 1
@@ -830,7 +830,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should allow theme to control spacing around admonition icon image using admonition_label_min_width key' do
       pdf_theme = { admonition_label_min_width: 40, admonition_icon_tip: { scale: 1, width: 24 } }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
       :icons: font
       :iconsdir:
 
@@ -840,7 +840,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
       Use the admonition_label_min_width key to control the image width.
       ====
-      EOS
+      END
 
       images = pdf.images
       (expect images).to have_size 1
@@ -849,7 +849,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should resolve icon when icons attribute is set to image', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'admonition-image-icon.pdf', attribute_overrides: { 'docdir' => fixtures_dir }
+      to_file = to_pdf_file <<~'END', 'admonition-image-icon.pdf', attribute_overrides: { 'docdir' => fixtures_dir }
       :icons: image
       :iconsdir:
 
@@ -857,13 +857,13 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       ====
       Use the icon attribute to customize the image for an admonition block.
       ====
-      EOS
+      END
 
       (expect to_file).to visually_match 'admonition-custom-raster-icon.pdf'
     end
 
     it 'should not unset data-uri attribute when resolving icon image if already unset', visual: true do
-      doc = Asciidoctor.load <<~'EOS', backend: :pdf, safe: :safe, standalone: true, attributes: { 'docdir' => fixtures_dir, 'nofooter' => '' }
+      doc = Asciidoctor.load <<~'END', backend: :pdf, safe: :safe, standalone: true, attributes: { 'docdir' => fixtures_dir, 'nofooter' => '' }
       :icons: image
       :iconsdir:
 
@@ -871,7 +871,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       ====
       Use the icon attribute to customize the image for an admonition block.
       ====
-      EOS
+      END
 
       (expect doc.converter).not_to be_nil
       doc.remove_attr 'data-uri'
@@ -884,14 +884,14 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     it 'should not resolve remote icon when icons attribute is set to image and allow-uri-read is not set' do
       with_local_webserver do |base_url|
         (expect do
-          pdf = to_pdf <<~'EOS', attribute_overrides: { 'iconsdir' => base_url }, analyze: true
+          pdf = to_pdf <<~'END', attribute_overrides: { 'iconsdir' => base_url }, analyze: true
           :icons: image
 
           [TIP]
           ====
           Use the icon attribute to customize the image for an admonition block.
           ====
-          EOS
+          END
 
           label_text = pdf.find_unique_text 'TIP'
           (expect label_text).not_to be_nil
@@ -907,14 +907,14 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       with_local_webserver do |base_url|
         base_url += '/nada'
         (expect do
-          pdf = to_pdf <<~'EOS', attribute_overrides: { 'allow-uri-read' => '', 'iconsdir' => base_url }, analyze: true
+          pdf = to_pdf <<~'END', attribute_overrides: { 'allow-uri-read' => '', 'iconsdir' => base_url }, analyze: true
           :icons: image
 
           [TIP]
           ====
           Use the icon attribute to customize the image for an admonition block.
           ====
-          EOS
+          END
 
           label_text = pdf.find_unique_text 'TIP'
           (expect label_text).not_to be_nil
@@ -928,14 +928,14 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should resolve remote icon when icons attribute is set to image and allow-uri-read is set', visual: true do
       to_file = with_local_webserver do |base_url|
-        to_pdf_file <<~'EOS', 'admonition-remote-image-icon.pdf', attribute_overrides: { 'allow-uri-read' => '', 'iconsdir' => base_url }
+        to_pdf_file <<~'END', 'admonition-remote-image-icon.pdf', attribute_overrides: { 'allow-uri-read' => '', 'iconsdir' => base_url }
         :icons: image
 
         [TIP]
         ====
         Use the icon attribute to customize the image for an admonition block.
         ====
-        EOS
+        END
       end
 
       (expect to_file).to visually_match 'admonition-custom-raster-icon.pdf'
@@ -943,21 +943,21 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should resize icon only if it does not fit within the available space' do
       pdf_theme = { admonition_icon_tip: { scale: 1 } }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
       :icons: image
       :iconsdir:
 
       [TIP]
       This is Tux.
       He's the Linux mascot.
-      EOS
+      END
 
       images = pdf.images
       (expect images).to have_size 1
       (expect images[0][:width]).to be < 36.0
       (expect images[0][:height]).to be < 42.3529
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }, analyze: :image
       :icons: image
       :iconsdir:
 
@@ -970,7 +970,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       Thanks to Linux, penguins have receive a lot more attention.
       Technology can sometimes be a force for good like that.
       ====
-      EOS
+      END
 
       images = pdf.images
       (expect images).to have_size 1
@@ -980,7 +980,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should warn and fall back to admonition label if image icon cannot be resolved' do
       (expect do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'docdir' => fixtures_dir }, analyze: true
+        pdf = to_pdf <<~'END', attribute_overrides: { 'docdir' => fixtures_dir }, analyze: true
         :icons: image
         :iconsdir:
 
@@ -988,7 +988,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         ====
         Use the icon attribute to customize the image for an admonition block.
         ====
-        EOS
+        END
 
         note_text = pdf.find_unique_text 'NOTE'
         (expect note_text).not_to be_nil
@@ -997,28 +997,28 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
     end
 
     it 'should use icon image specified in theme if icon attribute is not set on block', visual: true do
-      to_file = to_pdf_file <<~'EOS', 'admonition-icon-image.pdf', attribute_overrides: { 'pdf-theme' => (fixture_file 'admonition-image-theme.yml') }, analyze: true
+      to_file = to_pdf_file <<~'END', 'admonition-icon-image.pdf', attribute_overrides: { 'pdf-theme' => (fixture_file 'admonition-image-theme.yml') }, analyze: true
       :icons:
 
       [NOTE]
       ====
       You can use a custom PDF theme to customize the icon image for a specific admonition type.
       ====
-      EOS
+      END
 
       (expect to_file).to visually_match 'admonition-icon-image.pdf'
     end
 
     it 'should substitute attribute references in icon image value in theme', visual: true do
       pdf_theme = { admonition_icon_note: { image: '{docdir}/tux-note.svg' } }
-      to_file = to_pdf_file <<~'EOS', 'admonition-icon-image-with-attribute-ref.pdf', attribute_overrides: { 'docdir' => fixtures_dir }, pdf_theme: pdf_theme, analyze: true
+      to_file = to_pdf_file <<~'END', 'admonition-icon-image-with-attribute-ref.pdf', attribute_overrides: { 'docdir' => fixtures_dir }, pdf_theme: pdf_theme, analyze: true
       :icons:
 
       [NOTE]
       ====
       You can use a custom PDF theme to customize the icon image for a specific admonition type.
       ====
-      EOS
+      END
 
       (expect to_file).to visually_match 'admonition-icon-image.pdf'
     end
@@ -1029,14 +1029,14 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         admonition_icon_note: { image: 'does-not-exist.png' },
       }
       (expect do
-        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme
+        pdf = to_pdf <<~'END', pdf_theme: pdf_theme
         :icons:
 
         [NOTE]
         ====
         If the icon image cannot be found, the converter will fall back to using the label text in the place of the icon.
         ====
-        EOS
+        END
 
         (expect get_images pdf).to be_empty
         (expect pdf.pages[0].text).to include 'NOTE'
@@ -1061,7 +1061,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         admonition_icon_question: { name: 'question-circle' },
       }
 
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, extensions: extensions, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, extensions: extensions, analyze: true
       :icons: font
 
       [QUESTION]
@@ -1070,7 +1070,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
       Just checking ;)
       ====
-      EOS
+      END
 
       icon_text = pdf.find_unique_text ?\uf059
       (expect icon_text).not_to be_nil
@@ -1094,14 +1094,14 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         end
       end
 
-      pdf = to_pdf <<~'EOS', extensions: extensions, analyze: true
+      pdf = to_pdf <<~'END', extensions: extensions, analyze: true
       :icons: font
 
       [FACT]
       ====
       Like all planetary bodies, the Earth is spherical.
       ====
-      EOS
+      END
 
       (expect pdf.lines).to eql [%(\uf05a Like all planetary bodies, the Earth is spherical.)]
       icon_text = pdf.find_unique_text ?\uf05a
@@ -1117,9 +1117,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
           admonition_column_rule_width: 1,
           admonition_column_rule_style: style,
         }
-        pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+        pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
         TIP: You can use the theme to customize the color and width of the column rule.
-        EOS
+        END
 
         lines = pdf.lines
         (expect lines).to have_size 1
@@ -1133,9 +1133,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should not draw column rule if value is transparent' do
       pdf_theme = { admonition_column_rule_color: 'transparent' }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       TIP: You can use the theme to customize the color and width of the column rule.
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to be_empty
@@ -1143,9 +1143,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should not draw column rule if value is nil and base border color is transparent' do
       pdf_theme = { base_border_color: 'transparent', admonition_column_rule_color: nil }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       TIP: You can use the theme to customize the color and width of the column rule.
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to be_empty
@@ -1157,9 +1157,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         admonition_column_rule_width: nil,
         base_border_width: nil,
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       TIP: You can use the theme to customize the color and width of the column rule.
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to be_empty
@@ -1172,9 +1172,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         admonition_column_rule_width: nil,
         admonition_column_rule_color: '222222',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       TIP: You can use the theme to customize the color and width of the column rule.
-      EOS
+      END
 
       (expect pdf.lines).to be_empty
     end
@@ -1185,9 +1185,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         admonition_column_rule_width: 1,
         admonition_column_rule_style: 'double',
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       TIP: You can use the theme to customize the color and width of the column rule.
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 2
@@ -1210,9 +1210,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         admonition_column_rule_color: '222222',
         admonition_column_rule_width: nil,
       }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       TIP: You can use the theme to customize the color and width of the column rule.
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to be_empty
@@ -1225,9 +1225,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         admonition_border_color: 'e0e0e0',
         admonition_column_rule_color: 'e0e0e0',
       }
-      to_file = to_pdf_file <<~'EOS', 'admonition-border.pdf', pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'admonition-border.pdf', pdf_theme: pdf_theme
       TIP: You can use the theme to add a border.
-      EOS
+      END
 
       (expect to_file).to visually_match 'admonition-border.pdf'
     end
@@ -1238,16 +1238,16 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         admonition_border_radius: 3,
         admonition_column_rule_width: 0,
       }
-      to_file = to_pdf_file <<~'EOS', 'admonition-background-color.pdf', pdf_theme: pdf_theme
+      to_file = to_pdf_file <<~'END', 'admonition-background-color.pdf', pdf_theme: pdf_theme
       TIP: You can use the theme to add a background color.
-      EOS
+      END
 
       (expect to_file).to visually_match 'admonition-background-color.pdf'
     end
 
     it 'should apply correct padding around content' do
       pdf_theme = { admonition_background_color: 'EEEEEE' }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       :icons: font
 
       [NOTE]
@@ -1256,7 +1256,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
       last
       ====
-      EOS
+      END
 
       boundaries = (pdf.extract_graphic_states pdf.pages[0][:raw_content])[0]
         .select {|l| l.end_with? 'l' }
@@ -1274,7 +1274,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should apply correct padding around content when using base theme' do
       pdf_theme = { extends: 'base', admonition_background_color: 'EEEEEE' }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       :icons: font
 
       [NOTE]
@@ -1283,7 +1283,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
       last
       ====
-      EOS
+      END
 
       boundaries = (pdf.extract_graphic_states pdf.pages[0][:raw_content])[0]
         .select {|l| l.end_with? 'l' }
@@ -1301,9 +1301,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
     it 'should allow theme to disable column rule by setting width to 0' do
       pdf_theme = { admonition_column_rule_width: 0 }
-      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :line
       TIP: You can use the theme to add a background color.
-      EOS
+      END
 
       (expect pdf.lines).to be_empty
     end

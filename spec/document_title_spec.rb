@@ -5,12 +5,12 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - Document Title' do
   context 'book' do
     it 'should partition the main title and subtitle' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Main Title: Subtitle
       :doctype: book
 
       body
-      EOS
+      END
 
       title_page_texts = pdf.find_text page_number: 1
       (expect title_page_texts).to have_size 2
@@ -26,13 +26,13 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
     end
 
     it 'should use custom separator to partition document title' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [separator=" -"]
       = Main Title - Subtitle
       :doctype: book
 
       body
-      EOS
+      END
 
       title_page_texts = pdf.find_text page_number: 1
       (expect title_page_texts).to have_size 2
@@ -50,11 +50,11 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
 
   context 'article' do
     it 'should place document title at top of first page of content' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
 
       body
-      EOS
+      END
 
       doctitle_text = (pdf.find_text 'Document Title')[0]
       (expect doctitle_text).not_to be_nil
@@ -66,11 +66,11 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
     end
 
     it 'should align document title according to value of heading_h1_text_align theme key' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { heading_h1_text_align: 'left' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { heading_h1_text_align: 'left' }, analyze: true
       = Document Title
 
       body
-      EOS
+      END
 
       doctitle_text = (pdf.find_text 'Document Title')[0]
       (expect doctitle_text).not_to be_nil
@@ -80,12 +80,12 @@ describe 'Asciidoctor::PDF::Converter - Document Title' do
     end
 
     it 'should not include document title if notitle attribute is set' do
-      pdf = to_pdf <<~'EOS', analyze: :page
+      pdf = to_pdf <<~'END', analyze: :page
       = Document Title
       :notitle:
 
       body
-      EOS
+      END
       (expect pdf.pages).to have_size 1
       (expect pdf.pages[0][:strings]).not_to include 'Document Title'
     end

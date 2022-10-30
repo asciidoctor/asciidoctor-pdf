@@ -25,14 +25,14 @@ describe 'Asciidoctor::PDF::Converter - media' do
     end
 
     it 'should leave blank page after image cover page' do
-      pdf = to_pdf <<~EOS
+      pdf = to_pdf <<~END
       = Document Title
       :doctype: book
       :media: prepress
       :front-cover-image: #{fixture_file 'cover.jpg', relative: true}
 
       == Chapter Title
-      EOS
+      END
 
       (expect pdf.pages).to have_size 5
       (expect (pdf.page 3).text).to eql 'Document Title'
@@ -43,14 +43,14 @@ describe 'Asciidoctor::PDF::Converter - media' do
     end
 
     it 'should leave blank page after PDF cover page' do
-      pdf = to_pdf <<~EOS
+      pdf = to_pdf <<~END
       = Document Title
       :doctype: book
       :media: prepress
       :front-cover-image: #{fixture_file 'blue-letter.pdf', relative: true}
 
       == Chapter Title
-      EOS
+      END
 
       (expect pdf.pages).to have_size 5
       (expect (pdf.page 1).text).to be_empty
@@ -62,7 +62,7 @@ describe 'Asciidoctor::PDF::Converter - media' do
     end
 
     it 'should insert blank page after TOC' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       = Document Title
       :doctype: book
       :media: prepress
@@ -74,7 +74,7 @@ describe 'Asciidoctor::PDF::Converter - media' do
       == Middle
 
       == End
-      EOS
+      END
 
       (expect pdf.pages).to have_size 11
       (expect (pdf.find_text 'Document Title')[0][:page_number]).to be 3
@@ -88,7 +88,7 @@ describe 'Asciidoctor::PDF::Converter - media' do
     end
 
     it 'should not insert blank page at start of document if document has no cover' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :media: prepress
@@ -98,7 +98,7 @@ describe 'Asciidoctor::PDF::Converter - media' do
       == Chapter Title
 
       Chapter content.
-      EOS
+      END
 
       (expect pdf.pages).to have_size 5
       doctitle_text = (pdf.find_text 'Document Title')[0]
@@ -110,7 +110,7 @@ describe 'Asciidoctor::PDF::Converter - media' do
     end
 
     it 'should not insert blank page at start of document with toc if title page is disabled' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :media: prepress
@@ -120,7 +120,7 @@ describe 'Asciidoctor::PDF::Converter - media' do
       == Chapter Title
 
       Chapter content.
-      EOS
+      END
 
       (expect pdf.pages).to have_size 3
       toc_text = (pdf.find_text 'Table of Contents')[0]
@@ -132,7 +132,7 @@ describe 'Asciidoctor::PDF::Converter - media' do
     end
 
     it 'should not insert blank page before chapter that follows preamble if chapter has nonfacing option' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :media: prepress
@@ -141,21 +141,21 @@ describe 'Asciidoctor::PDF::Converter - media' do
 
       [%nonfacing]
       == Chapter
-      EOS
+      END
 
       chapter_text = (pdf.find_text 'Chapter')[0]
       (expect chapter_text[:page_number]).to be 4
     end
 
     it 'should not insert blank page before chapter that follows document title if chapter has nonfacing option' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :media: prepress
 
       [%nonfacing]
       == Chapter
-      EOS
+      END
 
       chapter_text = (pdf.find_text 'Chapter')[0]
       (expect chapter_text[:page_number]).to be 2

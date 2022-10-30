@@ -5,35 +5,35 @@ require_relative 'spec_helper'
 describe 'Asciidoctor::PDF::Converter - Break' do
   context 'Line Breaks' do
     it 'should place text on separate line after explicit line break' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       foo +
       bar +
       baz
-      EOS
+      END
 
       (expect pdf.lines).to eql %w(foo bar baz)
     end
 
     it 'should preserve inner empty lines that end with hard line break' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       foo +
       filler +
       filler +
       filler +
 
       bar
-      EOS
+      END
 
       expected_gap = ((pdf.find_unique_text 'foo')[:y] - (pdf.find_unique_text 'bar')[:y]).round 4
 
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       foo +
       {empty} +
       {empty} +
       {empty} +
 
       bar
-      EOS
+      END
 
       actual_gap = ((pdf.find_unique_text 'foo')[:y] - (pdf.find_unique_text 'bar')[:y]).round 4
 
@@ -42,12 +42,12 @@ describe 'Asciidoctor::PDF::Converter - Break' do
     end
 
     it 'should preserve newlines in paragraph with hardbreaks option' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [%hardbreaks]
       foo
       bar
       baz
-      EOS
+      END
 
       (expect pdf.lines).to eql %w(foo bar baz)
     end
@@ -55,13 +55,13 @@ describe 'Asciidoctor::PDF::Converter - Break' do
 
   context 'Thematic Breaks' do
     it 'should draw line for thematic break' do
-      input = <<~'EOS'
+      input = <<~'END'
       before
 
       '''
 
       after
-      EOS
+      END
 
       pdf = to_pdf input, analyze: true
 
@@ -81,9 +81,9 @@ describe 'Asciidoctor::PDF::Converter - Break' do
     end
 
     it 'should use solid style for thematic break if not specified' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { thematic_break_border_style: nil }, analyze: :line
+      pdf = to_pdf <<~'END', pdf_theme: { thematic_break_border_style: nil }, analyze: :line
       '''
-      EOS
+      END
 
       lines = pdf.lines
       (expect lines).to have_size 1
@@ -98,13 +98,13 @@ describe 'Asciidoctor::PDF::Converter - Break' do
         thematic_break_border_style: 'double',
       }
 
-      input = <<~'EOS'
+      input = <<~'END'
       before
 
       '''
 
       after
-      EOS
+      END
 
       pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
 
@@ -127,13 +127,13 @@ describe 'Asciidoctor::PDF::Converter - Break' do
 
   context 'Page Breaks' do
     it 'should advance to next page after page break' do
-      pdf = to_pdf <<~'EOS', analyze: :page
+      pdf = to_pdf <<~'END', analyze: :page
       foo
 
       <<<
 
       bar
-      EOS
+      END
 
       (expect pdf.pages).to have_size 2
       (expect pdf.pages[0][:strings]).to include 'foo'
@@ -141,7 +141,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
     end
 
     it 'should insert page break if page does not have columns' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :notitle:
 
@@ -151,7 +151,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       <<<
 
       second page
-      EOS
+      END
 
       (expect pdf.pages).to have_size 2
       (expect (pdf.find_unique_text 'first page')[:page_number]).to eql 1
@@ -159,29 +159,29 @@ describe 'Asciidoctor::PDF::Converter - Break' do
     end
 
     it 'should not advance to next page if at start of document' do
-      pdf = to_pdf <<~'EOS', analyze: :page
+      pdf = to_pdf <<~'END', analyze: :page
       <<<
 
       foo
-      EOS
+      END
 
       (expect pdf.pages).to have_size 1
     end
 
     it 'should advance to next page if at start of document and always option is specified' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       [%always]
       <<<
 
       content
-      EOS
+      END
 
       (expect pdf.pages).to have_size 2
       (expect (pdf.find_unique_text 'content')[:page_number]).to eql 2
     end
 
     it 'should not advance to next page if preceding content forced a new page to be started' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Book Title
       :doctype: book
 
@@ -190,7 +190,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       <<<
 
       == Chapter
-      EOS
+      END
 
       part_text = (pdf.find_text 'Part')[0]
       (expect part_text[:page_number]).to be 2
@@ -199,27 +199,27 @@ describe 'Asciidoctor::PDF::Converter - Break' do
     end
 
     it 'should not advance to next page if preceding content advanced page' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       ....
       #{(['filler'] * 50).join ?\n}
       ....
 
       start of page
-      EOS
+      END
 
       start_of_page_text = (pdf.find_text 'start of page')[0]
       (expect start_of_page_text[:page_number]).to be 2
     end
 
     it 'should not advance to next column if at start of column in multi-column layout' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { page_columns: 2 }, analyze: true
       = Article Title
 
       [.column]
       <<<
 
       column 1
-      EOS
+      END
 
       (expect pdf.pages).to have_size 1
       text = pdf.find_unique_text 'column 1'
@@ -228,14 +228,14 @@ describe 'Asciidoctor::PDF::Converter - Break' do
     end
 
     it 'should advance to next column if at start of column in multi-column layout and always option is specified' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { page_columns: 2 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { page_columns: 2 }, analyze: true
       = Article Title
 
       [.column%always]
       <<<
 
       column 1
-      EOS
+      END
 
       (expect pdf.pages).to have_size 1
       text = pdf.find_unique_text 'column 1'
@@ -244,11 +244,11 @@ describe 'Asciidoctor::PDF::Converter - Break' do
     end
 
     it 'should not leave blank page at the end of document' do
-      input = <<~'EOS'
+      input = <<~'END'
       foo
 
       <<<
-      EOS
+      END
 
       [
         {},
@@ -261,14 +261,14 @@ describe 'Asciidoctor::PDF::Converter - Break' do
     end
 
     it 'should change layout if page break specifies page-layout attribute' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       portrait
 
       [page-layout=landscape]
       <<<
 
       landscape
-      EOS
+      END
 
       text = pdf.text
       (expect text).to have_size 2
@@ -277,14 +277,14 @@ describe 'Asciidoctor::PDF::Converter - Break' do
     end
 
     it 'should change layout if page break specifies layout role' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       portrait
 
       [.landscape]
       <<<
 
       landscape
-      EOS
+      END
 
       text = pdf.text
       (expect text).to have_size 2
@@ -293,7 +293,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
     end
 
     it 'should switch layout each time page break specifies layout role' do
-      pdf = to_pdf <<~'EOS', analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       portrait
 
       [.landscape]
@@ -310,7 +310,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       <<<
 
       landscape
-      EOS
+      END
 
       portrait_text = pdf.find_text 'portrait'
       (expect portrait_text).to have_size 2
@@ -328,7 +328,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
     end
 
     it 'should switch layout specified by page break even when it falls at a natural page break' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       portrait
 
       [.landscape]
@@ -340,13 +340,13 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       <<<
 
       portrait
-      EOS
+      END
 
       (expect (pdf.page 3)[:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
     end
 
     it 'should not switch layout specified by page break if value is unrecognized' do
-      pdf = to_pdf <<~EOS, analyze: true
+      pdf = to_pdf <<~END, analyze: true
       portrait
 
       [.landscape]
@@ -358,13 +358,13 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       <<<
 
       landscape
-      EOS
+      END
 
       (expect (pdf.page 3)[:size]).to eql (pdf.page 2)[:size]
     end
 
     it 'should insert page break in column layout' do
-      pdf = to_pdf <<~EOS, pdf_theme: { page_columns: 2 }, analyze: true
+      pdf = to_pdf <<~END, pdf_theme: { page_columns: 2 }, analyze: true
       = Article Title
 
       column 1, page 1
@@ -372,7 +372,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       <<<
 
       column 1, page 2
-      EOS
+      END
 
       c1p1_text = pdf.find_unique_text 'column 1, page 1'
       (expect c1p1_text[:x]).to eql 48.24
@@ -383,7 +383,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
     end
 
     it 'should insert page break with custom layout in column layout' do
-      pdf = to_pdf <<~EOS, pdf_theme: { page_columns: 2 }, analyze: true
+      pdf = to_pdf <<~END, pdf_theme: { page_columns: 2 }, analyze: true
       = Article Title
 
       column 1, page 1
@@ -392,7 +392,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       <<<
 
       column 1, page 2
-      EOS
+      END
 
       c1p1_text = pdf.find_unique_text 'column 1, page 1'
       (expect c1p1_text[:x]).to eql 48.24
@@ -407,7 +407,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
     end
 
     it 'should insert column break in column layout if column role is specified' do
-      pdf = to_pdf <<~EOS, pdf_theme: { page_columns: 2 }, analyze: true
+      pdf = to_pdf <<~END, pdf_theme: { page_columns: 2 }, analyze: true
       = Article Title
 
       column 1, page 1
@@ -416,7 +416,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       <<<
 
       column 2, page 1
-      EOS
+      END
 
       c1p1_text = pdf.find_unique_text 'column 1, page 1'
       (expect c1p1_text[:x]).to eql 48.24
@@ -427,7 +427,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
     end
 
     it 'should insert page break in column layout if page layout is specified even if column role is specified' do
-      pdf = to_pdf <<~EOS, pdf_theme: { page_columns: 2 }, analyze: true
+      pdf = to_pdf <<~END, pdf_theme: { page_columns: 2 }, analyze: true
       = Article Title
 
       column 1, page 1
@@ -436,7 +436,7 @@ describe 'Asciidoctor::PDF::Converter - Break' do
       <<<
 
       column 1, page 2
-      EOS
+      END
 
       c1p1_text = pdf.find_unique_text 'column 1, page 1'
       (expect c1p1_text[:x]).to eql 48.24

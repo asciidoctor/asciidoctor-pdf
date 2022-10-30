@@ -10,13 +10,13 @@ describe 'Asciidoctor::PDF::Converter - Audio' do
       'after',
     ]
 
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     before
 
     audio::podcast.mp3[]
 
     after
-    EOS
+    END
 
     (expect pdf.lines).to eql expected_lines
     before_text = (pdf.find_text 'before')[0]
@@ -26,9 +26,9 @@ describe 'Asciidoctor::PDF::Converter - Audio' do
   end
 
   it 'should wrap text for audio if it exceeds width of content area' do
-    pdf = to_pdf <<~'EOS', analyze: true, attribute_overrides: { 'imagesdir' => '' }
+    pdf = to_pdf <<~'END', analyze: true, attribute_overrides: { 'imagesdir' => '' }
     audio::a-podcast-with-an-excessively-long-and-descriptive-name-as-they-sometimes-are-that-causes-the-text-to-wrap.mp3[]
-    EOS
+    END
 
     (expect pdf.pages).to have_size 1
     lines = pdf.lines pdf.find_text page_number: 1
@@ -36,9 +36,9 @@ describe 'Asciidoctor::PDF::Converter - Audio' do
   end
 
   it 'should use font-based icon for play symbol if font icons are enabled' do
-    pdf = to_pdf <<~'EOS', attribute_overrides: { 'icons' => 'font' }, analyze: true
+    pdf = to_pdf <<~'END', attribute_overrides: { 'icons' => 'font' }, analyze: true
     audio::podcast.mp3[]
-    EOS
+    END
 
     icon_text = (pdf.find_text ?\uf04b)[0]
     (expect icon_text).not_to be_nil
@@ -46,12 +46,12 @@ describe 'Asciidoctor::PDF::Converter - Audio' do
   end
 
   it 'should show caption for audio if title is specified' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'END', analyze: true
     :icons: font
 
     .Episode 1 of my podcast
     audio::podcast-e1.mp3[]
-    EOS
+    END
 
     (expect pdf.lines).to eql [%(\uf04b\u00a0#{fixture_file 'podcast-e1.mp3'} (audio)), 'Episode 1 of my podcast']
   end
