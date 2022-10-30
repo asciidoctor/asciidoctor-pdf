@@ -27,6 +27,7 @@ Enhancements::
 * honor `GS_OPTIONS` environment variable for supplying additional parameters to command called by RGhost optimizer (#2337)
 * add support for passing a color mode to the default optimizer (#2347)
 * support horizontal alignment on AsciiDoc table cell that only contains paragraphs (#2358)
+* allow revision content to be customized by theme (#2362)
 
 Improvements::
 

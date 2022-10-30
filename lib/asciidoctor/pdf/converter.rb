@@ -593,7 +593,6 @@ module Asciidoctor
         theme.kbd_separator_content ||= %(+#{ZeroWidthSpace})
         theme.menu_caret_content ||= %(#{NoBreakSpace}\u203a )
         theme.title_page_authors_delimiter ||= ', '
-        theme.title_page_revision_delimiter ||= ', '
         theme.toc_indent ||= 0
         theme.toc_hanging_indent ||= 0
         if ::Array === (quotes = theme.quotes)
@@ -3795,18 +3794,35 @@ module Asciidoctor
             end
             move_down @theme.title_page_authors_margin_bottom || 0
           end
-          unless @theme.title_page_revision_display == 'none' || (revision_info = [(doc.attr? 'revnumber') ? %(#{doc.attr 'version-label'} #{doc.attr 'revnumber'}) : nil, (doc.attr 'revdate')].compact).empty?
-            move_down @theme.title_page_revision_margin_top || 0
-            revision_text = revision_info.join @theme.title_page_revision_delimiter
-            if (revremark = doc.attr 'revremark')
-              revision_text = %(#{revision_text}: #{revremark})
-            end
-            indent (@theme.title_page_revision_margin_left || 0), (@theme.title_page_revision_margin_right || 0) do
-              theme_font :title_page_revision do
-                ink_prose revision_text, align: title_text_align, margin: 0, normalize: false
+          if @theme.title_page_revision_display != 'none'
+            if (revision_content = @theme.title_page_revision_content)
+              revision_content = apply_subs_discretely doc, revision_content, drop_lines_with_unresolved_attributes: true, imagesdir: @themesdir
+            else
+              delimiters = [', ', ': ']
+              if (delimiter_overrides = @theme.title_page_revision_delimiter)
+                delimiter_overrides = [delimiter_overrides] unless Array === delimiter_overrides
+                delimiters[0..delimiter_overrides.size - 1] = delimiter_overrides
               end
+              revision_content = (doc.attr? 'revnumber') ? [([(doc.attr 'version-label'), (doc.attr 'revnumber')].compact.join ' ')] : []
+              if doc.attr? 'revdate'
+                revision_content << delimiters[0] unless revision_content.empty?
+                revision_content << (doc.attr 'revdate')
+              end
+              if doc.attr? 'revremark'
+                revision_content << delimiters[1] unless revision_content.empty?
+                revision_content << (doc.attr 'revremark')
+              end
+              revision_content = revision_content.join
             end
-            move_down @theme.title_page_revision_margin_bottom || 0
+            unless revision_content.empty?
+              move_down @theme.title_page_revision_margin_top || 0
+              indent (@theme.title_page_revision_margin_left || 0), (@theme.title_page_revision_margin_right || 0) do
+                theme_font :title_page_revision do
+                  ink_prose revision_content, align: title_text_align, margin: 0, normalize: false
+                end
+              end
+              move_down @theme.title_page_revision_margin_bottom || 0
+            end
           end
         end
       end
