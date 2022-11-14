@@ -3447,7 +3447,7 @@ module Asciidoctor
                 val = val.to_s unless ::String === val
                 if (val.include? ':') && val =~ ImageAttributeValueRx
                   attrlist = $2
-                  image_attrs = (AttributeList.new attrlist).parse %w(alt width)
+                  image_attrs = (::Asciidoctor::AttributeList.new attrlist).parse %w(alt width)
                   image_path, image_format = ::Asciidoctor::Image.target_and_format $1, image_attrs
                   image_path = apply_subs_discretely doc, image_path, subs: [:attributes], imagesdir: @themesdir
                   if (image_path = resolve_image_path doc, image_path, image_format, @themesdir) && (::File.readable? image_path)
@@ -3711,7 +3711,7 @@ module Asciidoctor
 
         if @theme.title_page_logo_display != 'none' && (logo_image_path = (doc.attr 'title-logo-image') || (logo_image_from_theme = @theme.title_page_logo_image))
           if (logo_image_path.include? ':') && logo_image_path =~ ImageAttributeValueRx
-            logo_image_attrs = (AttributeList.new $2).parse %w(alt width height)
+            logo_image_attrs = (::Asciidoctor::AttributeList.new $2).parse %w(alt width height)
             if logo_image_from_theme
               relative_to_imagesdir = false
               logo_image_path = apply_subs_discretely doc, $1, subs: [:attributes], imagesdir: @themesdir
@@ -4115,7 +4115,7 @@ module Asciidoctor
         return [image_path, {}] if symbolic_paths&.include? image_path
         return [] if image_path == 'none' || image_path == ''
         if (image_path.include? ':') && image_path =~ ImageAttributeValueRx
-          image_attrs = (AttributeList.new $2).parse %w(alt width)
+          image_attrs = (::Asciidoctor::AttributeList.new $2).parse %w(alt width)
           image_path = $1
           image_relative_to = true
         end
