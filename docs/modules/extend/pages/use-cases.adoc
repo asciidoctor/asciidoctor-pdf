@@ -335,19 +335,29 @@ include::example$pdf-converter-table-role.rb[]
 
 This extended converter allows you to specify any theme key on the custom role that's supported for tables.
 The role must be defined under a special role name `<table>` (to avoid clashing with other role names).
-Here's an example of a custom table role named `thick` that increases the width of the table border and grid lines.
+Here's an example of a custom table role named `heavy` that increases the width of the table border and grid lines and increases the font size.
 
 [,yaml]
 ----
 extends: default
 role:
   <table>:
-    thick:
-      border-width: 2
-      grid-width: 2
+    heavy:
+      border-width: 1.5
+      grid-width: 1.5
+      font-size: 12.5
 ----
 
-You apply this role to a table by prepending `.thick` to the first positional attribute in the block attribute line above the table.
+You apply this role to a table by prepending `.heavy` to the first positional attribute in the block attribute line above the table.
+
+[,asciidoc]
+----
+[.heavy,cols=2*]
+|===
+|big
+|data
+|===
+----
 
 As written, the extended converter only supports the first role on the table.
 It could be enhanced to support an arbitrary number of roles, with each successive role cascading (like CSS).
