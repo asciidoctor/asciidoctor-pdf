@@ -182,6 +182,19 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     end
   end
 
+  it 'should use icon from fas set if not explicitly remapped by prawn/icon' do
+    (expect do
+      pdf = to_pdf <<~'EOS', analyze: true
+      :icons: font
+
+      Use a icon:circle[] to indicate which candidate you are voting for.
+      EOS
+      hdd_text = pdf.find_text ?\uf111
+      (expect hdd_text).to have_size 1
+      (expect hdd_text[0][:font_name]).to eql 'FontAwesome5Free-Solid'
+    end).to log_message severity: :INFO, message: 'circle icon found in deprecated fa icon set; using circle from fas icon set instead', using_log_level: :INFO
+  end
+
   it 'should remap legacy icon name if icon set is not specified and report remapping' do
     (expect do
       pdf = to_pdf <<~'EOS', analyze: true
@@ -259,7 +272,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
 
     heart_text = pdf.text[0]
     (expect heart_text[:string]).to eql ?\uf004
-    (expect heart_text[:font_name]).to eql 'FontAwesome5Free-Regular'
+    (expect heart_text[:font_name]).to eql 'FontAwesome5Free-Solid'
     (expect heart_text[:font_color]).to eql 'FF0000'
   end
 
