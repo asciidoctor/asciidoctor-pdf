@@ -1,4 +1,6 @@
 = Title Page
+Author Name
+v1.0, 2020-02-20
 :description: The title page contains the doctitle, author, date, and revision information.
 
 The Asciidoctor PDF converter introduces a dedicated title page at the start of the document.
@@ -49,6 +51,27 @@ For documents that declare the `book` doctype, the title page can be omitted by 
 The title page can also be xref:theme:title-pages.adoc#deactivate[deactivated from the theme] by setting the value of the `title-page` category key to `false`.
 For all other doctypes, the title page is not added by default.
 In that case, setting the `:notitle:` attribute only removes the document title from the first page of content.
+
+== Author and revision information
+
+The author and revision information is displayed on the title page by default.
+If the document does not have a title page, you must use explicit references to this information in the text in order for it to be displayed.
+
+Here's an example of how to display the author and revision information in an article without a title page.
+
+[,asciidoc]
+----
+= Article Title
+Author Name
+v1.0, 2020-02-20
+
+[.metadata]
+{author} -- version {revnumber}, {revdate}
+
+Begin main content.
+----
+
+You can style this line by xref:roles.adoc#custom[defining a role] in a custom theme.
 
 [#background]
 == Background image
