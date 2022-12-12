@@ -40,7 +40,7 @@ Once you make this change, all your Unicode headaches will be behind you.
 
 Asciidoctor PDF (gem: *asciidoctor-pdf*, command: `asciidoctor-pdf`) is published as a RubyGem to the rubygems.org software registry.
 You install Asciidoctor PDF from that registry using the RubyGem management tools provided by Ruby (`bundle` or `gem`).
-Alternately, you can {url-project-repo}/blob/main/CONTRIBUTING-CODE.adocl[build and install Asciidoctor PDF from source^].
+Alternately, you can {url-project-repo}/blob/main/CONTRIBUTING-CODE.adoc[build and install Asciidoctor PDF from source^].
 
 Refer to the table below for instructions on how to install Asciidoctor PDF.
 If you use Bundler to manage your gems in a [.path]_Gemfile_, add the entry listed in the *Bundler* column.
