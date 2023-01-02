@@ -1162,7 +1162,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       to_file = to_pdf_file <<~'END', 'page-background-image-block-macro.pdf'
       = Document Title
       :doctype: book
-      :page-background-image: image:bg.png[]
+      :page-background-image: image::bg.png[]
 
       content
       END
