@@ -1205,6 +1205,18 @@ describe 'Asciidoctor::PDF::Converter - Page' do
       (expect to_file).to visually_match 'page-background-image-max-height.pdf'
     end
 
+    it 'should ignore pdfwidth for background image if fit=none is not specified', visual: true do
+      to_file = to_pdf_file <<~'END', 'page-background-image-max-height.pdf'
+      = Document Title
+      :pdf-page-layout: landscape
+      :page-background-image: image:square.png[pdfwidth=25%]
+
+      This page has a background image that is rather loud.
+      END
+
+      (expect to_file).to visually_match 'page-background-image-max-height.pdf'
+    end
+
     it 'should set width of background image according to width attribute when fit=none', visual: true do
       to_file = to_pdf_file <<~'END', 'page-background-image-width.pdf'
       = Document Title
