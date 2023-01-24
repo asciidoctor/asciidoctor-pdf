@@ -34,6 +34,6 @@ thematic-break:
 |xref:measurement-units.adoc[Measurement] {vbar} xref:measurement-units.adoc[Measurement[top,right,bottom,left\]] +
 (default: `0`)
 |[source]
-sidebar:
+thematic-break:
   padding: [3, 12]
 |===
