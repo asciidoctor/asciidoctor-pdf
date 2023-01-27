@@ -27,6 +27,7 @@ Each key that you want applied to a role should be entered on a new line.
 Role names can contain hyphens, but not underscores.
 
 The formatting keys that a custom role can accept are listed in xref:role.adoc[].
+Be aware that some keys do not apply to the context where the role is used.
 Let's look at some custom role definition and usage examples in the next section.
 
 == Custom role examples

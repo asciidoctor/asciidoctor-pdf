@@ -7,17 +7,19 @@
 == role
 
 The keys in the `role` category define custom roles for formatting.
-The name of the role is the first subkey level.
-The role name may contain a hyphen, but *a role name cannot contain an underscore*.
+The name of the role is the subkey.
 The keys under the role are the theming properties.
+The role name may contain a hyphen, but *a role name cannot contain an underscore*.
 
-IMPORTANT: Custom roles only apply to paragraphs and inline phrases.
+IMPORTANT: Custom roles only apply to paragraphs and inline phrases (text).
+In the table below, the *p* indicates keys which are recognized when the role is applied to a paragraph and the *i* indicates keys which are recognized when the role is applied to an inline phrase.
 
 [cols="3,4,5a"]
 |===
 |Key |Value Type |Example
 
-|background-color
+|background-color +
+(i)
 |xref:color.adoc[Color] +
 (default: _not set_)
 |[source]
@@ -25,7 +27,8 @@ role:
   high-contrast:
     background-color: #121212
 
-|border-color
+|border-color +
+(i)
 |xref:color.adoc[Color] +
 (default: _not set_)
 |[source]
@@ -33,7 +36,8 @@ role:
   found:
     border-color: #CCCCCC
 
-|border-offset
+|border-offset +
+(i)
 |xref:language.adoc#values[Number] +
 (default: `0`)
 |[source]
@@ -41,7 +45,8 @@ role:
   found:
     border-offset: 2
 
-|border-radius
+|border-radius +
+(i)
 |xref:measurement-units.adoc[Measurement] +
 (default: _not set_)
 |[source]
@@ -49,7 +54,8 @@ role:
   found:
     border-radius: 3
 
-|border-width
+|border-width +
+(i)
 |xref:measurement-units.adoc[Measurement] +
 (default: _not set_)
 |[source]
@@ -57,7 +63,8 @@ role:
   found:
     border-width: 0.5
 
-|font-color
+|font-color +
+(i, p)
 |xref:color.adoc[Color] +
 (default: _inherit_)
 |[source]
@@ -65,7 +72,8 @@ role:
   red:
     font-color: #FF0000
 
-|font-family
+|font-family +
+(i, p)
 |xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |[source]
@@ -73,7 +81,8 @@ role:
   label:
     font-family: M+ 1mn
 
-|font-size
+|font-size +
+(i, p)
 |xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
@@ -81,7 +90,8 @@ role:
   large:
     font-size: 12
 
-|font-style
+|font-style +
+(i, p)
 |xref:text.adoc#font-style[Font style] +
 (default: _inherit_)
 |[source]
@@ -89,7 +99,8 @@ role:
   heavy:
     font-style: bold
 
-|text-align
+|text-align +
+(p)
 |xref:text.adoc#text-align[Text alignment] +
 (default: _inherit_)
 |[source]
@@ -97,7 +108,8 @@ role:
   declare:
     text-align: center
 
-|text-decoration
+|text-decoration +
+(i)
 |xref:text.adoc#decoration[Text decoration] +
 (default: `none`)
 |[source]
@@ -105,7 +117,8 @@ role:
   deleted:
     text-decoration: line-through
 
-|text-decoration-color
+|text-decoration-color +
+(i)
 |xref:color.adoc[Color] +
 (default: `$role-<name>-font-color`)
 |[source]
@@ -113,7 +126,8 @@ role:
   deleted:
     text-decoration-color: #FF0000
 
-|text-decoration-width
+|text-decoration-width +
+(i)
 |xref:language.adoc#values[Number] +
 (default: `$base-text-decoration-width`)
 |[source]
@@ -121,7 +135,8 @@ role:
   underline:
     text-decoration-width: 0.5
 
-|text-transform
+|text-transform +
+(i, p)
 |xref:text.adoc#transform[Text transform] +
 (default: _inherit_)
 |[source]
