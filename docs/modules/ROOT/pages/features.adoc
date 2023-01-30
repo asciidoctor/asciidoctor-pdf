@@ -34,6 +34,9 @@
 [#limitations]
 == Known limitations
 
+* All decimal and hexadecimal character references are supported (e.g., `\&#169;`).
+However, the converter only processes a restricted set of named entities.
+The recognized named entities are as follows: amp, apos, gt, lt, nbsp, and quot (e.g., `\&apos;`). 
 * Copying text from a PDF in a way that preserves the original line wrapping is not reliable, particularly in code blocks.
 To achieve proper rendering, non-visible characters may either be interpreted, inserted, or dropped.
 This is primarily a limitation of the PDF format, in which text is broken into fragments and positioned at absolute coordinates on the canvas.
