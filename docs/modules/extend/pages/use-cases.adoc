@@ -462,8 +462,10 @@ Taking inspiration from this extension, we develop another inline macro named `p
 include::example$inline-pageref-macro.rb[]
 ----
 
-The only caveat of this extension is that it has to convert the document a second time to resolve any forward references.
+The only caveat of this extension is that it has to use a two-phase conversion.
+In other words, it has to convert the document a second time to resolve any forward references.
 That's because the page number of a section is not known until it is rendered.
+And not all sections are rendered until the first conversion is complete.
 
 Here's how the `pageref` macro would be used:
 
