@@ -894,4 +894,17 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect pdf.lines).to include 'not a conum <1>'
     (expect pdf.find_text '①').to be_empty
   end
+
+  it 'should not fail to process callouts due to specialchars substitution' do
+    (expect do
+      pdf = to_pdf <<~'END', analyze: true
+      ----
+      <; <.>
+      >; <!--2-->
+      ----
+      END
+
+      (expect pdf.lines).to eql ['<; ①', '>; ②']
+    end).to not_log_message
+  end
 end
