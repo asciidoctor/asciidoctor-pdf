@@ -108,6 +108,7 @@ module Asciidoctor
       MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|p[txc])?$/
       PageSizeRx = /^(?:\[(#{MeasurementRxt}), ?(#{MeasurementRxt})\]|(#{MeasurementRxt})(?: x |x)(#{MeasurementRxt})|\S+)$/
       CalloutExtractRx = %r((?:(?://|#|--|;;) ?)?(\\)?<!?(|--)(\d+|\.)\2> ?(?=(?:\\?<!?\2(?:\d+|\.)\2> ?)*$))
+      CalloutConflictRx = /([<>&])(; *<!?(|--)(?:\d+|\.)\3>)/
       ImageAttributeValueRx = /^image:{1,2}(.*?)\[(.*?)\]$/
       StopPunctRx = /[.!?;:]$/
       UriBreakCharsRx = %r((?:/|\?|&amp;|#)(?!$))
@@ -1090,6 +1091,9 @@ module Asciidoctor
             end
           else
             highlighter = nil
+            if (node.subs.include? :callouts) && (CalloutConflictRx.match? node.source)
+              node.lines.replace (node.lines.map {|l| (l.include? '<') ? (l.gsub CalloutConflictRx, %(\\1\u200b\\2)) : l })
+            end
             source_string = guard_indentation node.content
           end
 
