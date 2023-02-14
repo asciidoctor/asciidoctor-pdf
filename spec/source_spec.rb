@@ -301,7 +301,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
     end
 
     it 'should allow token to be formatted in bold, italic, and bold italic' do
-      pdf = to_pdf <<~'END', analyze: true, debug: true
+      pdf = to_pdf <<~'END', analyze: true
       :source-highlighter: rouge
       :rouge-style: monokai
 
