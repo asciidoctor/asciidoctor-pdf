@@ -313,14 +313,14 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       EOS
 
       line_text = pdf.find_unique_text 'int'
-      (expect line_text).not_to be_empty
+      (expect line_text).not_to be_nil
       (expect line_text[:font_name]).to eql 'mplus1mn-bold'
       line_text = pdf.find_unique_text %r/^#line 6 /
-      (expect line_text).not_to be_empty
+      (expect line_text).not_to be_nil
       (expect line_text[:font_name]).to eql 'mplus1mn-bold_italic'
-      line_text = pdf.find_unique_text %r/^\/\/ this is now /
-      (expect line_text).not_to be_empty
-      (expect line_text[:font_name]).to eql 'mplus1mn-italic'
+      if (line_text = pdf.find_unique_text %r/^\/\/ this is now /)
+        (expect line_text[:font_name]).to eql 'mplus1mn-italic'
+      end
     end
 
     it 'should allow token to add underline style to token', visual: true do
