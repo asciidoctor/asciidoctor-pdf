@@ -103,6 +103,14 @@ The keys in the `ulist-marker` category control the arrangement and style of the
 |===
 |Key |Value Type |Example
 
+|font-color
+|xref:color.adoc[Color] +
+(default: `$list-marker-font-color`)
+|[source]
+ulist:
+  marker:
+    font-color: #CCCCCC
+
 |font-family
 |xref:font-support.adoc[Font family name] +
 (default: _inherit_)
@@ -118,14 +126,6 @@ ulist:
 ulist:
   marker:
     font-size: 9
-
-|font-color
-|xref:color.adoc[Color] +
-(default: `$list-marker-font-color`)
-|[source]
-ulist:
-  marker:
-    font-color: #CCCCCC
 
 |font-style
 |xref:text.adoc#font-style[Font style] +
@@ -162,6 +162,15 @@ ulist:
     disc:
       content: "\uf140"
 
+|font-color
+|xref:color.adoc[Color] +
+(default: _inherit_)
+|[source]
+ulist:
+  marker:
+    square:
+      font-color: #FF0000
+
 |font-family
 |xref:font-support.adoc[Font family name] +
 (default: _inherit_)
@@ -179,15 +188,6 @@ ulist:
   marker:
     disc:
       font-size: 9
-
-|font-color
-|xref:color.adoc[Color] +
-(default: _inherit_)
-|[source]
-ulist:
-  marker:
-    square:
-      font-color: #FF0000
 
 |font-style
 |xref:text.adoc#font-style[Font style] +
