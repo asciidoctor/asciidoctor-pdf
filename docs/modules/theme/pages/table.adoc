@@ -400,7 +400,7 @@ The keys listed on xref:caption.adoc[] can also be nested under the `table-capti
 |===
 |Key |Value Type |Example
 
-|xref:tables.adoc#caption-align[caption-align]
+|xref:tables.adoc#caption-align[align]
 |xref:tables.adoc#caption-align[Block alignment] {vbar} xref:tables.adoc#caption-align[inherit] +
 (default: `$caption-align`)
 |[source]
@@ -408,7 +408,7 @@ table:
   caption:
     align: center
 
-|xref:tables.adoc#end[caption-end]
+|xref:tables.adoc#end[end]
 |xref:tables.adoc#end[End placement] +
 (default: `top`)
 |[source]
@@ -416,7 +416,7 @@ table:
   caption:
     end: bottom
 
-|caption-max-width
+|max-width
 |`fit-content` {vbar} `fit-content`(percentage) {vbar} `none` {vbar} xref:measurement-units.adoc[Measurement] +
 (default: `fit-content`)
 |[source]
@@ -424,7 +424,7 @@ table:
   caption:
     max-width: none
 
-|xref:tables.adoc#caption-text-align[caption-text-align]
+|xref:tables.adoc#caption-text-align[text-align]
 |xref:tables.adoc#caption-text-align[Text alignment] {vbar} xref:tables.adoc#caption-text-align[inherit] +
 (default: `$table-caption-align`)
 |[source]
