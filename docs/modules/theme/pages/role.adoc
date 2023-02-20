@@ -165,6 +165,10 @@ line-through:: The `line-through` role adds the strikethrough decoration.
 subtitle:: The `subtitle` role is used to configure the font properties of the subtitle of a section title.
 // end::user-formatting[]
 unresolved:: The `unresolved` role is applied automatically to the text of an unresolved footnote reference.
+(Only recognizes the `font-color` theme key).
+noborder:: Only applies to block images.
+If this role is present on the block image, the border will not be added.
+This role cannot be redefined.
 
 NOTE: The color roles (e.g., `blue`), which you may be familiar with from the HTML converter, are not mapped by default.
 You'll need to define these color roles as xref:custom-role.adoc[custom roles] in your theme if you'd like to make use of them when converting to PDF.

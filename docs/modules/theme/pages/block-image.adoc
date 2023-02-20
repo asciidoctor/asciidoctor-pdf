@@ -69,6 +69,15 @@ image:
   width: 100%
 |===
 
+=== noborder role
+
+If the `noborder` role is present on a block image, the border is not drawn on that image even if the border-related keys are defined on the `image` category in the theme.
+
+[,asciidoc]
+----
+image::image-without-border.png[role=noborder]
+----
+
 [#border-color]
 === border-color
 
