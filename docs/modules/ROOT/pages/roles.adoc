@@ -23,7 +23,15 @@ That is, the text won't be highlighted.
 [#custom]
 == Use a custom role
 
-NOTE: Before you can use a custom role in your document, you need to define it in your theme.
+In AsciiDoc, you can add any role name to an element that supports roles.
+However, in order for that role to have an effect, you must map it to theme settings.
+
+NOTE: In Asciidoctor PDF, the theme properties mapped to custom roles currently only apply to paragraphs and inline phrases.
+
+You can define additional roles in your theme using the `role` category.
+In addition to custom roles, the <<built-in,built-in roles>>, such as `lead`, can be augmented or redefined in the same way.
+
+IMPORTANT: Before you can use a custom role in your document, you need to define it in your theme.
 See xref:theme:custom-role.adoc[] and xref:theme:role.adoc[] to learn how to create a custom role.
 
 Let's assume you've defined a custom role named `labeled` in your theme.
@@ -50,5 +58,3 @@ A paragraph styled according to the custom role assigned to it.
 Another paragraph.
 The text [.labeled]#label me# is formatted using the styles of the custom role.
 ----
-
-Custom roles only apply to paragraphs and inline phrases.
