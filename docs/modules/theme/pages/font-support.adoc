@@ -107,6 +107,10 @@ That means you can extend a default theme and not have to worry about how the bu
 If you redeclare the bundled fonts in your custom theme, be sure to prefix the path with the `GEM_FONTS_DIR` token.
 An alternative approach is to include `GEM_FONT_DIR` in the value of the `pdf-fontsdir` attribute separated by the location of your custom fonts using a comma (e.g., `path/to/your/fonts,GEM_FONTS_DIR`) or a semicolon (e.g., `path/to/your/fonts;GEM_FONTS_DIR`).
 
+== Custom Fonts
+
+To learn how to use a custom font in your theme alongside or in place of built-in or bundled fonts, refer to xref:custom-font.adoc[].
+
 == Support for non-Latin languages
 
 Asciidoctor PDF can process the full range of characters in the UTF-8 character set.
