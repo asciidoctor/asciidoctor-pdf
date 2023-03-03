@@ -1,4 +1,4 @@
-= Custom Fonts
+= Use Custom Fonts
 :url-fontforge: https://fontforge.github.io/en-US/
 :url-roboto: https://github.com/googlefonts/roboto/releases
 :conum-guard-yaml: #
