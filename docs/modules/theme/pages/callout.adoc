@@ -8,7 +8,7 @@
 
 The keys in the `callout-list` category control the arrangement and style of callout lists and callout list item content.
 These keys don't affect the callout list markers.
-The appearance of the markers is controlled independently by the keys in <<conum,conum category>>.
+The appearance of the markers is controlled separately by the keys in <<conum,conum category>>.
 Also see <<inherit>> for more information.
 
 [cols="3,4,5a"]
@@ -90,8 +90,13 @@ callout-list:
 == conum
 
 The keys in the `conum` category control the style of callout numbers inside verbatim blocks and in callout lists.
+
+NOTE: The bundled font used by the default theme for conums (M+ 1mn) only supports callout numbers 1-20.
+If you need more callout numbers, you must specify the `glyphs` key to remap the callout numbers to Unicode value using Unicode escape ranges.
+Keep in mind that the font you specify must provide the glyphs for these Unicode values or else the callout number won't be rendered.
+
 These keys don't affect the callout list item content.
-The appearance of the callout list and the content of the list items are controlled independently by the keys in <<callout-list,callout-list category>>.
+The appearance of the callout list and the content of the list items are controlled separately by the keys in <<callout-list,callout-list category>>.
 Also see <<inherit>> for more information.
 
 [cols="2,5,5a"]
@@ -134,11 +139,11 @@ conum:
   font-style: normal
 
 |<<glyphs,glyphs>>
-|`circled` {vbar} `filled` {vbar} Unicode String ranges +
+|`circled` {vbar} `filled` {vbar} Unicode escape ranges +
 (default: `circled`)
 |[source]
 conum:
-  glyphs: \u0031-\u0039
+  glyphs: \u2776-\u277f,\u24eb-\u24f4,\u3251-\u325a
 
 |<<inherit,line-height>>
 |xref:language.adoc#values[Number] +
