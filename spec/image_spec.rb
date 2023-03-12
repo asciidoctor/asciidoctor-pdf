@@ -136,7 +136,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-wolpertinger.pdf'
     end
 
-    it 'should resolve target of block image in directory with non-ASCII characters', visual: true do
+    it 'should resolve target of block image in directory with non-ASCII characters', unless: (jruby? && windows?) do
       pdf = to_pdf <<~'END', analyze: :image, attribute_overrides: { 'imagesdir' => (File.join fixtures_dir, '测试') }
       image::square.png[pdfwidth=1in]
       END
