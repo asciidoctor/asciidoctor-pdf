@@ -136,6 +136,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-wolpertinger.pdf'
     end
 
+    it 'should resolve target of block image in directory with non-ASCII characters', visual: true do
+      pdf = to_pdf <<~'END', analyze: :image, attribute_overrides: { 'imagesdir' => (File.join fixtures_dir, '测试') }
+      image::square.png[pdfwidth=1in]
+      END
+
+      (expect pdf.images).to have_size 1
+    end
+
     it 'should replace block image with alt text if image is missing' do
       (expect do
         pdf = to_pdf 'image::no-such-image.png[Missing Image]', analyze: true
