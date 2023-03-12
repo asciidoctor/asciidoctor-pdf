@@ -119,14 +119,6 @@ The keys in the `quote-cite` category control the arrangement and style of the c
 |===
 |Key |Value Type |Example
 
-|font-size
-|xref:text.adoc#font-size[Font size] +
-(default: _inherit_)
-|[source]
-quote:
-  cite:
-    font-size: 9
-
 |font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)
@@ -151,6 +143,14 @@ quote:
   cite:
     font-kerning: none
 
+|font-size
+|xref:text.adoc#font-size[Font size] +
+(default: _inherit_)
+|[source]
+quote:
+  cite:
+    font-size: 9
+
 |font-style
 |xref:text.adoc#font-style[Font style] +
 (default: _inherit_)
@@ -167,4 +167,3 @@ quote:
   cite:
     text-transform: smallcaps
 |===
-
