@@ -7,7 +7,9 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Enhancements::
+
+* add `callout-list-marker-font-color` theme key to control color of conum marker in callout list (#2402)
 
 == 2.3.4 (2022-10-29) - @mojavelinux
 
