@@ -1383,9 +1383,10 @@ module Asciidoctor
         @list_numerals << (index = @list_numerals.pop).next
         theme_font :conum do
           marker_width = rendered_width_of_string %(#{marker = conum_glyph index}x)
+          marker_font_color = @theme.callout_list_marker_font_color || @font_color
           float do
             bounding_box [bounds.left, cursor], width: marker_width do
-              ink_prose marker, align: :center, inline_format: false, margin: 0
+              ink_prose marker, align: :center, inline_format: false, margin: 0, color: marker_font_color
             end
           end
         end
