@@ -12,6 +12,7 @@ module Prawn
 
         def initialize pdf, opts = {}
           @font_options = {}
+          @align = @valign = @root_font_size = nil
           super pdf, [], opts
         end
 
