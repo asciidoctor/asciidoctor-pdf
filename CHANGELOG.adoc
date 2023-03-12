@@ -28,6 +28,7 @@ Enhancements::
 * add support for passing a color mode to the default optimizer (#2347)
 * support horizontal alignment on AsciiDoc table cell that only contains paragraphs (#2358)
 * allow revision content to be customized by theme (#2362)
+* add `callout-list-marker-font-color` theme key to control color of conum marker in callout list (#2402)
 
 Improvements::
 

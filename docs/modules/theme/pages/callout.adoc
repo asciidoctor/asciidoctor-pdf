@@ -71,6 +71,13 @@ callout-list:
 callout-list:
   margin-top-after-code: 0
 
+|marker-font-color
+|xref:color.adoc[Color] +
+(default: `$conum-font-color`)
+|[source]
+callout-list:
+  marker-font-color: #000000
+
 |text-align
 |xref:text.adoc#text-align[Text alignment] +
 (default: `$list-text-align`)
