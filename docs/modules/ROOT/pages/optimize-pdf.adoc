@@ -77,7 +77,7 @@ If you're in this situation, it might be best to try <<hexapdf>> instead.
 
 If you're looking for a smaller file size, you can try reducing the quality of the output file by passing a quality keyword to the `optimize` attribute (e.g., `--optimize=screen`).
 The `optimize` attribute accepts the following keywords: `default` (default, same if value is empty), `screen`, `ebook`, `printer`, and `prepress`.
-Refer to the https://www.ghostscript.com/doc/current/VectorDevices.htm#PSPDF_IN[Ghostscript documentation^] to learn what settings these presets affect.
+Refer to the https://ghostscript.readthedocs.io/en/latest/VectorDevices.html#distiller-parameters[Ghostscript documentation^] to learn what settings these presets affect.
 
  $ asciidoctor-pdf -a optimize=prepress filename.adoc
 
