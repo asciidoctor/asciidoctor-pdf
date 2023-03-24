@@ -953,7 +953,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect pdf.find_text 'divide').not_to be_empty
     end
 
-    it 'should wrap text by character when autowidth option is set and cell forces table to page boundary' do
+    it 'should force text to wrap by character when autowidth option is set and widest cell exceeds remaining space' do
       pdf = to_pdf <<~'END', analyze: true
       [%autowidth,cols=3*]
       |===
