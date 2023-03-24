@@ -1,29 +1,88 @@
 = Autowidth Tables
 
 Asciidoctor PDF supports autowidth tables.
-However, the behavior differs from HTML when the content forces the width of the table to the page boundary.
-The behavior in this scenario, handled by the prawn-table library, is explained in this section.
+However, the behavior differs from HTML when the content of a cell forces the width of the table to the page boundary.
+The behavior in this scenario, handled by the prawn-table library, is explained on this page.
 
-If the natural width of all columns (based on the width of the cell content) is less than the width of the page, the converter behaves as you'd expect.
-Each column is assigned the width it needs to prevent the content from wrapping.
+WARNING: For reasons explained on this page, you should use autowidth tables and fixed width columns in Asciidoctor PDF carefully, especially when the natural content of the cells forces the table to the page boundary.
 
-However, when the natural width of all columns exceeds the width of the page, the behavior may not be what you expect.
-What prawn-table does is compute how to arrange the table on an infinite canvas, where each column can have a width no greater than the width of the page.
-Then, it reduces the width of the table by reducing the width of each column proportionally.
-As a result, columns which reported the width necessary to render without wrapping now no longer do.
+== Compliant scenario
+
+When arranging an autowidth table, the layout engine tries to determine the natural width of the table.
+The natural width of a table is the preferred width of the widest row.
+The preferred width of a row is the combined preferred width of all the cells in that row.
+The preferred width of a cell is the width of the text without wrapping or breaking, or the width of the page if the width of the unwrapped text is wider.
+
+If the natural width of the table is less than the width of the page, the converter behaves as you'd expect.
+Each column is allocated the width it needs to prevent the content from wrapping.
+
+You can observe this behavior by trying the following example:
+
+----
+[%autowidth]
+|===
+|Operation |Operator
+
+|add
+|+
+
+|subtract
+|-
+
+|multiply
+|*
+
+|divide
+|/
+|===
+----
+
+The table is only wide as necessary to ensure that the text in each cell only occupies a single line.
+The width of each column is effectively controlled by the cell in header row, which has the widest content in the column.
+
+== Non-compliant range
+
+When the natural width of the table exceeds the width of the page, the behavior may not be what you expect.
+The problem stems from how prawn-table computes column widths.
+
+prawn-table first computes how to arrange the table on an infinite canvas, restricting each column to a width no greater than the width of the page.
+In order to fit the table on the page, it then reduces the width of each column proportionally.
+However, when it does so, it makes no attempt to prevent words from breaking.
+As a result, columns which had reported the width necessary to avoid breaking any words can no longer honor that contract.
+Any words that would overlap the edge of the column are broken and wrapped to fit within the new width.
+
+You can observe this behavior by trying the following example:
+
+----
+[%autowidth]
+|===
+|Operator |Operation |Description
+
+|add
+|+
+|Adds the left-hand side to the right-hand side.
+If the values are numbers, the values will be the sum of the two numbers.
+If the values of strings, the values will be combined to form a single string.
+|===
+----
+
+The table now stretches the width of the page since the text in the table cannot fit without wrapping.
+The width of the columns is effectively controlled by the third column, which has the widest content.
+The width of the other columns is pinched, without any regard to what those columns contain.
+Thus, we see the text in the header of the other columns break.
 
 The reason this compression is not performed like in HTML is because prawn-table has no awareness of words.
-Thus, it doesn't know how to redistribute with width intelligently.
+Thus, it doesn't know how to redistribute and balance the width intelligently.
 
-To protect against truncation or insufficient width errors, prawn-table wraps text by character.
-That's why the last character in the cell can end up getting wrapped.
+To protect against insufficient width errors, prawn-table forces text to be wrapped by character.
+That's why the words can be broken even when there's a possible way to arrange the table so that they don't.
 (There's a small amount of tolerance built in to prawn-table to address some edge cases, but it's not sufficient to handle all of them).
+
+== Fixed-width columns
 
 The wrap by character also comes into play when a column has a fixed width.
 If the width of a single word exceeds the width of the column, prawn-table has no choice but to break the word.
 If there's no break opportunity in the word, it will do so at the last possible opportunity.
 Again, that's why the last letter in the word can end up getting wrapped.
-You can avoid this arbitrary break either by enabling hyphens on the document or by introducing either a shy (\&#173;) or nbsp (\{nbsp}) somewhere in the word (e.g., `+sub&#173;processor+`)
-
-For the reasons just explained, you should be extremely careful with relying on autowidth tables and fixed width columns in Asciidoctor PDF, especially when the natural content of the cells forces the table to the page boundary.
-Let experience be your guide.
+You can avoid this arbitrary break by providing a semantic break opportunity.
+You can do so either by enabling hyphens on the document or by introducing either a shy (\&#173;) or nbsp (\{nbsp}) somewhere in the word (e.g., `+sub&#173;processor+`)
