@@ -15,6 +15,7 @@ Bug Fixes::
 
 * do not drop section that follows empty index (#2368)
 * restore bottom margin on table with `breakable` or `unbreakable` option (#2379)
+* honor theme settings for caption on table with `breakable` or `unbreakable` option (#2379)
 
 == 2.3.4 (2022-10-29) - @mojavelinux
 

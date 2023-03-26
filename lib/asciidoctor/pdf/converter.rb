@@ -1245,7 +1245,7 @@ module Asciidoctor
         if !at_page_top? && (has_title || id || (node.option? 'unbreakable'))
           arrange_block node do
             add_dest_for_block node if id
-            tare_first_page_content_stream { ink_caption node, labeled: false } if has_title
+            tare_first_page_content_stream { ink_caption node, category: (node.style === 'table-container' ? :table : nil), labeled: false } if has_title
             traverse node
           end
         else
