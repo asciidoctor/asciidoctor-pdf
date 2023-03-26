@@ -1,14 +1,22 @@
 = Extended Converter Use Cases
 :navtitle: Use Cases
 
-This page presents common use cases that can be accomplished by extending and customizing the converter.
-In xref:create-converter.adoc[], we were just biting around the edges of what you can do with an extended converter.
-This page gets into more realistic use cases.
+In xref:create-converter.adoc[], we only touched on what you can do with an extended converter.
+This page presents more realistic use cases that can be accomplished by extending and customizing the converter.
 Each section introduces a different use case and presents the code for an extended converter you can use as a starting point.
 
-TIP: The extended converter can access predefined or custom theme keys via the `theme` accessor.
+TIP: An extended converter can access predefined or custom theme keys via the `theme` accessor.
 The segments in a key are always separated by an underscore character (e.g., `theme.title_page_font_color`).
 Consulting the value of theme keys allows the extra behavior provided by the extended converter to be styled using the theme.
+
+The source code for each use case on this page can be found in the {url-project-repo}/tree/{page-origin-refname}/docs/modules/extend/examples[docs/modules/extend/examples] directory in the Asciidoctor PDF repository.
+To use one of them, you can either download the script to your local disk or clone the Asciidoctor PDF repository.
+Once you have done so, refer to xref:use-converter.adoc[] to learn how to register and use it with Asciidoctor PDF.
+For example, to register and use the extended converter that allows you to theme admonitions by type, you'd use this command:
+
+ $ asciidoctor-pdf -r pdf-converter-admonition-theme-per-type.rb doc.adoc
+
+Refer to the sections below for details about how to use each extended converter.
 
 == Custom thematic break
 
