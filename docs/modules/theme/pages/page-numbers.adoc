@@ -39,10 +39,12 @@ page:
 
 The `start-at` key accepts the following keywords or an integer:
 
-after-toc:: The integer page numbering starts after the TOC, no matter where the TOC is placed in the document.
+after-toc:: The integer page numbering starts after the last page of the TOC, no matter where the TOC is placed in the document.
 The `after-toc` value is only recognized if the title page is implicitly or explicitly enabled.
+If `media=prepress`, this keyword refers to the first recto page after the last page of the TOC (it will skip an empty verso page).
 body:: This is the default value.
 The integer page numbering starts on the first page of the document body, which is typically the first page after the TOC if the TOC is in its default location.
+If `media=prepress`, this keyword refers to the first recto page after the last page of the TOC (it will skip an empty verso page).
 cover:: The integer page numbering starts on the front cover page of the document.
 The `cover` value is only recognized if the document has a front cover page (i.e., `front-cover-image`).
 title:: The integer page numbering starts on the title page.

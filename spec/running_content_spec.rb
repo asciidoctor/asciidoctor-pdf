@@ -452,6 +452,34 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect pgnum_labels.slice 0, 5).to eql [nil, nil, nil, nil, '1']
     end
 
+    it 'should start running content and page numbering on recto page after toc when both start at keys are after-toc and macro toc is used' do
+      pdf = to_pdf <<~END, pdf_theme: { running_content_start_at: 'after-toc', page_numbering_start_at: 'after-toc' }, enable_footer: true, analyze: true
+      = Document Title
+      :doctype: book
+      :toc: macro
+      :media: prepress
+
+      [abstract]
+      .Abstract
+      Documentation is a distillation of many long adventures.
+
+      toc::[]
+
+      == First Chapter
+
+      == Second Chapter
+      END
+
+      first_chapter_page_text = (pdf.page 7)[:text]
+      (expect first_chapter_page_text).to have_size 2
+      (expect first_chapter_page_text[0][:string]).to eql 'First Chapter'
+      (expect first_chapter_page_text[1][:string]).to eql '1'
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+      end
+      (expect pgnum_labels).to eql [nil, nil, nil, nil, nil, nil, '1', '2', '3']
+    end
+
     it 'should start running content at title page if running_content_start_at key is title' do
       pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { running_content_start_at: 'title' }, analyze: true
       = Document Title

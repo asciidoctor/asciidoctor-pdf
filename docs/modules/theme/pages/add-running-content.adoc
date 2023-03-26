@@ -36,8 +36,10 @@ The `start-at` key accepts the following keywords or an integer:
 
 after-toc:: The running content starts after the TOC, no matter where the TOC is placed in the document.
 The `after-toc` value is only recognized if the title page is implicitly or explicitly enabled.
+If `media=prepress`, this keyword refers to the first recto page after the last page of the TOC (it will skip an empty verso page).
 body:: This is the default value.
 The running content starts on the first page of the document body, which is typically the first page after the TOC if the TOC is in its default location.
+If `media=prepress`, this keyword refers to the first recto page after the last page of the TOC (it will skip an empty verso page).
 title:: The running content starts on the title page.
 The `title` value is only recognized if the title page is implicitly or explicitly enabled.
 toc:: The running content starts on the first page of the TOC.
