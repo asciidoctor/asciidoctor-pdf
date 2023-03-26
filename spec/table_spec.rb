@@ -3223,5 +3223,47 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       table_dest = get_dest pdf, 't1'
       (expect table_dest[:page_number]).to be 2
     end
+
+    it 'should not collapse margin below table with %unbreakable option' do
+      pdf = to_pdf <<~END, analyze: true
+      before
+
+      [%unbreakable]
+      |===
+      | will not be broken
+      |===
+
+      after
+      END
+
+      before_text = pdf.find_unique_text 'before'
+      table_text = pdf.find_unique_text 'will not be broken'
+      after_text = pdf.find_unique_text 'after'
+      margin_above = (before_text[:y] - table_text[:y]).round 2
+      margin_below = (table_text[:y] - after_text[:y]).round 2
+      (expect margin_below).to eql margin_above
+    end
+
+    it 'should not collapse margin below table with %breakable option' do
+      pdf = to_pdf <<~END, pdf_theme: { caption_font_size: 10.5, table_cell_padding: 0 }, analyze: true
+      before
+
+      .title
+      [%breakable]
+      |===
+      | will not be separated from title
+      |===
+
+      after
+      END
+
+      before_text = pdf.find_unique_text 'before'
+      title_text = pdf.find_unique_text 'Table 1. title'
+      table_text = pdf.find_unique_text 'will not be separated from title'
+      after_text = pdf.find_unique_text 'after'
+      margin_above = (before_text[:y] - title_text[:y]).round 2
+      margin_below = (table_text[:y] - after_text[:y]).round 2
+      (expect margin_below).to eql margin_above
+    end
   end
 end
