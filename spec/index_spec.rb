@@ -76,9 +76,15 @@ describe 'Asciidoctor::PDF::Converter - Index' do
 
     [index]
     == Index
+
+    [glossary]
+    == Glossary
     END
 
+    (expect pdf.pages).to have_size 4
     (expect (pdf.page 2).text).not_to include 'Index'
+    (expect (pdf.page 2).text).to include 'Glossary'
+    (expect (pdf.page 4).text).to include 'Glossary'
   end
 
   it 'should add the index entries to the section with the index style' do
