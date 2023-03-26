@@ -3,7 +3,7 @@
 
 == Require the extended converter
 
-To use this converter, require it by passing the path to the `-r` flag when calling the `asciidoctor-pdf` command:
+To use an extended converter, require it by passing the path to the `-r` flag when calling the `asciidoctor-pdf` command:
 
  $ asciidoctor-pdf -r ./extended-pdf-converter.rb doc.adoc
 
