@@ -3314,5 +3314,24 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       margin_below = (table_text[:y] - after_text[:y]).round 2
       (expect margin_below).to eql margin_above
     end
+
+    it 'should honor theme settings for caption on table that is enclosed in container' do
+      pdf = to_pdf <<~END, pdf_theme: { table_caption_font_color: '00ffff', table_caption_align: 'center' }, analyze: true
+      before
+
+      .title
+      [%breakable]
+      |===
+      | will not be separated from title
+      |===
+
+      after
+      END
+
+      before_text = pdf.find_unique_text 'before'
+      title_text = pdf.find_unique_text 'Table 1. title'
+      (expect title_text[:font_color]).to eql '00FFFF'
+      (expect title_text[:x]).to be > before_text[:x]
+    end
   end
 end
