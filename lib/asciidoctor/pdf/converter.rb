@@ -1988,13 +1988,15 @@ module Asciidoctor
 
       def convert_table node
         if !at_page_top? && ((unbreakable = node.option? 'unbreakable') || ((node.option? 'breakable') && (node.id || node.title?)))
-          (table_container = Block.new (table_dup = node.dup), :open) << table_dup
+          # NOTE: we use the current node as the parent so we can navigate back into the document model
+          (table_container = Block.new node, :open) << (table_dup = node.dup)
           if unbreakable
             table_dup.remove_attr 'unbreakable-option'
             table_container.set_attr 'unbreakable-option'
           else
             table_dup.remove_attr 'breakable-option'
           end
+          table_container.style = 'table-container'
           table_container.id, table_dup.id = table_dup.id, nil
           if table_dup.title?
             table_container.title = ''
@@ -4054,7 +4056,9 @@ module Asciidoctor
         end
         siblings = siblings.flatten if parent_context == :dlist
         if block != siblings[-1]
-          (self_idx = siblings.index block) && siblings[self_idx + 1]
+          context == :open && block.style == 'table-container' ?
+            (next_enclosed_block parent) :
+            (self_idx = siblings.index block) && siblings[self_idx + 1]
         elsif parent_context == :list_item || (parent_context == :open && parent.style != 'abstract') || parent_context == :section
           next_enclosed_block parent
         elsif list_item && (grandparent = parent.parent).context == :list_item
