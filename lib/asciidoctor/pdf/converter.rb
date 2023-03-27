@@ -627,7 +627,8 @@ module Asciidoctor
           sect.context = :open
           return convert_abstract sect
         elsif (index_section = sectname == 'index') && @index.empty?
-          sect.remove
+          # override numbered_title to hide entry from TOC
+          sect.define_singleton_method :numbered_title, &->(*) { '' }
           return
         end
         title = sect.numbered_title formal: true

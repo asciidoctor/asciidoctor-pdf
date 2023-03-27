@@ -11,6 +11,10 @@ Enhancements::
 
 * add `callout-list-marker-font-color` theme key to control color of conum marker in callout list (#2402)
 
+Bug Fixes::
+
+* do not drop section that follows empty index (#2368)
+
 == 2.3.4 (2022-10-29) - @mojavelinux
 
 Bug Fixes::
