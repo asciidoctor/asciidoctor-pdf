@@ -47,6 +47,7 @@ Bug Fixes::
 * fix collation order of index terms that differ only in case
 * don't crash if page background image value is empty (interpret as "none")
 * prevent special character substitution from interfering with callouts in plain verbatim block (#2390)
+* do not drop section that follows empty index (#2368)
 
 == 2.3.4 (2022-10-29) - @mojavelinux
 
