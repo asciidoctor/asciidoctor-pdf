@@ -35,7 +35,6 @@ Improvements::
 * process `pre-wrap` role in text formatter
 * drop support for the unmaintained payment font (`pf`) for use in font-based icons
 * refactor formatted text transform to simplify how inner space is collapsed; verify only inner hard breaks are preserved
-* use first recto page after toc when media is prepress and page numbering or running content start-at value is `after-toc` (#2398)
 
 Bug Fixes::
 
@@ -52,6 +51,7 @@ Bug Fixes::
 * don't crash if page background image value is empty (interpret as "none")
 * prevent special character substitution from interfering with callouts in plain verbatim block (#2390)
 * do not drop section that follows empty index (#2368)
+* use first recto page after toc when media is prepress and page numbering or running content start-at value is `after-toc` (#2398)
 
 == 2.3.4 (2022-10-29) - @mojavelinux
 
