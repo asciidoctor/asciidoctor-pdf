@@ -299,8 +299,12 @@ module Asciidoctor
 
           if (toc_extent = @toc_extent)
             if title_page_on && !insert_toc
-              num_front_matter_pages[0] = toc_extent.to.page if @theme.running_content_start_at == 'after-toc'
-              num_front_matter_pages[1] = toc_extent.to.page if @theme.page_numbering_start_at == 'after-toc'
+              if @theme.running_content_start_at == 'after-toc' || @theme.page_numbering_start_at == 'after-toc' # rubocop:disable Style/SoleNestedConditional
+                last_toc_page = toc_extent.to.page
+                last_toc_page += 1 if @ppbook && (recto_page? last_toc_page)
+                num_front_matter_pages[0] = last_toc_page if @theme.running_content_start_at == 'after-toc'
+                num_front_matter_pages[1] = last_toc_page if @theme.page_numbering_start_at == 'after-toc'
+              end
             end
             toc_page_nums = ink_toc doc, toc_num_levels, toc_extent.from.page, toc_extent.from.cursor, num_front_matter_pages[1]
           else
