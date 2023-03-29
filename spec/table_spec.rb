@@ -1979,7 +1979,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect (markers_x[0] - left_edge).round 2).to eql reference_x
     end
 
-    it 'should capture footnotes in AsciiDoc table cell and render them with other footnotes' do
+    it 'should capture footnote in AsciiDoc table cell and render them with other footnotes' do
       pdf = to_pdf <<~'EOS', analyze: true
       before{empty}footnote:[Footnote before table]
 
@@ -1997,6 +1997,28 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         '[1] Footnote before table',
         '[2] Footnote inside table',
         '[3] Footnote after table',
+      ]
+      (expect pdf.lines).to eql expected_lines
+    end
+
+    it 'should capture footnotes in multiple AsciiDoc table cells and render them with other footnotes' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [cols=1a]
+      |===
+      |first{empty}footnote:[First footnote inside table]
+      |second{empty}footnote:[Second footnote inside table]
+      |===
+
+      third{empty}footnote:[Footnote outside of table]
+      EOS
+
+      expected_lines = [
+        'first[1]',
+        'second[2]',
+        'third[3]',
+        '1. First footnote inside table',
+        '2. Second footnote inside table',
+        '3. Footnote outside of table',
       ]
       (expect pdf.lines).to eql expected_lines
     end

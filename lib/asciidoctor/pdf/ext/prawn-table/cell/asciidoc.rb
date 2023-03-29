@@ -42,14 +42,12 @@ module Prawn
           apply_font_properties do
             extent = @pdf.dry_run keep_together: true, single_page: true do
               push_scratch parent_doc
-              doc.catalog[:footnotes] = parent_doc.catalog[:footnotes]
               # NOTE: we should be able to use cell.max_width, but returns 0 in some conditions (like when colspan > 1)
               indent cell.padding_left, bounds.width - cell.width + cell.padding_right do
                 move_down padding_y if padding_y > 0
                 conceal_page_top { traverse cell.content }
               end
               pop_scratch parent_doc
-              doc.catalog[:footnotes] = parent_doc.catalog[:footnotes]
             end
           end
           # NOTE: prawn-table doesn't support cells that exceed the height of a single page
@@ -90,6 +88,8 @@ module Prawn
           #   end
           # end
           start_page = pdf.page_number
+          parent_doc = (doc = content.document).nested? ? doc.parent_document : doc
+          doc.catalog[:footnotes] = parent_doc.catalog[:footnotes]
           # TODO: apply horizontal alignment; currently it is necessary to specify alignment on content blocks
           apply_font_properties { pdf.traverse content }
           if (extra_pages = pdf.page_number - start_page) > 0
