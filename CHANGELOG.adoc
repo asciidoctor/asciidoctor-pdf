@@ -17,6 +17,7 @@ Bug Fixes::
 * do not drop section that follows empty index (#2368)
 * restore bottom margin on table with `breakable` or `unbreakable` option (#2379)
 * honor theme settings for caption on table with `breakable` or `unbreakable` option (#2379)
+* use first recto page after toc when media is prepress and page numbering or running content start-at value is `after-toc` (#2398)
 
 == 2.3.4 (2022-10-29) - @mojavelinux
 
