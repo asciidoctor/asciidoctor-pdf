@@ -2016,9 +2016,9 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         'first[1]',
         'second[2]',
         'third[3]',
-        '1. First footnote inside table',
-        '2. Second footnote inside table',
-        '3. Footnote outside of table',
+        '[1] First footnote inside table',
+        '[2] Second footnote inside table',
+        '[3] Footnote outside of table',
       ]
       (expect pdf.lines).to eql expected_lines
     end
@@ -3247,7 +3247,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should not collapse margin below table with %unbreakable option' do
-      pdf = to_pdf <<~END, analyze: true
+      pdf = to_pdf <<~'EOS', analyze: true
       before
 
       [%unbreakable]
@@ -3256,7 +3256,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
 
       after
-      END
+      EOS
 
       before_text = pdf.find_unique_text 'before'
       table_text = pdf.find_unique_text 'will not be broken'
@@ -3267,7 +3267,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should not collapse margin below table with %breakable option' do
-      pdf = to_pdf <<~END, pdf_theme: { caption_font_size: 10.5, table_cell_padding: 0 }, analyze: true
+      pdf = to_pdf <<~'EOS', pdf_theme: { caption_font_size: 10.5, table_cell_padding: 0 }, analyze: true
       before
 
       .title
@@ -3277,7 +3277,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
 
       after
-      END
+      EOS
 
       before_text = pdf.find_unique_text 'before'
       title_text = pdf.find_unique_text 'Table 1. title'
@@ -3289,7 +3289,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should honor theme settings for caption on table that is enclosed in container' do
-      pdf = to_pdf <<~END, pdf_theme: { table_caption_font_color: '00ffff', table_caption_align: 'center' }, analyze: true
+      pdf = to_pdf <<~'EOS', pdf_theme: { table_caption_font_color: '00ffff', table_caption_align: 'center' }, analyze: true
       before
 
       .title
@@ -3299,7 +3299,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       |===
 
       after
-      END
+      EOS
 
       before_text = pdf.find_unique_text 'before'
       title_text = pdf.find_unique_text 'Table 1. title'
