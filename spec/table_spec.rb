@@ -2562,7 +2562,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
     it 'should not warn if cell overflows page without adding content to subsequent page' do
       (expect do
-        pdf = to_pdf <<~END, analyze: true
+        pdf = to_pdf <<~'END', analyze: true
         |===
         a|
         paragraph
@@ -2601,7 +2601,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should preserve left margin on page that follows page containing a table with an AsciiDoc table cell' do
-      pdf = to_pdf <<~END, analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       == Section Title
 
       image::tall.svg[pdfwidth=38mm]
@@ -3296,7 +3296,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should not collapse margin below table with %unbreakable option' do
-      pdf = to_pdf <<~END, analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       before
 
       [%unbreakable]
@@ -3316,7 +3316,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should not collapse margin below table with %breakable option' do
-      pdf = to_pdf <<~END, pdf_theme: { caption_font_size: 10.5, table_cell_padding: 0 }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { caption_font_size: 10.5, table_cell_padding: 0 }, analyze: true
       before
 
       .title
@@ -3338,7 +3338,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should honor theme settings for caption on table that is enclosed in container' do
-      pdf = to_pdf <<~END, pdf_theme: { table_caption_font_color: '00ffff', table_caption_align: 'center' }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { table_caption_font_color: '00ffff', table_caption_align: 'center' }, analyze: true
       before
 
       .title
