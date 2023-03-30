@@ -358,7 +358,7 @@ admonition:
       width: 24
 |===
 
-[#name]
+[#icon]
 === Identifying an icon
 
 The `name` key assigned to a built-in admonition only accepts a value in the format of <icon set>-<icon name>`.
@@ -366,3 +366,18 @@ A value is always required when assigning an icon to a built-in admonition.
 See the `.yml` files in the https://github.com/jessedoyle/prawn-icon/tree/master/data/fonts[prawn-icon repository^] for a list of valid icon names.
 The prefix (e.g., `fas-`) of the value determines which font set to use.
 If the prefix is not specified, `fa-` is assumed.
+
+[#name]
+== admonition-<name>
+
+Asciidoctor PDF does not currently support theming admonitions by name (i.e., type).
+In other words, the theming system doesn't provide the `admonition-<name>` category key, where `<name>` is the admonition name (e.g., note, tip, etc).
+That means it's not possible to apply a background color to one admonition type, such as NOTE, without applying it to all admonitions.
+However, it is possible to extend Asciidoctor PDF to add this capability.
+
+In order to add support for the `admonition-<name>` category key to the theming system, you need to create an extended converter.
+That converter will intercept requests to convert an admonition and temporarily promote settings on the `admonition-<name>` category key to the `admonition` category key.
+Once the admonition is converted (i.e., rendered), the original theme settings will be restored.
+
+You can find the details of this extended converter in the xref:extend:use-cases.adoc#theme-admonition-per-type[theme admonition per type] use case on the xref:extend:use-cases.adoc[] page.
+To apply the extension, refer to xref:extend:use-converter.adoc[].
