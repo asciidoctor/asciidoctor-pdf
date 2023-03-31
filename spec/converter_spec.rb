@@ -264,6 +264,26 @@ describe Asciidoctor::PDF::Converter do
         (expect pdf.find_text font_name: 'Times-Roman').to have_size pdf.text.size
       end
 
+      it 'should resolve theme at root of classloader when pdf-themesdir is uri:classloader:/', if: RUBY_ENGINE == 'jruby' do
+        require fixture_file 'pdf-themes.jar'
+        pdf = to_pdf <<~'END', attribute_overrides: { 'pdf-themesdir' => 'uri:classloader:/', 'pdf-theme' => 'custom' }, analyze: true
+        hi there
+        END
+
+        text = pdf.find_unique_text 'hi there'
+        (expect text[:font_color]).to eql '0000FF'
+      end
+
+      it 'should resolve theme from folder in classloader when pdf-themesdir starts with uri:classloader:', if: RUBY_ENGINE == 'jruby' do
+        require fixture_file 'pdf-themes.jar'
+        pdf = to_pdf <<~'END', attribute_overrides: { 'pdf-themesdir' => 'uri:classloader:/pdf-themes', 'pdf-theme' => 'another-custom' }, analyze: true
+        hi there
+        END
+
+        text = pdf.find_unique_text 'hi there'
+        (expect text[:font_color]).to eql 'FF0000'
+      end
+
       it 'should set text color to black when default-for-print theme is specified' do
         pdf = to_pdf <<~END, analyze: true
         = Document Title
