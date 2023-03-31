@@ -52,6 +52,7 @@ Bug Fixes::
 * prevent special character substitution from interfering with callouts in plain verbatim block (#2390)
 * do not drop section that follows empty index (#2368)
 * use first recto page after toc when media is prepress and page numbering or running content start-at value is `after-toc` (#2398)
+* remove deprecated, undocumented `svg-font-family` theme key (the correct key is `svg-fallback-font-family`)
 
 == 2.3.4 (2022-10-29) - @mojavelinux
 

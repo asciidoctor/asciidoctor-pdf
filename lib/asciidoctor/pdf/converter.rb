@@ -3021,7 +3021,7 @@ module Asciidoctor
       end
 
       def fallback_svg_font_name
-        @theme.svg_fallback_font_family || @theme.svg_font_family || @theme.base_font_family
+        @theme.svg_fallback_font_family || @theme.base_font_family
       end
 
       # Add an indentation guard at the start of indented lines.
