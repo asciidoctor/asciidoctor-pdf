@@ -29,6 +29,7 @@ Enhancements::
 * support horizontal alignment on AsciiDoc table cell that only contains paragraphs (#2358)
 * allow revision content to be customized by theme (#2362)
 * add `callout-list-marker-font-color` theme key to control color of conum marker in callout list (#2402)
+* add symbols for command, option, and retrun keys to the fallback font
 
 Improvements::
 

@@ -233,6 +233,8 @@ while (fi < num_copy_fonts)
         SelectMore(0u4e00,0u9faf)
         # Additional math characters (lceil, rceil, lfloor, rfloor)
         SelectMoreSingletons(0u2308,0u2309,0u230a,0u230b)
+        # Key Symbols (e.g., cmd, shift, option, return)
+        SelectMoreSingletons(0u2318,0u21e7,0u2325,0u23ce)
       endif
     endif
     #if (script == "fallback")
