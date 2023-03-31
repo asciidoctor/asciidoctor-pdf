@@ -42,6 +42,8 @@ ifeval::["{pdf-theme}"=="default-with-font-fallbacks"]
 upsid&#x0259; down
 // extended monospace punctuation
 `&#x2022;`
+// symbols for keys
+&#x21e7; &#x2318; &#x2325; &#x23ce;
 // CJK
 &#x3041;&#x3000;&#x3088;
 endif::[]
