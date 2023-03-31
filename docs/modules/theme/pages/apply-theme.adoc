@@ -8,6 +8,7 @@ This is done using AsciiDoc attributes.
 There are three AsciiDoc attributes that tell Asciidoctor PDF how to locate and apply your theme.
 
 pdf-theme:: The name or file path of the theme to load.
+When using JRuby, the file path may begin with `uri:classloader:` to reference a location on the classpath.
 +
 If the value of the `pdf-theme` attribute ends with `.yml` (e.g., `custom-theme.yml`), the name is assumed to be an absolute or relative file path.
 If the path is relative, it's resolved starting from the value of the `pdf-themesdir` attribute.
@@ -21,7 +22,8 @@ You can use the `+{docdir}+` token as the first path segment in the name to buil
 +
 Can be specified using the `--theme` CLI option as a shorthand.
 
-pdf-themesdir:: The directory where the theme file is located.
+pdf-themesdir:: The directory path where the theme file is located.
+When using JRuby, the directory path may begin with `uri:classloader:` to reference a location on the classpath.
 +
 If the path is relative, the value is resolved starting from the current working directory.
 You can use the `+{docdir}+` token as the first path segment to build an absolute path starting from the directory of the source document.
@@ -29,7 +31,8 @@ You can use the `+{docdir}+` token as the first path segment to build an absolut
 Relative image paths in your theme are resolved starting from this location.
 (In the future, these relative paths may be resolved starting from the directory where the theme file is located, which could be different).
 
-pdf-fontsdir:: The directory or directories where the fonts used by your theme, if any, are located.
+pdf-fontsdir:: The directory path or paths where the fonts used by your theme, if any, are located.
+When using JRuby, each path may begin with `uri:classloader:` to reference a location on the classpath.
 +
 Multiple entries must be separated by either a comma or a semicolon.
 To reference a file inside a JAR file on the classpath, prefix with the path with `uri:classloader:` (AsciidoctorJ only).
