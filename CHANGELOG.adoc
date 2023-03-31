@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.3.5 (2023-03-31) - @mojavelinux
 
 Enhancements::
 
@@ -18,6 +18,10 @@ Bug Fixes::
 * restore bottom margin on table with `breakable` or `unbreakable` option (#2379)
 * honor theme settings for caption on table with `breakable` or `unbreakable` option (#2379)
 * use first recto page after toc when media is prepress and page numbering or running content start-at value is `after-toc` (#2398)
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.5[git tag] | {url-repo}/compare/v2.3.4\...v2.3.5[full diff]
 
 == 2.3.4 (2022-10-29) - @mojavelinux
 
