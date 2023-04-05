@@ -7,7 +7,9 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Bug Fixes::
+
+* rework `File.absolute_path?` patch so it returns correct response when running on JRuby
 
 == 2.3.5 (2023-03-31) - @mojavelinux
 
