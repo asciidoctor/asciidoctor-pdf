@@ -3727,7 +3727,7 @@ module Asciidoctor
             if logo_image_from_theme
               relative_to_imagesdir = false
               logo_image_path = apply_subs_discretely doc, $1, subs: [:attributes], imagesdir: @themesdir
-              logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @themesdir unless doc.is_uri? logo_image_path
+              logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @themesdir unless (::File.absolute_path? logo_image_path) || (doc.is_uri? logo_image_path)
             else
               relative_to_imagesdir = true
               logo_image_path = $1
@@ -3737,7 +3737,7 @@ module Asciidoctor
             relative_to_imagesdir = false
             if logo_image_from_theme
               logo_image_path = apply_subs_discretely doc, logo_image_path, subs: [:attributes], imagesdir: @themesdir
-              logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @themesdir unless doc.is_uri? logo_image_path
+              logo_image_path = ThemeLoader.resolve_theme_asset logo_image_path, @themesdir unless (::File.absolute_path? logo_image_path) || (doc.is_uri? logo_image_path)
             end
           end
           if (::Asciidoctor::Image.target_and_format logo_image_path)[1] == 'pdf'

@@ -794,7 +794,11 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should add logo specified by title_page_logo_image theme key to title page' do
-      pdf = to_pdf <<~'END', pdf_theme: { title_page_logo_image: 'image:{docdir}/tux.png[]' }, attribute_overrides: { 'docdir' => fixtures_dir }
+      pdf_theme = {
+        __dir__: fixtures_dir,
+        title_page_logo_image: 'image:tux.png[]',
+      }
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }
       = Document Title
       :doctype: book
       END
@@ -803,6 +807,22 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
       (expect images).to have_size 1
       (expect images[0].hash[:Width]).to be 204
       (expect images[0].hash[:Height]).to be 240
+    end
+
+    it 'should use title page logo image if specified as absolute path' do
+      %w({docdir}/tux.png image:{docdir}/tux.png[]).each do |title_page_logo_image|
+        pdf_theme = { title_page_logo_image: title_page_logo_image }
+
+        pdf = to_pdf <<~'END', pdf_theme: pdf_theme, attribute_overrides: { 'docdir' => fixtures_dir }
+        = Document Title
+        :doctype: book
+        END
+
+        images = get_images pdf, 1
+        (expect images).to have_size 1
+        (expect images[0].hash[:Width]).to be 204
+        (expect images[0].hash[:Height]).to be 240
+      end
     end
 
     it 'should resolve title page logo image specified using path in theme relative to themesdir' do
