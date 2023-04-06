@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Install Ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -86,7 +86,7 @@ jobs:
       RGHOST_VERSION: '0.9.7'
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         fetch-depth: 5
     - name: Install Ruby
