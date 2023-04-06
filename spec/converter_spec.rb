@@ -266,9 +266,9 @@ describe Asciidoctor::PDF::Converter do
 
       it 'should resolve theme at root of classloader when pdf-themesdir is uri:classloader:/', if: RUBY_ENGINE == 'jruby' do
         require fixture_file 'pdf-themes.jar'
-        pdf = to_pdf <<~'END', attribute_overrides: { 'pdf-themesdir' => 'uri:classloader:/', 'pdf-theme' => 'custom' }, analyze: true
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-themesdir' => 'uri:classloader:/', 'pdf-theme' => 'custom' }, analyze: true
         hi there
-        END
+        EOS
 
         text = pdf.find_unique_text 'hi there'
         (expect text[:font_color]).to eql '0000FF'
@@ -276,9 +276,9 @@ describe Asciidoctor::PDF::Converter do
 
       it 'should resolve theme from folder in classloader when pdf-themesdir starts with uri:classloader:', if: RUBY_ENGINE == 'jruby' do
         require fixture_file 'pdf-themes.jar'
-        pdf = to_pdf <<~'END', attribute_overrides: { 'pdf-themesdir' => 'uri:classloader:/pdf-themes', 'pdf-theme' => 'another-custom' }, analyze: true
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-themesdir' => 'uri:classloader:/pdf-themes', 'pdf-theme' => 'another-custom' }, analyze: true
         hi there
-        END
+        EOS
 
         text = pdf.find_unique_text 'hi there'
         (expect text[:font_color]).to eql 'FF0000'
