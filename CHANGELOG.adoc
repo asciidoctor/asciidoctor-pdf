@@ -48,7 +48,16 @@ Bug Fixes::
 * don't crash if page background image value is empty (interpret as "none")
 * prevent special character substitution from interfering with callouts in plain verbatim block (#2390)
 * remove deprecated, undocumented `svg-font-family` theme key (the correct key is `svg-fallback-font-family`)
+
+== 2.3.6 (2023-04-09) - @mojavelinux
+
+Bug Fixes::
+
 * rework `File.absolute_path?` patch so it returns correct response when running on JRuby
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.6[git tag] | {url-repo}/compare/v2.3.5\...v2.3.6[full diff]
 
 == 2.3.5 (2023-03-31) - @mojavelinux
 
