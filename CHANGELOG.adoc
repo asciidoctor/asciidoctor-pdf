@@ -5,11 +5,15 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.3.6 (2023-04-09) - @mojavelinux
 
 Bug Fixes::
 
 * rework `File.absolute_path?` patch so it returns correct response when running on JRuby
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.6[git tag] | {url-repo}/compare/v2.3.5\...v2.3.6[full diff]
 
 == 2.3.5 (2023-03-31) - @mojavelinux
 
