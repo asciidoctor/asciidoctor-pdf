@@ -11,7 +11,7 @@ If you want to customize the layout and styling of the PDF, you can extend one o
 
 == Theme configuration and language
 
-The Asciidoctor PDF theming system is driven by a YAML configuration file.
+The Asciidoctor PDF theming system is driven by a YAML data file.
 The Asciidoctor PDF theme language is described using https://en.wikipedia.org/wiki/YAML[YAML] and incorporates many _concepts_ from CSS and SASS, such as selectors, properties, and inheritance.
 Therefore, if you have a background in web design, the terminology should be immediately familiar to you.
 *Note, however, that the theming system is not actually CSS.*

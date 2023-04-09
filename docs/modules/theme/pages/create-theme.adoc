@@ -2,7 +2,7 @@
 :page-aliases: extend-theme.adoc
 :description: Create a PDF theme by extending a built-in theme or starting one from scratch.
 
-Asciidoctor PDF allows you to create your own theme, which you define using a YAML configuration file.
+Asciidoctor PDF allows you to create your own theme, which you define using a YAML data file.
 When creating a theme, you have the option to extend a built-in theme and gradually layer on your customizations or to develop a theme from scratch.
 This page explains both approaches and the advantages of each.
 
@@ -11,7 +11,7 @@ Otherwise, Asciidoctor PDF will fall back to the built-in AFM fonts in PDF, whic
 
 == New theme basics
 
-An Asciidoctor PDF theme is defined using a YAML configuration file that ends with `-theme.yml` (e.g., [.path]_my-theme.yml_).
+An Asciidoctor PDF theme is defined using a YAML data file that ends with `-theme.yml` (e.g., [.path]_my-theme.yml_).
 No keys are actually required.
 Each key you specify will customize the styling in some way that differs from the intrinsic defaults.
 
