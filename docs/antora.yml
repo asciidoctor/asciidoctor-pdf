@@ -9,7 +9,6 @@ asciidoc:
     release-line: '3.0.x'
     url-gem: https://rubygems.org/gems/asciidoctor-pdf
     url-project-repo: https://github.com/asciidoctor/asciidoctor-pdf
-    url-repo-root: https://github.com/asciidoctor/asciidoctor-pdf/tree/main
     url-project-issues: https://github.com/asciidoctor/asciidoctor-pdf/issues
     url-api-docs: https://www.rubydoc.info/github/asciidoctor/asciidoctor-pdf/Asciidoctor/PDF/Converter
     url-prawn: https://prawnpdf.org

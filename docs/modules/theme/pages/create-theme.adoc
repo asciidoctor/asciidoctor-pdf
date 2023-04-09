@@ -161,7 +161,7 @@ extends: ~
 Although no theme keys are set in this case, Asciidoctor PDF will still resort to using fallback values when a theme setting is required.
 Thus, "`from scratch`" really means mostly from scratch.
 
-If you choose not to extend a theme, you should consult the {url-repo-root}/data/themes/base-theme.yml[base theme] to discover which keys you'll need to set to support the visual hierarchy and styling of core block and inline elements.
+If you choose not to extend a theme, you should consult the {url-project-repo}/blob/{page-origin-refname}/data/themes/base-theme.yml[base theme^] to discover which keys you'll need to set to support the visual hierarchy and styling of core block and inline elements.
 You can also find the location of the [.path]_data/themes_ directory on your local disk by running the following command:
 
  $ gem contents asciidoctor-pdf --show-install-dir

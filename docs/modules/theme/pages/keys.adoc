@@ -11,9 +11,9 @@ This nested structure is for organizational purposes only.
 All keys are flatted when the theme is loaded (e.g., `text-align` nested under `base` becomes `base-text-align`).
 
 The converter uses the values of these keys to control how most elements are arranged and styled in the PDF.
-The default values listed in this section get inherited from the {url-repo-root}/data/themes/base-theme.yml[base theme^].
+The default values listed in this section get inherited from the {url-project-repo}/blob/{page-origin-refname}/data/themes/base-theme.yml[base theme^].
 
-IMPORTANT: The {url-repo-root}/data/themes/default-theme.yml[default theme^] has a different set of values which are not shown in this guide.
+IMPORTANT: The {url-project-repo}/blob/{page-origin-refname}/data/themes/default-theme.yml[default theme^] has a different set of values which are not shown in this guide.
 
 When creating a theme that extends the base theme, all keys are optional.
 Required keys are provided by the base theme.

@@ -109,5 +109,5 @@ Performing all this font modification manually can be tedious (not to mention ha
 Fortunately, FontForge provides a {url-fontforge-scripting}[scripting interface^], which you can use to automate the process.
 
 In fact, that's what we use to prepare the fonts that are bundled with Asciidoctor PDF.
-You can find that FontForge script, the Bash script that calls it, and the Docker image in which it is run in the {url-repo-root}/scripts[scripts directory^] of this project.
+You can find that FontForge script, the Bash script that calls it, and the Docker image in which it is run in the {url-project-repo}/tree/{page-origin-refname}/scripts[scripts directory^] of this project.
 You can use that script as a starting point or reference for your own font preparation / modification script.
