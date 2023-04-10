@@ -1225,6 +1225,20 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       (expect attr_name_text[:font_color]).to eql '4F9FCF'
       (expect (pdf.find_text '①')[0]).not_to be_nil
     end
+
+    it 'should not crash if source highlighter is enabled and subs is set on empty block' do
+      (expect do
+        input = <<~'END'
+        [source,ruby,subs=attributes+]
+        ----
+        ----
+        END
+        lines = (to_pdf input, attribute_overrides: { 'source-highlighter' => 'coderay' }, analyze: :line).lines
+        text = (to_pdf input, attribute_overrides: { 'source-highlighter' => 'coderay' }, analyze: true).text
+        (expect (lines[0][:from][:y] - lines[1][:from][:y]).abs).to be < 5
+        (expect text).to be_empty
+      end).not_to raise_exception
+    end
   end
 
   context 'Pygments' do

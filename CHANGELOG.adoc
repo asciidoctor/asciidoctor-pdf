@@ -48,6 +48,7 @@ Bug Fixes::
 * don't crash if page background image value is empty (interpret as "none")
 * prevent special character substitution from interfering with callouts in plain verbatim block (#2390)
 * remove deprecated, undocumented `svg-font-family` theme key (the correct key is `svg-fallback-font-family`)
+* don't crash if source block with custom subs is empty and source highlighter is enabled
 
 == 2.3.6 (2023-04-09) - @mojavelinux
 

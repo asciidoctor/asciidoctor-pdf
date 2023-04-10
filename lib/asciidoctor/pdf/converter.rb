@@ -1086,8 +1086,9 @@ module Asciidoctor
                   callouts_enabled = false
                 end
                 subs[highlight_idx] = :specialcharacters
+                source_string = node.content || ''
                 # NOTE: indentation guards will be added by the source highlighter logic
-                source_string = expand_tabs unescape_xml (sanitize node.content, compact: false)
+                source_string = expand_tabs unescape_xml (sanitize source_string, compact: false) unless source_string.empty?
                 node.lines.replace saved_lines if saved_lines
               end
             else
