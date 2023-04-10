@@ -7,7 +7,9 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Bug Fixes::
+
+* don't crash if source block with custom subs is empty and source highlighter is enabled
 
 == 2.3.6 (2023-04-09) - @mojavelinux
 
