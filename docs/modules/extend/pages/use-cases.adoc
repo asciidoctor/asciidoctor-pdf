@@ -303,6 +303,33 @@ You're free to customize where the label is placed.
 The float method allows you to move the cursor around in absolute space without impacting the flow of the content.
 The extent gives you the information about the location of the code block.
 
+== Code block with wrap indicator
+
+Since PDF is a fixed layout format, code blocks can not scroll left to right.
+As a result, lines may wrap.
+If you want to indicate to a reader when a line has wrapped, you can use an extended converter to add a wrap indicator at the end of these lines.
+
+WARNING: This is a very low-level converter that relies on internal APIs in both Asciidoctor PDF and Prawn.
+It's possible that it can break when either library is upgraded.
+
+To add the wrap indicator, you need to intercept the `add_fragment_to_line` method on the line wrapper and register a callback on the last consumed fragment when it doesn't fit on the line.
+That callback will then add a wrap indicator to the end of the line after the line is rendered.
+
+.Extended converter that adds a wrap indicator to wrapped lines in a code block
+[,ruby]
+----
+include::example$pdf-converter-code-with-wrap-indicator.rb[]
+----
+
+This converter uses the return key character as the line wrap indicator.
+When using the built-in themes, the glyph for this character is only available in the fallback font.
+Therefore, as written, this converter requires you to use the fallback font (i.e., `-a pdf-theme=default-with-font-fallbacks`) unless your theme uses a custom font that supports this character.
+
+This extended converter does not attempt to change how lines are wrapped, and thus cannot make room for itself.
+Rather, it adds the wrap indicator after the wrapped line has been rendered.
+That means it has to use the remaining space available.
+To do so, it overlays a wrap indicator character so it sits halfway into the gutter to the right of the printable area of the code block.
+
 [#wrap-code-blocks-around-image]
 == Wrap code blocks around an image float
 
