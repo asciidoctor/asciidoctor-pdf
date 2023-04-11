@@ -28,7 +28,7 @@ Enhancements::
 * add support for passing a color mode to the default optimizer (#2347)
 * support horizontal alignment on AsciiDoc table cell that only contains paragraphs (#2358)
 * allow revision content to be customized by theme (#2362)
-* add symbols for shift, command, option, and retrun keys to the fallback font
+* add symbols for shift, command, option, and return keys to the fallback font
 
 Improvements::
 
