@@ -381,7 +381,7 @@ module Asciidoctor
           if fragment
             fragment = fragment.merge
             fragment[:styles] = fragment[:styles].dup if fragment.key? :styles
-            fragment[:callback] = fragment[:callback].dup if fragment.key? :callback
+            fragment[:callback] = fragment[:callback].drop 0 if fragment.key? :callback
             append ? (fragment.update append) : fragment
           else
             append || {}

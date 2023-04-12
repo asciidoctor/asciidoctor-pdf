@@ -42,11 +42,11 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
         fragment_font_opts = { style: :italic }
       end
     end
-    fallback_fonts = @fallback_fonts.dup
+    fallback_fonts = @fallback_fonts.drop 0
     font_glyph_pairs = []
     @document.save_font do
       fragment_hash[:text].each_char do |char|
-        font_glyph_pairs << [(find_font_for_this_glyph char, fragment_font, fragment_font_opts || {}, fallback_fonts.dup), char]
+        font_glyph_pairs << [(find_font_for_this_glyph char, fragment_font, fragment_font_opts || {}, (fallback_fonts.drop 0)), char]
       end
     end
     # NOTE: don't add a :font to fragment if it wasn't there originally
@@ -61,7 +61,7 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
       current_font
     elsif fallback_fonts_to_check.empty?
       if logger.info? && !doc.scratch?
-        fonts_checked = @fallback_fonts.dup.unshift original_font
+        fonts_checked = [original_font].concat @fallback_fonts
         missing_chars = (doc.instance_variable_defined? :@missing_chars) ?
             (doc.instance_variable_get :@missing_chars) : (doc.instance_variable_set :@missing_chars, {})
         previous_fonts_checked = (missing_chars[char] ||= [])

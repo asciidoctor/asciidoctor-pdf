@@ -9,7 +9,7 @@ autoload :Open3, 'open3'
 
 RGhost::GSAlone.prepend (Module.new do
   def initialize params, debug
-    (@params = params.dup).push(*(@params.pop.split File::PATH_SEPARATOR))
+    (@params = params.drop 0).push(*(@params.pop.split File::PATH_SEPARATOR))
     @debug = debug
   end
 

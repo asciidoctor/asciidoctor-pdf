@@ -136,7 +136,7 @@ module Rouge
             fragment[:color] = fg
           end
           if style_rules[:bold]
-            fragment[:styles] = style_rules[:italic] ? BoldItalicStyle.dup : BoldStyle.dup
+            fragment[:styles] = (style_rules[:italic] ? BoldItalicStyle : BoldStyle).dup
           elsif style_rules[:italic]
             fragment[:styles] = ItalicStyle.dup
           end
