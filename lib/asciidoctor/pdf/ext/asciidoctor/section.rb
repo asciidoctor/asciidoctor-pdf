@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Asciidoctor::Section
+Asciidoctor::Section.prepend (Module.new do
   def numbered_title opts = {}
     @cached_numbered_title ||= nil
     unless @cached_numbered_title
@@ -32,9 +32,9 @@ class Asciidoctor::Section
       end
     end
     opts[:formal] ? @cached_formal_numbered_title : @cached_numbered_title
-  end unless method_defined? :numbered_title
+  end
 
   def first_section_of_part?
     (par = @parent).context == :section && par.sectname == 'part' && self == par.blocks.find {|it| it.context == :section }
-  end unless method_defined? :first_section_of_part?
-end
+  end
+end)
