@@ -4190,7 +4190,7 @@ module Asciidoctor
             str_to_pt width
           end
         elsif attrs.key? 'scale'
-          %(#{attrs['scale']}).extend ImageWidth # rubocop:disable Style/RedundantInterpolation
+          (attrs['scale'] + '').extend ImageWidth
         elsif attrs.key? 'scaledwidth'
           # NOTE: the parser automatically appends % if value is unitless
           if (width = attrs['scaledwidth']).end_with? '%'
