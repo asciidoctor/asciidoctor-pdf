@@ -377,7 +377,7 @@ module Asciidoctor
         if (rotated_page_margin = resolve_page_margin (doc.attr 'pdf-page-margin-rotated') || theme.page_margin_rotated)
           rotated_page_margin = expand_margin_value rotated_page_margin
           @edge_shorthand_cache = nil
-          @page_margin[PageLayouts[(PageLayouts.index page.layout) - 1]] = { recto: rotated_page_margin, verso: rotated_page_margin.dup }
+          @page_margin[PageLayouts[(PageLayouts.index page.layout) - 1]] = { recto: rotated_page_margin, verso: (rotated_page_margin.drop 0) }
         end
         if @media == 'prepress'
           @ppbook = doc.doctype == 'book'
@@ -1048,7 +1048,7 @@ module Asciidoctor
             else
               highlighter = nil
             end
-            saved_subs = (subs = node.subs).dup
+            saved_subs = (subs = node.subs).drop 0
             callouts_enabled = subs.include? :callouts
             highlight_idx = subs.index :highlight
             # NOTE: scratch? here only applies if listing block is nested inside another block
@@ -1069,9 +1069,9 @@ module Asciidoctor
                 source_string = expand_tabs node.content
               else
                 if callouts_enabled
-                  saved_lines = node.lines.dup
+                  saved_lines = node.lines.drop 0
                   subs.delete :callouts
-                  prev_subs = subs.dup
+                  prev_subs = subs.drop 0
                   subs.clear
                   source_string, conum_mapping = extract_conums node.content
                   node.lines.replace (source_string.split LF)
@@ -1421,7 +1421,7 @@ module Asciidoctor
             term_inline_format = (term_font_styles = font_styles).empty? ? true : [inherited: { styles: term_font_styles }]
             term_line_metrics = calc_line_metrics @base_line_height
             term_padding_no_blocks = [term_line_metrics.padding_top, 10, term_line_metrics.padding_bottom, 10]
-            (term_padding = term_padding_no_blocks.dup)[2] += @theme.prose_margin_bottom * 0.5
+            (term_padding = (term_padding_no_blocks.drop 0))[2] += @theme.prose_margin_bottom * 0.5
             desc_padding = [0, 10, 0, 10]
             term_kerning = default_kerning?
           end
@@ -2030,15 +2030,15 @@ module Asciidoctor
           head_rows = node.rows[:head]
           body_rows = node.rows[:body]
           #if (hrows = node.attr 'hrows') && (shift_rows = hrows.to_i - head_rows.size) > 0
-          #  head_rows = head_rows.dup
-          #  body_rows = body_rows.dup
+          #  head_rows = head_rows.drop 0
+          #  body_rows = body_rows.drop 0
           #  shift_rows.times { head_rows << body_rows.shift unless body_rows.empty? }
           #end
           theme_font :table_head do
             table_header_size = head_rows.size
             head_font_info = font_info
             head_line_metrics = calc_line_metrics theme.table_head_line_height || theme.table_cell_line_height || @base_line_height
-            head_cell_padding = ((head_cell_padding = theme.table_head_cell_padding) ? (expand_padding_value head_cell_padding) : body_cell_padding).dup
+            head_cell_padding = (theme.table_head_cell_padding ? (expand_padding_value theme.table_head_cell_padding) : body_cell_padding).drop 0
             head_cell_padding[0] += head_line_metrics.padding_top
             head_cell_padding[2] += head_line_metrics.padding_bottom
             # QUESTION: why doesn't text transform inherit from table?
@@ -2149,7 +2149,7 @@ module Asciidoctor
                 cell_data = { content: asciidoc_cell, source_location: cell.source_location }
               end
               if cell_line_metrics
-                cell_padding = body_cell_padding.dup
+                cell_padding = body_cell_padding.drop 0
                 cell_padding[0] += cell_line_metrics.padding_top
                 cell_padding[2] += cell_line_metrics.padding_bottom
                 cell_data[:leading] = cell_line_metrics.leading
@@ -4164,7 +4164,7 @@ module Asciidoctor
             str_to_pt width
           end
         elsif attrs.key? 'scale'
-          attrs['scale'].dup.extend ImageWidth
+          %(#{attrs['scale']}).extend ImageWidth
         elsif attrs.key? 'scaledwidth'
           # NOTE: the parser automatically appends % if value is unitless
           if (width = attrs['scaledwidth']).end_with? '%'
@@ -4909,7 +4909,7 @@ module Asciidoctor
       end
 
       def init_float_box _node, block_width, block_height, float_to
-        gap = ::Array === (gap = @theme.image_float_gap) ? gap.dup : [gap, gap]
+        gap = ::Array === (gap = @theme.image_float_gap) ? (gap.drop 0) : [gap, gap]
         float_w = block_width + (gap[0] ||= 12)
         float_h = block_height + (gap[1] ||= 6)
         box_l = bounds.left + (float_to == 'right' ? 0 : float_w)

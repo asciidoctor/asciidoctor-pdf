@@ -379,7 +379,7 @@ module Asciidoctor
           if fragment
             fragment = fragment.dup
             fragment[:styles] = fragment[:styles].dup if fragment.key? :styles
-            fragment[:callback] = fragment[:callback].dup if fragment.key? :callback
+            fragment[:callback] = fragment[:callback].drop 0 if fragment.key? :callback
           else
             fragment = {}
           end

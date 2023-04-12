@@ -11,7 +11,7 @@ File.singleton_class.alias_method :exists?, :exist? unless File.respond_to? :exi
 
 RGhost::GSAlone.prepend (Module.new do
   def initialize params, debug
-    (@params = params.dup).push(*(@params.pop.split File::PATH_SEPARATOR))
+    (@params = params.drop 0).push(*(@params.pop.split File::PATH_SEPARATOR))
     @debug = debug
   end
 
