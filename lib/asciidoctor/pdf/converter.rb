@@ -2453,7 +2453,7 @@ module Asciidoctor
             bare_target = target
             text = node.text
           end
-          if (role = node.attr 'role') && (role == 'bare' || (role.split.include? 'bare'))
+          if role && (role == 'bare' || (role.split.include? 'bare'))
             # QUESTION: should we insert breakable chars into URI when building fragment instead?
             %(#{anchor}<a href="#{target}"#{attrs.join}>#{breakable_uri text}</a>)
           # NOTE: @media may not be initialized if method is called before convert phase
