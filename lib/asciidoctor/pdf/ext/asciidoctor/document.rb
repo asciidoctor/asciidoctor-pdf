@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Asciidoctor::Document
+Asciidoctor::Document.prepend (Module.new do
   # promote preface block (i.e., preamble block with title in book doctype) to preface section
   # FIXME: this should be handled by core
   def promote_preface_block
@@ -28,4 +28,4 @@ class Asciidoctor::Document
   def attr_unspecified? name
     !((attribute_locked? name) || (@attributes_modified.include? name))
   end
-end
+end)
