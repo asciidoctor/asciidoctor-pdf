@@ -30,6 +30,7 @@ Enhancements::
 * allow revision content to be customized by theme (#2362)
 * add symbols for shift, command, option, and return keys to the fallback font
 * add support for `nowrap` and `nobreak` roles on formatted text
+* do not insert break opportunities into bare URL with `nobreak` role
 
 Improvements::
 

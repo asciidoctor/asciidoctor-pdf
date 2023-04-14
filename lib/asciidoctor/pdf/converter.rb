@@ -2455,9 +2455,10 @@ module Asciidoctor
             bare_target = target
             text = node.text
           end
-          if role && (role == 'bare' || (role.split.include? 'bare'))
+          if role && (role == 'bare' || ((roles = role.split).include? 'bare'))
             # QUESTION: should we insert breakable chars into URI when building fragment instead?
-            %(#{anchor}<a href="#{target}"#{class_attr}>#{breakable_uri text}</a>)
+            text = breakable_uri text if role == 'bare' || !(roles.include? 'nobreak')
+            %(#{anchor}<a href="#{target}"#{class_attr}>#{text}</a>)
           # NOTE: @media may not be initialized if method is called before convert phase
           elsif (doc.attr? 'show-link-uri') || (@media != 'screen' && (doc.attr_unspecified? 'show-link-uri'))
             # QUESTION: should we insert breakable chars into URI when building fragment instead?

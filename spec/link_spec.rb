@@ -110,6 +110,15 @@ describe 'Asciidoctor::PDF::Converter - Link' do
       (expect lines[1]).to eql 'https://goo.gl/search/asciidoctor'
     end
 
+    it 'should not split bare URL with nobreak role' do
+      pdf = to_pdf <<~'END', analyze: true
+      this line contains a URL that falls at the end of the line that is not split https://goo.gl/search/asciidoctor[role=nobreak]
+      END
+      lines = pdf.lines
+      (expect lines).to have_size 2
+      (expect lines[1]).to eql 'https://goo.gl/search/asciidoctor'
+    end
+
     it 'should reveal URL of link when media=print or media=prepress' do
       %w(print prepress).each do |media|
         pdf = to_pdf <<~'END', attribute_overrides: { 'media' => media }, analyze: true
