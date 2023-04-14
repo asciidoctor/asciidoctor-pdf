@@ -837,6 +837,32 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect shout_text[:string]).to eql '0 1  2   3     5'
     end
 
+    it 'should support built-in nowrap role on phrase' do
+      pdf = to_pdf <<~'END', analyze: true
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt `ut labore` et dolore magna aliqua.
+
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt [.nowrap]`ut labore` et dolore magna aliqua.
+      END
+
+      reference_text = pdf.find_unique_text 'labore'
+      (expect reference_text[:x]).to eql 48.24
+      nowrap_text = pdf.find_unique_text 'ut labore'
+      (expect nowrap_text[:x]).to eql 48.24
+    end
+
+    it 'should support built-in nobreak role on phrase' do
+      pdf = to_pdf <<~'END', analyze: true
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt `ut-labore` et dolore magna aliqua.
+
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt [.nobreak]`ut-labore` et dolore magna aliqua.
+      END
+
+      reference_text = pdf.find_unique_text 'labore'
+      (expect reference_text[:x]).to eql 48.24
+      nowrap_text = pdf.find_unique_text 'ut-labore'
+      (expect nowrap_text[:x]).to eql 48.24
+    end
+
     it 'should allow theme to control formatting applied to phrase by role' do
       pdf_theme = {
         role_red_font_color: 'ff0000',

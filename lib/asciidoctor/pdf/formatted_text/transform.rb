@@ -362,6 +362,7 @@ module Asciidoctor
           end
           # TODO: we could limit to select tags, but doesn't seem to really affect performance
           attrs[:class].split.each do |class_name|
+            fragment[:single_token] = true if class_name == 'nobreak' || class_name == 'nowrap'
             fragment[:wj] = true if class_name == 'wj'
             fragment[:preserve_space] = true if class_name == 'pre-wrap'
             next unless @theme_settings.key? class_name

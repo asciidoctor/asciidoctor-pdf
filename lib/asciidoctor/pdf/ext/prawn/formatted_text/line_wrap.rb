@@ -14,7 +14,7 @@ Prawn::Text::Formatted::LineWrap.prepend (Module.new do
       else
         joined_string_width = 0
       end
-      last_idx = (segments = tokenize fragment).length - 1
+      last_idx = (segments = @arranger.current_format_state[:single_token] ? [fragment] : (tokenize fragment)).length - 1
       segments.each_with_index do |segment, idx|
         if segment == (zero_width_space segment.encoding)
           segment_width = effective_segment_width = 0
