@@ -155,6 +155,11 @@ _asciidoctor-diagram_
 | 2.2.0
 | Diagram blocks (must be required using `-r asciidoctor-diagram`)
 
+| *Asciidoctor Kroki* +
+_asciidoctor-kroki_
+| 0.8.0
+| Diagram blocks (must be required using `-r asciidoctor-kroki`)
+
 | *Rouge* +
 _rouge_
 | 2.0.0
