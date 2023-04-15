@@ -190,4 +190,9 @@ _rghost_
 _text-hyphen_
 | 1.4.1
 | Automatic hyphenation (requires `hyphens` attribute to be set)
+
+| *ICU* +
+_ffi-icu_
+| 0.5.0
+| Locale-aware sorting of index terms
 |===
