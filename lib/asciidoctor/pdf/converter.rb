@@ -979,8 +979,6 @@ module Asciidoctor
                       begin
                         image_obj, image_info = ::File.open(icon_path, 'rb') {|fd| build_image_object fd }
                         icon_aspect_ratio = image_info.width.fdiv image_info.height
-                        # NOTE: don't scale image up if smaller than label_width
-                        #icon_width = [(to_pt image_info.width, :px), icon_width].min
                         if (icon_height = icon_width * (1 / icon_aspect_ratio)) > label_height
                           icon_width *= label_height / icon_height
                         end
