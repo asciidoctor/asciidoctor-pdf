@@ -5,12 +5,16 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.3.7 (2023-04-16) - @mojavelinux
 
 Bug Fixes::
 
 * don't crash if source block with custom subs is empty and source highlighter is enabled
 * add workaround for JRuby on Windows when value of `imagesdir` attribute is absolute and contains non-ASCII characters
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.7[git tag] | {url-repo}/compare/v2.3.6\...v2.3.7[full diff]
 
 == 2.3.6 (2023-04-09) - @mojavelinux
 
