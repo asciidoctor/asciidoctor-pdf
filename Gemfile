@@ -28,13 +28,13 @@ group :lint do
     gem 'rubocop-rake', '~> 0.6.0', require: false
     gem 'rubocop-rspec', '~> 2.10.0', require: false
   else
-    gem 'rubocop', '~> 1.37.0', require: false
+    gem 'rubocop', '~> 1.50.0', require: false
     gem 'rubocop-rake', '~> 0.6.0', require: false
-    gem 'rubocop-rspec', '~> 2.14.0', require: false
+    gem 'rubocop-rspec', '~> 2.20.0', require: false
   end
 end
 
 group :coverage do
   gem 'deep-cover-core', '~> 1.1.0', require: false
-  gem 'simplecov', '~> 0.21.0', require: false
+  gem 'simplecov', '~> 0.22.0', require: false
 end
