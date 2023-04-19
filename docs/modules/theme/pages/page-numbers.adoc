@@ -24,6 +24,7 @@ The page number is displayed in the right corner of the footer on recto pages an
 
 You can change where the <<start-at,virtual page numbering starts>>, how the <<style,numbers are styled and positioned>>, what page the <<display,numbers start being displayed on>>, and adjust the folio placement using a combination of theme keys and AsciiDoc document attributes.
 
+[#hide]
 == Hiding the page numbers
 
 When using a theme that's configured to show page numbers in the running content (such as the footer), you can quickly hide the page numbers by unsetting the `pagenums` document attribute in the document header (or via the API).
