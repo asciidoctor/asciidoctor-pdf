@@ -24,6 +24,39 @@ The page number is displayed in the right corner of the footer on recto pages an
 
 You can change where the <<start-at,virtual page numbering starts>>, how the <<style,numbers are styled and positioned>>, what page the <<display,numbers start being displayed on>>, and adjust the folio placement using a combination of theme keys and AsciiDoc document attributes.
 
+== Hiding the page numbers
+
+When using a theme that's configured to show page numbers in the running content (such as the footer), you can quickly hide the page numbers by unsetting the `pagenums` document attribute in the document header (or via the API).
+
+----
+= Document Title
+:doctype: book
+:!pagenums:
+
+This page doesn't have a page number in the footer.
+----
+
+In doing so, it will also hide all other text on the same line of the column in the running content.
+Therefore, a more formal way of hiding page numbers is to configure the running content to not include them.
+
+Here's an example of a theme that extends the default them to show legal text instead of the page number.
+
+[,yml]
+----
+extends: default
+footer:
+  columns: =100%
+  recto:
+    center:
+      content: '(C) Copyright 2020 ACME. All rights reserved.'
+  verso:
+    center:
+      content: $header-recto-center-content
+----
+
+Notice that there is no reference to `\{page-number}`, hence why no page number will appear.
+You can find more details in the section xref:add-running-content.adoc#page-number[Modify page number position].
+
 [#start-at]
 == Starting integer page numbering
 
