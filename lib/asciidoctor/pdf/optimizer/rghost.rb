@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../optimizer' unless defined? ::Asciidoctor::PDF::Optimizer
+require_relative '../optimizer' unless defined? Asciidoctor::PDF::Optimizer
 require 'pathname'
 require 'rghost'
 require 'rghost/gs_alone'
