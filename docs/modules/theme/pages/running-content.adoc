@@ -261,7 +261,7 @@ footer:
 
 |border-color
 |xref:blocks.adoc#border-color[Color] +
-(default: _not set_)
+(default: `$base-border-color`)
 |[source]
 footer:
   border-color: #DDDDDD
@@ -275,7 +275,7 @@ footer:
 
 |border-width
 |xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[\]] +
-(default: `$base-border-width`)
+(default: `0.5`)
 |[source]
 footer:
   border-width: 0.25
