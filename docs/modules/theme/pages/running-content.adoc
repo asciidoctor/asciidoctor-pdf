@@ -12,6 +12,8 @@ The `header`, `footer`, and `running-content` category keys control the arrangem
 The `header` category key accepts the keys listed in the following table.
 
 IMPORTANT: If you don't specify a `height` for the header, it effectively disables the header.
+To enable the border, you must at least set the `border-width` key.
+If the `border-color` key is not specified, the border color will default to `$base-border-color`.
 
 [cols="3,4,6a"]
 |===
@@ -33,7 +35,7 @@ header:
 
 |border-color
 |xref:blocks.adoc#border-color[Color] +
-(default: _not set_)
+(default: `$base-border-color`)
 |[source]
 header:
   border-color: #DDDDDD
@@ -47,7 +49,7 @@ header:
 
 |border-width
 |xref:blocks.adoc#border-width[Measurement] {vbar} xref:blocks.adoc#border-width[Measurement[\]] +
-(default: `$base-border-width`)
+(default: _not set_)
 |[source]
 header:
   border-width: 0.25
