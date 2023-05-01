@@ -9,7 +9,7 @@ You can also find some troubleshooting advice if the installation goes wrong.
 == Prerequisites
 
 Asciidoctor PDF is a Ruby application.
-Therefore, to use it, you'll need a Ruby runtime.
+Therefore, you'll need a Ruby runtime to run it.
 
 The Ruby versions on which Asciidoctor PDF is supported {url-project-repo}/blob/{page-origin-refname}/.github/workflows/ci.yml[and tested] are Ruby 2.7 or greater or JRuby 9.2 or greater.
 We always recommend using the most recent version of Ruby or JRuby, if possible.
