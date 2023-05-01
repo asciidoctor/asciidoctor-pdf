@@ -22,7 +22,7 @@ To check if you have Ruby available, run the `ruby` command to print the install
 
  $ ruby -v
 
-Make sure this command reports a Ruby version that starts with 2.7 (or a JRuby version that starts with 9.2).
+Make sure this command reports a Ruby version that starts with at least 2.7 (or a JRuby version that starts with at least 9.2).
 If so, you're ready to proceed.
 If not, head over to {url-rvm}[rvm.io^] to get RVM and use it to install Ruby.
 
