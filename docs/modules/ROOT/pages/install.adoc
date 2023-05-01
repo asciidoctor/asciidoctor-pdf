@@ -31,13 +31,7 @@ If not, head over to {url-rvm}[rvm.io^] to get RVM and use it to install Ruby.
 Asciidoctor assumes you're using UTF-8 encoding.
 To minimize encoding problems, make sure the default encoding of your system is set to UTF-8.
 
-If you're using a non-English Windows environment, the default encoding of your system may not be UTF-8.
-As a result, you may get an `Encoding::UndefinedConversionError` or other encoding issues when invoking Asciidoctor.
-To solve these problems, we recommend at least changing the active code page in your console to UTF-8.
-
- chcp 65001
-
-Once you make this change, all your Unicode headaches will be behind you.
+See the xref:asciidoctor:install:supported-platforms.adoc#system-encoding[system encoding prerequisites] section to learn how to override the default character encodings when using Asciidoctor if you can't modify your system encoding.
 
 == Install Asciidoctor PDF
 
