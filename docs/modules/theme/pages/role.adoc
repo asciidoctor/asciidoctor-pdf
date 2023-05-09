@@ -155,19 +155,25 @@ You can xref:ROOT:roles.adoc[use these roles] when using a built-in theme or a c
 You can also redefine the built-in roles in your theme configuration file.
 
 // tag::user-formatting[]
-lead:: The `lead` role defines the font properties for a lead paragraph.
-The lead role is automatically assigned to the first paragraph of the preamble if a role is not already declared.
+lead:: The `lead` role defines the font properties for a lead paragraph or phrase.
 The built-in themes configure this role to set the font size to the `$base-font-size-large` value.
+This role is automatically assigned to the first paragraph of the preamble if a role is not already declared.
 big:: The `big` role maps the font size to the `$base-font-size-large` value.
 small:: The `small` role maps the font size to the `$base-font-size-small` value.
 underline:: The `underline` role adds the underline decoration.
 line-through:: The `line-through` role adds the strikethrough decoration.
 subtitle:: The `subtitle` role is used to configure the font properties of the subtitle of a section title.
 // end::user-formatting[]
+// tag::para-roles[]
+text-justify:: Aligns the text to the left margin with justification.
+text-left:: Aligns the text to the left margin (without justification).
+text-right:: Aligns the text to the right margin.
+text-center:: Aligns the text to the center of the page.
+// end::para-roles[]
 unresolved:: The `unresolved` role is applied automatically to the text of an unresolved footnote reference.
 (Only recognizes the `font-color` theme key).
 noborder:: Only applies to block images.
-If this role is present on the block image, the border will not be added.
+If this role is present on the block image, the border will not be drawn even if configured on the `image` category in the theme.
 This role cannot be redefined.
 
 NOTE: The color roles (e.g., `blue`), which you may be familiar with from the HTML converter, are not mapped by default.
