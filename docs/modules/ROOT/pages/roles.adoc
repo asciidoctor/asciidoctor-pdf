@@ -1,12 +1,20 @@
 = Roles
 :description: Assign built-in and custom roles to paragraphs and inline phrases.
 
-You can apply the built-in roles Asciidoctor PDF provides as well as custom roles you define in your theme to paragraphs and inline phrases.
+You can apply the built-in roles that Asciidoctor PDF supports as well as custom roles you define in your theme.
+Built-in roles are not supported universally, but rather on specific elements.
+Custom roles are limited to paragraphs and inline phrases.
 
 [#built-in]
 == Use a built-in role
 
-The following built-in roles can be assigned to paragraphs and inline phrases:
+Asciidoctor PDF supports a subset of the built-in roles defined in AsciiDoc.
+Where these built-in roles can be applied is limited.
+If a built-in role is not listed in this section, then you can expect that it's not supported.
+
+=== On text
+
+The following built-in roles can be assigned to paragraphs and inline phrases.
 
 include::theme:page$role.adoc[tag=user-formatting]
 
@@ -17,18 +25,43 @@ In the example below, the built-in role `big` is applied to an inline phrase.
 The sign spelled out [.big]#WELCOME# in glowing neon lights.
 ----
 
-When text is enclosed in a pair of single or double hash symbols (`#`) and has at least one role, the role(s) will be applied to that text without adding any other implicit formatting.
-That is, the text won't be highlighted.
+When text is enclosed in a pair of single or double hash symbols (`#`) and has at least one role, the role or roles will be applied to the text without any other implicit formatting.
+That is, the text will appear with custom styling rather than being displayed as marked (i.e., highlighted) text.
 
-Roles are sometimes used to control behavior.
-For example, if the `noborder` role is present on a block image, the border will not be drawn even if configured on the `image` category in the theme.
-The `noborder` role cannot be redefined.
+The following built-in roles can be assigned to paragraphs, list items, and discrete headings.
+
+include::theme:page$role.adoc[tag=para-roles]
+
+In the example below, the built-in role `text-right` is applied to a paragraph so it aligns to the right.
+
+[,asciidoc]
+----
+[.text-right]
+A response is often shown right-aligned like this.
+----
+
+=== On block images
+
+The following built-in roles can be assigned to block images.
+
+left:: Aligns the image to the left margin.
+Analogous to `align=left`.
+
+right:: Aligns the image to the right margin.
+Analogous to `align=right`.
+
+center:: Aligns the image to the middle of the page.
+Analogous to `align=center`.
+
+noborder:: The border will not be drawn even if configured on the `image` category in the theme.
+
+The purpose of the built-in roles on block images cannot be redefined.
 
 [#custom]
 == Use a custom role
 
 In AsciiDoc, you can add any role name to an element that supports roles.
-However, in order for that role to have an effect, you must map it to theme settings.
+However, in order for that role to have any effect, you must assign styles to it in a theme.
 
 NOTE: In Asciidoctor PDF, the theme properties mapped to custom roles currently only apply to paragraphs and inline phrases.
 
