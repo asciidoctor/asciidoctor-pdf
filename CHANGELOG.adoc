@@ -11,6 +11,10 @@ Bug Fixes::
 
 * alias `File.exists?` to `File.exist?` when loading RGhost optimizer to patch incompatibility when using Ruby 3.2
 
+Build / Infrastructure::
+
+* bump upper Ruby version from 3.1 to 3.2 in CI workflow
+
 == 2.3.7 (2023-04-16) - @mojavelinux
 
 Bug Fixes::
