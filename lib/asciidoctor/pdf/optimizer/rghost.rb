@@ -7,6 +7,9 @@ require 'rghost/gs_alone'
 require 'tmpdir'
 autoload :Open3, 'open3'
 
+# rghost still uses File.exists?
+File.singleton_class.alias_method :exists?, :exist? unless File.respond_to? :exists?
+
 RGhost::GSAlone.prepend (Module.new do
   def initialize params, debug
     (@params = params.drop 0).push(*(@params.pop.split File::PATH_SEPARATOR))
