@@ -1,6 +1,6 @@
 = Fallback Fonts
 
-If a TrueType font is missing a character needed to render the document, such as a special symbol or emoji, you can have Asciidoctor PDF look for the character in a fallback font.
+If a TrueType font (not an AFM font) is missing a character needed to render the document, such as a special symbol or emoji, you can have Asciidoctor PDF look for the character in a fallback font.
 
 You only need to specify a single fallback font, typically one that provides a full set of symbols.
 If the character isn't found in the fallback font, it will mostly likely be replaced by a box (i.e., the notdef glyph), which is guaranteed if you're using the bundled fallback font.
