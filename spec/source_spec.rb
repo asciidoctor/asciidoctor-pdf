@@ -431,7 +431,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       type, name = ARGV
       case type
       when :hello
-        puts %(Hello, #{name}!)
+        puts sprintf %(Hello, %s!), name
       when :goodbye
         puts 'See ya, ' + name + '!'
       end
