@@ -127,7 +127,7 @@ It would also severely limit the style choices in the default theme, which cater
 If you're writing in a CJK language, such as Japanese, Asciidoctor PDF provides a built-in theme named `default-with-font-fallbacks` that provides a broad range of characters in the CJK charsets.
 You can start with that theme to see how far it gets you:
 
- $ asciidoctor-pdf -a scripts=cjk -a pdf-theme=default-with-font-fallbacks document.adoc
+ $ asciidoctor-pdf -a scripts=cjk --theme default-with-font-fallbacks document.adoc
 
 Notice the `-a scripts=cjk` option.
 That's important.

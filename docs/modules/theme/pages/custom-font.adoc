@@ -120,25 +120,25 @@ This will allow you to use the same font names (aka families) in both your graph
 [#configure-search-path]
 == Configuring the font search path
 
-When you execute Asciidoctor PDF, specify the directory where the fonts reside using the `pdf-fontsdir` attribute:
+When you invoke Asciidoctor PDF, specify the directory where the fonts reside using the `pdf-fontsdir` attribute:
 
- $ asciidoctor-pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir=path/to/fonts document.adoc
+ $ asciidoctor-pdf --theme basic-theme.yml -a pdf-fontsdir=path/to/fonts document.adoc
 
 You can specify multiple directories by separating the paths with either a comma (`,`):
 
- $ asciidoctor-pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir=path/to/fonts,path/to/more-fonts document.adoc
+ $ asciidoctor-pdf --theme basic-theme.yml -a pdf-fontsdir=path/to/fonts,path/to/more-fonts document.adoc
 
 or a semicolon (`;`) (which requires enclosing the combined value in double quotes to escape the delimiter from the shell):
 
- $ asciidoctor-pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir="path/to/fonts;path/to/more-fonts" document.adoc
+ $ asciidoctor-pdf --theme basic-theme.yml -a pdf-fontsdir="path/to/fonts;path/to/more-fonts" document.adoc
 
 To include the location of the bundled fonts in the search, include the `GEM_FONTS_DIR` token in the list:
 
- $ asciidoctor-pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir="path/to/fonts;GEM_FONTS_DIR" document.adoc
+ $ asciidoctor-pdf --theme basic-theme.yml -a pdf-fontsdir="path/to/fonts;GEM_FONTS_DIR" document.adoc
 
 When running Asciidoctor PDF on the JVM (perhaps using AsciidoctorJ PDF), you can refer to a directory inside any JAR file on the classpath by prefixing the path with `uri:classloader:`:
 
- $ asciidoctorj -b pdf -a pdf-theme=basic-theme.yml -a pdf-fontsdir="uri:classloader:/path/to/fonts;GEM_FONTS_DIR" document.adoc
+ $ asciidoctorj -b pdf --theme basic-theme.yml -a pdf-fontsdir="uri:classloader:/path/to/fonts;GEM_FONTS_DIR" document.adoc
 
 [#subset]
 == Subsetting your font
