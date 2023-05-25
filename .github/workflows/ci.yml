@@ -113,7 +113,8 @@ jobs:
     - name: Install Ghostscript and Poppler and set GS env var (Windows)
       if: matrix.os == 'windows-latest'
       run: |
-        choco install --no-progress ghostscript poppler
+        choco install --no-progress poppler --version=0.89.0
+        choco install --no-progress ghostscript
         echo "GS=$(& where.exe /R 'C:\Program Files\gs' gswin64c.exe)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Set Prawn Gmagick version / Install GraphicsMagick (Linux)
       if: matrix.primary
