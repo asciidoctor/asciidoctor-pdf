@@ -323,7 +323,7 @@ include::example$pdf-converter-code-with-wrap-indicator.rb[]
 
 This converter uses the return key character as the line wrap indicator.
 When using the built-in themes, the glyph for this character is only available in the fallback font.
-Therefore, as written, this converter requires you to use the fallback font (i.e., `-a pdf-theme=default-with-font-fallbacks`) unless your theme uses a custom font that supports this character.
+Therefore, as written, this converter requires you to use the fallback font (i.e., `--theme default-with-font-fallbacks`) unless your theme uses a custom font that supports this character.
 
 This extended converter does not attempt to change how lines are wrapped, and thus cannot make room for itself.
 Rather, it adds the wrap indicator after the wrapped line has been rendered.
