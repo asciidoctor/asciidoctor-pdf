@@ -84,16 +84,18 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     .Dogs
     ****
     Cats may rule, well, everything.
-    But ((dogs)) are a human's best friend.
+    But ((dogs)) are a (((humans)))human's best friend.
     ****
 
     [index]
     == Index
     EOS
 
-    index_text = pdf.find_text 'Index', page_number: 3, font_size: 22
-    (expect index_text).to have_size 1
-    (expect pdf.lines).to include 'dogs, 1'
+    index_heading_text = pdf.find_unique_text 'Index', page_number: 3, font_size: 22
+    (expect index_heading_text).not_to be_nil
+    index_lines = pdf.lines pdf.find_text page_number: 3
+    (expect index_lines).to include 'dogs, 1'
+    (expect index_lines).to include 'humans, 1'
   end
 
   it 'should create link from entry in index to location of term' do
