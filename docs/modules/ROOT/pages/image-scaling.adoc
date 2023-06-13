@@ -46,9 +46,25 @@ See xref:background-images.adoc[] for details.
 [#default]
 == Default sizing
 
-An image is always sized according to the explicit or intrinsic width, then its height is scaled proportionally.
-The height of the image is ignored by the PDF converter unless the height of the image exceeds the content height of the page.
-In this case, the image is scaled down to fit on a single page.
+An image is always sized based on the user-specified or intrinsic width (aka the resolved width), then its height is scaled proportionally.
+The computed height of the image is honored unless this value exceeds the height of the content area.
+In this case, the image is scaled down to fit within the content area.
+
+The height of the content area is typically the space between the top and bottom margins of the page.
+However, the content area is different for table cells.
+
+=== Inline image sizing in table cells
+
+In tables, each cell is considered its own content area.
+Inline images in normal table cells will be scaled to fit the line height.
+The line height is computed from the font size of the table cell.
+If the computed height of the image exceeds the line height, the image will be scaled down to fit.
+This behavior is roughly equivalent to setting `fit=line` on the inline image.
+
+The content area of an AsciiDoc table cell is less restrictive.
+An AsciiDoc table cell will expand to use all available height on the page.
+Thus, when you specify the `a` style on a table cell, the scaling of an inline image will be different.
+In this case, the inline image will be allowed to be taller than the line height.
 
 [#pdfwidth]
 == pdfwidth attribute
