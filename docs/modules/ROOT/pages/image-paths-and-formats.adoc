@@ -149,3 +149,24 @@ font:
 
 The bottom line is this:
 If you're using fonts in your SVG, and you want those fonts to be preserved, those fonts must be defined in the Asciidoctor PDF theme file.
+
+== Remote images
+
+In order to generate a PDF, the converter must read all image files in order to embed the image data in the PDF.
+This is a requirement of the PDF format.
+The task that the PDF converter must perform is roughly equivalent to the `data-uri` mode of the HTML converter.
+
+By default, Asciidoctor will not read images from a URI.
+Therefore, if the target of one or more images in the document is a URI, you must also set the `allow-uri-read` attribute when calling Asciidoctor PDF from the CLI or API.
+For example:
+
+ $ asciidoctor-pdf -a allow-uri-read document.adoc
+
+When this attribute is not set, you may enounter the following warning:
+
+[.output]
+....
+asciidoctor: WARNING: cannot embed remote image: https://example.org/image.png (allow-uri-read attribute not enabled)
+....
+
+Since `allow-uri-read` is a secure attribute, setting it in the document has no impact.
