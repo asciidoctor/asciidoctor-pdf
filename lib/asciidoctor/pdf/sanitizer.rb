@@ -19,11 +19,11 @@ module Asciidoctor
         'nbsp' => ' ',
         'quot' => '"',
       }).default = '?'
-      SanitizeXMLRx = /<[^>]+>/
+      SanitizeXMLRx = /<[^>]+>\0?/
       CharRefRx = /&(?:amp;)?(?:([a-z][a-z]+\d{0,2})|#(?:(\d\d\d{0,4})|x(\h\h\h{0,3})));/
       UnescapedAmpersandRx = /&(?!(?:[a-z][a-z]+\d{0,2}|#(?:\d\d\d{0,4}|x\h\h\h{0,3}));)/
 
-      # Strip leading, trailing and repeating whitespace, remove XML tags and
+      # Strip leading, trailing and repeating whitespace, remove XML tags along with an enclosed null character, and
       # resolve all entities in the specified string.
       #
       # FIXME: move to a module so we can mix it in elsewhere
