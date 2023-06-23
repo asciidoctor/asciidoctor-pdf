@@ -749,14 +749,18 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       pdf = to_pdf <<~'EOS'
       = _Document_ *Title*
       :doctype: book
+      :sectnums:
 
       == _First_ *Chapter*
+
+      == ((Wetland Birds))
       EOS
 
       outline = extract_outline pdf
-      (expect outline).to have_size 2
+      (expect outline).to have_size 3
       (expect outline[0][:title]).to eql 'Document Title'
-      (expect outline[1][:title]).to eql 'First Chapter'
+      (expect outline[1][:title]).to eql 'Chapter 1. First Chapter'
+      (expect outline[2][:title]).to eql 'Chapter 2. Wetland Birds'
     end
 
     it 'should decode character references in entries' do

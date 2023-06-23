@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 Bug Fixes::
 
+* remove null character enclosed in XML tag when santizing text; fixes invisible text in outline when heading contains index term (#2430)
 * alias `File.exists?` to `File.exist?` when loading RGhost optimizer to patch incompatibility when using Ruby 3.2
 
 Build / Infrastructure::
