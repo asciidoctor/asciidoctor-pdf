@@ -5,7 +5,7 @@
 
 Asciidoctor PDF provides the following behaviors to assist with printing:
 
-* Shows the URLs for links unless the linked text matches the URL
+* Shows the URLs for links unless the link text matches the URL
 * Consolidates page ranges in the index
 * Deactivates the links from page numbers in the index to the locations of terms in the document
 
