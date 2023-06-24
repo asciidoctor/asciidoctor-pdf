@@ -9,6 +9,7 @@ Inline images can be sized in much the same way as block images, using the `pdfw
 * Inline images do not currently support a default width controlled from the theme.
 
 To confine the inline image to the height of the line while preserving the aspect ratio, use the attribute `fit=line`.
+If you want to prevent the inline image from being fit to the content area, such as in a normal table cell, use `fit=none`.
 
 If the resolved height of the image is less than or equal to 1.5 times the line height, the image won't disrupt the line height and is centered vertically in the line.
 This is done to maximize the use of available space.

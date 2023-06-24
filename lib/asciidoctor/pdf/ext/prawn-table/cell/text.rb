@@ -10,7 +10,7 @@ class Prawn::Table::Cell::Text
   def draw_content
     with_font do
       self.valign = [:center, -font.descender * 0.5] if valign == :center
-      bounds = @pdf.bounds
+      (bounds = @pdf.bounds).instance_variable_set :@table_cell, true
       remaining_text = with_text_color do
         (text_box width: bounds.width, height: bounds.height, at: [0, @pdf.cursor]).render
       end
