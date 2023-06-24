@@ -56,15 +56,19 @@ However, the content area is different for table cells.
 === Inline image sizing in table cells
 
 In tables, each cell is considered its own content area.
-Inline images in normal table cells will be scaled to fit the line height.
-The line height is computed from the font size of the table cell.
-If the computed height of the image exceeds the line height, the image will be scaled down to fit.
-This behavior is roughly equivalent to setting `fit=line` on the inline image.
+
+The content area of a normal table cell is computed based on how much space the content needs.
+In this regard, inline images in normal table cells are permitted to increase the height of the cell.
+However, the calculation of the content's height can be inaccurate, and is often impacted by the font used.
+When the table cell is rendered, its height is restricted to the computed height.
+This can impact the sizing of inline images in a normal table cell.
+If the computed height ends up being less than the height the inline image needs, the image will be scaled down to fit.
+This behavior is a side effect of how the PDF generator used by Asciidoctor PDF works and cannot be fixed.
 
 The content area of an AsciiDoc table cell is less restrictive.
 An AsciiDoc table cell will expand to use all available height on the page.
 Thus, when you specify the `a` style on a table cell, the scaling of an inline image will be different.
-In this case, the inline image will be allowed to be taller than the line height.
+In this case, the inline image will not be scaled down if it fits within the available height on the page.
 
 [#pdfwidth]
 == pdfwidth attribute
