@@ -10,11 +10,9 @@ class Prawn::Table::Cell::Text
   def draw_content
     with_font do
       self.valign = [:center, -font.descender * 0.5] if valign == :center
+      bounds = @pdf.bounds
       remaining_text = with_text_color do
-        (text_box \
-          width: spanned_content_width + FPTolerance,
-          height: spanned_content_height + FPTolerance,
-          at: [0, @pdf.cursor]).render
+        (text_box width: bounds.width, height: bounds.height, at: [0, @pdf.cursor]).render
       end
       unless remaining_text.empty? || @pdf.scratch?
         logger.error message_with_context %(the table cell on page #{@pdf.page_number} has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page), source_location: @source_location
