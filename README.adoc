@@ -1,6 +1,6 @@
 = Asciidoctor PDF: A native PDF converter for AsciiDoc
 Dan Allen <https://github.com/mojavelinux[@mojavelinux]>; Sarah White <https://github.com/graphitefriction[@graphitefriction]>
-v2.3.7, 2023-04-16
+v2.3.8, 2023-06-25
 // Settings:
 :experimental:
 :idprefix:
