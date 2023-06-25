@@ -63,7 +63,15 @@ module Asciidoctor::PDF::FormattedText
           image_w = [available_w, pctidx ? (image_w.to_f / 100 * available_w) : image_w.to_f].min
         end
 
-        max_image_h = fragment[:image_fit] == 'line' ? [available_h, doc.font.height].min : available_h
+        if (fit = fragment[:image_fit]) === 'line'
+          max_image_h = [available_h, doc.font.height].min
+        elsif fit == 'none'
+          max_image_h = doc.margin_box.height
+        elsif doc.bounds.instance_variable_get :@table_cell
+          max_image_h = doc.bounds.parent.height
+        else
+          max_image_h = available_h
+        end
 
         # TODO: make helper method to calculate width and height of image
         if image_format == 'svg'

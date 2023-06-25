@@ -37,6 +37,8 @@ Improvements::
 * process `pre-wrap` role in text formatter
 * drop support for the unmaintained payment font (`pf`) for use in font-based icons
 * refactor formatted text transform to simplify how inner space is collapsed; verify only inner hard breaks are preserved
+* do not attempt to fit inline image in normal table cell to computed height of cell (#2428)
+* support `fit=none` attribute on inline image to prevent image from being scaled down to fit available height (#2428)
 
 Bug Fixes::
 
