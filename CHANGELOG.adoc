@@ -7,6 +7,11 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
+Improvements::
+
+* do not attempt to fit inline image in normal table cell to computed height of cell (#2428)
+* support `fit=none` attribute on inline image to prevent image from being scaled down to fit available height (#2428)
+
 Bug Fixes::
 
 * remove null character enclosed in XML tag when santizing text; fixes invisible text in outline when heading contains index term (#2430)

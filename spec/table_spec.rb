@@ -907,6 +907,38 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect images[0][:y]).to be > text[1][:y]
     end
 
+    it 'should not attempt to fit image to computed height of normal table cell' do
+      pdf_theme = { table_font_family: 'M+ 1mn', table_font_size: 9 }
+
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :image
+      [cols=2*]
+      |===
+      a|image:square.png[pdfwidth=16px] text
+      |image:square.png[pdfwidth=16px] text
+      |===
+      END
+      images = pdf.images
+      (expect images).to have_size 2
+      (expect images[0][:width]).to eql 12.0
+      (expect images[1][:width]).to eql 12.0
+    end
+
+    it 'should not attempt to fit image to computed height of normal table cell if fit=none is set' do
+      pdf_theme = { table_font_family: 'M+ 1mn', table_font_size: 9 }
+
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :image
+      [cols=2*]
+      |===
+      a|image:square.png[pdfwidth=16px] text
+      |image:square.png[pdfwidth=16px,fit=none] text
+      |===
+      END
+      images = pdf.images
+      (expect images).to have_size 2
+      (expect images[0][:width]).to eql 12.0
+      (expect images[1][:width]).to eql 12.0
+    end
+
     it 'should not break words in head row when autowidth option is set' do
       pdf = to_pdf <<~'EOS', analyze: true
       [%autowidth]
