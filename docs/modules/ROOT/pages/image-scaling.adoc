@@ -36,11 +36,18 @@ _Only applies to block images and xref:theme:block-images.adoc#fallback[is set i
 If the value ends in `%` (not recommended), it's assumed to be the percentage of the available content area width.
 If the width exceeds the content area width, the image is scaled down to the content area width.
 
+|fit
+|_(Inline image only)_
+If the value is `line`, the image will be scaled down proportionally, as necessary, to fit the height of a line of text.
+If the value is `none`, the image will never be scaled down to fit within the height of the content area.
+The `none` value should only be used as a workaround in cases when the converter is scaling the image when it shouldn't.
+
 |_unspecified_
 |If you don't specify one of the aforementioned width settings, the intrinsic width of the image is used (the px value is multiplied by 75% to convert to pt, assuming canvas is 96 dpi) unless the width exceeds the content area width, in which case the image is scaled down to the content area width.
 |===
 
 TIP: Images in running content and page background images also support the `fit` attribute when specified using the image macro.
+However, the acceptable values of the `fit` attribute in those cases differs from the acceptable values for an inline image.
 See xref:background-images.adoc[] for details.
 
 [#default]
