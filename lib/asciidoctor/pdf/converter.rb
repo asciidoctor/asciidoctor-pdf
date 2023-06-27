@@ -1831,14 +1831,13 @@ module Asciidoctor
               update_colors if graphic_state.color_space.empty?
               ink_caption node, category: :image, end: :top, block_align: alignment, block_width: rendered_w, max_width: caption_max_width if caption_end == :top && node.title?
               image_y = y
+              left = bounds.left
               # NOTE: prawn-svg does not compute :at for alignment correctly in column box, so resort to our own logic
               case alignment
               when :center
-                left = bounds.left + (available_w - rendered_w) * 0.5
+                left += (available_w - rendered_w) * 0.5
               when :right
-                left = bounds.left + available_w - rendered_w
-              else
-                left = bounds.left
+                left += available_w - rendered_w
               end
               svg_obj.options[:at] = [left, (image_cursor = cursor)]
               svg_obj.draw # NOTE: cursor advances automatically
