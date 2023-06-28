@@ -1997,6 +1997,7 @@ module Asciidoctor
       end
 
       def convert_table node
+        caption_end = (theme = @theme).table_caption_end&.to_sym || :top
         if !at_page_top? && ((unbreakable = node.option? 'unbreakable') || ((node.option? 'breakable') && (node.id || node.title?)))
           # NOTE: we use the current node as the parent so we can navigate back into the document model
           (table_container = Block.new node, :open) << (table_dup = node.dup)
@@ -2008,7 +2009,7 @@ module Asciidoctor
           end
           table_container.style = 'table-container'
           table_container.id, table_dup.id = table_dup.id, nil
-          if table_dup.title?
+          if caption_end == :top && table_dup.title?
             table_container.title = ''
             table_container.instance_variable_set :@converted_title, table_dup.captioned_title
             table_dup.title = nil
@@ -2020,7 +2021,6 @@ module Asciidoctor
         num_rows = node.attr 'rowcount'
         num_cols = node.columns.size
         table_header_size = false
-        theme = @theme
         prev_font_scale, @font_scale = @font_scale, 1 if node.document.nested?
 
         tbl_bg_color = resolve_theme_color :table_background_color
@@ -2258,7 +2258,6 @@ module Asciidoctor
           alignment = theme.table_align&.to_sym || :left
         end
 
-        caption_end = theme.table_caption_end&.to_sym || :top
         caption_max_width = theme.table_caption_max_width || 'fit-content'
 
         table_settings = {
@@ -2290,7 +2289,7 @@ module Asciidoctor
           @column_widths = column_widths unless column_widths.empty?
           # NOTE: call width to capture resolved table width
           table_width = width
-          @pdf.ink_table_caption node, alignment, table_width, caption_max_width if node.title? && caption_end == :top
+          @pdf.ink_table_caption node, alignment, table_width, caption_max_width if caption_end == :top && node.title?
           # NOTE: align using padding instead of bounding_box as prawn-table does
           # using a bounding_box across pages mangles the margin box of subsequent pages
           if alignment != :left && table_width != (this_bounds = @pdf.bounds).width
@@ -2363,7 +2362,7 @@ module Asciidoctor
           bounds.subtract_left_padding left_padding
           bounds.subtract_right_padding right_padding if right_padding
         end
-        ink_table_caption node, alignment, table_width, caption_max_width, caption_end if node.title? && caption_end == :bottom
+        ink_table_caption node, alignment, table_width, caption_max_width, caption_end if caption_end == :bottom && node.title?
         theme_margin :block, :bottom, (next_enclosed_block node)
       rescue ::Prawn::Errors::CannotFit
         log :error, (message_with_context 'cannot fit contents of table cell into specified column width', source_location: node.source_location)

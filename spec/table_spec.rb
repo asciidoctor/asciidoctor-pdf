@@ -3291,6 +3291,29 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect cell_a1_text[:page_number]).to be 2
     end
 
+    it 'should honor caption end placement if %unbreakable option is set on table' do
+      pdf_theme = { table_caption_end: 'bottom' }
+      pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
+      image::tall.svg[pdfwidth=75mm]
+
+      .Title
+      [%unbreakable]
+      |===
+      | Column A | Column B
+
+      #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
+      |===
+      END
+
+      title_text = pdf.find_unique_text 'Table 1. Title'
+      (expect title_text[:page_number]).to be 2
+      column_a_text = pdf.find_text 'Column A'
+      (expect column_a_text).to have_size 1
+      column_a_text = column_a_text[0]
+      (expect column_a_text[:page_number]).to be 2
+      (expect title_text[:y]).to be < column_a_text[:y]
+    end
+
     it 'should keep caption with table if %breakable option is set on table' do
       pdf = to_pdf <<~END, analyze: true
       image::tall.svg[pdfwidth=80mm]
