@@ -22,7 +22,7 @@ module Asciidoctor
       LoneVariableRx = /^\$([a-z0-9_-]+)$/
       HexColorEntryRx = /^(?<k> *\p{Graph}+): +(?!null$)(?<q>["']?)(?<h>#)?(?<v>\h\h\h\h{0,3})\k<q> *(?:#.*)?$/
       MultiplyDivideOpRx = %r((-?\d+(?:\.\d+)?) +([*/^]) +(-?\d+(?:\.\d+)?))
-      AddSubtractOpRx = /(-?\d+(?:\.\d+)?) +([+\-]) +(-?\d+(?:\.\d+)?)/
+      AddSubtractOpRx = /(-?\d+(?:\.\d+)?) +([+-]) +(-?\d+(?:\.\d+)?)/
       PrecisionFuncRx = /^(round|floor|ceil)\(/
       RoleAlignKeyRx = /(?:_text)?_align$/
 
