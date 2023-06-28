@@ -4,7 +4,19 @@ require:
 - ./cops/to_pdf_no_debug.rb
 AllCops:
   TargetRubyVersion: 2.7
+Capybara/MatchStyle:
+  Enabled: false
+Capybara/NegationMatcher:
+  Enabled: false
+Capybara/SpecificActions:
+  Enabled: false
+Capybara/SpecificFinders:
+  Enabled: false
+Capybara/SpecificMatcher:
+  Enabled: false
 Gemspec/DeprecatedAttributeAssignment:
+  Enabled: true
+Gemspec/DevelopmentDependencies:
   Enabled: true
 Gemspec/RequireMFA:
   Enabled: false
@@ -81,6 +93,8 @@ Lint/DuplicateBranch:
 Lint/DuplicateElsifCondition:
   Enabled: true
 Lint/DuplicateMagicComment:
+  Enabled: true
+Lint/DuplicateMatchPattern:
   Enabled: true
 Lint/DuplicateRegexpCharacterClassElement:
   Enabled: true
@@ -161,6 +175,8 @@ Lint/UnusedMethodArgument:
   Enabled: true
 Lint/UselessMethodDefinition:
   Enabled: true
+Lint/UselessRescue:
+  Enabled: true
 Lint/UselessRuby2Keywords:
   Enabled: true
 Lint/UselessTimes:
@@ -173,6 +189,8 @@ Metrics/BlockNesting:
   Max: 10
 Metrics/ClassLength:
   Enabled: false
+Metrics/CollectionLiteralLength:
+  Enabled: true
 Metrics/CyclomaticComplexity:
   Enabled: false
 Metrics/MethodLength:
@@ -202,6 +220,8 @@ Naming/PredicateName:
   Enabled: true
 Naming/VariableNumber:
   Enabled: false # reason: this is just nitpicky
+RSpec/BeEmpty:
+  Enabled: true
 RSpec/BeEq:
   Enabled: true
 RSpec/BeEql:
@@ -210,14 +230,8 @@ RSpec/BeNil:
   Enabled: true
 RSpec/BeforeAfterAll:
   Enabled: true
-RSpec/Capybara/NegationMatcher:
-  Enabled: false
-RSpec/Capybara/SpecificActions:
-  Enabled: false
-RSpec/Capybara/SpecificFinders:
-  Enabled: false
-RSpec/Capybara/SpecificMatcher:
-  Enabled: false
+RSpec/ContainExactly:
+  Enabled: true
 RSpec/ChangeByZero:
   Enabled: true
 RSpec/ClassCheck:
@@ -226,6 +240,8 @@ RSpec/ContextWording:
   Enabled: false
 RSpec/DescribeClass:
   Enabled: false
+RSpec/DuplicatedMetadata:
+  Enabled: true
 RSpec/EmptyExampleGroup:
   Enabled: true
 RSpec/ExampleLength:
@@ -238,11 +254,17 @@ RSpec/ExpectInHook:
   Enabled: true
 RSpec/FactoryBot/ConsistentParenthesesStyle:
   Enabled: false
+RSpec/FactoryBot/FactoryNameStyle:
+  Enabled: false
 RSpec/FactoryBot/SyntaxMethods:
   Enabled: false
 RSpec/FilePath:
   Enabled: false
 RSpec/IdenticalEqualityAssertion:
+  Enabled: true
+RSpec/IndexedLet:
+  Enabled: true
+RSpec/MatchArray:
   Enabled: true
 RSpec/MultipleExpectations:
   Enabled: true
@@ -253,12 +275,22 @@ RSpec/NoExpectationExample:
   Enabled: false
 RSpec/Pending:
   Enabled: true
+RSpec/PendingWithoutReason:
+  Enabled: true
+RSpec/RedundantAround:
+  Enabled: true
 RSpec/Rails/AvoidSetupHook:
   Enabled: false
 RSpec/Rails/HaveHttpStatus:
   Enabled: false
 RSpec/Rails/InferredSpecType:
   Enabled: false
+RSpec/Rails/MinitestAssertions:
+  Enabled: false
+RSpec/Rails/TravelAround:
+  Enabled: false
+RSpec/SkipBlockInsideExample:
+  Enabled: true
 RSpec/SortMetadata:
   Enabled: true
 RSpec/SubjectDeclaration:
@@ -283,6 +315,8 @@ Style/ArgumentsForwarding:
   Enabled: true
 Style/ArrayCoercion:
   Enabled: false # reason: using [*values] is faster
+Style/ArrayIntersect:
+  Enabled: true
 Style/AsciiComments:
   Enabled: false # reason: this is just nitpicky
 Style/Attr:
@@ -318,9 +352,17 @@ Style/CommentAnnotation:
   - NOTE
   - QUESTION
   RequireColon: true
+Style/ComparableClamp:
+  Enabled: true
+Style/ConcatArrayLiterals:
+  Enabled: true
 Style/ConditionalAssignment:
   EnforcedStyle: assign_inside_condition
   IncludeTernaryExpressions: false
+Style/DataInheritance:
+  Enabled: true
+Style/DirEmpty:
+  Enabled: true
 Style/DocumentDynamicEvalDefinition:
   Enabled: true
 Style/Documentation:
@@ -341,6 +383,8 @@ Style/ExponentialNotation:
   Enabled: true
 Style/FetchEnvVar:
   Enabled: false # reason: just no
+Style/FileEmpty:
+  Enabled: true
 Style/FileRead:
   Enabled: true
 Style/FileWrite:
@@ -392,11 +436,15 @@ Style/MapCompactWithConditionalBlock:
   Enabled: true
 Style/MapToHash:
   Enabled: false # reason: not supported in JRuby < 9.3
+Style/MapToSet:
+  Enabled: false # reason: not supported in JRuby < 9.3
 Style/MethodCallWithArgsParentheses:
   Enabled: true
   EnforcedStyle: omit_parentheses
 Style/MethodDefParentheses:
   EnforcedStyle: require_no_parentheses
+Style/MinMaxComparison:
+  Enabled: true
 Style/MultilineBlockChain:
   Enabled: false # reason: no reason not to allow method call on block result
 Style/MultilineInPatternThen:
@@ -454,11 +502,21 @@ Style/RedundantAssignment:
   Enabled: true
 Style/RedundantBegin:
   Enabled: true
+Style/RedundantConstantBase:
+  Enabled: true
+Style/RedundantDoubleSplatHashBraces:
+  Enabled: true
+Style/RedundantEach:
+  Enabled: true
 Style/RedundantFetchBlock:
   Enabled: true
 Style/RedundantFileExtensionInRequire:
   Enabled: true
+Style/RedundantHeredocDelimiterQuotes:
+  Enabled: false # reason: we know what we are doing
 Style/RedundantInitialize:
+  Enabled: true
+Style/RedundantLineContinuation:
   Enabled: true
 Style/RedundantPercentQ:
   Enabled: true
