@@ -1342,6 +1342,91 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       page_contents = pdf.objects[(pdf.page 2).page_object[:Contents]].data
       (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 0.0 scn']
     end
+
+    it 'should place raster image in correct column when page columns are enabled' do
+      pdf_theme = {
+        page_columns: 2,
+        page_column_gap: 12,
+        thematic_break_border_color: '0000FF',
+        thematic_break_border_width: 1,
+      }
+      input = <<~'END'
+      left column
+
+      [.column]
+      <<<
+
+      ---
+
+      image::tux.jpg[pdfwidth=50%]
+      END
+
+      lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+      thematic_break_line = lines.find {|it| it[:color] == '0000FF' && it[:width] == 1 }
+      column_left = thematic_break_line[:from][:x]
+      images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
+      (expect images).to have_size 1
+      (expect images[0][:page_number]).to eql 1
+      (expect images[0][:x]).to eql column_left
+    end
+
+    it 'should align raster image to right of column when page columns are enabled' do
+      pdf_theme = {
+        page_columns: 2,
+        page_column_gap: 12,
+        thematic_break_border_color: '0000FF',
+        thematic_break_border_width: 1,
+      }
+      input = <<~'END'
+      left column
+
+      [.column]
+      <<<
+
+      ---
+
+      image::tux.jpg[align=right,pdfwidth=50%]
+      END
+
+      lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+      thematic_break_line = lines.find {|it| it[:color] == '0000FF' && it[:width] == 1 }
+      column_right = thematic_break_line[:to][:x]
+      images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
+      (expect images).to have_size 1
+      (expect images[0][:page_number]).to eql 1
+      (expect images[0][:width]).to eql 121.7
+      (expect images[0][:x]).to eql (column_right - images[0][:width])
+    end
+
+    it 'should align raster image to center of column when page columns are enabled' do
+      pdf_theme = {
+        page_columns: 2,
+        page_column_gap: 12,
+        thematic_break_border_color: '0000FF',
+        thematic_break_border_width: 1,
+      }
+      input = <<~'EOS'
+      left column
+
+      [.column]
+      <<<
+
+      ---
+
+      image::tux.jpg[align=center,pdfwidth=50%]
+      EOS
+
+      lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+      thematic_break_line = lines.find {|it| it[:color] == '0000FF' && it[:width] == 1 }
+      column_left = thematic_break_line[:from][:x]
+      column_right = thematic_break_line[:to][:x]
+      images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
+      (expect images).to have_size 1
+      (expect images[0][:page_number]).to eql 1
+      (expect images[0][:width]).to eql 121.7
+      (expect images[0][:x]).to be > column_left
+      (expect images[0][:x] + images[0][:width]).to be < column_right
+    end
   end
 
   context 'BMP' do

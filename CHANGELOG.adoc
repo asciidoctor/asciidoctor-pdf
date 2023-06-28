@@ -7,7 +7,9 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Bug Fixes::
+
+* correctly align block image in raster format in column when align is right or center and page columns are enabled (#2433)
 
 == 2.3.8 (2023-06-25) - @mojavelinux
 

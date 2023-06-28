@@ -1856,9 +1856,16 @@ module Asciidoctor
               update_colors if graphic_state.color_space.empty?
               ink_caption node, category: :image, end: :top, block_align: alignment, block_width: rendered_w, max_width: caption_max_width if caption_end == :top && node.title?
               image_y = y
-              image_cursor = cursor
+              left = bounds.left
+              # NOTE: prawn does not compute :at for alignment correctly in column box, so resort to our own logic
+              case alignment
+              when :center
+                left += (available_w - rendered_w) * 0.5
+              when :right
+                left += available_w - rendered_w
+              end
               # NOTE: specify both width and height to avoid recalculation
-              embed_image image_obj, image_info, width: rendered_w, height: rendered_h, position: alignment
+              embed_image image_obj, image_info, at: [left, (image_cursor = cursor)], height: rendered_h, width: rendered_w
               draw_image_border image_cursor, rendered_w, rendered_h, alignment unless pinned || (node.role? && (node.has_role? 'noborder'))
               if (link = node.attr 'link')
                 add_link_to_image link, { width: rendered_w, height: rendered_h }, position: alignment, y: image_y
