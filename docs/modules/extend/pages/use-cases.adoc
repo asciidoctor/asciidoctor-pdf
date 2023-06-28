@@ -231,6 +231,23 @@ include::example$pdf-converter-additional-toc-entries.rb[]
 The depth of the TOC is automatically controlled by the `toclevels` attributes.
 Once this limit is reached, the converter will not call `get_entries_for_toc` for that parent (as none of its children will be included in the TOC).
 
+[#breakable-tables]
+== Breakable tables
+
+As explained on xref:ROOT:breakable-and-unbreakable.adoc[], tables are not configured with orphan prevention of the anchor and title by default.
+In order to activate this behavior, the `breakable` option must be specified on the table.
+
+To avoid having to add this option on every table, you can use an Asciidoctor extension to add it at runtime.
+This use case employs a tree processor rather than an extended PDF converter, though its behavior does impact conversion.
+
+.Extension that adds the breakable option to all tables
+[,ruby]
+----
+include::example$breakable-tables-tree-processor.rb[]
+----
+
+This same technique can be used to add the `breakable` or `unbreakable` option at runtime to any blocks of your choosing.
+
 == Narrow TOC
 
 Let's say you want to make the content on the TOC page(s) really narrow.
