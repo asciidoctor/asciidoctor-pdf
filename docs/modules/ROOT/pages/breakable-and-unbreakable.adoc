@@ -40,7 +40,7 @@ Since these blocks are already breakable by default, this option is merely a pub
 
 === Table
 
-The `breakable` option can be applied to a table to ensure the anchor and title are kept with the table if the table gets advanced to the next page.
+The `breakable` option can be applied to a table to ensure the anchor and title (i.e., caption) are kept with the table if the table gets advanced to the next page.
 
 [,asciidoc]
 ----
@@ -53,6 +53,10 @@ The `breakable` option can be applied to a table to ensure the anchor and title 
 |===
 ----
 <.> Assign the `breakable` option to a table, using the shorthand percent symbol (`%`) for the `option` attribute name, to indicate that the table's title and anchor should be kept with the table.
+
+The behavior to keep the title with the table is _only_ supported if the table caption is in its default end placement above the table (i.e., `top`).
+If the theme configures the caption end placement (`table-caption-end`) below the table (i.e., `bottom`), the title could be widowed on the next page.
+The lack of widow prevention for the title when placed below the table is due to a limitation in how this converter is implemented.
 
 [#section-or-discrete-heading]
 === Section or discrete heading
