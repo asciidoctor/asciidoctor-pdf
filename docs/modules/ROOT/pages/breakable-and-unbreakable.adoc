@@ -194,4 +194,7 @@ Orphan prevents adds almost as many since it's a similar process.
 Doing that by default for tables, sections, and discrete headings would be too complex and costly.
 To recoup some of the processing time, we decided to make some trade-offs.
 Therefore, blocks are breakable by default and authors must opt-in to get orphan prevention for tables, sections, and discrete headings.
+
+However, you can add the `breakable` (or `unbreakable` option) to any block at runtime using an Asciidoctor extension.
+Refer to xref:extend:use-cases.adoc#breakable-tables[breakable tables] to find the code for this extension.
 ****
