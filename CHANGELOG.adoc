@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 Bug Fixes::
 
 * correctly align block image in raster format in column when align is right or center and page columns are enabled (#2433)
+* honor table caption end placement (`table-caption-end` theme key) when `unbreakable` (or `breakable`) option is set on table (#2434)
 
 == 2.3.8 (2023-06-25) - @mojavelinux
 

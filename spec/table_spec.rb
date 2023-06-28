@@ -910,13 +910,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     it 'should not attempt to fit image to computed height of normal table cell' do
       pdf_theme = { table_font_family: 'M+ 1mn', table_font_size: 9 }
 
-      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :image
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :image
       [cols=2*]
       |===
       a|image:square.png[pdfwidth=16px] text
       |image:square.png[pdfwidth=16px] text
       |===
-      END
+      EOS
       images = pdf.images
       (expect images).to have_size 2
       (expect images[0][:width]).to eql 12.0
@@ -926,13 +926,13 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     it 'should not attempt to fit image to computed height of normal table cell if fit=none is set' do
       pdf_theme = { table_font_family: 'M+ 1mn', table_font_size: 9 }
 
-      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: :image
+      pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: :image
       [cols=2*]
       |===
       a|image:square.png[pdfwidth=16px] text
       |image:square.png[pdfwidth=16px,fit=none] text
       |===
-      END
+      EOS
       images = pdf.images
       (expect images).to have_size 2
       (expect images[0][:width]).to eql 12.0
@@ -3240,6 +3240,29 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect column_a_text[0][:page_number]).to be 2
       cell_a1_text = pdf.find_unique_text 'A1'
       (expect cell_a1_text[:page_number]).to be 2
+    end
+
+    it 'should honor caption end placement if %unbreakable option is set on table' do
+      pdf_theme = { table_caption_end: 'bottom' }
+      pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      image::tall.svg[pdfwidth=75mm]
+
+      .Title
+      [%unbreakable]
+      |===
+      | Column A | Column B
+
+      #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
+      |===
+      EOS
+
+      title_text = pdf.find_unique_text 'Table 1. Title'
+      (expect title_text[:page_number]).to be 2
+      column_a_text = pdf.find_text 'Column A'
+      (expect column_a_text).to have_size 1
+      column_a_text = column_a_text[0]
+      (expect column_a_text[:page_number]).to be 2
+      (expect title_text[:y]).to be < column_a_text[:y]
     end
 
     it 'should keep caption with table if %breakable option is set on table' do
