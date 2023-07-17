@@ -57,6 +57,31 @@ The method `stroke_horizontal_rule` draws a horizontal line using the specified 
 The method `ink_prose` is provided by Asciidoctor PDF to make writing text to the page easier.
 Finally, the method `convert` will convert and render the Asciidoctor node that is passed to it, in this case a block image.
 
+== Custom document header without a title page
+
+Documents rendered as articles by Asciidoctor PDF don't have a title page by default.
+Instead their document title is shown on the first content page above the actual content.
+
+Other than in articles rendered by Asciidoctor to HTML, and other than when rendered with a title page (e.g. document type book),
+the author, date and revision remark won't be shown by default.
+To get them included anyway, we can hook into the method `ink_general_heading`, which renders the document title.
+As `ink_general_heading` is also responsible for rendering other "headers" (e.g. section titles),
+we let it fall back to the default implementation for all headers that aren't the document title.
+
+.Extended converter with author, date and revision remark below the document title of document types without a title page
+[,ruby]
+----
+include::example$pdf-converter-article-title-with-author-and-date.rb[]
+----
+<.> Fall back to default implementation unless handling the document title.
+<.> Render the document title.
+<.> The revision remark isn't available as a field of `doc`, so we have to get it from the hash `doc.attributes`.
+    Because we'll use it multiple times, we store it in a local variable.
+<.> Only include the additional line if there's actually content for it, so we don't end up with unused vertical space.
+<.> An em-dash to be put between author and date, but only if both aren't empty.
+<.> A vertical bar to be put before the revision remark, but only if it isn't empty and there's actually something else (author, date or both) in front of it.
+<.> Put everything together using Ruby https://docs.ruby-lang.org/en/3.0/syntax/literals_rdoc.html#label-Strings[string] interpolation and render it as a center-aligned line.
+
 == Custom part title
 
 A common need is to add extra styling to the title page for a part in a multi-part book.
