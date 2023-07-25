@@ -1,5 +1,4 @@
 = Import PDF Pages
-:url-import-blog-post: https://fromplantoprototype.com/blog/2019/08/07/importing-pdf-pages-in-asciidoctor-pdf/
 
 In addition to using a PDF page for the front or back cover, you can also insert a PDF page at an arbitrary location in your document.
 This technique is useful for adding pages that have complex layouts and graphics prepared in a specialized design program, which would otherwise not be achievable using this converter.
@@ -42,8 +41,6 @@ image::custom-pages.pdf[pages=3;1..2]
 ----
 
 Pages are imported in the order listed.
-
-To see a practical example of how to use this feature, refer to the blog post {url-import-blog-post}[Importing PDF Pages in asciidoctor-pdf^].
 
 CAUTION: An image macro used to import PDF pages should never be nested inside a delimited block or table cell.
 It should be a direct descendant of the document or a section.
