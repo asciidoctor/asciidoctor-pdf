@@ -1354,21 +1354,25 @@ describe 'Asciidoctor::PDF::Converter - Page' do
     end
 
     it 'should scale down background SVG to fit boundaries of page if computed height is greater than page height', visual: true do
-      to_file = to_pdf_file <<~'END', 'page-background-image-svg-fit-scale-down-computed-height.pdf'
-      :pdf-page-size: A6
-      :page-background-image: image:tall.svg[pdfwidth=200,fit=scale-down]
-      END
+      with_content_spacer 200, 600 do |spacer_path|
+        to_file = to_pdf_file <<~END, 'page-background-image-svg-fit-scale-down-computed-height.pdf'
+        :pdf-page-size: A6
+        :page-background-image: image:#{spacer_path}[pdfwidth=200,fit=scale-down]
+        END
 
-      (expect to_file).to visually_match 'page-background-image-svg-fit-scale-down-height.pdf'
+        (expect to_file).to visually_match 'page-background-image-svg-fit-scale-down-height.pdf'
+      end
     end
 
     it 'should scale down background SVG to fit boundaries of page if intrinsic height is greater than page height', visual: true do
-      to_file = to_pdf_file <<~'END', 'page-background-image-svg-fit-scale-down-intrinsic-height.pdf'
-      :pdf-page-size: A6
-      :page-background-image: image:tall.svg[fit=scale-down]
-      END
+      with_content_spacer 200, 600 do |spacer_path|
+        to_file = to_pdf_file <<~END, 'page-background-image-svg-fit-scale-down-intrinsic-height.pdf'
+        :pdf-page-size: A6
+        :page-background-image: image:#{spacer_path}[fit=scale-down]
+        END
 
-      (expect to_file).to visually_match 'page-background-image-svg-fit-scale-down-height.pdf'
+        (expect to_file).to visually_match 'page-background-image-svg-fit-scale-down-height.pdf'
+      end
     end
 
     it 'should not scale background SVG with explicit width to fit boundaries of page if fit is scale-down and image fits', visual: true do
