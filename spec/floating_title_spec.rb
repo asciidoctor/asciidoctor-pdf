@@ -138,32 +138,34 @@ describe 'Asciidoctor::PDF::Converter - Floating Title' do
     backend = %(pdf#{ext_class.object_id})
     source_lines[0] = %(  register_for '#{backend}'\n)
     ext_class.class_eval source_lines.join, source_file
-    pdf = to_pdf <<~END, backend: backend, analyze: true
-    [discrete]
-    == Heading A
+    with_content_spacer 200, 600 do |spacer_path|
+      pdf = to_pdf <<~END, backend: backend, analyze: true
+      [discrete]
+      == Heading A
 
-    [discrete]
-    == Heading B
+      [discrete]
+      == Heading B
 
-    image::tall.svg[pdfwidth=65mm]
+      image::#{spacer_path}[pdfwidth=65mm]
 
-    [discrete]
-    == Heading C
+      [discrete]
+      == Heading C
 
-    [%unbreakable]
-    --
-    keep
+      [%unbreakable]
+      --
+      keep
 
-    this
+      this
 
-    together
-    --
-    END
+      together
+      --
+      END
 
-    heading_c_text = pdf.find_unique_text 'Heading C'
-    (expect heading_c_text[:page_number]).to be 2
-    content_text = pdf.find_unique_text 'keep'
-    (expect content_text[:page_number]).to be 2
+      heading_c_text = pdf.find_unique_text 'Heading C'
+      (expect heading_c_text[:page_number]).to be 2
+      content_text = pdf.find_unique_text 'keep'
+      (expect content_text[:page_number]).to be 2
+    end
   end
 
   it 'should not force discrete heading to next page if heading-min-height-after value is not set' do
