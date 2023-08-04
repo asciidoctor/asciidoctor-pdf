@@ -616,7 +616,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should compute width correctly when SVG defines width in px units', visual: true do
       [true, false].each do |from_theme|
-        to_file = with_content_spacer 200, 200, 'px' do |spacer_path|
+        to_file = with_content_spacer 200, 200, units: 'px' do |spacer_path|
           pdf_theme = {}
           pdf_theme[:image_width] = '200px' if from_theme
           to_pdf_file <<~END, %(image-svg-px-width-from-#{from_theme ? 'theme' : 'file'}.svg), pdf_theme: pdf_theme
