@@ -279,11 +279,11 @@ module RSpec::ExampleHelpers
     RSpec::ExampleGroupHelpers.windows?
   end
 
-  def with_content_spacer width, height, units = 'pt'
+  def with_content_spacer width, height, units: 'pt', fill: '#999999'
     contents = <<~END
     <svg width="#{width}#{units}" height="#{height}#{units}" viewBox="0 0 #{width} #{height}" version="1.0" xmlns="http://www.w3.org/2000/svg">
     <g>
-    <rect style="fill:#999999" width="#{width}" height="#{height}" x="0" y="0"></rect>
+    <rect style="fill:#{fill}" width="#{width}" height="#{height}" x="0" y="0"></rect>
     </g>
     </svg>
     END
