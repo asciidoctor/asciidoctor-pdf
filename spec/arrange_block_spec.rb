@@ -71,34 +71,36 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
   end
 
   it 'should invoke on_page_create if set on scratch document' do
-    input = <<~'END'
-    scratch_background_color:CCCCCC[]
+    with_content_spacer 200, 600, fill: '#008000' do |spacer_path|
+      input = <<~END
+      scratch_background_color:CCCCCC[]
 
-    image::tall.svg[pdfwidth=70mm]
+      image::#{spacer_path}[pdfwidth=70mm]
 
-    ====
-    content
+      ====
+      content
 
-    of
+      of
 
-    block
-    ====
-    END
-    scratch_pdf = nil
-    extensions = proc do
-      inline_macro :scratch_background_color do
-        process do |parent, target|
-          (scratch_pdf = parent.document.converter.scratch).on_page_create do
-            scratch_pdf.fill_absolute_bounds target
+      block
+      ====
+      END
+      scratch_pdf = nil
+      extensions = proc do
+        inline_macro :scratch_background_color do
+          process do |parent, target|
+            (scratch_pdf = parent.document.converter.scratch).on_page_create do
+              scratch_pdf.fill_absolute_bounds target
+            end
+            create_inline parent, :quoted, 'before'
           end
-          create_inline parent, :quoted, 'before'
         end
       end
+      to_pdf input, pdf_theme: pdf_theme, extensions: extensions
+      scratch_pdf_output = scratch_pdf.render
+      scratch_pdf = (TextInspector.analyze scratch_pdf_output)
+      (expect scratch_pdf.pages[0][:raw_content]).to include %(/DeviceRGB cs\n0.8 0.8 0.8 scn\n0.0 0.0 612.0 792.0 re)
     end
-    to_pdf input, pdf_theme: pdf_theme, extensions: extensions
-    scratch_pdf_output = scratch_pdf.render
-    scratch_pdf = (TextInspector.analyze scratch_pdf_output)
-    (expect scratch_pdf.pages[0][:raw_content]).to include %(/DeviceRGB cs\n0.8 0.8 0.8 scn\n0.0 0.0 612.0 792.0 re)
   end
 
   it 'should not add bottom margin to last block or styled paragraph in enclosure that supports blocks' do
@@ -1403,33 +1405,35 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       end
 
       it 'should not go haywire if caption does not fit and converter does not tare content' do
-        block_title = (['long caption that wraps'] * 15).join ' '
-        extensions = proc do
-          tree_processor do
-            process do |doc|
-              doc.converter.extend RSpec::ExampleGroupHelpers::TareFirstPageContentStreamNoop
-              nil
+        with_content_spacer 200, 600 do |spacer_path|
+          block_title = (['long caption that wraps'] * 15).join ' '
+          extensions = proc do
+            tree_processor do
+              process do |doc|
+                doc.converter.extend RSpec::ExampleGroupHelpers::TareFirstPageContentStreamNoop
+                nil
+              end
             end
           end
+          pdf = to_pdf <<~END, pdf_theme: pdf_theme, extensions: extensions, analyze: true
+          image::#{spacer_path}[pdfwidth=78mm]
+
+          .#{block_title}
+          ====
+          content
+
+          of
+
+          example
+          ====
+          END
+
+          pages = pdf.pages
+          (expect pages).to have_size 2
+          block_title = pdf.find_unique_text %r/^Example 1\. /
+          (expect block_title[:page_number]).to be 1
+          (expect (pdf.find_unique_text 'content')[:page_number]).to be 2
         end
-        pdf = to_pdf <<~END, pdf_theme: pdf_theme, extensions: extensions, analyze: true
-        image::tall.svg[pdfwidth=78mm]
-
-        .#{block_title}
-        ====
-        content
-
-        of
-
-        example
-        ====
-        END
-
-        pages = pdf.pages
-        (expect pages).to have_size 2
-        block_title = pdf.find_unique_text %r/^Example 1\. /
-        (expect block_title[:page_number]).to be 1
-        (expect (pdf.find_unique_text 'content')[:page_number]).to be 2
       end
 
       it 'should split block across pages that starts partway down rotated page' do
