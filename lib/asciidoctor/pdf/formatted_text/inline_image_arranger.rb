@@ -67,7 +67,7 @@ module Asciidoctor::PDF::FormattedText
           max_image_h = [available_h, doc.font.height].min
         elsif fit == 'none'
           max_image_h = doc.margin_box.height
-        elsif doc.bounds.instance_variable_get :@table_cell
+        elsif doc.bounds.instance_variable_defined? :@table_cell
           max_image_h = doc.bounds.parent.height
         else
           max_image_h = available_h
