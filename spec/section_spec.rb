@@ -1183,33 +1183,37 @@ describe 'Asciidoctor::PDF::Converter - Section' do
   end
 
   it 'should force section title with text transform to next page to keep with first line of section content' do
-    pdf = to_pdf <<~END, pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
-    image::tall.svg[pdfwidth=80mm]
+    with_content_spacer 200, 600 do |spacer_path|
+      pdf = to_pdf <<~END, pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true, debug: true
+      image::#{spacer_path}[pdfwidth=80mm]
 
-    == A long heading with uppercase characters
+      == A long heading with uppercase characters
 
-    content
-    END
+      content
+      END
 
-    section_text = pdf.find_unique_text %r/^A LONG HEADING/
-    (expect section_text[:page_number]).to be 2
-    content_text = pdf.find_unique_text 'content'
-    (expect content_text[:page_number]).to be 2
+      section_text = pdf.find_unique_text %r/^A LONG HEADING/
+      (expect section_text[:page_number]).to be 2
+      content_text = pdf.find_unique_text 'content'
+      (expect content_text[:page_number]).to be 2
+    end
   end
 
   it 'should not force section title with inline formatting to next page if text formatting does not affect height' do
-    pdf = to_pdf <<~END, analyze: true
-    image::tall.svg[pdfwidth=80mm]
+    with_content_spacer 200, 600 do |spacer_path|
+      pdf = to_pdf <<~END, analyze: true
+      image::#{spacer_path}[pdfwidth=80mm]
 
-    == A long heading with some inline #markup#
+      == A long heading with some inline #markup#
 
-    content
-    END
+      content
+      END
 
-    section_text = pdf.find_unique_text %r/^A long heading/
-    (expect section_text[:page_number]).to be 1
-    content_text = pdf.find_unique_text 'content'
-    (expect content_text[:page_number]).to be 1
+      section_text = pdf.find_unique_text %r/^A long heading/
+      (expect section_text[:page_number]).to be 1
+      content_text = pdf.find_unique_text 'content'
+      (expect content_text[:page_number]).to be 1
+    end
   end
 
   it 'should not force section title to next page to keep with content if heading-min-height-after theme key is zero' do
@@ -1237,107 +1241,115 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     backend = %(pdf#{ext_class.object_id})
     source_lines[0] = %(  register_for '#{backend}'\n)
     ext_class.class_eval source_lines.join, source_file
-    pdf = to_pdf <<~END, backend: backend, analyze: true
-    == Section A
+    with_content_spacer 200, 600 do |spacer_path|
+      pdf = to_pdf <<~END, backend: backend, analyze: true
+      == Section A
 
-    image::tall.svg[pdfwidth=70mm]
+      image::#{spacer_path}[pdfwidth=70mm]
 
-    == Section B
+      == Section B
 
-    [%unbreakable]
-    --
-    keep
+      [%unbreakable]
+      --
+      keep
 
-    this
+      this
 
-    together
-    --
-    END
+      together
+      --
+      END
 
-    section_b_text = pdf.find_unique_text 'Section B'
-    (expect section_b_text[:page_number]).to be 2
-    content_text = pdf.find_unique_text 'keep'
-    (expect content_text[:page_number]).to be 2
+      section_b_text = pdf.find_unique_text 'Section B'
+      (expect section_b_text[:page_number]).to be 2
+      content_text = pdf.find_unique_text 'keep'
+      (expect content_text[:page_number]).to be 2
+    end
   end
 
   it 'should keep section with first block of content if breakable option is set on section' do
-    pdf = to_pdf <<~END, pdf_theme: { heading_min_height_after: nil }, analyze: true
-    == Section A
+    with_content_spacer 200, 600 do |spacer_path|
+      pdf = to_pdf <<~END, pdf_theme: { heading_min_height_after: nil }, analyze: true
+      == Section A
 
-    image::tall.svg[pdfwidth=70mm]
+      image::#{spacer_path}[pdfwidth=70mm]
 
-    [%breakable]
-    == Section B
+      [%breakable]
+      == Section B
 
-    [%unbreakable]
-    --
-    keep
+      [%unbreakable]
+      --
+      keep
 
-    this
+      this
 
-    together
-    --
-    END
+      together
+      --
+      END
 
-    section_b_text = pdf.find_unique_text 'Section B'
-    (expect section_b_text[:page_number]).to be 2
-    content_text = pdf.find_unique_text 'keep'
-    (expect content_text[:page_number]).to be 2
+      section_b_text = pdf.find_unique_text 'Section B'
+      (expect section_b_text[:page_number]).to be 2
+      content_text = pdf.find_unique_text 'keep'
+      (expect content_text[:page_number]).to be 2
+    end
   end
 
   it 'should keep section with first block of content if heading-min-height-after theme key is auto' do
-    pdf = to_pdf <<~END, pdf_theme: { heading_min_height_after: 'auto' }, analyze: true
-    == Section A
+    with_content_spacer 200, 600 do |spacer_path|
+      pdf = to_pdf <<~END, pdf_theme: { heading_min_height_after: 'auto' }, analyze: true
+      == Section A
 
-    image::tall.svg[pdfwidth=70mm]
+      image::#{spacer_path}[pdfwidth=70mm]
 
-    == Section B
+      == Section B
 
-    [%unbreakable]
-    --
-    keep
+      [%unbreakable]
+      --
+      keep
 
-    this
+      this
 
-    together
-    --
-    END
+      together
+      --
+      END
 
-    section_b_text = pdf.find_unique_text 'Section B'
-    (expect section_b_text[:page_number]).to be 2
-    content_text = pdf.find_unique_text 'keep'
-    (expect content_text[:page_number]).to be 2
+      section_b_text = pdf.find_unique_text 'Section B'
+      (expect section_b_text[:page_number]).to be 2
+      content_text = pdf.find_unique_text 'keep'
+      (expect content_text[:page_number]).to be 2
+    end
   end
 
   it 'should not alter document state when arranging heading' do
-    input = <<~'END'
-    == Section A
+    with_content_spacer 200, 600 do |spacer_path|
+      input = <<~END
+      == Section A
 
-    image::tall.svg[pdfwidth=75mm]
+      image::#{spacer_path}[pdfwidth=75mm]
 
-    [%breakable]
-    == Section B
+      [%breakable]
+      == Section B
 
-    This is the first paragraph of Section B.footnote:[This paragraph falls on the first page.]
+      This is the first paragraph of Section B.footnote:[This paragraph falls on the first page.]
 
-    This paragraph falls on the second page.
-    END
+      This paragraph falls on the second page.
+      END
 
-    pdf = to_pdf input, analyze: true
-    (expect (pdf.find_unique_text 'This is the first paragraph of Section B.')[:page_number]).to eql 1
-    (expect (pdf.find_unique_text %r/This paragraph falls on the first page\.$/)[:page_number]).to eql 2
-    (expect (pdf.find_unique_text 'This paragraph falls on the second page.')[:page_number]).to eql 2
-    pdf = to_pdf input
-    p1_annotations = get_annotations pdf, 1
-    (expect p1_annotations).to have_size 1
-    p2_annotations = get_annotations pdf, 2
-    (expect p2_annotations).to have_size 1
-    footnote_label_y = p1_annotations[0][:Rect][3]
-    footnote_item_y = p2_annotations[0][:Rect][3]
-    (expect (footnoteref_dest = get_dest pdf, '_footnoteref_1')).not_to be_nil
-    (expect footnote_label_y - footnoteref_dest[:y]).to be < 1
-    (expect (footnotedef_dest = get_dest pdf, '_footnotedef_1')).not_to be_nil
-    (expect footnotedef_dest[:y]).to eql footnote_item_y
+      pdf = to_pdf input, analyze: true
+      (expect (pdf.find_unique_text 'This is the first paragraph of Section B.')[:page_number]).to eql 1
+      (expect (pdf.find_unique_text %r/This paragraph falls on the first page\.$/)[:page_number]).to eql 2
+      (expect (pdf.find_unique_text 'This paragraph falls on the second page.')[:page_number]).to eql 2
+      pdf = to_pdf input
+      p1_annotations = get_annotations pdf, 1
+      (expect p1_annotations).to have_size 1
+      p2_annotations = get_annotations pdf, 2
+      (expect p2_annotations).to have_size 1
+      footnote_label_y = p1_annotations[0][:Rect][3]
+      footnote_item_y = p2_annotations[0][:Rect][3]
+      (expect (footnoteref_dest = get_dest pdf, '_footnoteref_1')).not_to be_nil
+      (expect footnote_label_y - footnoteref_dest[:y]).to be < 1
+      (expect (footnotedef_dest = get_dest pdf, '_footnotedef_1')).not_to be_nil
+      (expect footnotedef_dest[:y]).to eql footnote_item_y
+    end
   end
 
   it 'should not add break before chapter if heading-chapter-break-before key in theme is auto' do
