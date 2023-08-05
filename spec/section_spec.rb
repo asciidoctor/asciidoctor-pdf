@@ -1184,7 +1184,7 @@ describe 'Asciidoctor::PDF::Converter - Section' do
 
   it 'should force section title with text transform to next page to keep with first line of section content' do
     with_content_spacer 200, 600 do |spacer_path|
-      pdf = to_pdf <<~END, pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true, debug: true
+      pdf = to_pdf <<~END, pdf_theme: { heading_text_transform: 'uppercase' }, analyze: true
       image::#{spacer_path}[pdfwidth=80mm]
 
       == A long heading with uppercase characters
