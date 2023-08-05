@@ -199,41 +199,45 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
 
   it 'should put footnotes beyond margin below last block of content' do
     pdf_theme = { sidebar_background_color: 'transparent' }
-    input = <<~'END'
-    About this thing.footnote:[More about this thing.]
+    with_content_spacer 200, 600 do |spacer_path|
+      input = <<~END
+      About this thing.footnote:[More about this thing.]
 
-    image::tall.svg[pdfwidth=76.98mm]
+      image::#{spacer_path}[pdfwidth=76.98mm]
 
-    ****
-    sidebar
-    ****
-    END
+      ****
+      sidebar
+      ****
+      END
 
-    pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
-    horizontal_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
-      .select {|it| it[:from][:y] == it[:to][:y] }.sort_by {|it| -it[:from][:y] }
-    (expect pdf.pages).to have_size 1
-    footnote_text = pdf.find_unique_text %r/More about /
-    footnote_text_top = footnote_text[:y] + footnote_text[:font_size]
-    content_bottom_y = horizontal_lines[-1][:from][:y]
-    (expect content_bottom_y - footnote_text_top).to be > 12.0
-    (expect content_bottom_y - footnote_text_top).to be < 14.0
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      horizontal_lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+        .select {|it| it[:from][:y] == it[:to][:y] }.sort_by {|it| -it[:from][:y] }
+      (expect pdf.pages).to have_size 1
+      footnote_text = pdf.find_unique_text %r/More about /
+      footnote_text_top = footnote_text[:y] + footnote_text[:font_size]
+      content_bottom_y = horizontal_lines[-1][:from][:y]
+      (expect content_bottom_y - footnote_text_top).to be > 12.0
+      (expect content_bottom_y - footnote_text_top).to be < 14.0
+    end
   end
 
   it 'should not allow footnotes to collapse margin below last block of content' do
-    pdf = to_pdf <<~'END', analyze: true
-    About this thing.footnote:[More about this thing.]
+    with_content_spacer 200, 600 do |spacer_path|
+      pdf = to_pdf <<~END, analyze: true
+      About this thing.footnote:[More about this thing.]
 
-    image::tall.svg[pdfwidth=80mm]
+      image::#{spacer_path}[pdfwidth=80mm]
 
-    Some other content.
-    END
+      Some other content.
+      END
 
-    (expect pdf.pages).to have_size 2
-    main_text = pdf.find_unique_text %r/^About /
-    footnote_text = pdf.find_unique_text %r/More about /
-    (expect main_text[:page_number]).to eql 1
-    (expect footnote_text[:page_number]).to eql 2
+      (expect pdf.pages).to have_size 2
+      main_text = pdf.find_unique_text %r/^About /
+      footnote_text = pdf.find_unique_text %r/More about /
+      (expect main_text[:page_number]).to eql 1
+      (expect footnote_text[:page_number]).to eql 2
+    end
   end
 
   it 'should not move footnotes down if height exceeds height of page' do
@@ -306,18 +310,20 @@ describe 'Asciidoctor::PDF::Converter - Footnote' do
   end
 
   it 'should keep footnote label with previous text when line wraps to next page' do
-    pdf = to_pdf <<~'END', analyze: true
-    image::tall.svg[pdfwidth=85mm]
+    with_content_spacer 200, 600 do |spacer_path|
+      pdf = to_pdf <<~END, analyze: true
+      image::#{spacer_path}[pdfwidth=85mm]
 
-    The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. Go.footnote:a[This is note A.]
-    END
+      The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. Go.footnote:a[This is note A.]
+      END
 
-    lines = pdf.lines
-    (expect lines).to have_size 3
-    (expect lines[1]).to eql 'Go.[1]'
-    (expect lines[2]).to eql '1. This is note A.'
-    (expect (pdf.find_unique_text 'Go.')[:page_number]).to eql 2
-    (expect (pdf.find_unique_text %r/This is note A/)[:page_number]).to eql 2
+      lines = pdf.lines
+      (expect lines).to have_size 3
+      (expect lines[1]).to eql 'Go.[1]'
+      (expect lines[2]).to eql '1. This is note A.'
+      (expect (pdf.find_unique_text 'Go.')[:page_number]).to eql 2
+      (expect (pdf.find_unique_text %r/This is note A/)[:page_number]).to eql 2
+    end
   end
 
   it 'should keep formatted footnote label with previous text' do
