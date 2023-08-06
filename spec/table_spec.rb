@@ -2633,41 +2633,43 @@ describe 'Asciidoctor::PDF::Converter - Table' do
     end
 
     it 'should preserve left margin on page that follows page containing a table with an AsciiDoc table cell' do
-      pdf = to_pdf <<~'END', analyze: true
-      == Section Title
+      with_content_spacer 200, 600 do |spacer_path|
+        pdf = to_pdf <<~END, analyze: true
+        == Section Title
 
-      image::tall.svg[pdfwidth=38mm]
+        image::#{spacer_path}[pdfwidth=38mm]
 
-      [cols=2*]
-      |===
-      |filler
-      a| Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna al abcde aaaaaaaaaa bbbbb
+        [cols=2*]
+        |===
+        |filler
+        a| Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna al abcde aaaaaaaaaa bbbbb
 
-      ____
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-      ____
-      |===
+        ____
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        ____
+        |===
 
-      terms::
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et doloreata.
+        terms::
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et doloreata.
 
-      nested term:::
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. +
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. +
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et fin.
+        nested term:::
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. +
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore. +
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et fin.
 
-      .list title
-      * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.
-      END
+        .list title
+        * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.
+        END
 
-      first_page_text = pdf.text.select {|it| it[:page_number] == 1 }
-      second_page_text = pdf.text.select {|it| it[:page_number] == 2 }
-      (expect second_page_text[0][:string]).to end_with ' et fin.'
-      (expect second_page_text[0][:x]).to be > 48.24
-      (expect second_page_text[0][:x]).to eql first_page_text.last[:x]
-      (expect second_page_text[1][:string]).to eql 'list title'
-      (expect second_page_text[1][:x]).to eql 48.24
+        first_page_text = pdf.text.select {|it| it[:page_number] == 1 }
+        second_page_text = pdf.text.select {|it| it[:page_number] == 2 }
+        (expect second_page_text[0][:string]).to end_with ' et fin.'
+        (expect second_page_text[0][:x]).to be > 48.24
+        (expect second_page_text[0][:x]).to eql first_page_text.last[:x]
+        (expect second_page_text[1][:string]).to eql 'list title'
+        (expect second_page_text[1][:x]).to eql 48.24
+      end
     end
 
     it 'should account for top and bottom padding when computing natural height of table cell' do
@@ -3235,119 +3237,131 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
   context 'Arrange block' do
     it 'should advance table to next page to avoid it from breaking if %unbreakable option is set on table' do
-      pdf = to_pdf <<~END, analyze: true
-      image::tall.svg[pdfwidth=75mm]
+      with_content_spacer 200, 600 do |spacer_path|
+        pdf = to_pdf <<~END, analyze: true
+        image::#{spacer_path}[pdfwidth=75mm]
 
-      [%unbreakable]
-      |===
-      | Column A | Column B
+        [%unbreakable]
+        |===
+        | Column A | Column B
 
-      #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
-      |===
-      END
+        #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
+        |===
+        END
 
-      column_a_text = pdf.find_text 'Column A'
-      (expect column_a_text).to have_size 1
-      (expect column_a_text[0][:page_number]).to be 2
-      cell_a1_text = pdf.find_unique_text 'A1'
-      (expect cell_a1_text[:page_number]).to be 2
+        column_a_text = pdf.find_text 'Column A'
+        (expect column_a_text).to have_size 1
+        (expect column_a_text[0][:page_number]).to be 2
+        cell_a1_text = pdf.find_unique_text 'A1'
+        (expect cell_a1_text[:page_number]).to be 2
+      end
     end
 
     it 'should advance table with ID to next page to avoid it from breaking if %unbreakable option is set on table' do
-      pdf = to_pdf <<~END
-      image::tall.svg[pdfwidth=75mm]
+      with_content_spacer 200, 600 do |spacer_path|
+        pdf = to_pdf <<~END
+        image::#{spacer_path}[pdfwidth=75mm]
 
-      [#t1%unbreakable]
-      |===
-      | Column A | Column B
+        [#t1%unbreakable]
+        |===
+        | Column A | Column B
 
-      #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
-      |===
-      END
+        #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
+        |===
+        END
 
-      (expect (table_dest = get_dest pdf, 't1')).not_to be_nil
-      (expect table_dest[:page_number]).to be 2
+        (expect (table_dest = get_dest pdf, 't1')).not_to be_nil
+        (expect table_dest[:page_number]).to be 2
+      end
     end
 
     it 'should advance table with caption to next page to avoid it from breaking if %unbreakable option is set on table' do
-      pdf = to_pdf <<~END, analyze: true
-      image::tall.svg[pdfwidth=75mm]
+      with_content_spacer 200, 600 do |spacer_path|
+        pdf = to_pdf <<~END, analyze: true
+        image::#{spacer_path}[pdfwidth=75mm]
 
-      .Title
-      [%unbreakable]
-      |===
-      | Column A | Column B
+        .Title
+        [%unbreakable]
+        |===
+        | Column A | Column B
 
-      #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
-      |===
-      END
+        #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
+        |===
+        END
 
-      title_text = pdf.find_unique_text 'Table 1. Title'
-      (expect title_text[:page_number]).to be 2
-      column_a_text = pdf.find_text 'Column A'
-      (expect column_a_text).to have_size 1
-      (expect column_a_text[0][:page_number]).to be 2
-      cell_a1_text = pdf.find_unique_text 'A1'
-      (expect cell_a1_text[:page_number]).to be 2
+        title_text = pdf.find_unique_text 'Table 1. Title'
+        (expect title_text[:page_number]).to be 2
+        column_a_text = pdf.find_text 'Column A'
+        (expect column_a_text).to have_size 1
+        (expect column_a_text[0][:page_number]).to be 2
+        cell_a1_text = pdf.find_unique_text 'A1'
+        (expect cell_a1_text[:page_number]).to be 2
+      end
     end
 
     it 'should honor caption end placement if %unbreakable option is set on table' do
       pdf_theme = { table_caption_end: 'bottom' }
-      pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
-      image::tall.svg[pdfwidth=75mm]
+      with_content_spacer 200, 600 do |spacer_path|
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, analyze: true
+        image::#{spacer_path}[pdfwidth=75mm]
 
-      .Title
-      [%unbreakable]
-      |===
-      | Column A | Column B
+        .Title
+        [%unbreakable]
+        |===
+        | Column A | Column B
 
-      #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
-      |===
-      END
+        #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
+        |===
+        END
 
-      title_text = pdf.find_unique_text 'Table 1. Title'
-      (expect title_text[:page_number]).to be 2
-      column_a_text = pdf.find_text 'Column A'
-      (expect column_a_text).to have_size 1
-      column_a_text = column_a_text[0]
-      (expect column_a_text[:page_number]).to be 2
-      (expect title_text[:y]).to be < column_a_text[:y]
+        title_text = pdf.find_unique_text 'Table 1. Title'
+        (expect title_text[:page_number]).to be 2
+        column_a_text = pdf.find_text 'Column A'
+        (expect column_a_text).to have_size 1
+        column_a_text = column_a_text[0]
+        (expect column_a_text[:page_number]).to be 2
+        (expect title_text[:y]).to be < column_a_text[:y]
+      end
     end
 
     it 'should keep caption with table if %breakable option is set on table' do
-      pdf = to_pdf <<~END, analyze: true
-      image::tall.svg[pdfwidth=80mm]
+      with_content_spacer 200, 600 do |spacer_path|
+        pdf = to_pdf <<~END, analyze: true
+        image::#{spacer_path}[pdfwidth=80mm]
 
-      .Title that goes on #{['and on'] * 50 * ' '}
-      [%breakable]
-      |===
-      | Column A | Column B
+        .Title that goes on #{['and on'] * 50 * ' '}
+        [%breakable]
+        |===
+        | Column A | Column B
 
-      #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
-      |===
-      END
+        #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
+        |===
+        END
 
-      title_text = pdf.find_unique_text %r/^Table 1\. /
-      (expect title_text[:page_number]).to be 2
-      column_a_text = pdf.find_text 'Column A'
-      (expect column_a_text).to have_size 1
-      (expect column_a_text[0][:page_number]).to be 2
+        title_text = pdf.find_unique_text %r/^Table 1\. /
+        (expect title_text[:page_number]).to be 2
+        column_a_text = pdf.find_text 'Column A'
+        (expect column_a_text).to have_size 1
+        (expect column_a_text[0][:page_number]).to be 2
+      end
     end
 
     it 'should keep ID with table if %breakable option is set on table' do
-      pdf = to_pdf <<~END
-      image::tall.svg[pdfwidth=85mm]
+      with_content_spacer 200, 600 do |spacer_path|
+        pdf = to_pdf <<~END
+        image::#{spacer_path}[pdfwidth=85mm]
 
-      [#t1%breakable]
-      |===
-      | Column A | Column B
+        [#t1%breakable]
+        |===
+        | Column A | Column B
 
-      #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
-      |===
-      END
+        #{(1.upto 5).map {|idx| %(| A#{idx} | B#{idx}) }.join %(\n\n)}
+        |===
+        END
 
-      table_dest = get_dest pdf, 't1'
-      (expect table_dest[:page_number]).to be 2
+        table_dest = get_dest pdf, 't1'
+        (expect table_dest[:page_number]).to be 2
+      end
     end
 
     it 'should not collapse margin below table with %unbreakable option' do
