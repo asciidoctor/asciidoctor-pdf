@@ -639,23 +639,25 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should not allow inline image to affect the cursor position of the following paragraph' do
-      pdf = to_pdf <<~'END', analyze: true
-      before
+      with_content_spacer 200, 600 do |spacer_path|
+        pdf = to_pdf <<~'END', analyze: true
+        before
 
-      next
-      END
+        next
+        END
 
-      expected_gap = ((pdf.find_unique_text 'before')[:y] - (pdf.find_unique_text 'next')[:y]).round 2
+        expected_gap = ((pdf.find_unique_text 'before')[:y] - (pdf.find_unique_text 'next')[:y]).round 2
 
-      pdf = to_pdf <<~'END', analyze: true
-      before image:tall.svg[pdfwidth=0.5in] after
+        pdf = to_pdf <<~END, analyze: true
+        before image:#{spacer_path}[pdfwidth=0.5in] after
 
-      next
-      END
+        next
+        END
 
-      actual_gap = ((pdf.find_unique_text %r/before/)[:y] - (pdf.find_unique_text 'next')[:y]).round 2
-      (expect actual_gap).to eql expected_gap
-      (expect (pdf.find_unique_text %r/before/)[:y]).to eql (pdf.find_unique_text %r/after/)[:y]
+        actual_gap = ((pdf.find_unique_text %r/before/)[:y] - (pdf.find_unique_text 'next')[:y]).round 2
+        (expect actual_gap).to eql expected_gap
+        (expect (pdf.find_unique_text %r/before/)[:y]).to eql (pdf.find_unique_text %r/after/)[:y]
+      end
     end
 
     it 'should set color space on page that only has image and stamp' do
@@ -706,56 +708,60 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should place SVG in correct column when page columns are enabled' do
-      pdf_theme = {
-        page_columns: 2,
-        page_column_gap: 12,
-        thematic_break_border_color: '0000FF',
-        thematic_break_border_width: 1,
-      }
-      input = <<~'END'
-      left column
+      with_content_spacer 200, 600, fill: '#008000' do |spacer_path|
+        pdf_theme = {
+          page_columns: 2,
+          page_column_gap: 12,
+          thematic_break_border_color: '0000FF',
+          thematic_break_border_width: 1,
+        }
+        input = <<~END
+        left column
 
-      [.column]
-      <<<
+        [.column]
+        <<<
 
-      ---
+        ---
 
-      image::tall.svg[pdfwidth=50%]
-      END
+        image::#{spacer_path}[pdfwidth=50%]
+        END
 
-      lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
-      thematic_break_line = lines.find {|it| it[:color] == '0000FF' && it[:width] == 1 }
-      column_left = thematic_break_line[:from][:x]
-      rects = (to_pdf input, pdf_theme: pdf_theme, analyze: :rect).rectangles
-      (expect rects).to have_size 1
-      (expect rects[0][:page_number]).to eql 1
-      (expect rects[0][:point]).to eql [column_left, 181.89]
-      (expect rects[0][:width]).to eql 200.0
-      (expect rects[0][:height]).to eql 600.0
-      (expect rects[0][:fill_color]).to eql '008000'
+        lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+        thematic_break_line = lines.find {|it| it[:color] == '0000FF' && it[:width] == 1 }
+        column_left = thematic_break_line[:from][:x]
+        rects = (to_pdf input, pdf_theme: pdf_theme, analyze: :rect).rectangles
+        (expect rects).to have_size 1
+        (expect rects[0][:page_number]).to eql 1
+        (expect rects[0][:point]).to eql [column_left, 181.89]
+        (expect rects[0][:width]).to eql 200.0
+        (expect rects[0][:height]).to eql 600.0
+        (expect rects[0][:fill_color]).to eql '008000'
+      end
     end
 
     it 'should center SVG in right column when page columns are enabled', visual: true do
-      pdf_theme = {
-        page_columns: 2,
-        page_column_gap: 12,
-        thematic_break_border_color: '0000FF',
-        thematic_break_border_width: 1,
-      }
-      input = <<~'END'
-      left column
+      with_content_spacer 200, 600, fill: '#008000' do |spacer_path|
+        pdf_theme = {
+          page_columns: 2,
+          page_column_gap: 12,
+          thematic_break_border_color: '0000FF',
+          thematic_break_border_width: 1,
+        }
+        input = <<~END
+        left column
 
-      [.column]
-      <<<
+        [.column]
+        <<<
 
-      ---
+        ---
 
-      image::tall.svg[pdfwidth=50%,align=center]
-      END
+        image::#{spacer_path}[pdfwidth=50%,align=center]
+        END
 
-      to_file = to_pdf_file input, 'image-svg-in-column-align-center.pdf', pdf_theme: pdf_theme
+        to_file = to_pdf_file input, 'image-svg-in-column-align-center.pdf', pdf_theme: pdf_theme
 
-      (expect to_file).to visually_match 'image-svg-in-column-align-center.pdf'
+        (expect to_file).to visually_match 'image-svg-in-column-align-center.pdf'
+      end
     end
 
     it 'should not advance SVG at top of column box to fit if column box starts below top of page' do
@@ -770,25 +776,27 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         end
       end
 
-      input = <<~'END'
-      = Document Title
+      with_content_spacer 200, 600, fill: '#008000' do |spacer_path|
+        input = <<~END
+        = Document Title
 
-      image::tall.svg[pdfwidth=90mm]
+        image::#{spacer_path}[pdfwidth=90mm]
 
-      paragraph in second column
-      END
+        paragraph in second column
+        END
 
-      pdf = to_pdf input, backend: backend, analyze: true
-      (expect pdf.pages).to have_size 1
-      second_column_text = pdf.find_unique_text 'paragraph in second column'
-      (expect second_column_text[:x]).to eql 302.89
-      (expect second_column_text[:y] + second_column_text[:font_size]).to (be_within 2).of 758.37
-      rects = (to_pdf input, backend: backend, analyze: :rect).rectangles
-      (expect rects).to have_size 1
-      (expect rects[0][:page_number]).to eql 1
-      (expect rects[0][:point]).to eql [48.24, 158.37]
-      (expect rects[0][:width]).to eql 200.0
-      (expect rects[0][:height]).to eql 600.0
+        pdf = to_pdf input, backend: backend, analyze: true
+        (expect pdf.pages).to have_size 1
+        second_column_text = pdf.find_unique_text 'paragraph in second column'
+        (expect second_column_text[:x]).to eql 302.89
+        (expect second_column_text[:y] + second_column_text[:font_size]).to (be_within 2).of 758.37
+        rects = (to_pdf input, backend: backend, analyze: :rect).rectangles
+        (expect rects).to have_size 1
+        (expect rects[0][:page_number]).to eql 1
+        (expect rects[0][:point]).to eql [48.24, 158.37]
+        (expect rects[0][:width]).to eql 200.0
+        (expect rects[0][:height]).to eql 600.0
+      end
     end
 
     it 'should advance SVG below top of column box to next column to fit' do
@@ -803,29 +811,31 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         end
       end
 
-      input = <<~'END'
-      = Document Title
+      with_content_spacer 200, 600, fill: '#008000' do |spacer_path|
+        input = <<~END
+        = Document Title
 
-      before
+        before
 
-      image::tall.svg[pdfwidth=90mm]
+        image::#{spacer_path}[pdfwidth=90mm]
 
-      paragraph on next page
-      END
+        paragraph on next page
+        END
 
-      pdf = to_pdf input, backend: backend, analyze: true
-      (expect pdf.pages).to have_size 2
-      before_text = pdf.find_unique_text 'before'
-      (expect before_text[:x]).to eql 48.24
-      second_column_text = pdf.find_unique_text 'paragraph on next page'
-      (expect second_column_text[:page_number]).to eql 2
-      (expect second_column_text[:x]).to eql 48.24
-      rects = (to_pdf input, backend: backend, analyze: :rect).rectangles
-      (expect rects).to have_size 1
-      (expect rects[0][:page_number]).to eql 1
-      (expect rects[0][:point]).to eql [302.89, 158.37]
-      (expect rects[0][:width]).to eql 200.0
-      (expect rects[0][:height]).to eql 600.0
+        pdf = to_pdf input, backend: backend, analyze: true
+        (expect pdf.pages).to have_size 2
+        before_text = pdf.find_unique_text 'before'
+        (expect before_text[:x]).to eql 48.24
+        second_column_text = pdf.find_unique_text 'paragraph on next page'
+        (expect second_column_text[:page_number]).to eql 2
+        (expect second_column_text[:x]).to eql 48.24
+        rects = (to_pdf input, backend: backend, analyze: :rect).rectangles
+        (expect rects).to have_size 1
+        (expect rects[0][:page_number]).to eql 1
+        (expect rects[0][:point]).to eql [302.89, 158.37]
+        (expect rects[0][:width]).to eql 200.0
+        (expect rects[0][:height]).to eql 600.0
+      end
     end
 
     it 'should scale down SVG to fit bounds if width is set in SVG but not on image macro', visual: true do
@@ -835,54 +845,60 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should not scale SVG if it can fit on next page' do
-      pdf = to_pdf <<~END, analyze: true
-      #{(%w(filler) * 6).join %(\n\n)}
+      with_content_spacer 200, 600 do |spacer_path|
+        pdf = to_pdf <<~END, analyze: true
+        #{(%w(filler) * 6).join %(\n\n)}
 
-      image::tall.svg[]
+        image::#{spacer_path}[]
 
-      below first
+        below first
 
-      <<<
+        <<<
 
-      image::tall.svg[]
+        image::#{spacer_path}[]
 
-      below second
-      END
+        below second
+        END
 
-      below_first_text = pdf.find_unique_text 'below first'
-      below_second_text = pdf.find_unique_text 'below second'
-      (expect below_first_text[:y]).to eql below_second_text[:y]
-      (expect below_first_text[:page_number]).to be 2
-      (expect below_second_text[:page_number]).to be 3
+        below_first_text = pdf.find_unique_text 'below first'
+        below_second_text = pdf.find_unique_text 'below second'
+        (expect below_first_text[:y]).to eql below_second_text[:y]
+        (expect below_first_text[:page_number]).to be 2
+        (expect below_second_text[:page_number]).to be 3
+      end
     end
 
     it 'should scale down inline SVG to fit height of page' do
-      input = <<~'END'
-      :pdf-page-size: 200x350
-      :pdf-page-margin: 0
+      with_content_spacer 200, 600 do |spacer_path|
+        input = <<~END
+        :pdf-page-size: 200x350
+        :pdf-page-margin: 0
 
-      image:tall.svg[]
-      END
+        image:#{spacer_path}[]
+        END
 
-      pdf = to_pdf input, analyze: :line
-      image_h = pdf.lines[1][:to][:y] - pdf.lines[1][:from][:y]
-      (expect image_h).to eql 350.0
+        pdf = to_pdf input, analyze: :line
+        image_h = pdf.lines[1][:to][:y] - pdf.lines[1][:from][:y]
+        (expect image_h).to eql 350.0
+      end
     end
 
     it 'should scale down inline SVG to fit height of next page' do
-      input = <<~'END'
-      :pdf-page-size: 200x350
-      :pdf-page-margin: 0
+      with_content_spacer 200, 600 do |spacer_path|
+        input = <<~END
+        :pdf-page-size: 200x350
+        :pdf-page-margin: 0
 
-      before
+        before
 
-      image:tall.svg[]
-      END
+        image:#{spacer_path}[]
+        END
 
-      pdf = to_pdf input, analyze: :line
-      (expect pdf.lines.map {|it| it[:page_number] }.uniq).to eql [2]
-      image_h = pdf.lines[1][:to][:y] - pdf.lines[1][:from][:y]
-      (expect image_h).to eql 350.0
+        pdf = to_pdf input, analyze: :line
+        (expect pdf.lines.map {|it| it[:page_number] }.uniq).to eql [2]
+        image_h = pdf.lines[1][:to][:y] - pdf.lines[1][:from][:y]
+        (expect image_h).to eql 350.0
+      end
     end
 
     it 'should display text inside link' do
@@ -1149,17 +1165,19 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         footer_recto_right_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),
         footer_verso_left_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),
       }
-      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, enable_footer: true
-      before
+      with_content_spacer 200, 600 do |spacer_path|
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, enable_footer: true
+        before
 
-      image::tall.svg[pdfwidth=50%]
+        image::#{spacer_path}[pdfwidth=50%]
 
-      after
-      END
+        after
+        END
 
-      (expect pdf.pages).to have_size 3
-      page_contents = pdf.objects[(pdf.page 2).page_object[:Contents]].data
-      (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 0.0 scn']
+        (expect pdf.pages).to have_size 3
+        page_contents = pdf.objects[(pdf.page 2).page_object[:Contents]].data
+        (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 0.0 scn']
+      end
     end
 
     it 'should set graphic state for running content when image does not occupy whole page' do
@@ -1167,22 +1185,24 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         footer_recto_right_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),
         footer_verso_left_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),
       }
-      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, enable_footer: true
-      first
+      with_content_spacer 200, 600 do |spacer_path|
+        pdf = to_pdf <<~END, pdf_theme: pdf_theme, enable_footer: true
+        first
 
-      <<<
+        <<<
 
-      before
+        before
 
-      image::tall.svg[pdfwidth=25%]
+        image::#{spacer_path}[pdfwidth=25%]
 
-      after
-      END
+        after
+        END
 
-      (expect pdf.pages).to have_size 2
-      [1, 2].each do |pagenum|
-        page_contents = pdf.objects[(pdf.page pagenum).page_object[:Contents]].data
-        (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.2 0.2 0.2 scn']
+        (expect pdf.pages).to have_size 2
+        [1, 2].each do |pagenum|
+          page_contents = pdf.objects[(pdf.page pagenum).page_object[:Contents]].data
+          (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.2 0.2 0.2 scn']
+        end
       end
     end
 
