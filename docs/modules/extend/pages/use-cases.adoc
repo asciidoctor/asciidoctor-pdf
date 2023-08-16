@@ -228,7 +228,7 @@ This method is invoked for each parent entry in the TOC, starting from the docum
 include::example$pdf-converter-additional-toc-entries.rb[]
 ----
 
-The depth of the TOC is automatically controlled by the `toclevels` attributes.
+The depth of the TOC is automatically controlled by the `toclevels` attribute.
 Once this limit is reached, the converter will not call `get_entries_for_toc` for that parent (as none of its children will be included in the TOC).
 
 [#breakable-tables]
