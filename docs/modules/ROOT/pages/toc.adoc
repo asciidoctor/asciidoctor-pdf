@@ -30,6 +30,42 @@ The `toclevels` attribute controls the depth of both the TOC and the PDF outline
 The depth of the PDF outline can be controlled independently using the xref:pdf-outline.adoc#levels[outlinelevels attribute].
 Both the `toclevels` and `outlinelevels` attributes can be set as a block attribute on each section to override the respective depth of the TOC or outline for that section.
 
+== TOC depth
+
+You can adjust the depth of section levels that are displayed in the TOC using the `toclevels` document attribute.
+
+[,asciidoc]
+----
+= Document Title
+:toclevels: 3 <.>
+----
+<.> Set `toclevels` in the document header.
+Accepted values are the numbers 1 through 5.
+
+You can override the `toclevels` document attribute for a specific section and its children by setting the `toclevels` block attribute on the respective section.
+
+[,asciidoc]
+----
+= Document Title
+:toclevels: 1
+
+== Section title
+
+Content.
+
+[toclevels=2] <.>
+== Section title
+
+Content.
+
+=== Section title
+----
+<.> Temporarily overrides the `toclevels` document attribute with the value `2` until the next sibling section.
+
+The block attribute temporarily changes the value of the document attribute and thus refers to the absolute depth.
+Therefore, it must take into account the depth of the section on which it is set.
+The value `0` always removes the current section from the TOC.
+
 == Insert TOC entries
 
 You can add TOC entries for a preface, preamble, or imported PDF pages using the `notitle` option.
