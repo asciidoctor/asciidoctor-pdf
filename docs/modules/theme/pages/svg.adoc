@@ -4,7 +4,11 @@
 :source-language: yaml
 
 The key in the `svg` category controls the SVG fallback font.
-The fallback font family is only used when the font family in the SVG does not map to a known font name from the font catalog.
+The fallback font family is only consulted when the font family in the SVG is unrecognized, meaning it does not map to a known font name in the theme's font catalog.
+The one exception to this rule are the generic font families: serif, sans-serif, cursive, fantasy, and monospace.
+These generic font families are mapped to their respective built-in (AFM) fonts (e.g., serif maps to Times-Roman, sans-serif maps to Helvetica, and monospace maps to Courier).
+If you want to change this mapping, it's necessary to remap the generic font family of interest as a font in the theme.
+The `fallback-font-family` key in the `svg` category won't help you here.
 
 [cols="4,4,6a"]
 |===
