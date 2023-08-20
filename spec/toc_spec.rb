@@ -180,6 +180,35 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.find_text page_number: 2, string: 'Appendix Section').to have_size 0
     end
 
+    it 'should include dot leaders in TOC entry if toclevels is increased for a given section' do
+      pdf = to_pdf <<~'END', analyze: true
+      = Document Title
+      :doctype: book
+      :toc:
+      :toclevels: 1
+
+      == Chapter
+
+      === Chapter Section
+
+      ==== Chapter Subsection
+
+      [toclevels=3]
+      == Lorem Ipsum
+
+      === Lorem Ipsum Section
+
+      ==== Lorem Ipsum Subsection
+      END
+
+      toc_lines = pdf.lines pdf.find_text page_number: 2
+      (expect toc_lines).to have_size 5
+      (expect toc_lines[1]).to match %r/^Chapter (\. )+.*?1/
+      (expect toc_lines[2]).to match %r/^Lorem Ipsum (\. )+.*?2/
+      (expect toc_lines[3]).to match %r/^Lorem Ipsum Section (\. )+.*?2/
+      (expect toc_lines[4]).to match %r/^Lorem Ipsum Subsection (\. )+.*?2/
+    end
+
     it 'should allow section to remove itself from toc by setting toclevels to less than section level' do
       pdf = to_pdf <<~'EOS', analyze: true
       = Document Title

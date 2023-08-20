@@ -3861,7 +3861,7 @@ module Asciidoctor
               font_style: dot_leader_font_style,
               font_size: font_size,
               levels: ((dot_leader_l = @theme.toc_dot_leader_levels) == 'none' ? ::Set.new :
-                  (dot_leader_l && dot_leader_l != 'all' ? dot_leader_l.to_s.split.map(&:to_i).to_set : (0..num_levels).to_set)),
+                  (dot_leader_l && dot_leader_l != 'all' ? dot_leader_l.to_s.split.map(&:to_i).to_set : nil)),
               text: (dot_leader_text = @theme.toc_dot_leader_content || DotLeaderTextDefault),
               width: dot_leader_text.empty? ? 0 : (rendered_width_of_string dot_leader_text),
               # TODO: spacer gives a little bit of room between dots and page number
@@ -3935,7 +3935,7 @@ module Asciidoctor
               end_cursor = cursor
               move_cursor_to start_cursor
               # NOTE: we're guaranteed to be on the same page as the final line of the entry
-              if dot_leader[:width] > 0 && (dot_leader[:levels].include? entry_level.pred)
+              if dot_leader[:width] > 0 && (dot_leader[:levels] ? (dot_leader[:levels].include? entry_level.pred) : true)
                 pgnum_label_width = rendered_width_of_string pgnum_label
                 pgnum_label_font_settings = { color: @font_color, font: font_family, size: @font_size, styles: font_styles }
                 save_font do
