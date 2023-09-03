@@ -13,13 +13,13 @@ describe 'Asciidoctor::PDF::Converter - Video' do
     end
 
     it 'should replace video with video path and play icon if poster not specified' do
-      pdf = to_pdf <<~'END', analyze: true
+      pdf = to_pdf <<~'END', attributes: { 'imagesdir' => 'path/to/images' }, analyze: true
       :icons: font
 
       video::asciidoctor.mp4[]
       END
 
-      (expect pdf.lines).to eql [%(\uf04b\u00a0#{fixture_file 'asciidoctor.mp4'} (video))]
+      (expect pdf.lines).to eql [%(\uf04b\u00a0path/to/images/asciidoctor.mp4 (video))]
     end
 
     it 'should wrap text for video if it exceeds width of content area' do
@@ -33,14 +33,14 @@ describe 'Asciidoctor::PDF::Converter - Video' do
     end
 
     it 'should show caption for video with no poster if title is specified' do
-      pdf = to_pdf <<~'END', analyze: true
+      pdf = to_pdf <<~'END', attributes: { 'imagesdir' => '' }, analyze: true
       :icons: font
 
       .Asciidoctor training
       video::asciidoctor.mp4[]
       END
 
-      (expect pdf.lines).to eql [%(\uf04b\u00a0#{fixture_file 'asciidoctor.mp4'} (video)), 'Asciidoctor training']
+      (expect pdf.lines).to eql [%(\uf04b\u00a0asciidoctor.mp4 (video)), 'Asciidoctor training']
     end
   end
 
