@@ -6,11 +6,11 @@ describe 'Asciidoctor::PDF::Converter - Audio' do
   it 'should replace audio block with right pointer, path to audio file, and audio label' do
     expected_lines = [
       'before',
-      %(\u25ba\u00a0#{fixture_file 'podcast.mp3'} (audio)),
+      %(\u25ba\u00a0path/to/images/podcast.mp3 (audio)),
       'after',
     ]
 
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'EOS', attributes: { 'imagesdir' => 'path/to/images' }, analyze: true
     before
 
     audio::podcast.mp3[]
@@ -46,13 +46,13 @@ describe 'Asciidoctor::PDF::Converter - Audio' do
   end
 
   it 'should show caption for audio if title is specified' do
-    pdf = to_pdf <<~'EOS', analyze: true
+    pdf = to_pdf <<~'EOS', attributes: { 'imagesdir' => '' }, analyze: true
     :icons: font
 
     .Episode 1 of my podcast
     audio::podcast-e1.mp3[]
     EOS
 
-    (expect pdf.lines).to eql [%(\uf04b\u00a0#{fixture_file 'podcast-e1.mp3'} (audio)), 'Episode 1 of my podcast']
+    (expect pdf.lines).to eql [%(\uf04b\u00a0podcast-e1.mp3 (audio)), 'Episode 1 of my podcast']
   end
 end

@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 Bug Fixes::
 
 * show dot leaders in TOC entry if toclevels is increased for a given section (#2441)
+* decouple tests from path of PWD (#2444)
 
 == 2.3.9 (2023-06-28) - @mojavelinux
 
