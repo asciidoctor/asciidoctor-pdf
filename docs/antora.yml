@@ -10,7 +10,7 @@ asciidoc:
     url-gem: https://rubygems.org/gems/asciidoctor-pdf
     url-project-repo: https://github.com/asciidoctor/asciidoctor-pdf
     url-project-issues: https://github.com/asciidoctor/asciidoctor-pdf/issues
-    url-api-docs: https://www.rubydoc.info/github/asciidoctor/asciidoctor-pdf/Asciidoctor/PDF/Converter
+    url-api-docs: https://www.rubydoc.info/gems/asciidoctor-pdf/Asciidoctor/PDF/Converter
     url-prawn: https://prawnpdf.org
     url-prawn-gmagick: https://github.com/packetmonkey/prawn-gmagick
     url-prawn-svg: https://github.com/mogest/prawn-svg
