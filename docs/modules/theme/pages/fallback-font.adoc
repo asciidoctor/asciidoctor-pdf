@@ -10,6 +10,9 @@ IMPORTANT: When defining the fallback font, you *must specify all four variants*
 IMPORTANT: The fallback font only gets used when the primary font is a TrueType or OpenType font (i.e., TTF, DFont, TTC, OTF).
 Any glyph missing from an AFM font is simply replaced with the "`not`" glyph (`&#172;`).
 
+WARNING: You cannot use a color emoji font as a fallback font in Asciidoctor PDF.
+The font library used by Asciidoctor PDF does not support color fonts and will cause Asciidoctor to crash.
+
 CAUTION: The `default` theme does not use a fallback font.
 However, the built-in `default-with-font-fallbacks` theme does.
 In fact, it provides two.
