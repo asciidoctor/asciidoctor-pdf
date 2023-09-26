@@ -340,92 +340,81 @@ The keys in the `title-page-authors` category control the display, arrangement a
 |xref:quoted-string.adoc[Quoted AsciiDoc string] +
 (default: `"\{author}"`)
 |[source]
-title-page:
-  authors:
-    content:
-      name_only: "{author}"
-      with_email: "{author} <{email}>"
-      with_url: "{url}[{author}]"
+title-page-authors:
+  content:
+    name_only: "{author}"
+    with_email: "{author} <{email}>"
+    with_url: "{url}[{author}]"
 
 |delimiter
 |xref:quoted-string.adoc[Quoted string] +
 (default: `', '`)
 |[source]
-title-page:
-  authors:
-    delimiter: '; '
+title-page-authors:
+  delimiter: '; '
 
 |display
 |`none` +
 (default: _not set_)
 |[source]
-title-page:
-  authors:
-    display: none
+title-page-authors:
+  display: none
 
 |font-color
 |xref:color.adoc[Color] +
 (default: _inherit_)
 |[source]
-title-page:
-  authors:
-    font-color: #181818
+title-page-authors:
+  font-color: #181818
 
 |font-family
 |xref:font-support.adoc[Font family name] +
 (default: _inherit_)
 |[source]
-title-page:
-  authors:
-    font-family: Noto Serif
+title-page-authors:
+  font-family: Noto Serif
 
 |font-kerning
 |`none` {vbar} `normal` +
 (default: _inherit_)
 |[source]
-title-page:
-  authors:
-    font-kerning: none
+title-page-authors:
+  font-kerning: none
 
 |font-size
 |xref:text.adoc#font-size[Font size] +
 (default: _inherit_)
 |[source]
-title-page:
-  authors:
-    font-size: 13
+title-page-authors:
+  font-size: 13
 
 |font-style
 |xref:text.adoc#font-style[Font style] +
 (default: _inherit_)
 |[source]
-title-page:
-  authors:
-    font-style: bold_italic
+title-page-authors:
+  font-style: bold_italic
 
 |margin-bottom
 |xref:measurement-units.adoc[Measurement] +
 (default: `0`)
 |[source]
-title-page:
-  authors:
-    margin-bottom: 5
+title-page-authors:
+  margin-bottom: 5
 
 |margin-top
 |xref:measurement-units.adoc[Measurement] +
 (default: `12`)
 |[source]
-title-page:
-  authors:
-    margin-top: 13.125
+title-page-authors:
+  margin-top: 13.125
 
 |text-transform
 |xref:text.adoc#transform[Text transform] +
 (default: _inherit_)
 |[source]
-title-page:
-  authors:
-    text-transform: uppercase
+title-page-authors:
+  text-transform: uppercase
 |===
 
 [#content]
