@@ -6,7 +6,8 @@ RSpec::Matchers.define :not_log_message do |expected|
   match notify_expectation_failures: true do |actual|
     with_memory_logger expected.to_h[:using_log_level] do |logger|
       actual.call
-      logger ? logger.empty? : true
+      (expect logger).to be_empty if logger
+      true
     end
   end
 
