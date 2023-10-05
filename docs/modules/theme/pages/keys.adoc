@@ -6,9 +6,11 @@ The following pages list the keys and acceptable values or value types that are 
 The keys are organized by category key.
 Each category represents a common prefix under which the (property) keys are typically nested.
 
-TIP: Keys can be nested wherever an underscore (`_`) or hyphen (`-`) appears in the name.
-This nested structure is for organizational purposes only.
-All keys are flatted when the theme is loaded (e.g., `text-align` nested under `base` becomes `base-text-align`).
+TIP: Keys can be divided and nested wherever an underscore (`_`) or hyphen (`-`) appears in the name.
+For example, the key `base-text-align` can be expressed as the `text-align` key under the `base` category key.
+This nested structure is for organizational purposes and is not required.
+All keys are flatted when the theme is loaded.
+Although the `title-page` category key contains a hyphen, it's never split since `title` is not a recognized category key.
 
 The converter uses the values of these keys to control how most elements are arranged and styled in the PDF.
 The default values listed in this section get inherited from the {url-project-repo}/blob/{page-origin-refname}/data/themes/base-theme.yml[base theme^].
