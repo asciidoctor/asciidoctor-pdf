@@ -52,6 +52,7 @@ Bug Fixes::
 * prevent special character substitution from interfering with callouts in plain verbatim block (#2390)
 * remove deprecated, undocumented `svg-font-family` theme key (the correct key is `svg-fallback-font-family`)
 * decouple tests from path of PWD (#2444)
+* add fallback character for placeholder character when using AFM font (#2453)
 
 == 2.3.9 (2023-06-28) - @mojavelinux
 
