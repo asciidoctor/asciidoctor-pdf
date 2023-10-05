@@ -1350,7 +1350,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         thematic_break_border_color: '0000FF',
         thematic_break_border_width: 1,
       }
-      input = <<~'END'
+      input = <<~'EOS'
       left column
 
       [.column]
@@ -1359,7 +1359,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       ---
 
       image::tux.jpg[pdfwidth=50%]
-      END
+      EOS
 
       lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
       thematic_break_line = lines.find {|it| it[:color] == '0000FF' && it[:width] == 1 }
@@ -1377,7 +1377,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         thematic_break_border_color: '0000FF',
         thematic_break_border_width: 1,
       }
-      input = <<~'END'
+      input = <<~'EOS'
       left column
 
       [.column]
@@ -1386,7 +1386,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       ---
 
       image::tux.jpg[align=right,pdfwidth=50%]
-      END
+      EOS
 
       lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
       thematic_break_line = lines.find {|it| it[:color] == '0000FF' && it[:width] == 1 }
@@ -2167,14 +2167,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should not warn about missing glyph for image placeholder char when using AFM font' do
       (expect do
-        pdf = to_pdf <<~'END', attribute_overrides: { 'pdf-theme' => 'base' }, analyze: :image
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => 'base' }, analyze: :image
         :pdf-page-size: A6
         :pdf-page-layout: landscape
 
         before
 
         image:square.png[pdfwidth=7cm]
-        END
+        EOS
         (expect (images = pdf.images)).to have_size 1
         (expect images[0][:page_number]).to be 2
       end).to not_log_message using_log_level: :INFO

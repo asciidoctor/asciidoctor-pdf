@@ -1228,11 +1228,11 @@ describe 'Asciidoctor::PDF::Converter - Source' do
 
     it 'should not crash if source highlighter is enabled and subs is set on empty block' do
       (expect do
-        input = <<~'END'
+        input = <<~'EOS'
         [source,ruby,subs=attributes+]
         ----
         ----
-        END
+        EOS
         lines = (to_pdf input, attribute_overrides: { 'source-highlighter' => 'coderay' }, analyze: :line).lines
         text = (to_pdf input, attribute_overrides: { 'source-highlighter' => 'coderay' }, analyze: true).text
         (expect (lines[0][:from][:y] - lines[1][:from][:y]).abs).to be < 5

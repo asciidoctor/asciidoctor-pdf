@@ -181,7 +181,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should include dot leaders in TOC entry if toclevels is increased for a given section' do
-      pdf = to_pdf <<~'END', analyze: true
+      pdf = to_pdf <<~'EOS', analyze: true
       = Document Title
       :doctype: book
       :toc:
@@ -199,7 +199,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       === Lorem Ipsum Section
 
       ==== Lorem Ipsum Subsection
-      END
+      EOS
 
       toc_lines = pdf.lines pdf.find_text page_number: 2
       (expect toc_lines).to have_size 5
