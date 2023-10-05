@@ -2,7 +2,7 @@
 
 == Run Asciidoctor PDF
 
-Assuming all the required gems install properly, verify you can run the `asciidoctor-pdf` script:
+Assuming all the required gems install properly, verify you can run the `asciidoctor-pdf` command:
 
  $ asciidoctor-pdf -v
 
@@ -22,11 +22,11 @@ include::attachment$basic-example.adoc[]
 
 It's time to convert the AsciiDoc document directly to PDF.
 
-== Convert an AsciiDoc document to a PDF
+== Convert an AsciiDoc document to PDF
 
 IMPORTANT: You'll need the `rouge` gem installed to run this example since it uses the `source-highlighter` attribute with the value of `rouge`.
 
-Converting to PDF is as straightforward as running the `asciidoctor-pdf` script using Ruby and passing the AsciiDoc document as the first argument:
+Converting to PDF is as straightforward as running the `asciidoctor-pdf` command using Ruby and passing the AsciiDoc document as the first argument:
 
  $ asciidoctor-pdf basic-example.adoc
 
@@ -37,9 +37,76 @@ This command is a shorter way of running `asciidoctor` with the PDF converter an
 The `asciidoctor-pdf` command saves you from having to remember these low-level options.
 That's why we provide it.
 
-When the script completes, you should see the file [.path]_basic-example.pdf_ in the current directory.
+When the command completes, you should see the file [.path]_basic-example.pdf_ in the current directory.
 Asciidoctor creates the output file in the same directory as the input file by default.
 Open the [.path]_basic-example.pdf_ file with a PDF viewer to see the result.
 
 .Example PDF document rendered in a PDF viewer
 image::basic-example-pdf-screenshot.png[Screenshot of PDF document,960,540,pdfwidth=100%]
+
+== Convert to PDF using the API
+
+In addition to the `asciidoctor-pdf` command, you can convert to PDF using the Asciidoctor API.
+The selection of the Asciidoctor PDF converter is controlled through use of the `backend` keyword, which may be specified either as an API option or a document attribute.
+
+First, make sure you have the Asciidoctor PDF gem installed and available on the Ruby runtime path.
+Once that step is complete, require the `asciidoctor-pdf` gem to load the Asciidoctor PDF converter.
+
+[,ruby]
+----
+require 'asciidoctor-pdf'
+----
+
+You can now use the main Asciidoctor API to convert an AsciiDoc document to PDF.
+
+[,ruby]
+----
+require 'asciidoctor-pdf'
+
+Asciidoctor.convert_file 'basic-example.adoc', backend: 'pdf', safe: :unsafe
+----
+
+This API call is equivalent to the command shown in the previous section.
+The script first requires the *asciidoctor-pdf* gem (equivalent to `-r asciidoctor-pdf`).
+Then it invokes Asciidoctor with the safe mode set to unsafe (equivalent to the `asciidoctor` command) and the backend to `pdf` (equivalent to `-b pdf`).
+You can run this script using the `ruby` command.
+
+When the script completes, you should see the file [.path]_basic-example.pdf_ in the current directory.
+You can use the typical set of API options to customize where this file is written.
+
+If you use the `convert` method instead of the `convert_file` method, Asciidoctor will return the instance of the converter (which is also an instance of `Prawn::Document`).
+If you want to capture the PDF stream, you need to do so by redirecting the output to a StringIO object.
+
+[,ruby]
+----
+require 'asciidoctor-pdf'
+require 'stringio'
+
+Asciidoctor.convert 'I *love* AsciiDoc!', backend: 'pdf', safe: :unsafe, to_file: (pdf = StringIO.new)
+puts pdf.string
+----
+
+You can also capture the PDF strea after the fact by passing the returned document to the `write` method on that same object.
+
+[,ruby]
+----
+require 'asciidoctor-pdf'
+require 'stringio'
+
+doc = Asciidoctor.convert 'I *love* AsciiDoc!', backend: 'pdf', safe: :unsafe
+doc.write doc, (pdf = StringIO.new)
+puts pdf.string
+----
+
+This call is the equivalent to the following:
+
+[,ruby]
+----
+require 'asciidoctor-pdf'
+require 'stringio'
+
+puts (Asciidoctor.convert 'I *love* AsciiDoc!', backend: 'pdf', safe: :unsafe).render
+----
+
+The main difference is that calling `render` directly on the returned converter object does not trigger the cleanup routine, which is important when converting to PDF.
+Thus, using a StringIO object as the target is preferable.
