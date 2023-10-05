@@ -9,6 +9,9 @@
 The keys in the `title-page` category control the title page and the arrangement and style of the elements on it.
 See xref:title-pages.adoc[] for examples and more information.
 
+NOTE: The `title-page` key is always written as single key rather than divided into `title` and `page`.
+The nesting in the data structure typically only begins with secondary categories such as `authors` (i.e., the `authors` category key is nested under the `title-page` category key.
+
 [cols="3,4,6a"]
 |===
 |Key |Value Type |Example
