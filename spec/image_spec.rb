@@ -2165,6 +2165,21 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-inline-scale-down-height.pdf'
     end
 
+    it 'should not warn about missing glyph for image placeholder char when using AFM font' do
+      (expect do
+        pdf = to_pdf <<~'END', attribute_overrides: { 'pdf-theme' => 'base' }, analyze: :image
+        :pdf-page-size: A6
+        :pdf-page-layout: landscape
+
+        before
+
+        image:square.png[pdfwidth=7cm]
+        END
+        (expect (images = pdf.images)).to have_size 1
+        (expect images[0][:page_number]).to be 2
+      end).to not_log_message using_log_level: :INFO
+    end
+
     it 'should scale image down to fit available height inside delimited block', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-inline-in-block-scale-down-height.pdf'
       :pdf-page-size: A6
