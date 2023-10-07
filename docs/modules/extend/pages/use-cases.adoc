@@ -86,7 +86,7 @@ include::example$pdf-converter-article-title-with-author-and-date.rb[]
 <.> Only include the additional line if there's actually content for it, so we don't end up with unused vertical space.
 <.> An em-dash to be put between author and date, but only if both aren't empty.
 <.> A vertical bar to be put before the revision remark, but only if it isn't empty and there's actually something else (author, date or both) in front of it.
-<.> Put everything together using Ruby https://docs.ruby-lang.org/en/3.0/syntax/literals_rdoc.html#label-Strings[string] interpolation and render it.
+<.> Put author, date, revision remark and the separators together using Ruby https://docs.ruby-lang.org/en/3.0/syntax/literals_rdoc.html#label-Strings[string] interpolation and render the resulting string.
 
 == Custom part title
 
