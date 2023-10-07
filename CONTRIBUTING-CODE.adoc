@@ -338,3 +338,98 @@ Use the following command to regenerate the parser:
 
 Then look for any places that a type is mixed into an object multiple times and remove the duplicate.
 Finally, you then need to commit both files.
+
+== Documentation
+
+The documentation is generated using https://antora.org[Antora].
+Using Antora, you can generate the documentation for this project alone or you can generate it alongside all the other Asciidoctor documentation.
+If you are making a substantial change to the documentation, we ask that you at least generate the documentation for this project alone.
+
+=== Prerequisites
+
+In order to build the documentation, you need Node.js installed on your system.
+Refer to the https://docs.antora.org/antora/latest/install-and-run-quickstart/#install-nodejs[Install Node.js] section of the Antora installation quickstart to learn how to do so.
+
+Node.js provides a tool named `npx` that will install and run Antora.
+
+=== Project only mode
+
+To build the documentation for Asciidoctor PDF out of the git worktree, create the following Antora playbook file at the root of the project.
+
+.local-antora-playbook.yml
+[,yml]
+----
+runtime:
+  log:
+    level: info
+site:
+  title: Asciidoctor Docs
+  start_page: pdf-converter::index.adoc
+content:
+  sources:
+  - url: .
+    branches: HEAD
+    start_paths: docs
+asciidoc:
+  attributes:
+    experimental: ''
+    idprefix: '@'
+    idseparator: '-@'
+    table-caption: false
+    table-frame: 'none@'
+    table-grid: 'rows@'
+    example-caption: false
+    listing-caption: false
+    hide-uri-scheme: '@'
+ui:
+  bundle:
+    url: https://github.com/asciidoctor/docs.asciidoctor.org-ui/releases/download/prod-309/ui-bundle.zip
+----
+
+Next, run Antora on this playbook using the following command:
+
+ $ npx antora local-antora-playbook.yml
+
+NOTE: You can safely ignore invalid xrefs that point outside of the asciidoctor-pdf component (such as to the asciidoctor compoent).
+
+The command will print the location of the generated site that you can visit in your browser.
+
+=== Full site mode
+
+In order to build the Asciidoctor PDF documentation alongside all the other Asciidoctor documentation, you first need to clone the playbook project, which hosts the build for the site.
+
+First, move to the parent directory of the asciidoctor-pdf clone:
+
+ $ cd ..
+
+Next, clone the docs.asciidoctor.org repository:
+
+ $ git clone https://github.com/asciidoctor/docs.asciidoctor.org
+
+Switch to that directory:
+
+ $ cd docs.asciidoctor.org
+
+Now edit the Antora playbook file, antora-playbook.yml, and change the entry for asciidoctor-pdf so it points to the worktree of your clone:
+
+[,yml]
+----
+  - url: ./../asciidoctor-pdf
+    branches: HEAD
+    start_path: docs
+----
+
+Notice that we have changed both the `url` key and the `branches` key.
+You can use an absolute path to the local clone (e.g., /path/to/asciidoctor-pdf or C:/path/to/asciidoctor-pdf) instead of a relative path if it makes it easier to find.
+The symbolic name `HEAD` means to use whatever branch you have checked out.
+You can add other branch names if you prefer, though it is really not necessary to do so.
+
+You can now build the full site using the following command:
+
+ $ npx antora antora-playbook.yml
+
+Once again, the command will print the location of the generated site that you can visit in your browser.
+
+Building the full site is not strictly necessary.
+You also have the option of removing other entries to limit how much is built.
+Consult the https://docs.antora.org/antora/latest/playbook/[Antora documentation] to learn more about how to customize the Antora build.
