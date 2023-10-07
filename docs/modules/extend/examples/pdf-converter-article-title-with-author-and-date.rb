@@ -6,7 +6,7 @@ class PDFConverterArticleTitleWithAuthorAndDate < (Asciidoctor::Converter.for 'p
     theme_font :heading_doctitle do
       ink_prose title, align: :center # <2>
     end
-    revremark = doc.attributes['revremark'] # <3>
+    revremark = doc.attr 'revremark' # <3>
     if doc.author || doc.revdate || revremark # <4>
       theme_font :base do
         author_date_separator = (doc.author && doc.revdate) ? ' – ' : '' # <5>
