@@ -146,6 +146,21 @@ For example:
 :chapter-toclevels: 2
 ----
 
+== Colophon before TOC
+
+Some publishers prefer the colophon to precede the table of contents.
+When converting to a prepress book, publishers may also prefer the colophon to be placed on the recto page that follows the title page.
+You can achieve both of these customizations by overriding the built-in `ink_toc` method and rendering the colophon before the TOC is rendered (i.e., inked).
+
+.Extended converter that modifies the placement of the colophon
+[,ruby]
+----
+include::example$pdf-converter-colophon-placement.rb[]
+----
+
+It's important to note that this converter, as written, assumes the colophon fits on a single page.
+More effort would be needed to accomodate a multi-page colophon.
+
 == License page
 
 Let's say you want to insert a license page into your documents, but you don't want to have to put a block macro for it in the document source.
