@@ -29,8 +29,8 @@ class PDFConverterArticleTitleWithAuthorAndDate < (Asciidoctor::Converter.for 'p
   def ink_document_metainfo doc, opts
     revremark = doc.attr 'revremark' # <5>
     if doc.author || doc.revdate || revremark # <6>
-      move_down @theme.heading_h1_documentmetainfo_margin_top || 0
-      theme_font_cascade [:base, :heading_h1_documentmetainfo] do
+      move_down @theme.heading_h1_details_margin_top || 0
+      theme_font_cascade [:base, :heading_h1_details] do
         author_date_separator = doc.author && doc.revdate ? %( #{EmDash} ) : '' # <7>
         revremark_separator = (doc.author || doc.revdate) && revremark ? ' | ' : '' # <8>
         ink_prose %(#{doc.author}#{author_date_separator}#{doc.revdate}#{revremark_separator}#{revremark}), align: opts[:align] # <9>
