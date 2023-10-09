@@ -75,14 +75,14 @@ include::example$pdf-converter-article-title-with-author-and-date.rb[]
 ----
 <.> Fall back to default implementation unless handling the document title.
 <.> Render the document title.
-    See the definition of `ink_document_title` for details.
+See the definition of `ink_document_title` for details.
 <.> Render author, date and revision remark, if they're available.
-    See the definition of `ink_document_metainfo` for details.
+See the definition of `ink_document_metainfo` for details.
 <.> Render a vertical gap between the title section (incl. author, date and revision remark) and the body of the document.
-    See the definition of `ink_titlesection_body_separator` for details.
+See the definition of `ink_titlesection_body_separator` for details.
 <.> The revision remark isn't available as a field of `doc`, so we have to get it from the hash `doc.attributes`.
-    We could do that with `doc.attributes['revremark']`, but we use the convenience method `doc.attr` instead.
-    Because we'll use the revision remark multiple times, we store it in a local variable.
+We could do that with `doc.attributes['revremark']`, but we use the convenience method `doc.attr` instead.
+Because we'll use the revision remark multiple times, we store it in a local variable.
 <.> Only include the additional line if there's actually content for it, so we don't end up with unused vertical space.
 <.> An em-dash to be put between author and date, but only if both aren't empty.
 <.> A vertical bar to be put before the revision remark, but only if it isn't empty and there's actually something else (author, date or both) in front of it.
