@@ -79,8 +79,8 @@ See the definition of `ink_document_title` for details.
 <.> Render author, date and revision remark, if they're available.
 See the definition of `ink_document_metainfo` for details.
 <.> Render a vertical gap between the title section (incl. author, date and revision remark) and the body of the document.
-<.> The revision remark isn't available as a field of `doc`, so we have to get it from the hash `doc.attributes`.
-We could do that with `doc.attributes['revremark']`, but we use the convenience method `doc.attr` instead.
+<.> The revision remark isn't available as a field of `doc`,
+so we have to retrieve it using the method `doc.attr` instead.
 Because we'll use the revision remark multiple times, we store it in a local variable.
 <.> Only include the additional line if there's actually content for it, so we don't end up with unused vertical space.
 <.> Render a vertical gap between the document title
