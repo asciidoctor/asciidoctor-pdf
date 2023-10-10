@@ -94,7 +94,7 @@ we first have to reset to the default style using the `:base` category.
 Then, we can apply the `heading_h1_details` category.
 <.> An em-dash to be put between author and date, but only if both aren't empty.
 <.> A vertical bar to be put before the revision remark, but only if it isn't empty and there's actually something else (author, date or both) in front of it.
-<.> Put author, date, revision remark and the separators together using Ruby https://docs.ruby-lang.org/en/3.0/syntax/literals_rdoc.html#label-Strings[string] interpolation and render the resulting string.
+<.> Put author, date, revision remark and the separators together using Ruby string interpolation and render the resulting string.
 
 == Custom part title
 
