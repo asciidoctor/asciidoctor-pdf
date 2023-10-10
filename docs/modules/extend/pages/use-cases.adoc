@@ -62,11 +62,9 @@ Finally, the method `convert` will convert and render the Asciidoctor node that 
 Documents rendered as articles by Asciidoctor PDF don't have a title page by default.
 Instead their document title is shown on the first content page above the actual content.
 
-Other than in articles rendered by Asciidoctor to HTML, and other than when rendered with a title page (e.g. document type book),
-the author, date and revision remark won't be shown by default.
+Other than in articles rendered by Asciidoctor to HTML, and other than when rendered with a title page (e.g. document type book), the author, date and revision remark won't be shown by default.
 To get them included anyway, we can hook into the method `ink_general_heading`, which renders the document title.
-As `ink_general_heading` is also responsible for rendering other "headers" (e.g. section titles),
-we let it fall back to the default implementation for all headers that aren't the document title.
+As `ink_general_heading` is also responsible for rendering other "headers" (e.g. section titles), we let it fall back to the default implementation for all headers that aren't the document title.
 
 .Extended converter with author, date and revision remark below the document title of document types without a title page
 [,ruby]
@@ -79,18 +77,14 @@ See the definition of `ink_document_title` for details.
 <.> Render author, date and revision remark, if they're available.
 See the definition of `ink_document_metainfo` for details.
 <.> Render a vertical gap between the title section (incl. author, date and revision remark) and the body of the document.
-<.> The revision remark isn't available as a field of `doc`,
-so we have to retrieve it using the method `doc.attr` instead.
+<.> The revision remark isn't available as a field of `doc`, so we have to retrieve it using the method `doc.attr` instead.
 Because we'll use the revision remark multiple times, we store it in a local variable.
 <.> Only include the additional line if there's actually content for it, so we don't end up with unused vertical space.
-<.> Render a vertical gap between the document title
-and the line with author, date and revision remark
-if the theme sets a size of that gap.
+<.> Render a vertical gap between the document title and the line with author, date and revision remark if the theme sets a size of that gap.
 Otherwise, fall back to a zero-height "`gap`".
 <.> When we get here, a heading-specific style will already be set.
 (This is ensured by the methods that call `ink_general_heading`.)
-As we don't want author, date and revision remark to look like a heading,
-we first have to reset to the default style using the `:base` category.
+As we don't want author, date and revision remark to look like a heading, we first have to reset to the default style using the `:base` category.
 Then, we can apply the `heading_h1_details` category.
 <.> An em-dash to be put between author and date, but only if both aren't empty.
 <.> A vertical bar to be put before the revision remark, but only if it isn't empty and there's actually something else (author, date or both) in front of it.
