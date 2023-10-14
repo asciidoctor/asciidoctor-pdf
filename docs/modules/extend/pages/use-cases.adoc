@@ -57,7 +57,7 @@ The method `stroke_horizontal_rule` draws a horizontal line using the specified 
 The method `ink_prose` is provided by Asciidoctor PDF to make writing text to the page easier.
 Finally, the method `convert` will convert and render the Asciidoctor node that is passed to it, in this case a block image.
 
-== Custom article title with document details
+== Custom article title with details
 
 Documents rendered as articles (i.e., `doctype=article`) by Asciidoctor PDF don't have a title page by default.
 Instead the document title of the article, the article title, is shown on the first content page above the main content.
