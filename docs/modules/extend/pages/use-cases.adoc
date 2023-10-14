@@ -60,17 +60,17 @@ Finally, the method `convert` will convert and render the Asciidoctor node that 
 == Custom article title with document details
 
 Documents rendered as articles (i.e., `doctype=article`) by Asciidoctor PDF don't have a title page by default.
-Instead the document title is shown on the first content page above the main content.
+Instead the document title of the article, the article title, is shown on the first content page above the main content.
 
 The document details, which includes the author, date, and revision information (revnumber and revremark), are not shown in this mode.
 To insert them below the document title (similar to what the built-in HTML converter does), we can use an extended converter.
-To do so, we hook into the method `ink_general_heading`, which renders the document title.
+To do so, we hook into the method `ink_general_heading`, which renders the document title of an article.
 Since this method is also responsible for rendering other headings (e.g. section titles), we allow it fall back to the default implementation unless it is processing the document title of an article.
 
-.Extended converter that renders the document details below the document title of an article
+.Extended converter that renders the document details below the article title
 [,ruby]
 ----
-include::example$pdf-converter-article-title-with-author-and-date.rb[]
+include::example$pdf-converter-article-title-with-details.rb[]
 ----
 <.> Fall back to default implementation unless handling the document title.
 <.> Render the document title.
