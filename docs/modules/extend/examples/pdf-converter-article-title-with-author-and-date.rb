@@ -22,18 +22,19 @@ class PDFConverterArticleTitleWithAuthorAndDate < (Asciidoctor::Converter.for 'p
         inline_format_opts = [{ inherited: inherited }]
       end
       typeset_text_opts = { color: @font_color, inline_format: inline_format_opts }.merge opts
-      typeset_text title, (calc_line_metrics (opts.delete :line_height) || @base_line_height), typeset_text_opts 
+      typeset_text title, (calc_line_metrics (opts.delete :line_height) || @base_line_height), typeset_text_opts
     end
   end
 
   def ink_document_details doc, opts
-    revremark = doc.attr 'revremark' # <5>
-    if doc.author || doc.revdate || revremark # <6>
+    revnumber = doc.attr 'revnumber' # <5>
+    if doc.author || doc.revdate || revnumber # <6>
       move_down @theme.heading_h1_details_margin_top || 0 # <7>
       theme_font_cascade [:base, :heading_h1_details] do # <8>
         author_date_separator = doc.author && doc.revdate ? %( #{EmDash} ) : '' # <9>
-        revremark_separator = (doc.author || doc.revdate) && revremark ? ' | ' : '' # <10>
-        ink_prose %(#{doc.author}#{author_date_separator}#{doc.revdate}#{revremark_separator}#{revremark}), align: opts[:align] # <11>
+        revision = (doc.attr? 'revremark') ? %(#{revnumber} | #{doc.attr 'revremark'}) : revnumber if revnumber
+        revision_separator = revision && (doc.author || doc.revdate) ? %( #{EmDash} ) : '' # <10>
+        ink_prose %(#{doc.author}#{author_date_separator}#{doc.revdate}#{revision_separator}#{revision}), align: opts[:align] # <11>
       end
     end
   end
