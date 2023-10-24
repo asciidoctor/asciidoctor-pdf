@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec::Matchers.define :log_message do |expected|
-  handler = proc do |negated|
+  handler = proc do |actual, negated|
     if expected
       log_level_override = expected.delete :using_log_level
       expected = nil if expected.empty?
@@ -18,11 +18,11 @@ RSpec::Matchers.define :log_message do |expected|
   end
 
   match notify_expectation_failures: true do |actual|
-    instance_exec &handler
+    instance_exec actual, &handler
   end
 
   match_when_negated notify_expectation_failures: true do |actual|
-    instance_exec true, &handler
+    instance_exec actual, true, &handler
   end
 
   supports_block_expectations
