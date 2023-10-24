@@ -52,7 +52,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
       END
 
       (expect pdf.lines[-1]).to eql %(\u2014 J. Helliwell & B. McMahon)
-    end).to not_log_message
+    end).not_to log_message
   end
 
   it 'should escape bare ampersand in citetitle' do
@@ -63,7 +63,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
       END
 
       (expect pdf.lines[-1]).to eql %(\u2014 J. Helliwell & B. McMahon, Melbourne Congress & General Assembly of the IUCr)
-    end).to not_log_message
+    end).not_to log_message
   end
 
   it 'should render character reference in attribution' do
@@ -74,7 +74,7 @@ describe 'Asciidoctor::PDF::Converter - Quote' do
       END
 
       (expect pdf.lines[-1]).to eql %(\u2014 J. Helliwell & B. McMahon \u00a9 IUCr)
-    end).to not_log_message
+    end).not_to log_message
   end
 
   it 'should apply substitutions to attribution and citetitle if enclosed in single quotes' do

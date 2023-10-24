@@ -183,7 +183,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         (expect theme.sidebar_title_text_align).to eql 'left'
         (expect theme.caption_align).to eql 'center'
         (expect theme.caption_text_align).to eql 'left'
-      end).to not_log_message
+      end).not_to log_message
     end
 
     it 'should remap table-caption-side key to table-caption-end' do
@@ -201,7 +201,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         (expect theme.table_caption_side).to be_nil
         (expect theme.table_caption_end).to eql 'bottom'
         (expect theme.image_caption_end).to eql 'bottom'
-      end).to not_log_message
+      end).not_to log_message
     end
 
     it 'should remap kbd-separator key to kbd-separator-content key and warn' do

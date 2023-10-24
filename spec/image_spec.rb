@@ -2155,7 +2155,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect do
         pdf = to_pdf 'Look for image:logo.png[the "no cow" brand] when you buy.', analyze: :image
         (expect pdf.images).to have_size 1
-      end).to not_log_message
+      end).not_to log_message
     end
 
     it 'should only render inline image once if alt text is chunked to apply a fallback font' do
@@ -2257,7 +2257,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
         END
         (expect (images = pdf.images)).to have_size 1
         (expect images[0][:page_number]).to be 2
-      end).to not_log_message using_log_level: :INFO
+      end).not_to log_message using_log_level: :INFO
     end
 
     it 'should scale image down to fit available height inside delimited block', visual: true do

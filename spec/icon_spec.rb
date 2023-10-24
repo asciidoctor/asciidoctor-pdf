@@ -21,7 +21,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
       (expect images).to have_size 1
       (expect images[0][:width]).to eql 14.28
       (expect images[0][:x]).to be > 48.24
-    end).to not_log_message
+    end).not_to log_message
   end
 
   it 'should log warning if image file for icon not readable' do

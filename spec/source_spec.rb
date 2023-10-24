@@ -626,7 +626,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         END
 
         (expect pdf.lines).to eql ['1 fee', '2 fi', '3 fo', '4 fum']
-      end).to not_log_message
+      end).not_to log_message
     end
 
     it 'should preserve orphan callout on last line' do
@@ -1607,7 +1607,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
         END
 
         (expect pdf.lines).to eql ['1 fee', '2 fi', '3 fo', '4 fum']
-      end).to not_log_message
+      end).not_to log_message
     end
 
     it 'should indent wrapped line if line numbers are enabled' do

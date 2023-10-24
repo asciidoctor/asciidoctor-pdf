@@ -1526,7 +1526,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         (expect doc.attr 'attribute-missing').to eql 'warn'
         pdf = PDF::Reader.new pdf_io
         (expect (pdf.page 1).text).to include 'keep attribute-missing=skip'
-      end).to not_log_message
+      end).not_to log_message
     end
 
     it 'should parse running content as AsciiDoc' do
@@ -2327,7 +2327,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
         running_text = pdf.find_text %(The Chronicles of <Foo> & \u00a6)
         (expect running_text).to have_size 1
-      end).to not_log_message
+      end).not_to log_message
     end
 
     it 'should set document-title and document-subtitle based on doctitle' do

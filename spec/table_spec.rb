@@ -2589,7 +2589,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         END
 
         (expect pdf.pages).to have_size 1
-      end).to not_log_message
+      end).not_to log_message
     end
 
     it 'should not warn if cell overflows page without adding content to subsequent page' do
@@ -2606,7 +2606,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         END
 
         (expect pdf.pages).to have_size 1
-      end).to not_log_message
+      end).not_to log_message
     end
 
     it 'should warn if cell exceeds more than one page height' do

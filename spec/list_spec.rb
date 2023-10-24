@@ -608,7 +608,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         END
 
         (expect pdf.lines[0]).to eql '1. one'
-      end).to not_log_message
+      end).not_to log_message
     end
 
     it 'should support decimal marker style' do

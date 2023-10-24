@@ -163,7 +163,7 @@ describe 'Asciidoctor::PDF::Converter - Hyphens', if: (RSpec::ExampleGroupHelper
       (expect lines[0].count ?\u00ad).to be 1
       (expect lines[0]).to include ?\uf780
       (expect lines[0]).to include ?\uf1b0
-    end).to not_log_message
+    end).not_to log_message
   end
 
   it 'should set hyphenation language based on value of hyphens attribute' do

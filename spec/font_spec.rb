@@ -142,7 +142,7 @@ describe 'Asciidoctor::PDF::Converter - Font' do
         END
         (expect pdf.find_text font_name: 'Helvetica').to have_size pdf.text.size
         (expect pdf.lines).to eql [%(\u2022 disc), '- circle', %(\u00b7 square), 'nospace', 'button:[Save]']
-      end).to not_log_message
+      end).not_to log_message
     end
   end
 

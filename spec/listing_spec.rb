@@ -905,6 +905,6 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
       END
 
       (expect pdf.lines).to eql ['<; ①', '>; ②']
-    end).to not_log_message
+    end).not_to log_message
   end
 end
