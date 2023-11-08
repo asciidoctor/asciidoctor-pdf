@@ -7,11 +7,6 @@ It bypasses the requirement to generate an intermediary format such as DocBook, 
 Instead, you can use Asciidoctor PDF to convert your documents directly from AsciiDoc to PDF.
 The aim of this library is to take the pain out of creating PDF documents from AsciiDoc.
 
-NOTE: You're viewing the documentation for Asciidoctor PDF {page-component-display-version}.
-If you're looking for the documentation for Asciidoctor PDF 1.6, refer to the {url-project-repo}/tree/v1.6.x#readme[README] in the v1.6.x branch.
-Asciidoctor PDF 1.6 is no longer being developed and will reach EOL later this year.
-You are encouraged to migrate to Asciidoctor PDF 2 as soon as possible.
-
 == Overview
 
 Asciidoctor PDF converts an AsciiDoc document directly to a PDF document.
