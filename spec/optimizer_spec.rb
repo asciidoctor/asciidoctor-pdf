@@ -99,7 +99,7 @@ describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_avai
   end
 
   # can't test on macOS due to an incompatible version of poppler
-  it 'should apply grayscale color mode modifier on quality when optimizing output file', unless: Gem::Platform.local == 'darwin', visual: true do
+  it 'should apply grayscale color mode modifier on quality when optimizing output file', unless: Gem::Platform.local.os == 'darwin', visual: true do
     %w(gray grayscale).each do |mode|
       input_file = Pathname.new fixture_file 'with-color.adoc'
       to_file = to_pdf_file input_file, 'optimizer-gray.pdf', attribute_overrides: { 'optimize' => %(screen:#{mode}) }
