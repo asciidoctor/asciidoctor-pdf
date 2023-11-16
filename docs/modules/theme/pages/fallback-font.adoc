@@ -95,3 +95,23 @@ font:
 ----
 
 Now Asciidoctor PDF will look for the emoji in the Symbola font instead of the Noto Emoji font.
+
+== Default Microsoft Windows Font Limitations
+When using the fonts provided by default in Microsoft Windows 10, and possibly other versions, it is important to define a fallback font to provide full coverage of Asciidoctor language features.
+In particular, the https://docs.asciidoctor.org/asciidoc/latest/lists/checklist/[Checklist] feature makes use of the _Ballet Box_ ☐ (U+2610) and _Ballot Box with Check_ "☑" (U+2611) characters.
+Two fonts, Segoe UI Symbol (`seuisysm.ttf`) and Segoe UI Emoji (`seguiemj.ttf`), do contain these characters.
+
+Here is an example using Courier with Segoe UI Symbol as a fallback providing the characters needed to support checklists:
+[,yaml]
+----
+font:
+  catalog:
+    Courier:
+      normal: cour.ttf
+      italic: couri.ttf
+      bold: courbd.ttf
+      bold_italic: courbi.ttf
+    CourierFallback: seuisysm.ttf
+  fallbacks:
+  - CourierFallback
+----
