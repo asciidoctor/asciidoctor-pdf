@@ -99,19 +99,24 @@ Now Asciidoctor PDF will look for the emoji in the Symbola font instead of the N
 == Default Microsoft Windows Font Limitations
 When using the fonts provided by default in Microsoft Windows 10, and possibly other versions, it is important to define a fallback font to provide full coverage of Asciidoctor language features.
 In particular, the https://docs.asciidoctor.org/asciidoc/latest/lists/checklist/[Checklist] feature makes use of the _Ballet Box_ ☐ (U+2610) and _Ballot Box with Check_ "☑" (U+2611) characters.
-Two fonts, Segoe UI Symbol (`seuisysm.ttf`) and Segoe UI Emoji (`seguiemj.ttf`), do contain these characters.
+Two fonts provided by Windows, Segoe UI Symbol (`seguisym.ttf`) and Segoe UI Emoji (`seguiemj.ttf`), do contain these characters.
+These two fonts have baselines which match better with most of the Windows font library than the default Notoserif font which is included with Asciidoctor PDF.
 
-Here is an example using Courier with Segoe UI Symbol as a fallback providing the characters needed to support checklists:
+Here is an example using Times New Roman with Segoe UI Symbol as a fallback providing the characters needed to support checklists:
 [,yaml]
 ----
 font:
   catalog:
-    Courier:
-      normal: cour.ttf
-      italic: couri.ttf
-      bold: courbd.ttf
-      bold_italic: courbi.ttf
-    CourierFallback: seuisysm.ttf
+    TimesNewRoman:
+      normal: times.ttf
+      italic: timesi.ttf
+      bold: timesbd.ttf
+      bold_italic: timesbi.ttf
+    TimesNewRomanFallback: seguisym.ttf
   fallbacks:
-  - CourierFallback
+  - TimesNewRomanFallback
 ----
+
+Make sure to configure the theme to include the location of the Windows font files, which is `c:\Windows\Fonts`.
+
+
