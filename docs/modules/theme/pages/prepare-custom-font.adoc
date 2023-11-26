@@ -40,59 +40,32 @@ Resaving the font in FontForge will usually resolve any errors in the font.
 To ready your font for use with Asciidoctor PDF, you'll need to modify it using a font program.
 We recommend using {url-fontforge}[FontForge^].
 But don't let this scare you off.
-FontForge essentially works like a vector-drawing tool, in which each character is a separate canvas.
+FontForge essentially works like a vector-drawing tool, in which each character is a separate glyph canvas.
 You can find a crash course in how to use the program on the FontForge project site.
 
 Here are the modifications you need to apply to a custom font for it to work best with Asciidoctor PDF:
 
 * Convert the font to TTF or OTF (only required if the font is a TTC or other format not supported by Prawn).
-* Add the glyphs for the required characters if missing from the font (optional if using a fallback font).
+* Add the glyphs for the <<required-characters,required characters>> if missing from the font (optional if using a fallback font).
 * Subset the font to exclude unused characters to reduce the file size (optional).
 * Save the file using the old-style kern table to activate kerning.
 
-NOTE: Technically, subsetting the font (i.e., removing glyphs) is not required since Prawn only embeds the characters from the font used in the document (i.e., it automatically subsets the font).
-However, if you plan to commit the font to a repository, subsetting helps keep the file size down.
+Subsetting the font (i.e., removing glyphs) is not required since Prawn only embeds the glyphs from the font used in the document (i.e., it automatically subsets the font).
+However, if you plan to commit the font to a repository, subsetting helps keep the file size manageable.
 
 Most fonts do not provide glyphs for all the Unicode character ranges (i.e., scripts).
 (A glyph is the corresponding vector image for a Unicode character).
 In fact, many fonts only include glyphs for Latin (Basic, Supplement, and Extended) and a few other scripts (e.g., Cyrillic, Greek).
 That means certain glyphs Asciidoctor PDF relies on may be missing from the font.
+The <<Required characters>> section lists all the characters that a custom font is expected to provide.
 
-Below are the non-Latin characters (identified by Unicode code point) on which Asciidoctor PDF relies that are often missing from fonts.
-Unless you're using a fallback font that fills in the missing glyphs, you need to ensure these glyphs are present in your font (and add them if not).
-
-* \u00a0 - no-break space
-* \ufeff - zero width no-break space
-* \u200b - zero width space (used for line break hints)
-* \u000a - line feed character (zero width)
-* \u2009 - thin spaced (used in the button UI element)
-* \u202f - narrow no-break space (used in the keybinding UI element)
-* \u2011 - non-breaking hyphen
-* \u2022 - disc (used for first-level unordered list level)
-* \u25e6 - circle (used for second-level unordered list level)
-* \u25aa - square (used for third-level unordered list level)
-* \u2611 - ballot box checked (used for checked list item)
-* \u2610 - ballot box unchecked (used for unchecked list item)
-* \u2014 - em-dash (used in quote attribute)
-* \u203a - single right-pointing quotation mark (used in the menu UI element)
-* \u25ba - right pointer (used for media play icon when icon fonts are disabled)
-* .notdef - used as the default glyph when a requested character is missing from the font (usually a box)
-
-NOTE: If the .notdef glyph is non-empty (i.e., contains splines), it will be used as the default glyph when the document requests a character that is missing from the font.
-Unlike other glyphs, the .notdef glyph is referenced by name only.
-It does not have a designated Unicode code point.
-
-If you're preparing a font for use in verbatim blocks (e.g., a listing block), you'll also need this range of characters:
-
-* \u2460 to \u2468 - circled numbers
-
-One way to get these glyphs is to steal them from another font (or from another character in the same font).
+One way to get the glyphs for these required characters is to steal them from another font (or from another character in the same font).
 To do so, open the other font in FontForge, select the character, press kbd:[Ctrl,c], switch back to your font, select the character again, and press kbd:[Ctrl,v].
 You may need to scale the glyph so it fits properly in the art box.
 
 IMPORTANT: If you're copying a non-visible character, be sure to set the width to 0 using menu:Metrics[Set Width...], enter 0 into *Set Width To*, then click btn:[OK].
 
-When you're done, save the font with the old-style kern table enabled.
+When you're adding any required characters, save the font with the old-style kern table enabled.
 To do so, select menu:File[Generate Fonts...], select *TrueType*, click btn:[Options], make sure _only_ the following options are checked (equivalent to the flags 0x90 + 0x08):
 
 * [x] OpenType
@@ -111,3 +84,38 @@ Fortunately, FontForge provides a {url-fontforge-scripting}[scripting interface^
 In fact, that's what we use to prepare the fonts that are bundled with Asciidoctor PDF.
 You can find that FontForge script, the Bash script that calls it, and the Docker image in which it is run in the {url-project-repo}/tree/{page-origin-refname}/scripts[scripts directory^] of this project.
 You can use that script as a starting point or reference for your own font preparation / modification script.
+
+[#required-characters]
+== Required characters
+
+Below are the non-Latin characters (identified by Unicode code point) on which Asciidoctor PDF relies that are often missing from fonts.
+You need to ensure these glyphs are present in your prepared font or configure a fallback font that provides them.
+
+* \u00a0 - no-break space
+* \ufeff - zero width no-break space
+* \u200b - zero width space (used for line break hints)
+* \u000a - line feed character (zero width)
+* \u2009 - thin spaced (used in the button UI element)
+* \u202f - narrow no-break space (used in the keybinding UI element)
+* \u2011 - non-breaking hyphen
+* \u2022 - disc (used for first-level unordered list level)
+* \u25e6 - circle (used for second-level unordered list level)
+* \u25aa - square (used for third-level unordered list level)
+* \u2611 - ballot box checked (used for checked list item)
+* \u2610 - ballot box unchecked (used for unchecked list item)
+* \u2014 - em-dash (used in quote attribute)
+* \u203a - single right-pointing quotation mark (used in the menu UI element)
+* \u25ba - right pointer (used for media play icon when icon fonts are disabled)
+* .notdef - used as the default glyph when a requested character is missing from the font (usually a box)
+
+If the .notdef glyph is non-empty (i.e., contains splines), it will be used as the default glyph when the document requests a character that's missing from the font.
+Unlike other glyphs, the .notdef glyph is referenced by name only, meaning it does not have a designated Unicode code point.
+
+If you're preparing a font for use in verbatim blocks (e.g., a listing block), you'll also need this range of characters:
+
+* \u2460 to \u2468 - circled numbers
+
+The fonts used by the default theme in Asciidoctor PDF provide all of these glyphs.
+
+If you don't want to add additional glyphs to the font you are preparing, you can configure a fallback font instead.
+A symbol font, such as Symbola, is a good choice as a fallback font since it's focus is on filling in these glyphs for other fonts.
