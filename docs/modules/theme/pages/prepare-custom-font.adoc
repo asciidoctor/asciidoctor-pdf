@@ -92,12 +92,12 @@ Below are the non-Latin characters (identified by Unicode code point) on which A
 You need to ensure these glyphs are present in your prepared font or configure a fallback font that provides them.
 
 //* \ufeff - zero width no-break space
-* \u00a0 - no-break space
+* \u00a0 - no-break space (used by converter to preserve indentation in code blocks)
 * \u200b - zero width space (used for line break hints)
-* \u000a - line feed character (zero width)
-* \u2009 - thin spaced (used in the button UI element)
+* \u000a - line feed character (used to indicate the location of a hard line break; has zero width)
+* \u2009 - thin space (used for space in the button UI element)
 * \u202f - narrow no-break space (used in the keybinding UI element)
-* \u2011 - non-breaking hyphen
+* \u2011 - non-breaking hyphen (used for hyphenation; not required if hyphenation not in use)
 * \u2022 - disc (used for first-level unordered list level)
 * \u25e6 - circle (used for second-level unordered list level)
 * \u25aa - square (used for third-level unordered list level)
