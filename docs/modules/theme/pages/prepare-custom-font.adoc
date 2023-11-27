@@ -91,8 +91,8 @@ You can use that script as a starting point or reference for your own font prepa
 Below are the non-Latin characters (identified by Unicode code point) on which Asciidoctor PDF relies that are often missing from fonts.
 You need to ensure these glyphs are present in your prepared font or configure a fallback font that provides them.
 
+//* \ufeff - zero width no-break space
 * \u00a0 - no-break space
-* \ufeff - zero width no-break space
 * \u200b - zero width space (used for line break hints)
 * \u000a - line feed character (zero width)
 * \u2009 - thin spaced (used in the button UI element)
