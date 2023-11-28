@@ -32,21 +32,26 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
     end
   end
 
-  # TODO: remove when upgrading to prawn-2.5.0
+  # help Prawn correctly resolve which font to analyze, including the font style
   def analyze_glyphs_for_fallback_font_support fragment_hash
     fragment_font = fragment_hash[:font] || (original_font = @document.font.family)
+    effective_font_styles = @document.font_styles
+    fragment_font_opts = {}
     if (fragment_font_styles = fragment_hash[:styles])
-      if fragment_font_styles.include? :bold
-        fragment_font_opts = { style: (fragment_font_styles.include? :italic) ? :bold_italic : :bold }
-      elsif fragment_font_styles.include? :italic
-        fragment_font_opts = { style: :italic }
+      effective_font_styles.merge fragment_font_styles
+      if effective_font_styles.include? :bold
+        fragment_font_opts[:style] = (effective_font_styles.include? :italic) ? :bold_italic : :bold
+      elsif effective_font_styles.include? :italic
+        fragment_font_opts[:style] = :italic
       end
+    elsif !effective_font_styles.empty?
+      fragment_font_opts[:style] = @document.resolve_font_style effective_font_styles
     end
     fallback_fonts = @fallback_fonts.drop 0
     font_glyph_pairs = []
     @document.save_font do
       fragment_hash[:text].each_char do |char|
-        font_glyph_pairs << [(find_font_for_this_glyph char, fragment_font, fragment_font_opts || {}, (fallback_fonts.drop 0)), char]
+        font_glyph_pairs << [(find_font_for_this_glyph char, fragment_font, fragment_font_opts, (fallback_fonts.drop 0)), char]
       end
     end
     # NOTE: don't add a :font to fragment if it wasn't there originally
