@@ -16,7 +16,7 @@ The keys in the `admonition` category control the arrangement and style of admon
 |xref:color.adoc[Color] +
 (default: _not set_)
 |[source]
-admontition:
+admonition:
   background-color: #757575
 
 |border-color
