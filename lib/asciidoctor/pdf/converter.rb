@@ -3841,6 +3841,28 @@ module Asciidoctor
                 end
               end
               move_down @theme.title_page_revision_margin_bottom || 0
+			  
+			#NOTE Disclaimer on title page bottom
+            disclaimer_info = (doc.attr 'disclaimer') || (@theme.title_page_disclaimer_content)
+            if disclaimer_info
+              if (disclaimer_top = @theme.title_page_disclaimer_top)
+                if disclaimer_top.end_with? 'vh'
+                  disclaimer_top = page_height - page_height * disclaimer_top.to_f / 100.0
+                else
+                  disclaimer_top = bounds.absolute_top - effective_page_height * disclaimer_top.to_f / 100.0
+                end
+              # FIXME delegate to method to convert page % to y value
+              @y = disclaimer_top
+            end
+            theme_font :title_page_disclaimer do
+              layout_prose(disclaimer_info,
+              align: (@theme.title_page_disclaimer_align || @theme.title_page_align).to_sym,
+                margin: 0,
+                normalize: false)
+            end
+			end		  
+			  
+			  
             end
           end
         end
