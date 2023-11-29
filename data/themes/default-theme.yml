@@ -114,6 +114,15 @@ title_page:
     font_color: 181818
   revision:
     margin_top: $base_font_size * 1.25
+  disclaimer:
+    top: 80%
+    align: justify
+    font_color: 181818
+    font_size: $base_font_size_small 
+    font_style: normal
+    content: |
+        PROPRIETARY Disclaimer INFORMATION:
+        Whatever you want your Company to disclaim here. Can be a single line text. Some companies need this on their front page so their legal department is happy.
 block:
   margin_bottom: $vertical_rhythm
 caption:
