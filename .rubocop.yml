@@ -4,15 +4,7 @@ require:
 - ./cops/to_pdf_no_debug.rb
 AllCops:
   TargetRubyVersion: 2.7
-Capybara/MatchStyle:
-  Enabled: false
-Capybara/NegationMatcher:
-  Enabled: false
-Capybara/SpecificActions:
-  Enabled: false
-Capybara/SpecificFinders:
-  Enabled: false
-Capybara/SpecificMatcher:
+Capybara:
   Enabled: false
 Gemspec/DeprecatedAttributeAssignment:
   Enabled: true
