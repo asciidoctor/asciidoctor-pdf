@@ -140,6 +140,39 @@ When running Asciidoctor PDF on the JVM (perhaps using AsciidoctorJ PDF), you ca
 
  $ asciidoctorj -b pdf --theme basic-theme.yml -a pdf-fontsdir="uri:classloader:/path/to/fonts;GEM_FONTS_DIR" document.adoc
 
+== Using system fonts from Microsoft Windows
+
+You can configure Asciidoctor PDF to use the system fonts provided by Microsoft Windows.
+If you decide to use these fonts without modification, you'll need to define a xref:fallback-font.adoc[fallback font].
+This step is necessary since these fonts do not support all the xref:prepare-custom-font.adoc#required-characters[required characters] Asciidoctor PDF needs in order to function properly.
+
+To retain consistent font metrics, you'll also want to use a system font as the fallback font.
+Windows provides two fonts, Segoe UI Symbol [.path]_seguisym.ttf_ and Segoe UI Emoji [.path]_seguiemj.ttf_, that work well as fallback fonts to fill in the characters required by Asciidoctor PDF.
+These fonts have baselines that align with other Windows system fonts better than the bundle fonts in Asciidoctor PDF, so they're more suitable as fallback fonts in this scenario.
+
+Here's an example of how to register Times New Roman from Windows as the main font and Segoe UI Symbol from Windows as the fallback.
+
+[,yaml]
+----
+font:
+  catalog:
+    TimesNewRoman:
+      normal: times.ttf
+      italic: timesi.ttf
+      bold: timesbd.ttf
+      bold_italic: timesbi.ttf
+    SegoeUISymbol: seguisym.ttf
+  fallbacks:
+  - SegoeUISymbol
+----
+
+In order for Asciidoctor PDF to locate these system fonts, you'll need to configure the `pdf-fontsdir` attribute to look in the Windows font folder, which is [.path]_c:/Windows/Fonts_.
+For example, you can pass the following option when invoking Asciidoctor PDF:
+
+ -a pdf-fontsdir="c:/Windows/Fonts;GEM_FONTS_DIR"
+
+See <<configure-search-path>> for more information about this attribute.
+
 [#subset]
 == Subsetting your font
 
