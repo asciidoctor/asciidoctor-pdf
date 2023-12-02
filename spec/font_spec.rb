@@ -37,6 +37,20 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect to_file).to visually_match 'font-glyph-fallback-only.pdf'
     end
 
+    it 'should resolve glyph in fallback font when styles are inherited', visual: true do
+      input = <<~'END'
+      |===
+      |&#x2611; For | &#x2610; Against
+
+      |Tastes great
+      |High in sugar
+      |===
+      END
+
+      to_file = to_pdf_file input, 'fallback-font-inherited-styles.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-font-fallbacks' }
+      (expect to_file).to visually_match 'fallback-font-inherited-styles.pdf'
+    end
+
     it 'should use notdef from original font of glyph not found in any fallback font', visual: true do
       input = ?\u0278 * 10
       to_file = to_pdf_file input, 'font-notdef-glyph.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-font-fallbacks' }
