@@ -18,6 +18,8 @@ To &#x221e;!
 // circled numbers
 `&#x2460;` to `&#x2473;`
 `&#x2776;` to `&#x24f4;`
+// ballot boxes
+&#x2610; &#x2611;
 // greek
 &#x0391; to &#x03a9;
 // cyrillic
@@ -38,6 +40,8 @@ fast&#x2011;approaching
 ifeval::["{pdf-theme}"=="default-with-font-fallbacks"]
 // check mark
 &#x2713; done
+// bold ballot boxes
+*&#x2610; &#x2611;*
 // upside down e
 upsid&#x0259; down
 // extended monospace punctuation

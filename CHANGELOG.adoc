@@ -11,6 +11,7 @@ Bug Fixes::
 
 * show dot leaders in TOC entry if toclevels is increased for a given section (#2441)
 * decouple tests from path of PWD (#2444)
+* consider inherited styles when analyzing glyphs for fallback font support (#2463)
 * add fallback character for placeholder character when using AFM font (#2453)
 
 == 2.3.9 (2023-06-28) - @mojavelinux
