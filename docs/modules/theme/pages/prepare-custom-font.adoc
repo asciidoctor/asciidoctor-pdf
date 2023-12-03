@@ -90,6 +90,7 @@ You can use that script as a starting point or reference for your own font prepa
 
 Below are the non-Latin characters (identified by Unicode code point) on which Asciidoctor PDF relies that are often missing from fonts.
 You need to ensure these glyphs are present in your prepared font or configure a fallback font that provides them.
+The fonts used by the default theme in Asciidoctor PDF provide all of these glyphs.
 
 //* \ufeff - zero width no-break space
 * \u00a0 - no-break space (used by converter to preserve indentation in code blocks)
@@ -107,7 +108,7 @@ You need to ensure these glyphs are present in your prepared font or configure a
 * \u203a - single right-pointing quotation mark (used in the menu UI element)
 * \u25ba - right pointer (used for media play icon when icon fonts are disabled)
 * .notdef - used as the default glyph when a requested character is missing from the font (usually a box)
-
++
 If the .notdef glyph is non-empty (i.e., contains splines), it will be used as the default glyph when the document requests a character that's missing from the font.
 Unlike other glyphs, the .notdef glyph is referenced by name only, meaning it does not have a designated Unicode code point.
 
@@ -115,7 +116,7 @@ If you're preparing a font for use in verbatim blocks (e.g., a listing block), y
 
 * \u2460 to \u2468 - circled numbers
 
-The fonts used by the default theme in Asciidoctor PDF provide all of these glyphs.
+The font will also need to provide glyphs for all characters used in the document content, such as emoji.
 
-If you don't want to add additional glyphs to the font you are preparing, you can configure a fallback font instead.
+If you don't want to add additional glyphs to the font you're preparing, you can configure a fallback font instead.
 A symbol font, such as Symbola, is a good choice as a fallback font since it's focus is on filling in these glyphs for other fonts.
