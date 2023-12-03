@@ -927,8 +927,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         (expect image[:y]).to eql 742.0
       end
 
-      # NOTE: this scenario renders an example block that starts with an empty page
-      it 'should split block across pages that contains image taller than page at start of block', negative: true do
+      it 'should split block across pages that contains image taller than page at start of block' do
         input = <<~'EOS'
         ====
         image::tall-spacer.png[]
@@ -937,18 +936,16 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
         pages = pdf.pages
-        (expect pages).to have_size 2
+        (expect pages).to have_size 1
         page_width, page_height = (get_page_size pdf, 1).map(&:to_f)
         page_margin = pdf_theme[:page_margin].to_f
         (expect images).to have_size 1
         image = images[0]
-        (expect image[:page_number]).to be 2
-        (expect image[:y]).to eql (page_height - page_margin)
-        (expect image[:height]).to eql (page_height - page_margin * 2)
+        (expect image[:page_number]).to be 1
+        (expect image[:y]).to eql (page_height - page_margin - 12)
+        (expect image[:height]).to eql (page_height - 12 - page_margin * 2)
         p1_gs = (pdf.extract_graphic_states pages[0][:raw_content])[0]
         (expect p1_gs).to have_background color: 'FFFFCC', top_left: [page_margin, page_height - page_margin], bottom_right: [page_width - page_margin, page_margin]
-        p2_gs = (pdf.extract_graphic_states pages[1][:raw_content])[0]
-        (expect p2_gs).to have_background color: 'FFFFCC', top_left: [page_margin, page_height - page_margin], bottom_right: [page_width - page_margin, page_margin]
       end
 
       it 'should split block across pages that contains image taller than page that follows text' do
@@ -1348,8 +1345,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         (expect image[:y]).to eql 711.009
       end
 
-      # NOTE: this scenario renders an example block that starts with an empty page
-      it 'should split block across pages that contains image taller than page at start of block', negative: true do
+      it 'should split block across pages that contains image taller than page at start of block' do
         input = <<~'EOS'
         before block
 
@@ -1360,19 +1356,17 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         images = (to_pdf input, pdf_theme: pdf_theme, analyze: :image).images
         pages = pdf.pages
-        (expect pages).to have_size 3
+        (expect pages).to have_size 2
         page_width, page_height = (get_page_size pdf, 1).map(&:to_f)
         page_margin = pdf_theme[:page_margin].to_f
         (expect images).to have_size 1
         image = images[0]
-        (expect image[:page_number]).to be 3
-        (expect image[:y]).to eql (page_height - page_margin)
-        (expect image[:height]).to eql (page_height - page_margin * 2)
+        (expect image[:page_number]).to be 2
+        (expect image[:y]).to eql (page_height - page_margin - 12)
+        (expect image[:height]).to eql (page_height - 12 - page_margin * 2)
         (expect (pdf.extract_graphic_states pages[0][:raw_content])).to be_empty
         p2_gs = (pdf.extract_graphic_states pages[1][:raw_content])[0]
         (expect p2_gs).to have_background color: 'FFFFCC', top_left: [page_margin, page_height - page_margin], bottom_right: [page_width - page_margin, page_margin]
-        p3_gs = (pdf.extract_graphic_states pages[2][:raw_content])[0]
-        (expect p3_gs).to have_background color: 'FFFFCC', top_left: [page_margin, page_height - page_margin], bottom_right: [page_width - page_margin, page_margin]
       end
 
       # FIXME: this fails when block is unbreakable

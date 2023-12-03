@@ -13,6 +13,10 @@ Asciidoctor::AbstractBlock.prepend (Module.new do
     blocks[-1]
   end
 
+  def first_child?
+    self == parent.blocks[0]
+  end
+
   def last_child?
     self == parent.blocks[-1]
   end

@@ -13,6 +13,7 @@ Bug Fixes::
 * decouple tests from path of PWD (#2444)
 * consider inherited styles when analyzing glyphs for fallback font support (#2463)
 * add fallback character for placeholder character when using AFM font (#2453)
+* don't advance image that's first child of block at top of page if image is taller than page (#2012)
 
 == 2.3.9 (2023-06-28) - @mojavelinux
 
