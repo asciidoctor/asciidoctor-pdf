@@ -990,9 +990,16 @@ module Asciidoctor
       # start_new_page. Using start_new_page can mangle the calculation of content block's extent.
       #
       def arrange_block node, &block
-        keep_together = (node.option? 'unbreakable') && !at_page_top?
+        if at_page_top?
+          at_top = true
+        else
+          at_top = true if node.first_child? && (node.parent.attr? 'pdf-at-top')
+          keep_together = true if node.option? 'unbreakable'
+        end
+        node.set_attr 'pdf-at-top', '' if at_top
         doc = node.document
         block_for_scratch = proc do
+          at_top = node.set_attr 'pdf-at-top', '' if !at_top && at_page_top?
           push_scratch doc
           instance_exec(&block)
         ensure
@@ -1000,6 +1007,8 @@ module Asciidoctor
         end
         extent = dry_run keep_together: keep_together, onto: [self, keep_together], &block_for_scratch
         scratch? ? block_for_scratch.call : (yield extent)
+      ensure
+        node.remove_attr 'pdf-at-top' if at_top
       end
 
       # This method installs an on_page_create_callback that stops processing if the first page is

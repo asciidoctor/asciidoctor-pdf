@@ -1819,7 +1819,7 @@ module Asciidoctor
               end
               # NOTE: shrink image so it fits within available space; group image & caption
               if (rendered_h = svg_size.output_height) > (available_h = cursor - caption_h)
-                unless pinned || at_page_top?
+                unless pinned || at_page_top? || (node.first_child? && (node.parent.attr? 'pdf-at-top'))
                   advance_page
                   available_h = cursor - caption_h
                 end
@@ -1860,7 +1860,7 @@ module Asciidoctor
               rendered_w, rendered_h = image_info.calc_image_dimensions width: (width || [available_w, actual_w].min)
               # NOTE: shrink image so it fits within available space; group image & caption
               if rendered_h > (available_h = cursor - caption_h)
-                unless pinned || at_page_top?
+                unless pinned || at_page_top? || (node.first_child? && (node.parent.attr? 'pdf-at-top'))
                   advance_page
                   available_h = cursor - caption_h
                 end
