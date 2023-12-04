@@ -4,15 +4,7 @@ require:
 - ./cops/to_pdf_no_debug.rb
 AllCops:
   TargetRubyVersion: 2.7
-Capybara/MatchStyle:
-  Enabled: false
-Capybara/NegationMatcher:
-  Enabled: false
-Capybara/SpecificActions:
-  Enabled: false
-Capybara/SpecificFinders:
-  Enabled: false
-Capybara/SpecificMatcher:
+Capybara:
   Enabled: false
 Gemspec/DeprecatedAttributeAssignment:
   Enabled: true
@@ -254,11 +246,7 @@ RSpec/ExcessiveDocstringSpacing:
   Enabled: true
 RSpec/ExpectInHook:
   Enabled: true
-RSpec/FactoryBot/ConsistentParenthesesStyle:
-  Enabled: false
-RSpec/FactoryBot/FactoryNameStyle:
-  Enabled: false
-RSpec/FactoryBot/SyntaxMethods:
+RSpec/FactoryBot:
   Enabled: false
 RSpec/FilePath:
   Enabled: false
@@ -281,15 +269,7 @@ RSpec/PendingWithoutReason:
   Enabled: true
 RSpec/RedundantAround:
   Enabled: true
-RSpec/Rails/AvoidSetupHook:
-  Enabled: false
-RSpec/Rails/HaveHttpStatus:
-  Enabled: false
-RSpec/Rails/InferredSpecType:
-  Enabled: false
-RSpec/Rails/MinitestAssertions:
-  Enabled: false
-RSpec/Rails/TravelAround:
+RSpec/Rails:
   Enabled: false
 RSpec/SkipBlockInsideExample:
   Enabled: true
