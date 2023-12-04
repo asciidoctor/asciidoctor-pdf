@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.3.10 (2023-12-04) - @mojavelinux
 
 Bug Fixes::
 
@@ -14,6 +14,10 @@ Bug Fixes::
 * consider inherited styles when analyzing glyphs for fallback font support (#2463)
 * add fallback character for placeholder character when using AFM font (#2453)
 * don't advance image that's first child of block at top of page if image is taller than page (#2012)
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.10[git tag] | {url-repo}/compare/v2.3.9\...v2.3.10[full diff]
 
 == 2.3.9 (2023-06-28) - @mojavelinux
 
