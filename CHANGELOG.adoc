@@ -31,6 +31,7 @@ Enhancements::
 * add symbols for shift, command, option, and return keys to the fallback font
 * add support for `nowrap` and `nobreak` roles on formatted text
 * do not insert break opportunities into bare URL with `nobreak` role
+* upgrade prawn-svg dependency to 0.33.x (PR #2469)
 
 Improvements::
 
