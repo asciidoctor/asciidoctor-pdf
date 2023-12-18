@@ -7,7 +7,9 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Enhancements::
+
+* upgrade prawn-svg dependency to 0.33.x (PR #2469)
 
 == 2.3.10 (2023-12-04) - @mojavelinux
 
