@@ -8,8 +8,9 @@ The outline can also be deactivated with the `outline` attribute.
 [#title]
 == outline-title attribute
 
-By default, the document title is displayed as the title of the PDF outline.
+By default, the document title is displayed as the first entry in the PDF outline.
 You can customize the outline title using the `outline-title` document attribute.
+If this attribute is set and the value is not empty, it gets used instead of the document title.
 
 [,asciidoc]
 ----
@@ -19,6 +20,8 @@ You can customize the outline title using the `outline-title` document attribute
 <.> Set `outline-title` in the document header and assign it your preferred title for the PDF outline.
 
 The PDF outline resulting from the example above will be titled "`The Chronicles`".
+
+If you plan to override this entry for a batch of documents, you may want to use a generic term such as "Outline", "Title Page" (when the doctype is book), or "Contents".
 
 [#levels]
 == outlinelevels attribute
