@@ -10,7 +10,23 @@ Asciidoctor PDF provides the following behaviors to assist with printing:
 * Deactivates the links from page numbers in the index to the locations of terms in the document
 
 To enable these printing features, set the `media` document attribute to `print` in the header of your AsciiDoc document or from the API or CLI (e.g., `-a media=print`).
-You may also want to consider using the print-optimized theme, which uses darker, grayscale colors for text and borders (e.g., `--theme default-for-print`).
+In this case, you may also want to consider using the print-optimized theme, which uses darker, grayscale colors for text and borders (e.g., `--theme default-for-print`).
+
+If you don't want the URL to be shown next to the link text, unset the `show-link-uri` attribute in the document header:
+
+----
+:!show-link-uri:
+----
+
+or from the API or CLI:
+
+----
+-a show-link-uri!
+----
+
+Only the link text will be shown, as in the case when `media` is `screen` (the default).
+
+You can force the processor to show the URL next to links, regardless of the value of the `media` attribute, by setting the `show-link-uri` attribute.
 
 [#prepress]
 == Prepress mode
