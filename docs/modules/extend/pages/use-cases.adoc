@@ -234,7 +234,7 @@ Thus, you can use an extended converter to turn off the running content on other
 .Extended converter to turn off running content on empty page
 [,ruby]
 ----
-include::example$pdf-converter-no-running-content-on-empty-page.rb[]
+include::example$pdf-converter-no-running-content-empty-page.rb[]
 ----
 
 This converter does not attempt to detect pages that are empty to make the next page facing (i.e., empty verso pages).
