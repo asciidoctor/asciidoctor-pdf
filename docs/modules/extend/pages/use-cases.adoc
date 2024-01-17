@@ -226,6 +226,23 @@ Then, you can add this number in the left margin at the start of each paragraph 
 include::example$pdf-converter-numbered-paragraphs.rb[]
 ----
 
+== No running content on empty page
+
+If a page is labeled as imported, Asciidoctor PDF will not add running content to that page.
+Thus, you can use an extended converter to turn off the running content on otherwise empty pages by marking them as imported.
+
+.Extended converter to turn off running content on empty page
+[,ruby]
+----
+include::example$pdf-converter-no-running-content-on-empty-page.rb[]
+----
+
+This converter does not attempt to detect pages that are empty to make the next page facing (i.e., empty verso pages).
+Therefore, you may want to add a filter to only turn off the running content on those pages.
+
+If the running content on empty pages is causing the PDF to fail validation, you can instead write an non-visible character (such as a space) to those pages instead.
+See the commented code in the example for how to do that.
+
 == Change bars
 
 If you have a preprocessor that adds change metadata to the content, you can use an extended converter to draw change bars to add a visual indicator in the rendered output.
