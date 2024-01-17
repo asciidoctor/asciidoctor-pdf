@@ -1,2 +1,3 @@
 * text=auto eol=lf
+*.pdf binary
 *.rb diff=ruby
