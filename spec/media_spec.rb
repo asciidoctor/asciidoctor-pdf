@@ -160,5 +160,30 @@ describe 'Asciidoctor::PDF::Converter - media' do
       chapter_text = (pdf.find_text 'Chapter')[0]
       (expect chapter_text[:page_number]).to be 2
     end
+
+    it 'should initialize color space on empty verso pages', cli: true do
+      to_file = to_pdf_file <<~'END', 'running-content-on-empty-verso-pages.pdf', enable_footer: true
+      = Document Title
+      :doctype: book
+      :media: prepress
+
+      == Beginning
+
+      content
+
+      == Middle
+
+      content
+
+      == End
+
+      content
+      END
+
+      out, err, res = run_command 'pdftotext', to_file, '-'
+      (expect res.exitstatus).to be 0
+      (expect out).to include '4'
+      (expect err).to be_empty
+    end
   end
 end

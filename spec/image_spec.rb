@@ -1176,7 +1176,18 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
         (expect pdf.pages).to have_size 3
         page_contents = pdf.objects[(pdf.page 2).page_object[:Contents]].data
-        (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 0.0 scn']
+        page_content_lines = page_contents.split ?\n
+        (expect page_content_lines.shift).to eql 'q'
+        (expect page_content_lines.shift).to eql 'q'
+        stack_size = 1
+        until (line = page_content_lines.shift).nil?
+          if line == 'q'
+            stack_size += 1
+          elsif line == 'Q'
+            break if (stack_size -= 1) == 0
+          end
+        end
+        (expect page_content_lines.slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 0.0 scn']
       end
     end
 
@@ -1399,7 +1410,19 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
       (expect pdf.pages).to have_size 3
       page_contents = pdf.objects[(pdf.page 2).page_object[:Contents]].data
-      (expect (page_contents.split ?\n).slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 0.0 scn']
+      page_content_lines = page_contents.split ?\n
+      (expect page_content_lines.shift).to eql 'q'
+      page_content_lines.shift if page_content_lines[0].empty?
+      (expect page_content_lines.shift).to eql 'q'
+      stack_size = 1
+      until (line = page_content_lines.shift).nil?
+        if line == 'q'
+          stack_size += 1
+        elsif line == 'Q'
+          break if (stack_size -= 1) == 0
+        end
+      end
+      (expect page_content_lines.slice 0, 3).to eql ['q', '/DeviceRGB cs', '0.0 0.0 0.0 scn']
     end
 
     it 'should place raster image in correct column when page columns are enabled' do
