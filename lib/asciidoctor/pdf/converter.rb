@@ -3615,7 +3615,7 @@ module Asciidoctor
           next if page.imported_page? || (disable_on_pages.include? pgnum)
           virtual_pgnum = pgnum - skip_pagenums
           pgnum_label = (virtual_pgnum < 1 ? (RomanNumeral.new pgnum, :lower) : virtual_pgnum).to_s
-          side = page_side((@folio_placement[:basis] == :physical ? pgnum : virtual_pgnum), @folio_placement[:inverted])
+          side = page_side (@folio_placement[:basis] == :physical ? pgnum : virtual_pgnum), @folio_placement[:inverted]
           doc.set_attr 'page-layout', page.layout.to_s
 
           # NOTE: running content is cached per page layout
