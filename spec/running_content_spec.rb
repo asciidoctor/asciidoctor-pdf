@@ -23,7 +23,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should add running content to empty page' do
-      pdf = to_pdf <<~'EOS', enable_footer: true
+      pdf = to_pdf <<~'END', enable_footer: true
       first page
 
       <<<
@@ -32,7 +32,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       <<<
 
       third page
-      EOS
+      END
       (expect pdf.pages).to have_size 3
       (expect pdf.pages[1].text).to eql '2'
     end
