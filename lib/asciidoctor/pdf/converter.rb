@@ -1809,9 +1809,6 @@ module Asciidoctor
                 rendered_w = (svg_obj.resize height: (rendered_h = available_h)).output_width if rendered_h > available_h
               end
               add_dest_for_block node if node.id
-              # NOTE: workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
-              # breakage occurs when running content (stamps) are added to page
-              update_colors if graphic_state.color_space.empty?
               ink_caption node, category: :image, end: :top, block_align: alignment, block_width: rendered_w, max_width: caption_max_width if caption_end == :top && node.title?
               image_y = y
               # NOTE: prawn-svg does not compute :at for alignment correctly in column box, so resort to our own logic
@@ -1851,9 +1848,6 @@ module Asciidoctor
                 rendered_w = (image_info.calc_image_dimensions height: (rendered_h = available_h))[0] if rendered_h > available_h
               end
               add_dest_for_block node if node.id
-              # NOTE: workaround to fix Prawn not adding fill and stroke commands on page that only has an image;
-              # breakage occurs when running content (stamps) are added to page
-              update_colors if graphic_state.color_space.empty?
               ink_caption node, category: :image, end: :top, block_align: alignment, block_width: rendered_w, max_width: caption_max_width if caption_end == :top && node.title?
               image_y = y
               left = bounds.left
@@ -3590,7 +3584,16 @@ module Asciidoctor
 
         pagenums_enabled = doc.attr? 'pagenums'
         periphery_layout_cache = {}
-        # NOTE: this block is invoked during PDF generation, after #write -> #render_file and thus after #convert_document
+        # NOTE: Prawn fails to properly set color spaces on empty pages, but repeater relies on them
+        # prefer simpler fix below call to repeat; keep this workaround in case that workaround stops working
+        #(content_start_page_number..num_pages).each do |pgnum|
+        #  next if (disable_on_pages.include? pgnum) || (pg = state.pages[pgnum - 1]).imported_page? || !pg.graphic_state.color_space.empty?
+        #  go_to_page pgnum
+        #  set_color_space :fill, (color_space graphic_state.fill_color)
+        #  set_color_space :stroke, (color_space graphic_state.stroke_color)
+        #end
+        #go_to_page content_start_page_number if page_number != content_start_page_number
+        # NOTE: this block is invoked during PDF generation, during call to #write -> #render_file and thus after #convert_document
         repeat (content_start_page_number..num_pages), dynamic: true do
           pgnum = page_number
           # NOTE: don't write on pages which are imported / inserts (otherwise we can get a corrupt PDF)
@@ -3701,7 +3704,11 @@ module Asciidoctor
             end
           end
         end
-
+        # NOTE: force repeater to consult color spaces on current page instead of the page on which repeater was created
+        # if this stops working, use the commented code above repeat call instead
+        unless (repeater_graphic_state = repeaters[-1].instance_variable_get :@graphic_state).singleton_methods.include? :color_space
+          repeater_graphic_state.define_singleton_method :color_space, &(method :page_color_space)
+        end
         go_to_page prev_page_number
         nil
       end
@@ -4382,7 +4389,6 @@ module Asciidoctor
 
       def start_new_chapter chapter
         start_new_page unless at_page_top?
-        # TODO: must call update_colors before advancing to next page if start_new_page is called in ink_chapter_title
         start_new_page if @ppbook && verso_page? && !(chapter.option? 'nonfacing')
       end
 
@@ -5060,6 +5066,10 @@ module Asciidoctor
         ink_caption node, category: :image, end: :bottom if node.title?
         theme_margin :block, :bottom, (next_enclosed_block node) unless opts[:pinned]
         nil
+      end
+
+      def page_color_space
+        page.graphic_state.color_space
       end
 
       def remove_tmp_files

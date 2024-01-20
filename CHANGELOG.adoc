@@ -11,6 +11,10 @@ Enhancements::
 
 * upgrade prawn-svg dependency to 0.33.x (PR #2469)
 
+Bug Fixes::
+
+* ensure color spaces are set on page before adding running content (#2477)
+
 == 2.3.10 (2023-12-04) - @mojavelinux
 
 Bug Fixes::

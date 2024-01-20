@@ -22,6 +22,29 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect text[0][:string]).to eql '1'
     end
 
+    it 'should add running content to empty page' do
+      pdf = to_pdf <<~'EOS', enable_footer: true
+      first page
+
+      <<<
+
+      [%always]
+      <<<
+
+      third page
+      EOS
+      (expect pdf.pages).to have_size 3
+      (expect pdf.pages[1].text).to eql '2'
+      pdf.pages.each do |page|
+        contents = pdf.objects[page.page_object[:Contents]].data
+        content_lines = contents.lines
+        before_fill_color = (content_lines.slice 0, content_lines.index {|it| it.end_with? %( scn\n) }).join
+        before_stroke_color = (content_lines.slice 0, content_lines.index {|it| it.end_with? %( SCN\n) }).join
+        (expect before_fill_color).to include %(\n/DeviceRGB cs\n)
+        (expect before_stroke_color).to include %(\n/DeviceRGB CS\n)
+      end
+    end
+
     it 'should start adding running content to page after imported page' do
       pdf = to_pdf <<~'EOS', enable_footer: true, analyze: true
       image::blue-letter.pdf[]
