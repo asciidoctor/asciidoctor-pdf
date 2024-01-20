@@ -11,6 +11,10 @@ Enhancements::
 
 * upgrade prawn-svg dependency to 0.33.x (PR #2469)
 
+Improvements::
+
+* extract shared `smallcaps` method from `TextTransform#smallcaps_pcdata` to make it easier to override
+
 Bug Fixes::
 
 * ensure color spaces are set on page before adding running content (#2477)
