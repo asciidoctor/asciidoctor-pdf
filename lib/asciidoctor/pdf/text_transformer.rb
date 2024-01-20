@@ -59,10 +59,14 @@ module Asciidoctor
 
       def smallcaps_pcdata string
         if XMLMarkupRx.match? string
-          string.gsub(PCDATAFilterRx) { $2 ? ($2.tr LowerAlphaChars, SmallCapsChars) : $1 }
+          string.gsub(PCDATAFilterRx) { $2 ? (smallcaps $2) : $1 }
         else
-          string.tr LowerAlphaChars, SmallCapsChars
+          smallcaps string
         end
+      end
+
+      def smallcaps string
+        string.tr LowerAlphaChars, SmallCapsChars
       end
 
       # Apply the text transform to the specified text.
