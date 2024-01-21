@@ -1764,6 +1764,53 @@ describe 'Asciidoctor::PDF::Converter - Table' do
 
       (expect to_file).to visually_match 'table-transparent-header-cell.pdf'
     end
+
+    it 'should be able to access node in Prawn::Table#add_header' do
+      backend = nil
+      create_class (Asciidoctor::Converter.for 'pdf') do
+        register_for (backend = %(pdf#{object_id}).to_sym)
+        def init_pdf(*)
+          super
+          extend (Module.new do
+            def table data, options = {}, &block
+              t = Prawn::Table.new data, self, options, &block
+              t.extend (Module.new do
+                def add_header(*)
+                  height = 0
+                  this_node = (instance_variable_defined? :@node) && @node # rubocop:disable RSpec/InstanceVariable
+                  if this_node && this_node.title?
+                    this_pdf = @pdf # rubocop:disable RSpec/InstanceVariable
+                    title = %(#{this_node.captioned_title} (continued))
+                    height += (this_pdf.ink_caption title, dry_run: true)
+                    this_pdf.ink_caption title
+                  end
+                  height + super
+                end
+              end)
+              t.draw
+              t
+            end
+          end)
+        end
+      end
+
+      input = <<~END
+      .table title
+      |===
+      |Column
+
+      #{['| cell'] * 40 * ?\n}
+      |===
+      END
+
+      pdf = to_pdf input, backend: backend, analyze: true
+      (expect pdf.pages).to have_size 2
+      title_text = pdf.find_unique_text page_number: 2, string: 'Table 1. table title (continued)'
+      (expect title_text).not_to be_nil
+      column_text = pdf.find_unique_text page_number: 2, string: 'Column'
+      (expect column_text).not_to be_nil
+      (expect title_text[:y] - column_text[:y]).to be > 20
+    end
   end
 
   context 'Foot' do
