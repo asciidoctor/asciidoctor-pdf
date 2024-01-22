@@ -86,7 +86,7 @@ Asciidoctor.convert 'I *love* AsciiDoc!', backend: 'pdf', safe: :unsafe, to_file
 puts pdf.string
 ----
 
-You can also capture the PDF strea after the fact by passing the returned document to the `write` method on that same object.
+You can also capture the PDF stream after the fact by passing the returned document to the `write` method on that same object.
 
 [,ruby]
 ----
