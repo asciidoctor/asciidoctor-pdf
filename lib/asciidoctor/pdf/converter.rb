@@ -2262,6 +2262,7 @@ module Asciidoctor
 
         left_padding = right_padding = nil
         table table_data, table_settings do
+          instance_variable_set :@node, node
           # NOTE: cell_style must be applied manually to be compatible with both prawn-table 0.2.2 and prawn-table 0.2.3
           cells.style cell_style
           @column_widths = column_widths unless column_widths.empty?
