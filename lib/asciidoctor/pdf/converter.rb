@@ -442,6 +442,7 @@ module Asciidoctor
         # scratch calls init_scratch on a copy of the prototype to instantiate a scratch document
         # push_scratch and pop_scratch make changes to the document catalog and attributes transactional
         allocate_scratch_prototype
+        # NOTE: & prefix required here to pass resolved method as block of on_page_create method
         on_page_create(&(method :init_page).curry[doc])
         self
       end
@@ -638,7 +639,7 @@ module Asciidoctor
           return convert_abstract sect
         elsif (index_section = sectname == 'index') && @index.empty?
           # override numbered_title to hide entry from TOC
-          sect.define_singleton_method :numbered_title, &->(*) { '' }
+          sect.define_singleton_method :numbered_title, ->(*) { '' }
           return
         end
         title = sect.numbered_title formal: true
@@ -3726,7 +3727,8 @@ module Asciidoctor
         # NOTE: force repeater to consult color spaces on current page instead of the page on which repeater was created
         # if this stops working, use the commented code above repeat call instead
         unless (repeater_graphic_state = repeaters[-1].instance_variable_get :@graphic_state).singleton_methods.include? :color_space
-          repeater_graphic_state.define_singleton_method :color_space, &(method :page_color_space)
+          # NOTE: must convert override method to proc since we're are changing bind argument
+          repeater_graphic_state.define_singleton_method :color_space, (method :page_color_space).to_proc
         end
         go_to_page prev_page_number
         nil
