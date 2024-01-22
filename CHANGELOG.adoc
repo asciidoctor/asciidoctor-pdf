@@ -39,6 +39,7 @@ Improvements::
 * drop support for the unmaintained payment font (`pf`) for use in font-based icons
 * refactor formatted text transform to simplify how inner space is collapsed; verify only inner hard breaks are preserved
 * extract shared `smallcaps` method from `TextTransform#smallcaps_pcdata` to make it easier to override
+* assign node to `@node` instance variable on table instance to make it easer to access from Prawn::Table extension (#2471)
 
 Bug Fixes::
 
