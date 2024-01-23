@@ -42,7 +42,7 @@ font:
 |===
 
 [#extend-catalog]
-== Extending the font catalog
+== Extend the font catalog
 
 If you define a xref:custom-font.adoc[custom font] in the font catalog in a theme that extends from `default`, and you want to continue to use the bundled fonts in your theme, you either have to redeclare the bundled fonts:
 

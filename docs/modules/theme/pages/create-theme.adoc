@@ -40,7 +40,7 @@ Refer to <<how-extend-works>> for details about what values the `extends` key ac
 == Extend the default theme
 
 *The quickest and simplest way to create a new theme is to extend the default theme.*
-Right out of the gate, your theme already has all the functionality provided by the default theme.
+Right out of the gate, your theme already has all the fonts and functionality provided by the default theme.
 You only have to define keys in your theme that you want to customize from the default theme.
 
 Let's create a theme that drastically modifies the base font color.
@@ -72,6 +72,9 @@ footer:
 ----
 
 Learn more about how to customize the running content on the xref:add-running-content.adoc[] page.
+
+If you want to add additional fonts to the default theme, but still be able to use the bundled fonts as well, you should also extend the font catalog.
+Refer to xref:font.adoc#extend-catalog[Extending the font catalog] to learn how.
 
 == Extend the base theme
 
