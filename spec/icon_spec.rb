@@ -64,7 +64,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
       %W(far bell \uf0f3 FontAwesome5Free-Regular),
       %W(fas lock \uf023 FontAwesome5Free-Solid),
       %W(fi lock \uf16a fontcustom),
-      %W(mdi alien \uf089 MaterialDesignIcons),
+      %W(mdi alien \u{0f089a} MaterialDesignIcons),
     ].each do |icon_set, icon_name, char_code, font_name|
       next if icon_set == 'mdi' && !supports_mdi
       pdf = to_pdf <<~END, analyze: true
@@ -75,7 +75,13 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
       END
       icon_text = pdf.text[1]
       (expect icon_text).not_to be_nil
-      (expect icon_text[:string]).to eql char_code
+      if icon_set == 'mdi' && icon_name == 'alien'
+        unless (actual_char_code = icon_text[:string]) == ?\uf089 # prawn <= 2.4.0 truncates the 6-digit char code
+          (expect actual_char_code).to eql char_code
+        end
+      else
+        (expect icon_text[:string]).to eql char_code
+      end
       (expect icon_text[:font_name]).to eql font_name
     end
   end
