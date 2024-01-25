@@ -72,10 +72,9 @@ jobs:
         #- os: ubuntu-latest
         #  ruby: '3.2'
         #  asciidoctor-version: '~> 2.0.0'
-        # NOTE: https://github.com/prawnpdf/prawn/pull/1322 breaks visual comparison for some font tests
-        #- os: ubuntu-latest
-        #  ruby: '3.2'
-        #  upstream: upstream
+        - os: ubuntu-latest
+          ruby: '3.2'
+          upstream: upstream
         - os: ubuntu-latest
           ruby: '3.2'
           rouge-version: '~> 4.0.0'
