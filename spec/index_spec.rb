@@ -945,6 +945,66 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect s_category_text[:x]).to eql 36.0
   end
 
+  # this happens if the term sits right on the page boundary and the hanging indent is still active
+  it 'should preserve indentation when recreating column box on subsequent pages' do
+    pdf_theme = {
+      page_margin: [50, 54],
+      page_margin_inner: 72,
+      page_margin_outer: 36,
+    }
+    pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
+    = Document Title
+    :doctype: book
+    :media: prepress
+    :notitle:
+    :pdf-page-size: A5
+
+    == Chapter
+
+    ((foo)) and ((bar))
+
+    ((yin)) and ((yang))
+
+    ((tea)) and ((coffee))
+
+    ((left)) and ((right))
+
+    ((salt)) and ((pepper))
+
+    ((up)) and ((down))
+
+    ((sugar)) and ((spice))
+
+    ((day)) and ((night))
+
+    ((melody)) and ((harmony))
+
+    ((inside)) and ((outside))
+
+    ((forward)) and ((back))
+
+    ((cake)) and ((icing))
+
+    ((to that place where you wish to go)) and ((fro))
+
+    ((apples)) and ((oranges))
+
+    ((over)) and ((under))
+
+    ((light)) and ((dark))
+
+    [index]
+    == Index
+    END
+
+    wrapped_text = pdf.find_unique_text 'to go, 1', page_number: 4
+    (expect wrapped_text).not_to be_nil
+    (expect wrapped_text[:x]).to eql 66.0
+    u_category_text = pdf.find_unique_text 'U', page_number: 4
+    (expect u_category_text).not_to be_nil
+    (expect u_category_text[:x]).to eql 36.0
+  end
+
   it 'should preserve column count on subsequent pages' do
     pdf_theme = {
       page_margin: 36,

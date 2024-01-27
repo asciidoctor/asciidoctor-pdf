@@ -15,8 +15,11 @@ Prawn::Document::ColumnBox.prepend (Module.new do
     initial_margins = doc.page.margins
     parent_.move_past_bottom
     if doc.page.margins != initial_margins
-      doc.bounds = self.class.new doc, parent_, [(margin_box = doc.margin_box).absolute_left, @y],
+      doc.bounds = bounds = self.class.new doc, parent_, [(margin_box = doc.margin_box).absolute_left, @y],
         columns: @columns, reflow_margins: @reflow_margins, spacer: @spacer, width: margin_box.width, height: @height
+      # ensure indentation is preserved across page break
+      bounds.add_left_padding @total_left_padding if @total_left_padding > 0
+      bounds.add_right_padding @total_right_padding if @total_right_padding > 0
     end
     nil
   end
