@@ -7,7 +7,9 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Bug Fixes::
+
+* ensure indentation is preserved at page transition of index when media=prepress; prevents margin from shifting to the left (#2480)
 
 == 2.3.11 (2024-01-23) - @mojavelinux
 
