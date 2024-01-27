@@ -10,6 +10,7 @@ class AsciidoctorPDFExtensions < (Asciidoctor::Converter.for 'pdf')
     else
       # if doctype=book and media=prepress, use blank page before table of contents
       go_to_page page_number.pred if @ppbook
+      colophon.set_option 'nonfacing' # ensure colophon is configured to be non-facing
       convert_section colophon
       go_to_page page_number.next
     end
