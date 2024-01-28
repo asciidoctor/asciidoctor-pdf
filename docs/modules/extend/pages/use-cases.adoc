@@ -213,7 +213,7 @@ This the the text of the first chapter.
 This chapter will start on the first recto page after the table of contents.
 ----
 
-If you want the running content and/or page numbering to start at the first chapter, you'll need to customize the theme.
+TIP: If you want the running content and/or page numbering to start at the first chapter, you'll need to set the `start-at` key to `after-toc` in the `running-content` and/or `page-numbering` keys in your theme.
 
 Instead of using the built-in support through configuration, you can achieve these customizations using an extended converter instead.
 To do so, you need to override the built-in `ink_toc` method and render the colophon before the TOC is rendered (i.e., inked).
