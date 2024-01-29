@@ -218,7 +218,7 @@ Background color and border offset on links:: You can now control the background
 === Fonts, font styles, and text transforms
 
 Small caps:: The `text-transform` theme key now accepts the `smallcaps` value.
-When `smallcaps` is specified, the lowercase letters are replaced with the small capital letter variants.
+When `smallcaps` is specified, the lowercase ASCII letters (a-z) are replaced with their small capital letter variants.
 normal_italic:: The xref:theme:text.adoc#font-style[new normal_italic value] for the `font-style` key resets the font style to normal, then applies the italic variant of a font family.
 Noto Sans:: xref:theme:font-support.adoc#bundled[Noto Sans is now bundled] with Asciidoctor PDF.
 It is used as a fallback font in the `sans-with-fallback-font` theme and can be declared in a custom theme.
