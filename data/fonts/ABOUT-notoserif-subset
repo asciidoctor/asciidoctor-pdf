@@ -10,6 +10,7 @@ The following changes were made using fontforge to produce the notoserif-*-subse
  ** Basic Latin (U+0020–U+007e)
  ** Latin-1 Supplement (U+00a0–U+00fd)
  ** Latin Extended-A (U+0100–U+017f)
+ ** Combining characters (U+0300-U+030F) (used for NFD normalized forms of characters with a diacritical mark)
  ** Greek (U+0370–U+03ff)
  ** Cyrillic (U+0400–U+04ff)
  ** Vietnamese (U+01a0–U01b0, U+1ea0–U1ef9)

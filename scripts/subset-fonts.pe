@@ -220,6 +220,8 @@ while (fi < num_copy_fonts)
       # Small Caps
       SelectMoreSingletons(0u1d00,0u0299,0u1d04,0u1d05,0u1d07,0ua730,0u0262,0u029c,0u026a,0u1d0a,0u1d0b,0u029f,0u1d0d)
       SelectMoreSingletons(0u0274,0u1d0f,0u1d18,0ua7af,0u0280,0ua731,0u1d1b,0u1d1c,0u1d20,0u1d21,0u028f,0u1d22,0u01eb)
+      # Combining characters for NFD normalized form (needed to support small caps with a diacritical mark)
+      SelectMore(0u0300,0u030f)
       if (is_mplus)
         # CJK Symbols and Punctuation (not present in mainstream Noto Serif fonts)
         SelectMore(0u3000,0u303f)
