@@ -142,12 +142,31 @@ The `text-transform` key changes the case of the text.
 It accepts the following keywords:
 
 capitalize:: Transforms the first letter of each word to a capital letter.
-lowercase:: Transforms all the text to lower case letters.
+lowercase:: Transforms all the text to lowercase letters.
 none:: Clears an inherited value and no case transformation is applied to the text.
-smallcaps:: Replaces lowercase Latin letters with their small capital variant.
+smallcaps:: Replaces lowercase ASCII letters (a-z) with their small capital variant.
+Lowercase letters outside the ASCII range are not transformed.
 uppercase:: Transforms all the text to capital letters.
 
-The `text-transform` key can’t be set on the xref:base.adoc[base category].
+The `text-transform` key can't be set on the xref:base.adoc[base category].
+
+If you want the smallcaps transformation to support letters beyond the a-z range, you can do so by overridding the `smallcaps` method in an extended converter.
+
+[,ruby]
+----
+class MyPDFConverter < (Asciidoctor::Converter.for 'pdf')
+  register_for 'pdf'
+  
+  def smallcaps string
+    string = super
+    string = string.gsub 'é', %(\u1d07\u0301)
+    string
+  end
+end
+----
+
+The smallcaps transformation for extended Latin characters (e.g., characters that include an accent) typically requires the addition of a combining character, such as the combining acute accent in the example above).
+Therefore, you must ensure that the font you're using supports these combining characters (meaning it provides the necessary glyphs).
 
 [#border-background-color]
 == Border and background color 
