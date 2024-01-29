@@ -7,6 +7,10 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
+Improvements::
+
+* add combining characters to bundled fonts (#2482)
+
 Bug Fixes::
 
 * ensure indentation is preserved at page transition of index when media=prepress; prevents margin from shifting to the left (#2480)
