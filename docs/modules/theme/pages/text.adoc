@@ -165,6 +165,21 @@ class MyPDFConverter < (Asciidoctor::Converter.for 'pdf')
 end
 ----
 
+This transformation can be automated using `String#unicode_normalize` with the `:nfd` form.
+This method will rewrite all characters with diacritical marks so that the diacritical mark is added using a combining character (i.e., a two graphene form).
+
+[,ruby]
+----
+class MyPDFConverter < (Asciidoctor::Converter.for 'pdf')
+  register_for 'pdf'
+  
+  def smallcaps string
+    string = string.unicode_normalize :nfd unless string.ascii_only?
+    super
+  end
+end
+----
+
 The smallcaps transformation for extended Latin characters (e.g., characters that include an accent) typically requires the addition of a combining character, such as the combining acute accent in the example above).
 Therefore, you must ensure that the font you're using supports these combining characters (meaning it provides the necessary glyphs).
 
