@@ -3,16 +3,23 @@
 Asciidoctor PDF supports additional built-in document attributes that impact PDF conversion.
 You can use these attributes to control the PDF media, launch mode, and outline, PDF optimization, text hyphenation, and various document-specific theme settings such as the front and back cover images, the background images, the title page logo and background images, page dimensions, and more.
 
+[NOTE]
+====
+The attributes mentioned on this page allow a limited configuration of the PDF output. For more options over the layout, you will have to xref:theme:create-theme.adoc#extend-default[extend] or create a new xref:theme:index.adoc[PDF theme] and xref:theme:apply-theme.adoc[apply] it to your document during processing.
+====
+
 == AsciiDoc document attributes
 
-If an attribute is marked as "Header Only", it only takes effect if defined in the AsciiDoc document header or via the API.
+If an attribute is marked as "Header Only", it only takes effect if defined in the AsciiDoc document header.
+You can, however, add the attributes as parameters to your API or CLI calls.
+
 If an attribute matches a key in the theme file, the document attribute takes precedence.
 
 [cols="2,3,^1,6a"]
 |===
 |Attribute |Value Type |Header Only |Example
 
-|`autofit-option`
+|xref:autofit-text.adoc[autofit-option]
 |flag (default: _not set_)
 |No
 |`:autofit-option:`
@@ -53,7 +60,7 @@ If an attribute matches a key in the theme file, the document attribute takes pr
 |Yes
 |`:compress:`
 
-|`optimize`
+|xref:optimize-pdf.adoc[optimize]
 |`screen` {vbar} `ebook` {vbar} `printer` {vbar} `prepress` {vbar} `default` (default: `default`)
 |Yes
 |`:optimize: prepress`
@@ -138,8 +145,8 @@ If an attribute matches a key in the theme file, the document attribute takes pr
 |Yes
 |`:scripts: cjk`
 
-|`text-align`^[7]^
-|xref:theme:text.adoc#text-align[Text alignment]
+|xref:theme:text.adoc#text-align[text-align] ^[7]^
+|`center` {vbar} `justify` {vbar} `left` {vbar} `right` {vbar} `inherit`
 |Yes
 |`:text-align: left`
 
