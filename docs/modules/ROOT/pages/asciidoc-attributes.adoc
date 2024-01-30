@@ -1,12 +1,9 @@
 = AsciiDoc Attributes for PDF
 
 Asciidoctor PDF supports additional built-in document attributes that impact PDF conversion.
-You can use these attributes to control the PDF media, launch mode, and outline, PDF optimization, text hyphenation, and various document-specific theme settings such as the front and back cover images, the background images, the title page logo and background images, page dimensions, and more.
+You can use these attributes to control the PDF media, launch mode, and outline, PDF optimization, text hyphenation, and various document-specific theme settings such as the front and back cover images, the background images, the title page logo and background images, page dimensions, and more. Some of these attributes overlap with settings controlled by the xref:theme:index.adoc[PDF theme].
 
-[NOTE]
-====
-The attributes mentioned on this page allow a limited configuration of the PDF output. For more options over the layout, you will have to xref:theme:create-theme.adoc#extend-default[extend] or create a new xref:theme:index.adoc[PDF theme] and xref:theme:apply-theme.adoc[apply] it to your document during processing.
-====
+These attributes are not meant to be a replacement for the theming system. Rather, they're provided as convenience to control some aspects of the theme that are often changed per document or conversion and thus warrant an override. For full control over the rendering of the PDF, you'll want to use a xref:theme:index.adoc[theme], which you can either create anew or xref:theme:create-theme.adoc#extend-default[extend from a built-in theme]. Once you have created a theme, you'll need to xref:theme:apply-theme.adoc[apply it] when converting the document.
 
 == AsciiDoc document attributes
 
@@ -145,8 +142,8 @@ If an attribute matches a key in the theme file, the document attribute takes pr
 |Yes
 |`:scripts: cjk`
 
-|xref:theme:text.adoc#text-align[text-align] ^[7]^
-|`center` {vbar} `justify` {vbar} `left` {vbar} `right` {vbar} `inherit`
+|`text-align`^[7]^
+|xref:theme:text.adoc#text-align[Text alignment]
 |Yes
 |`:text-align: left`
 
