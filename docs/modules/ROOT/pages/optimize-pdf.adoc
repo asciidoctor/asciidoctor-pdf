@@ -43,6 +43,7 @@ Otherwise, run the command in the *gem command* column.
 |gem install rghost
 |===
 
+[#optimize]
 === Convert and optimize
 
 Here's an example usage that converts your document and optimizes it:
