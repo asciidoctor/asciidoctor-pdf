@@ -1,14 +1,19 @@
 = AsciiDoc Attributes for PDF
 
 Asciidoctor PDF supports additional built-in document attributes that impact PDF conversion.
-You can use these attributes to control the PDF media, launch mode, and outline, PDF optimization, text hyphenation, and various document-specific theme settings such as the front and back cover images, the background images, the title page logo and background images, page dimensions, and more. Some of these attributes overlap with settings controlled by the xref:theme:index.adoc[PDF theme].
+These attributes can control the PDF media, launch mode, outline, optimization, text hyphenation, and some document-specific theme settings such as the front and back cover images, the background images, the title page logo and background images, page dimensions, and more.
 
-These attributes are not meant to be a replacement for the theming system. Rather, they're provided as convenience to control some aspects of the theme that are often changed per document or conversion and thus warrant an override. For full control over the rendering of the PDF, you'll want to use a xref:theme:index.adoc[theme], which you can either create anew or xref:theme:create-theme.adoc#extend-default[extend from a built-in theme]. Once you have created a theme, you'll need to xref:theme:apply-theme.adoc[apply it] when converting the document.
+The theme-oriented attributes overlap with settings controlled by the xref:theme:index.adoc[PDF theme].
+These attributes are not meant to be a replacement for the theming system.
+Rather, they're provided as a convenience to control some aspects of the theme that are often changed per document or conversion and thus warrant an override.
+
+For full control over the rendering of the PDF, you'll want to use a xref:theme:index.adoc[theme], which you can either create anew or xref:theme:create-theme.adoc#extend-default[extend from a built-in theme].
+Once you have created a theme, you'll need to xref:theme:apply-theme.adoc[apply it] when converting the document.
 
 == AsciiDoc document attributes
 
-If an attribute is marked as "Header Only", it only takes effect if defined in the AsciiDoc document header.
-You can, however, add the attributes as parameters to your API or CLI calls.
+If an attribute is marked as "Header Only", it only takes effect if defined by the end of the AsciiDoc document header.
+That includes attributes that are set via the API or CLI.
 
 If an attribute matches a key in the theme file, the document attribute takes precedence.
 
