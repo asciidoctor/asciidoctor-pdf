@@ -1,7 +1,7 @@
 = AsciiDoc Attributes for PDF
 
-Asciidoctor PDF supports additional built-in document attributes that impact PDF conversion.
-These attributes can control certain aspects of PDF rendering such as the PDF media, launch mode, outline, optimization, text hyphenation, as well as certain document-specific theme settings such as the front and back cover images, the background images, the title page logo and background images, page dimensions, and more.
+Asciidoctor PDF supports additional built-in document attributes that are used by the PDF converter.
+These attributes can control certain aspects of PDF rendering, such as the PDF media, launch mode, outline, optimization, text hyphenation, as well as some document-specific theme settings such as the front and back cover images, the background images, the title page logo and background images, page dimensions, and more.
 
 == Relationship to theme
 
@@ -9,11 +9,11 @@ The theme-oriented attributes overlap with settings controlled by the xref:theme
 These attributes are not meant to be a replacement for the theming system.
 Rather, they're provided as a convenience to control some theme settings that are frequently changed per document or conversion and thus warrant an override.
 
-If an AsciiDoc attribute for PDF correlates to a key in the theme file, the AsciiDoc attribute always takes precedence.
-
 For maximum control over the theming (aka branding) of the PDF, you'll want to use a xref:theme:index.adoc[theme].
 You can either create the theme anew or xref:theme:create-theme.adoc#extend-default[extend from a built-in theme].
 Once you've created a theme, you'll need to xref:theme:apply-theme.adoc[apply it] when converting the document.
+
+If an AsciiDoc attribute for PDF correlates to a key in the theme file, the AsciiDoc attribute always takes precedence.
 
 [#asciidoc-document-attributes]
 == Reference
