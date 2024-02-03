@@ -2385,7 +2385,11 @@ module Asciidoctor
           start_toc_page node, placement if (is_book = doc.doctype == 'book')
           add_dest_for_block node, id: (node.id || 'toc') if is_macro
           toc_extent = @toc_extent = allocate_toc doc, (doc.attr 'toclevels', 2).to_i, cursor, (title_page_on = is_book || (doc.attr? 'title-page'))
-          @index.start_page_number = toc_extent.to.page + 1 if title_page_on && @theme.page_numbering_start_at == 'after-toc'
+          if title_page_on && @theme.page_numbering_start_at == 'after-toc'
+            new_start_page_number = toc_extent.to.page + 1
+            new_start_page_number += 1 if @ppbook && (verso_page? new_start_page_number)
+            @index.start_page_number = new_start_page_number
+          end
           if is_macro
             @disable_running_content[:header] += toc_extent.page_range if node.option? 'noheader'
             @disable_running_content[:footer] += toc_extent.page_range if node.option? 'nofooter'
