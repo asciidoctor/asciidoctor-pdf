@@ -38,14 +38,14 @@ describe 'Asciidoctor::PDF::Converter - Font' do
     end
 
     it 'should resolve glyph in fallback font when styles are inherited', visual: true do
-      input = <<~'END'
+      input = <<~'EOS'
       |===
       |&#x2611; For | &#x2610; Against
 
       |Tastes great
       |High in sugar
       |===
-      END
+      EOS
 
       to_file = to_pdf_file input, 'fallback-font-inherited-styles.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-font-fallbacks' }
       (expect to_file).to visually_match 'fallback-font-inherited-styles.pdf'

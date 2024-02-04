@@ -515,7 +515,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
   end
 
   it 'should adjust start page number for prepress book when page numbering starts after-toc and toc macro is used' do
-    pdf = to_pdf <<~'END', pdf_theme: { page_numbering_start_at: 'after-toc' }, analyze: true
+    pdf = to_pdf <<~'EOS', pdf_theme: { page_numbering_start_at: 'after-toc' }, analyze: true
     = Book Title
     :doctype: book
     :media: prepress
@@ -533,7 +533,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
 
     [index]
     == Index
-    END
+    EOS
 
     index_title_text = (pdf.find_text 'Index')[-1]
     (expect index_title_text[:page_number]).to be 9
