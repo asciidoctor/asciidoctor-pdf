@@ -525,6 +525,38 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect terms).to eql %w(anchor AsciiDoc Asciidoctor authoring)
   end
 
+  it 'should adjust start page number for prepress book when page numbering starts at toc and toc macro is used' do
+    pdf = to_pdf <<~'END', pdf_theme: { page_numbering_start_at: 'toc' }, analyze: true
+    = Book Title
+    :doctype: book
+    :media: prepress
+    :toc: macro
+
+    [dedication]
+    = Dedication
+
+    Credit where credit is due.
+
+    toc::[]
+
+    == First Chapter
+
+    ((apples))
+
+    == Second Chapter
+
+    ((bananas))
+
+    [index]
+    == Index
+    END
+
+    index_title_text = (pdf.find_text 'Index')[-1]
+    (expect index_title_text[:page_number]).to be 11
+    index_lines = pdf.lines pdf.find_text page_number: 11
+    (expect index_lines).to eql ['Index', 'A', 'apples, 3', 'B', 'bananas, 5']
+  end
+
   it 'should adjust start page number for prepress book when page numbering starts after-toc and toc macro is used' do
     pdf = to_pdf <<~'END', pdf_theme: { page_numbering_start_at: 'after-toc' }, analyze: true
     = Book Title
