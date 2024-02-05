@@ -226,3 +226,31 @@ footer:
 ----
 
 If you define running header and footer content in your theme (including the height), you can still disable this content per document by setting the `noheader` and `nofooter` attributes in the AsciiDoc document header, respectively.
+
+[,asciidoc]
+----
+= Document Title
+:noheader:
+:nofooter:
+
+No running content in this document.
+----
+
+If you want to disable the header and footer on pages in the TOC that were added using the toc macro, you can do so by setting the `noheader` and/or `nofooter` options on the toc macro.
+
+[,asciidoc]
+----
+= Document Title
+:doctype: book
+:toc: macro
+
+[dedication]
+== Dedication
+
+Credit where credit is due.
+
+[%noheader%nofooter]
+toc::[]
+
+== First Chapter
+----
