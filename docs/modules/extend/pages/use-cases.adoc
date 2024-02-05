@@ -271,9 +271,7 @@ include::example$pdf-converter-no-running-content-empty-page.rb[]
 
 This converter does not attempt to detect pages that are empty to make the next page facing (i.e., empty verso pages).
 Therefore, you may want to add a filter to only turn off the running content on those pages.
-
-If the running content on empty pages is causing the PDF to fail validation, you can instead write an non-visible character (such as a space) to those pages instead.
-See the commented code in the example for how to do that.
+Switching to each page in turn, as the commented code does, usually helps with that.
 
 == Change bars
 
