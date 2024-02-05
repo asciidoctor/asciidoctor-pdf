@@ -265,7 +265,7 @@ Thus, you can use an extended converter to turn off the running content on other
 You can access this property from the pages attached to the PDF state or you can switch to each page in turn, as shown in the commented code.
 
 Instead of marking pages as imported, you can add them to the set of pages, by page number, on which the running content will not be added.
-These sets are stored in the `@disable_running_content[:header]` and `@disable_running_content[:footer]` variables.
+These sets are stored in the `:header` and `:footer` keys of the `@disable_running_content` instance variable.
 This benefit of this approach is that you can control the header and footer independently.
 
 .Extended converter to turn off running content on empty page
