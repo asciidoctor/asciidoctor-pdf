@@ -699,7 +699,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     end
 
     it 'should not advance toc in preamble to recto page for prepress book when nonfacing option is specified on macro' do
-      pdf = to_pdf <<~END, analyze: true
+      pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :doctype: book
       :media: prepress

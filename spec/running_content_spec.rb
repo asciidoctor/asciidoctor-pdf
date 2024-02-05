@@ -404,7 +404,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content at toc in body of book when start at is toc and macro toc is used' do
-      pdf = to_pdf <<~END, pdf_theme: { running_content_start_at: 'toc' }, enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { running_content_start_at: 'toc' }, enable_footer: true, analyze: true
       = Document Title
       :doctype: book
       :toc: macro
@@ -497,7 +497,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start running content and page numbering on recto page after toc when both start at keys are after-toc and macro toc is used' do
-      pdf = to_pdf <<~END, pdf_theme: { running_content_start_at: 'after-toc', page_numbering_start_at: 'after-toc' }, enable_footer: true, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { running_content_start_at: 'after-toc', page_numbering_start_at: 'after-toc' }, enable_footer: true, analyze: true
       = Document Title
       :doctype: book
       :toc: macro
@@ -808,7 +808,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
     end
 
     it 'should start page numbering at toc in body of book when start at is toc and toc macro is used' do
-      pdf = to_pdf <<~END, enable_footer: true, pdf_theme: { page_numbering_start_at: 'toc' }, analyze: true
+      pdf = to_pdf <<~'END', enable_footer: true, pdf_theme: { page_numbering_start_at: 'toc' }, analyze: true
       = Book Title
       :doctype: book
       :toc: macro
