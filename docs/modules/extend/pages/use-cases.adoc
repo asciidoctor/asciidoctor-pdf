@@ -262,6 +262,11 @@ include::example$pdf-converter-numbered-paragraphs.rb[]
 
 If a page is labeled as imported, Asciidoctor PDF will not add running content to that page.
 Thus, you can use an extended converter to turn off the running content on otherwise empty pages by marking them as imported.
+You can access this property from the pages attached to the PDF state or you can switch to each page in turn, as shown in the commented code.
+
+Instead of marking pages as imported, you can add them to the set of pages, by page number, on which the running content will not be added.
+These sets are stored in the `@disable_running_content[:header]` and `@disable_running_content[:footer]` variables.
+This benefit of this approach is that you can control the header and footer independently.
 
 .Extended converter to turn off running content on empty page
 [,ruby]
@@ -271,7 +276,6 @@ include::example$pdf-converter-no-running-content-empty-page.rb[]
 
 This converter does not attempt to detect pages that are empty to make the next page facing (i.e., empty verso pages).
 Therefore, you may want to add a filter to only turn off the running content on those pages.
-Switching to each page in turn, as the commented code does, usually helps with that.
 
 == Change bars
 
