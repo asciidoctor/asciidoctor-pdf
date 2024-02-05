@@ -403,6 +403,27 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect pgnum_labels).to eql [nil, nil, '1', '2', '3']
     end
 
+    it 'should start running content at toc in body of book when start at is toc and macro toc is used' do
+      pdf = to_pdf <<~'EOS', pdf_theme: { running_content_start_at: 'toc' }, enable_footer: true, analyze: true
+      = Document Title
+      :doctype: book
+      :toc: macro
+
+      == First Chapter
+
+      toc::[]
+
+      == Second Chapter
+
+      == Third Chapter
+      EOS
+
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+      end
+      (expect pgnum_labels.slice 0, 5).to eql [nil, nil, '2', '3', '4']
+    end
+
     it 'should start running content after toc in body of book when start at is after-toc and macro toc is used' do
       filler = (1..20).map {|it| %(== #{['Filler'] * 20 * ' '} #{it}\n\ncontent) }.join %(\n\n)
       pdf = to_pdf <<~EOS, pdf_theme: { running_content_start_at: 'after-toc' }, enable_footer: true, analyze: true
@@ -784,6 +805,33 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
       end
       (expect pgnum_labels).to eql [nil, '1', '2', '3']
+    end
+
+    it 'should start page numbering at toc in body of book when start at is toc and toc macro is used' do
+      pdf = to_pdf <<~'EOS', enable_footer: true, pdf_theme: { page_numbering_start_at: 'toc' }, analyze: true
+      = Book Title
+      :doctype: book
+      :toc: macro
+
+      == Dedication
+
+      To the only person who gets me.
+
+      toc::[]
+
+      == Acknowledgements
+
+      Thanks all to all who made this possible!
+
+      == Chapter One
+
+      content
+      EOS
+
+      pgnum_labels = (1.upto pdf.pages.size).each_with_object [] do |page_number, accum|
+        accum << ((pdf.find_text page_number: page_number, y: 14.263)[-1] || {})[:string]
+      end
+      (expect pgnum_labels.slice 0, 5).to eql [nil, 'ii', '1', '2', '3']
     end
 
     it 'should start page numbering after toc in body of book when start at is after-toc and toc macro is used' do

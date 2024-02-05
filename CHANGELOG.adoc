@@ -9,7 +9,8 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 Bug Fixes::
 
-* fix page number of index entries in prepress book when page numbering starts after toc and toc is inserted using macro (#2487)
+* support toc start at value for page numbering and running content when toc is added using macro (#2489)
+* fix page number of index entries in prepress book when page numbering starts at toc or after toc and toc is inserted using macro (#2487)
 
 == 2.3.12 (2024-02-02) - @mojavelinux
 

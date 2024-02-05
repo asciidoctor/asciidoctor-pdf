@@ -34,21 +34,26 @@ running-content:
 
 The `start-at` key accepts the following keywords or an integer:
 
-after-toc:: The running content starts after the TOC, no matter where the TOC is placed in the document.
-The `after-toc` value is only recognized if the title page is implicitly or explicitly enabled.
-If `media=prepress`, this keyword refers to the first recto page after the last page of the TOC (it will skip an empty verso page).
+after-toc:: The running content starts after the last page of the TOC, no matter where the TOC is placed in the document.
+If `media=prepress`, this keyword refers to the next recto page after the last page of the TOC.
+The `after-toc` value is primarily intended to be used with the book doctype, though it can be used with the article doctype if the title page is enabled.
+If the TOC is not enabled, or the title page for an article is not enabled, this value reverts to `body`.
+
 body:: This is the default value.
-The running content starts on the first page of the document body, which is typically the first page after the TOC if the TOC is in its default location.
-If `media=prepress`, this keyword refers to the first recto page after the last page of the TOC (it will skip an empty verso page).
+The running content starts on the first page of the document body.
+If the TOC is enabled in its default location, the first page of the document body is the next recto page after the TOC when `media=prepress` or the page that immediately follows the TOC otherwise.
+
 title:: The running content starts on the title page.
 The `title` value is only recognized if the title page is implicitly or explicitly enabled.
-toc:: The running content starts on the first page of the TOC.
-The `toc` value only applies if the TOC is in the default location (before the first page of the body).
-If the value is `toc`, and the toc macro is used to position the TOC, the `start-at` behavior is the same as if the TOC is not enabled.
-The `toc` value is only recognized if the title page is implicitly or explicitly enabled.
+
+toc:: The running content starts on the first page of the TOC, no matter where the TOC is placed in the document.
+The `toc` value is primarily intended to be used with the book doctype, though it can be used with the article doctype if the title page is enabled.
+If the TOC is not enabled, or the title page for an article is not enabled, this value reverts to `body`.
+
 [[page]]Integer:: The running content starts on the page that matches the number assigned to `start-at` (i.e., 1 is the first body page, 2 is the second body page).
+Refer to the `body` value for an explanation of where the body starts.
 For a prepress book (`doctype=book` and `media=prepress`), the running content starts on the empty verso page before the body if the value is `0`.
-When an integer is assigned to `start-at`, the title page doesn't need to be enabled.
+An integer value is recognized by all doctypes and the title page doesn't need to be enabled.
 
 TIP: To turn off the running content on TOC pages inserted by the toc macro, set the `noheader` or `nofooter` options on the macro (e.g., `toc::[opts=nofooter]`).
 

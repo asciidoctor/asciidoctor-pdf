@@ -174,7 +174,7 @@ module Asciidoctor
         ink_cover_page doc, :front
         has_front_cover = page_number > marked_page_number
         doctype = doc.doctype
-        if (has_title_page = (title_page_on = doctype == 'book' || (doc.attr? 'title-page')) && (start_title_page doc))
+        if (has_title_page = (title_as_page = doctype == 'book' || (doc.attr? 'title-page')) && (start_title_page doc))
           # NOTE: the base font must be set before any content is written to the main or scratch document
           font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style
           if perform_on_single_page { ink_title_page doc }
@@ -189,7 +189,7 @@ module Asciidoctor
           font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style
         end
 
-        unless title_page_on
+        unless title_as_page
           body_start_page_number = page_number
           theme_font :heading, level: 1 do
             ink_general_heading doc, doc.doctitle, align: (@theme.heading_h1_text_align&.to_sym || :center), level: 1, role: :doctitle
@@ -200,10 +200,10 @@ module Asciidoctor
 
         indent_section do
           toc_num_levels = (doc.attr 'toclevels', 2).to_i
-          if (insert_toc = (doc.attr? 'toc') && !((toc_placement = doc.attr 'toc-placement') == 'macro' || toc_placement == 'preamble') && !(get_entries_for_toc doc).empty?)
+          if (toc_at_top = (doc.attr? 'toc') && !((toc_placement = doc.attr 'toc-placement') == 'macro' || toc_placement == 'preamble') && !(get_entries_for_toc doc).empty?)
             start_new_page if @ppbook && verso_page?
             add_dest_for_block doc, id: 'toc', y: (at_page_top? ? page_height : nil)
-            @toc_extent = allocate_toc doc, toc_num_levels, cursor, (title_page_on && theme.toc_break_after != 'auto')
+            @toc_extent = allocate_toc doc, toc_num_levels, cursor, (title_as_page && theme.toc_break_after != 'auto')
           else
             @toc_extent = nil
           end
@@ -215,7 +215,7 @@ module Asciidoctor
             min_start_at = 1
           end
 
-          if title_page_on
+          if title_as_page
             zero_page_offset = has_front_cover ? 1 : 0
             first_page_offset = has_title_page ? zero_page_offset.next : zero_page_offset
             body_offset = (body_start_page_number = page_number) - 1
@@ -228,8 +228,10 @@ module Asciidoctor
               when 'title'
                 running_content_start_at = 'toc' unless has_title_page
               when 'toc'
-                running_content_start_at = 'body' unless insert_toc
+                uses_start_at_toc = true
+                running_content_start_at = 'body' unless toc_at_top
               when 'after-toc'
+                uses_start_at_after_toc = true
                 running_content_start_at = 'body'
               end
             end
@@ -248,8 +250,10 @@ module Asciidoctor
               when 'title'
                 page_numbering_start_at = 'toc' unless has_title_page
               when 'toc'
-                page_numbering_start_at = 'body' unless insert_toc
+                uses_start_at_toc = true
+                page_numbering_start_at = 'body' unless toc_at_top
               when 'after-toc'
+                uses_start_at_after_toc = true
                 page_numbering_start_at = 'body'
               end
             end
@@ -303,12 +307,17 @@ module Asciidoctor
           end
 
           if (toc_extent = @toc_extent)
-            if title_page_on && !insert_toc
-              if @theme.running_content_start_at == 'after-toc' || @theme.page_numbering_start_at == 'after-toc' # rubocop:disable Style/SoleNestedConditional
-                last_toc_page = toc_extent.to.page
-                last_toc_page += 1 if @ppbook && (recto_page? last_toc_page)
-                num_front_matter_pages[0] = last_toc_page if @theme.running_content_start_at == 'after-toc'
-                num_front_matter_pages[1] = last_toc_page if @theme.page_numbering_start_at == 'after-toc'
+            if title_as_page && !toc_at_top && (uses_start_at_toc || uses_start_at_after_toc)
+              if uses_start_at_toc
+                toc_offset = toc_extent.from.page - 1
+                num_front_matter_pages[0] = toc_offset if @theme.running_content_start_at == 'toc'
+                num_front_matter_pages[1] = toc_offset if @theme.page_numbering_start_at == 'toc'
+              end
+              if uses_start_at_after_toc
+                after_toc_offset = toc_extent.to.page
+                after_toc_offset += 1 if @ppbook && (recto_page? after_toc_offset)
+                num_front_matter_pages[0] = after_toc_offset if @theme.running_content_start_at == 'after-toc'
+                num_front_matter_pages[1] = after_toc_offset if @theme.page_numbering_start_at == 'after-toc'
               end
             end
             toc_page_nums = ink_toc doc, toc_num_levels, toc_extent.from.page, toc_extent.from.cursor, num_front_matter_pages[1]
@@ -2368,11 +2377,15 @@ module Asciidoctor
         if ((doc = node.document).attr? 'toc-placement', placement) && (doc.attr? 'toc') && !(get_entries_for_toc doc).empty?
           start_toc_page node, placement if (is_book = doc.doctype == 'book')
           add_dest_for_block node, id: (node.id || 'toc') if is_macro
-          toc_extent = @toc_extent = allocate_toc doc, (doc.attr 'toclevels', 2).to_i, cursor, (title_page_on = is_book || (doc.attr? 'title-page'))
-          if title_page_on && @theme.page_numbering_start_at == 'after-toc'
-            new_start_page_number = toc_extent.to.page + 1
-            new_start_page_number += 1 if @ppbook && (verso_page? new_start_page_number)
-            @index.start_page_number = new_start_page_number
+          toc_extent = @toc_extent = allocate_toc doc, (doc.attr 'toclevels', 2).to_i, cursor, (title_as_page = is_book || (doc.attr? 'title-page'))
+          if title_as_page
+            if @theme.page_numbering_start_at == 'toc'
+              @index.start_page_number = toc_extent.from.page
+            elsif @theme.page_numbering_start_at == 'after-toc'
+              new_start_page_number = toc_extent.to.page + 1
+              new_start_page_number += 1 if @ppbook && (verso_page? new_start_page_number)
+              @index.start_page_number = new_start_page_number
+            end
           end
           if is_macro
             @disable_running_content[:header] += toc_extent.page_range if node.option? 'noheader'
