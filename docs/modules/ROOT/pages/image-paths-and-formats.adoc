@@ -138,7 +138,7 @@ The diagrams will be generated using Noto Serif as the default font, and Asciido
 An alternative approach is to remap the font family that the diagram tool selects.
 For example, in your theme file, you might override the definition of the `sans-serif` font.
 
-[,yml]
+[,yaml]
 ----
 extends: default
 font:
