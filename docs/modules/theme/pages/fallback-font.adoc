@@ -36,7 +36,7 @@ In order to use the built-in fallback fonts, you must use or extend the `default
 
 If you want to build a theme that uses the built-in fallback fonts, you can do so by extending the `default-with-font-fallbacks` theme, as shown here:
 
-[,yml]
+[,yaml]
 ----
 extends: default-with-font-fallbacks
 base:
@@ -45,7 +45,7 @@ base:
 
 If, instead, you want to use the built-in fallback fonts in your own theme which does not extend `default-with-font-fallbacks`, you can do so as follows:
 
-[,yml]
+[,yaml]
 ----
 extends: default
 font:

@@ -42,7 +42,7 @@ Therefore, a more formal way of hiding page numbers is to configure the running 
 
 Here's an example of a theme that extends the default them to show legal text instead of the page number.
 
-[,yml]
+[,yaml]
 ----
 extends: default
 footer:

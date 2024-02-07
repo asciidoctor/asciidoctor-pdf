@@ -505,7 +505,7 @@ The placeholder `<type>` represents the admonition type; caution, important, not
 
 Here's an example that shows how you'd use the theme to apply a border to the important admonition type when using this extended converter:
 
-[,yml]
+[,yaml]
 ----
 admonition:
   important:
