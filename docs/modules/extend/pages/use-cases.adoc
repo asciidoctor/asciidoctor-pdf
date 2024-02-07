@@ -583,7 +583,7 @@ You're reading a section that begins on page pagenum:[section].
 Taking inspiration from this extension, we develop another inline macro named `pageref` that resolves the page number of the closest parent section of a reference.
 
 .inline-pageref-macro.rb
-[,rb]
+[,ruby]
 ----
 include::example$inline-pageref-macro.rb[]
 ----
