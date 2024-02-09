@@ -150,10 +150,13 @@ It essentially informs the converter that the front cover will be inserted by a 
 [#columns]
 === Columns
 
-The columns are only applied to the body of a document with the article or manpage doctype.
-The body of the document begins after the document title and TOC, if present.
+Page columns are applied to the body of a document that has either the article or manpage doctype.
+The body of the document begins after the document title and, if present, the TOC.
 
-If the columns are set on the index section using the `index-columns` key, they will be ignored when `page-columns` is set.
+If the toc macro is used in a document configured to have columns, the behavior is undefined.
+
+If the columns are set on the index section using the `index-columns` key, that setting will be overridden by the value of `page-columns`.
+The index will be arranged within the page columns.
 
 [#numbering]
 == page-numbering
