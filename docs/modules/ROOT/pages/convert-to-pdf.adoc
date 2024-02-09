@@ -44,6 +44,11 @@ Open the [.path]_basic-example.pdf_ file with a PDF viewer to see the result.
 .Example PDF document rendered in a PDF viewer
 image::basic-example-pdf-screenshot.png[Screenshot of PDF document,960,540,pdfwidth=100%]
 
+Notice that the body of the document is arranged in a single column.
+If the doctype is set to article (the default) or manpage, the body of the document can be arranged into multiple columns by assigning a column count to the `page-columns` key in a custom theme.
+The width of the gap between the columns can be adjusted using the `page-column-gap` theme key.
+See xref:theme:page.adoc#columns[Page Columns] for more information about how to activate this feature.
+
 == Convert to PDF using the API
 
 In addition to the `asciidoctor-pdf` command, you can convert to PDF using the Asciidoctor API.
