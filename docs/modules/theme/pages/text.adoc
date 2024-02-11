@@ -196,7 +196,7 @@ However, you can adjust them in a Prawn patch by requiring the following Ruby sc
 Prawn::Text::Formatted::Arranger.prepend (Module.new do
   def initialize(*)
     super
-    @sub_and_sup_relative_size = 0.75
+    @sup_relative_size = 0.75
   end
 end)
 
