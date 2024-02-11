@@ -183,6 +183,32 @@ end
 The smallcaps transformation for extended Latin characters (e.g., characters that include an accent) typically requires the addition of a combining character, such as the combining acute accent in the example above).
 Therefore, you must ensure that the font you're using supports these combining characters (meaning it provides the necessary glyphs).
 
+[#superscript]
+== Superscript
+
+Text formatted as superscript, which includes footnote number references in the body, are displayed in a smaller font size (58.3%) and raised above the baseline (offset by 85% of the ascender height).
+It's not currently possible to influence the font size and text position of superscript text using the theme.
+These settings are hardcoded into Asciidoctor PDF and Prawn, respectively.
+However, you can adjust them in a Prawn patch by requiring the following Ruby script:
+
+[,ruby]
+----
+Prawn::Text::Formatted::Arranger.prepend (Module.new do
+  def initialize(*)
+    super
+    @sub_and_sup_relative_size = 0.75
+  end
+end)
+
+Prawn::Text::Formatted::Fragment.prepend (Module.new do
+  def y_offset
+    superscript? ? 0.5 * ascender : super
+  end
+end)
+----
+
+Adjust the relative size and y offset values as you see fit.
+
 [#border-background-color]
 == Border and background color 
 
