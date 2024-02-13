@@ -73,21 +73,6 @@ Begin main content.
 
 You can style this line by xref:roles.adoc#custom[defining a role] in a custom theme.
 
-[#background]
-== Background image
-
-You can place a background image on the title page using the `title-page-background-image` document attribute.
-
-[,asciidoc]
-----
-= Document Title
-Author Name
-:title-page-background-image: image:title-bg.png[]
-----
-
-By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
-See xref:background-images.adoc[] to learn more.
-
 [#logo]
 == Logo image
 
@@ -108,3 +93,23 @@ A fixed value is converted to a point value.
 A percentage value is multiplied by the height of the content area (the area inside the top and bottom margins).
 The advantage of a fixed value is that it gives you precision.
 The advantage of a relative value is that it automatically adjusts for different page sizes.
+
+[#background]
+== Background image
+
+You can place a background image on the title page using the `title-page-background-image` document attribute.
+
+[,asciidoc]
+----
+= Document Title
+Author Name
+:title-page-background-image: image:title-bg.png[]
+----
+
+By default, page background images are automatically scaled to fit the bounds of the page (i.e., `fit=contain`) and centered (i.e., `position=center`).
+See xref:background-images.adoc[] to learn more.
+
+If you need to add two images to the title page, you can add one as a background image and the other as a logo image.
+To position the image added using a background image, you can either use `fit=none` in combination with the `position` attribute on the macro, or you can position the image on an image canvas matching the size of the page.
+When using the canvas technique, the background image could contributed several images to the page.
+You can then position the image added as a logo image as described in <<Logo image>>.
