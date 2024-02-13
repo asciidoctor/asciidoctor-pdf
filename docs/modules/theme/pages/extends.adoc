@@ -16,8 +16,8 @@ Otherwise, the filename is resolved relative to the value of the `pdf-themesdir`
 
 Currently, the theme starts out empty.
 Then, the files referenced by the extends key are loaded in order.
-Finally, the keys in the current file are loaded.
 Each time a theme is loaded, the flattened keys are overlaid onto the keys from the previous theme.
+Finally, the keys in the current file are loaded.
 
 [cols="4,4,6a"]
 |===
