@@ -158,6 +158,27 @@ If the toc macro is used in a document configured to have columns, the behavior 
 If the columns are set on the index section using the `index-columns` key, that setting will be overridden by the value of `page-columns`.
 The index will be arranged within the page columns.
 
+[#column-break]
+==== Column break
+
+Even when columns are enabled, the AsciiDoc page break macro will still end the current page and start a new page.
+The next chunk of content will be written to the left-most column on that new page.
+
+If you want the page break macro to end the current column instead, add the `column` role to it.
+
+[,asciidoc]
+----
+left column
+
+[.column]
+<<<
+
+right column
+----
+
+If columns are not enabled, the `column` role will be ignored and it will revert to a true page break.
+Thus, it's safe to add the role even when you're not using columns.
+
 [#numbering]
 == page-numbering
 
