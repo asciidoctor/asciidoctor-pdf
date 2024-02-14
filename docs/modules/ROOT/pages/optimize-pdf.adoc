@@ -1,7 +1,7 @@
 = Optimize the PDF
 :url-hexapdf: https://hexapdf.gettalong.org/
 
-By default, Asciidoctor PDF does not optimize the PDF it generates or compresses its streams.
+By default, Asciidoctor PDF does not optimize the PDF it generates, nor compress its streams.
 This page covers several approaches you can take to optimize your PDF.
 
 IMPORTANT: If you're creating a PDF for Amazon's Kindle Direct Publishing (KDP), GitLab repository preview, or other online publishers, you'll likely need to optimize the file before uploading.
