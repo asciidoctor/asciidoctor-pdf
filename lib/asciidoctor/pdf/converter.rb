@@ -109,7 +109,7 @@ module Asciidoctor
       PageSizeRx = /^(?:\[(#{MeasurementRxt}), ?(#{MeasurementRxt})\]|(#{MeasurementRxt})(?: x |x)(#{MeasurementRxt})|\S+)$/
       CalloutExtractRx = %r((?:(?://|#|--|;;) ?)?(\\)?<!?(|--)(\d+|\.)\2> ?(?=(?:\\?<!?\2(?:\d+|\.)\2> ?)*$))
       CalloutConflictRx = /([<>&])(; *<!?(|--)(?:\d+|\.)\3>)/
-      ImageAttributeValueRx = /^image:{1,2}(.*?)\[(.*?)\]$/
+      ImageAttributeValueRx = /\Aimage:{1,2}(.*?)\[(.*?)\]\Z/
       StopPunctRx = /[.!?;:]$/
       UriBreakCharsRx = %r((?:/|\?|&amp;|#)(?!$))
       UriBreakCharRepl = %(\\&#{ZeroWidthSpace})

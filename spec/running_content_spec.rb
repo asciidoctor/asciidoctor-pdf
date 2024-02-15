@@ -3096,6 +3096,37 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect rects[1][:fill_color]).to eql '0000FF'
     end
 
+    it 'should support multiline content with image on line above or below text' do
+      expected_image_data = File.binread fixture_file 'square.jpg'
+      pdf_theme = {
+        __dir__: fixtures_dir,
+        page_margin: 36,
+        footer_height: 36,
+        footer_columns: '=100%',
+        footer_recto_center_content: %(above +\nimage:square.jpg[fit=line]),
+        footer_recto_right_content: nil,
+        footer_verso_center_content: %(image:square.jpg[fit=line] +\nbelow),
+        footer_verso_left_content: nil,
+      }
+
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, enable_footer: true
+      recto
+
+      <<<
+
+      verso
+      END
+      images = get_images pdf
+      (expect images).to have_size 2
+      images.each do |image|
+        (expect image.data).to eql expected_image_data
+      end
+      (expect (get_images pdf, 1)).to have_size 1
+      (expect (get_images pdf, 2)).to have_size 1
+      (expect (pdf.page 1).text).to include 'above'
+      (expect (pdf.page 2).text).to include 'below'
+    end
+
     it 'should support data URI image', visual: true do
       image_data = File.binread fixture_file 'tux.png'
       encoded_image_data = Base64.strict_encode64 image_data
