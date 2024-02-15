@@ -17,6 +17,22 @@ When specified, the filename of the image must use the file extension that match
 CAUTION: CAUTION: The GIF (.gif), TIFF (.tiff), BMP (.bmp), and interlaced PNG formats are not supported unless you install prawn-gmagick.
 See xref:ROOT:image-paths-and-formats.adoc#other-image-formats[Supporting additional image file formats] for details.
 
+[#paths]
+== Image paths in the theme
+
+In the theme, an image can be specified as an AsciiDoc inline image macro.
+The image can also be specified as a bare path, except in running content.
+The benefit of using the image macro is that you can specify configuration, such as the alt text and size.
+
+The image path can be an absolute path, a data URI, or a relative path.
+If the image path is absolute or a data URI, the path is used as is.
+If the image path is relative, it's resolved relative to the value of the `pdf-themesdir` attribute.
+If the value of the `pdf-theme` attribute is a path that ends in `.yml`, and `pdf-themesdir` is not otherwise set, then images are resolved relative to the directory of the theme path.
+
+If you want to reference an image relative to the document you're converting, prefix the path with the `\{docdir}` or `\{docimagesdir}` attribute references, which both resolve to an absolute path.
+The `docimagesdir` is a combination of the `docdir` and `imagesdir` attribute values.
+When using one of these attribute references, it should be followed by the path separator.
+
 [#background]
 == Background images
 
@@ -26,7 +42,7 @@ xref:covers.adoc[Front and back cover images] are handled like background images
 [#specify]
 === Specify a background image in the theme
 
-In the theme, a background image is specified as a bare image path or as an AsciiDoc inline image macro.
+In the theme, a background image can specified either using the AsciiDoc inline image macro or as a bare image path.
 Here's how a background image is specified in the theme file as a bare path:
 
 [,yaml]
@@ -34,9 +50,6 @@ Here's how a background image is specified in the theme file as a bare path:
 title-page:
   background-image: title-cover.png
 ----
-
-By default, the bare path is resolved relative to the value of the `pdf-themesdir` attribute.
-The path can also be an absolute path.
 
 Here's how the background image is specified using the inline image macro:
 
@@ -46,9 +59,8 @@ title-page:
   background-image: image:title-cover.png[]
 ----
 
-The target of the inline image macro can be a path relative to the `pdf-themesdir` attribute (default), an absolute path, or a data URI.
-If `pdf-theme` is a path that ends in `.yml`, and `pdf-themesdir` is not set, then the images are resolved relative to the directory of the path specified by `pdf-theme`.
-If you want to reference an image relative to the document you're converting, then prefix the target with the `\{docdir}` or `\{docimagesdir}` attribute references, which both resolve to an absolute path.
+As described above, these relative paths will be resolved from the `pdf-themesdir`.
+Here's an example of an image that is resolved relative to the `imagesdir` value of the document being converted:
 
 [,yaml]
 ----
