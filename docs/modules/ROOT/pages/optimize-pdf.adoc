@@ -2,8 +2,8 @@
 :url-hexapdf: https://hexapdf.gettalong.org
 :url-gs-pdfwrite: https://ghostscript.com/doc/current/VectorDevices.htm#PDFWRITE
 
-By default, Asciidoctor PDF does not optimize the PDF it generates or compresses its streams.
-This page covers several approaches you can take to optimize your PDF.
+By default, Asciidoctor PDF does not optimize the PDF it generates and it does not compress the streams within it.
+This page covers several approaches you can take to optimize and compress the PDF output.
 
 IMPORTANT: If you're creating a PDF for Amazon's Kindle Direct Publishing (KDP), GitLab repository preview, or other online publishers, you'll likely need to optimize the file before uploading.
 In their words, you must tidy up the reference tree and https://kdp.amazon.com/en_US/help/topic/G201953020#check[flatten all transparencies^] (mostly likely referring to images).
