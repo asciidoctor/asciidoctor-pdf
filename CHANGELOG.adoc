@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.3.13 (2024-02-16) - @mojavelinux
 
 Bug Fixes::
 
@@ -14,6 +14,10 @@ Bug Fixes::
 * don't warn about missing character in fallback font when inline image is advanced to next page (#2492)
 * support toc start at value for page numbering and running content when toc is added using macro (#2489)
 * fix page number of index entries in prepress book when page numbering starts at toc or after toc and toc is inserted using macro (#2487)
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.13[git tag] | {url-repo}/compare/v2.3.12\...v2.3.13[full diff]
 
 == 2.3.12 (2024-02-02) - @mojavelinux
 
