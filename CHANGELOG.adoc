@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 Bug Fixes::
 
+* don't warn about missing character in fallback font when inline image is advanced to next page (#2492)
 * support toc start at value for page numbering and running content when toc is added using macro (#2489)
 * fix page number of index entries in prepress book when page numbering starts at toc or after toc and toc is inserted using macro (#2487)
 

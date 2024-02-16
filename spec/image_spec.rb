@@ -2150,6 +2150,24 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-wrap-inline.pdf'
     end
 
+    it 'should not warn about missing image placeholder char in fallback font when image is advanced to next page' do
+      (expect do
+        filler = %w(filler) * 26 * %(\n\n)
+        pdf = to_pdf <<~EOS, pdf_theme: { extends: 'default-with-font-fallbacks' }
+        #{filler}
+
+        #{'x' * 200} Look for the image:square.png[].
+        EOS
+        (expect pdf.pages).to have_size 2
+        (expect get_images pdf).to have_size 1
+        (expect (get_images pdf, 1)).to be_empty
+        (expect (get_images pdf, 2)).to have_size 1
+        pdf.pages.each do |page|
+          (expect page.text).not_to include ?\u2063
+        end
+      end).to not_log_message using_log_level: :INFO
+    end
+
     it 'should increase line height if height if image height is more than 1.5x line height', visual: true do
       to_file = to_pdf_file <<~'EOS', 'image-inline-extends-line-height.pdf'
       see tux run +
@@ -2188,9 +2206,9 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-inline-scale-down-height.pdf'
     end
 
-    it 'should not warn about missing glyph for image placeholder char when using AFM font' do
+    it 'should not warn about missing image placeholder char in AFM font when image is advanced to next page' do
       (expect do
-        pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => 'base' }, analyze: :image
+        pdf = to_pdf <<~'EOS', attribute_overrides: { 'pdf-theme' => 'base' }
         :pdf-page-size: A6
         :pdf-page-layout: landscape
 
@@ -2198,8 +2216,13 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
         image:square.png[pdfwidth=7cm]
         EOS
-        (expect (images = pdf.images)).to have_size 1
-        (expect images[0][:page_number]).to be 2
+        (expect pdf.pages).to have_size 2
+        (expect get_images pdf).to have_size 1
+        (expect (get_images pdf, 1)).to be_empty
+        (expect (get_images pdf, 2)).to have_size 1
+        pdf.pages.each do |page|
+          (expect page.text).not_to include ?\u2063
+        end
       end).to not_log_message using_log_level: :INFO
     end
 

@@ -33,7 +33,9 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
   end
 
   # help Prawn correctly resolve which font to analyze, including the font style
+  # also instruct Prawn to ignore fragment for inline image since the text is just a placeholder
   def analyze_glyphs_for_fallback_font_support fragment_hash
+    return [fragment_hash] if fragment_hash[:image_obj]
     fragment_font = fragment_hash[:font] || (original_font = @document.font.family)
     effective_font_styles = @document.font_styles
     fragment_font_opts = {}
