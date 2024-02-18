@@ -38,7 +38,9 @@ The names of the built-in fonts (for general-purpose text) are as follows:
 |===
 
 Using a built-in font requires no additional files.
-You can use the key anywhere a `font-family` property is accepted in the theme file.
+According to the section "`Standard Type 1 Fonts`" in the PDF specification, "`these fonts, or their font metrics and suitable substitution fonts, shall be available to the conforming reader.`"
+
+You can use an AFM font anywhere a `font-family` key is recognized in the theme file.
 For example:
 
 [,yaml]
