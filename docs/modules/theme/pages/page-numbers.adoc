@@ -52,7 +52,7 @@ footer:
       content: '(C) Copyright 2020 ACME. All rights reserved.'
   verso:
     center:
-      content: $header-recto-center-content
+      content: $footer-recto-center-content
 ----
 
 Notice that there is no reference to `\{page-number}`, hence why no page number will appear.
