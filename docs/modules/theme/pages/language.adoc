@@ -32,6 +32,10 @@ See xref:blocks.adoc#align[Alignment for blocks] for more information.
 See xref:text.adoc#text-align[Text alignment] for more information.
 * The `font-color` property in the theme language is equivalent to the `color` property in CSS.
 
+TIP: When you look at the bundled themes, you'll see that they use an underscore to separate key names.
+The underscore separator is used for bundled themes since it requires no translation and those themes are loaded frequently.
+The hyphen is the preferred separator for use in custom themes since it looks clearer.
+
 [#values]
 == Key values
 
