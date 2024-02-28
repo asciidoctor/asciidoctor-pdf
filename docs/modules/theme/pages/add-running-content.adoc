@@ -181,11 +181,13 @@ One exception to this rule are inline images, which are described in the next se
 You can add images to the running header or footer using the AsciiDoc inline image syntax.
 The image target is resolved relative to the value of the `pdf-themesdir` attribute.
 
-If the image macro is the entire value of the content for a given position, it acts like a block image.
-That means you can use the `position` and `fit` attributes to align and scale it relative to the column's box.
+If the image macro is the entire value of the content for a given position, it acts like a background image.
+That means you can use the `fit` attribute scale it relative to the column's box.
+The `position` and `align` attributes on the macro aren't currently recognized.
+Rather, the horizontal position is controlled by the alignment of the column and the vertical position is controlled by the `image-vertical-align` key on the periphery.
 
-If the image macro is adjacent to other text, the image is treated just like a normal inline image.
-In this case, you can only adjust the width of the image (e.g., `width=16` or `fit=line`).
+If the image macro is adjacent to other text, the image behaves just like any other inline image.
+In this case, you can only adjust the width of the image using the `width` attribute (e.g., `width=16`) or the `fit=line` attribute.
 
 Here's an example of how to use an image in the running header (which also applies for the footer).
 
