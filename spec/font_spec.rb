@@ -161,14 +161,14 @@ describe 'Asciidoctor::PDF::Converter - Font' do
   end
 
   context 'OTF' do
-    it 'should allow theme to specify an OTF font', visual: true do
+    it 'should allow theme to specify an OTF font', unless: (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '2.7.0'), visual: true, &(proc do
       to_file = to_pdf_file <<~'END', 'font-otf.pdf', enable_footer: true, attribute_overrides: { 'pdf-theme' => (fixture_file 'otf-theme.yml'), 'pdf-fontsdir' => fixtures_dir }
       == OTF
 
       You're looking at an OTF font!
       END
       (expect to_file).to visually_match 'font-otf.pdf'
-    end
+    end)
   end
 
   context 'custom' do
