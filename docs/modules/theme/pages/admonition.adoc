@@ -290,7 +290,8 @@ In other words, the `icon` category _cannot_ be declared multiple times and its 
 
 A font-based icon is placed in a container with a width 1.5 times the size of the icon.
 This is done to give the icon more padding than the textual label.
-This behavior will be configurable starting in Asciidoctor PDF 3.
+This behavior can be overridden by assigning a value to the `label-min-width` key, which becomes the width of the container for the icon.
+A more direct way of configuring the width of this container will be available in Asciidoctor PDF 3.
 
 The `image` key is only relevant when image-based icons are used (`icons=image`).
 It's an alternative to using the `icon` attribute on the admonition block.
