@@ -182,9 +182,9 @@ This designation includes attributes that are set via the API or CLI.
 3. The target of the image macro is resolved relative to `imagesdir` since it's defined in the AsciiDoc document (unlike in the theme, where it is resolved relative to the value of `pdf-themesdir`).
 4. Enables generation of the https://milan.kupcevic.net/ghostscript-ps-pdf/#marks[pdfmark^] file, which contains metadata that can be fed to Ghostscript when optimizing the PDF file.
 If you're using Ghostscript >= 8.54, this feature is not needed.
-5. Activates hyphenation for the language code specified (defaults to en_us).
+5. Activates hyphenation for the language code specified (defaults to en_us) if the `text-hyphen` gem is available.
 If the `hyphens` attribute is set in the document, it overrides the `base-hyphens` key set in the theme.
-In other case, if the value is empty, then the value of the `lang` document attribute is used for the hyphenation language.
+In either case, if the value is empty, then the value of the `lang` document attribute is used as the hyphenation language.
 6. Activates line break rules for CJK languages (specifically Chinese and Japanese).
 Chinese and Japanese are written without spaces (and may not use spaces when mixing with English words either).
 This setting allows a line break to be placed between any two CJK characters to accommodate wrapping.
