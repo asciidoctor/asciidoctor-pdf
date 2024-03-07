@@ -3,6 +3,7 @@
 require 'prawn-svg'
 require_relative 'prawn-svg/calculators/document_sizing'
 require_relative 'prawn-svg/elements/image'
+require_relative 'prawn-svg/elements/use'
 require_relative 'prawn-svg/loaders/data'
 require_relative 'prawn-svg/loaders/file'
 require_relative 'prawn-svg/loaders/web'

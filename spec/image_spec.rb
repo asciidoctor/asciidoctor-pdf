@@ -1217,23 +1217,23 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end
     end
 
-    it 'should not embed local SVG in inline image', visual: true do
+    it 'should embed local SVG in inline image', visual: true do
       (expect do
         to_file = to_pdf_file <<~'END', 'image-inline-svg-with-local-svg.pdf'
-        image:svg-with-local-svg.svg[pdfwidth=1.27cm] lacks the red square.
+        image:svg-with-local-svg.svg[pdfwidth=1.27cm] contains a red square.
         END
         (expect to_file).to visually_match 'image-inline-svg-with-local-svg.pdf'
-      end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-local-svg.svg'}; Unsupported image type supplied to image tag)
+      end).not_to log_message
     end
 
     it 'should not embed local SVG in block image', visual: true do
       (expect do
         to_file = to_pdf_file <<~'END', 'image-block-svg-with-local-svg.pdf'
-        .Lacks the red square
+        .Contains a red square
         image::svg-with-local-svg.svg[pdfwidth=5in]
         END
         (expect to_file).to visually_match 'image-block-svg-with-local-svg.pdf'
-      end).to log_message severity: :WARN, message: %(~problem encountered in image: #{fixture_file 'svg-with-local-svg.svg'}; Unsupported image type supplied to image tag)
+      end).not_to log_message
     end
   end
 
@@ -2211,7 +2211,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-multiple-inline.pdf'
     end
 
-    it 'should not mangle character spacing in line if inline image wraps', visual: true do
+    it '.only should not mangle character spacing in line if inline image wraps', visual: true do
       to_file = to_pdf_file <<~'END', 'image-wrap-inline.pdf'
       [cols="30e,58,12",width=75%]
       |===
