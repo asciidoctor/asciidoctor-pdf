@@ -2211,7 +2211,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-multiple-inline.pdf'
     end
 
-    it '.only should not mangle character spacing in line if inline image wraps', visual: true do
+    it 'should not mangle character spacing in line if inline image wraps', visual: true do
       to_file = to_pdf_file <<~'END', 'image-wrap-inline.pdf'
       [cols="30e,58,12",width=75%]
       |===
