@@ -7,7 +7,13 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Improvements::
+
+* upgrade prawn-svg to 0.34 to add support for SVG referenced by image tag (SVG in SVG)
+
+Bug Fixes::
+
+* upgrade prawn-svg to 0.34 to fix warning about base64 gem when using Ruby >= 3.3; apply additional patch to fix bug in prawn-svg
 
 == 2.3.13 (2024-02-16) - @mojavelinux
 
