@@ -1475,7 +1475,7 @@ module Asciidoctor
               desc_container = Block.new node, :open
               desc_container << (Block.new desc_container, :paragraph, source: (desc.instance_variable_get :@text), subs: :default) if desc.text?
               desc.blocks.each {|b| desc_container << b.dup } if desc.blocks?
-              row_data << { content: (::Prawn::Table::Cell::AsciiDoc.new self, content: (item[1] = desc_container), text_color: @font_color, padding: desc_padding, valign: :top) }
+              row_data << { content: (::Prawn::Table::Cell::AsciiDoc.new self, content: (item[1] = desc_container), text_color: @font_color, padding: desc_padding, valign: :top, source_location: desc.source_location) }
             else
               row_data << {}
             end
