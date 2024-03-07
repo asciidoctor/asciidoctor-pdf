@@ -12,7 +12,6 @@ when 'true'
 end
 
 require 'asciidoctor/pdf'
-require 'base64'
 require 'fileutils'
 require 'pathname'
 require_relative 'spec_helper/ext'

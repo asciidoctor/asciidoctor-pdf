@@ -142,7 +142,7 @@ describe Asciidoctor::PDF::Converter do
 
     it 'should not fail to remove tmp files if already removed' do
       image_data = File.read (fixture_file 'square.jpg'), mode: 'r:UTF-8'
-      encoded_image_data = Base64.strict_encode64 image_data
+      encoded_image_data = [image_data].pack 'm0'
       doc = Asciidoctor.load <<~EOS, backend: 'pdf'
       :page-background-image: image:data:image/png;base64,#{encoded_image_data}[Square,fit=cover]
       EOS
@@ -158,7 +158,7 @@ describe Asciidoctor::PDF::Converter do
     it 'should not fail to remove tmp files if they are not writable' do
       (expect do
         image_data = File.read (fixture_file 'square.jpg'), mode: 'r:UTF-8'
-        encoded_image_data = Base64.strict_encode64 image_data
+        encoded_image_data = [image_data].pack 'm0'
         doc = Asciidoctor.load <<~EOS, backend: 'pdf'
         :page-background-image: image:data:image/png;base64,#{encoded_image_data}[Square,fit=cover]
         EOS
@@ -180,7 +180,7 @@ describe Asciidoctor::PDF::Converter do
 
     it 'should keep tmp files if KEEP_ARTIFACTS environment variable is set' do
       image_data = File.read (fixture_file 'square.jpg'), mode: 'r:UTF-8'
-      encoded_image_data = Base64.strict_encode64 image_data
+      encoded_image_data = [image_data].pack 'm0'
       doc = Asciidoctor.load <<~EOS, backend: 'pdf'
       :page-background-image: image:data:image/png;base64,#{encoded_image_data}[Square,fit=cover]
       EOS
