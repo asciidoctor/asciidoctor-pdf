@@ -53,6 +53,7 @@ Bug Fixes::
 * prevent special character substitution from interfering with callouts in plain verbatim block (#2390)
 * remove deprecated, undocumented `svg-font-family` theme key (the correct key is `svg-fallback-font-family`)
 * major improvement to OTF support following release of ttfunk 1.8.0 (automatic transitive dependency of prawn)
+* propagate source location to table cell for description in horizontal dlist so it is included in truncation warning message (#2502)
 * upgrade prawn-svg to 0.34 to fix warning about base64 gem when using Ruby >= 3.3; apply additional patch to fix bug in prawn-svg
 
 == 2.3.13 (2024-02-16) - @mojavelinux
