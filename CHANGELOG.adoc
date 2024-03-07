@@ -13,6 +13,7 @@ Improvements::
 
 Bug Fixes::
 
+* propagate source location to table cell for description in horizontal dlist so it is included in truncation warning message (#2502)
 * upgrade prawn-svg to 0.34 to fix warning about base64 gem when using Ruby >= 3.3; apply additional patch to fix bug in prawn-svg
 
 == 2.3.13 (2024-02-16) - @mojavelinux

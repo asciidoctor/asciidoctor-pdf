@@ -27,8 +27,8 @@ RSpec::Matchers.define :have_message do |expected|
         elsif message_text === expected_message
           result = true
         end
-        result = false if (file = expected[:file]) && !(Hash === message_data && file == message_data[:source_location].file)
-        result = false if (lineno = expected[:lineno]) && !(Hash === message_data && lineno == message_data[:source_location].lineno)
+        result = false if (file = expected[:file]) && !(Hash === message_data && file == message_data[:source_location]&.file)
+        result = false if (lineno = expected[:lineno]) && !(Hash === message_data && lineno == message_data[:source_location]&.lineno)
       end
       actual = message
     end
