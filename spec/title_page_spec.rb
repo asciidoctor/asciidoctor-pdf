@@ -230,7 +230,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
 
     it 'should add logo specified by title-logo-image document attribute with data URI to title page' do
       image_data = File.binread fixture_file 'tux.png'
-      encoded_image_data = Base64.strict_encode64 image_data
+      encoded_image_data = [image_data].pack 'm0'
       image_url = %(image:data:image/jpg;base64,#{encoded_image_data}[])
       pdf = to_pdf <<~END
       = Document Title
@@ -894,7 +894,7 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
 
     it 'should add logo specified by title-logo-image document attribute with data URI to title page' do
       image_data = File.binread fixture_file 'tux.png'
-      encoded_image_data = Base64.strict_encode64 image_data
+      encoded_image_data = [image_data].pack 'm0'
       image_url = %(image:data:image/jpg;base64,#{encoded_image_data}[])
       pdf = to_pdf <<~'END', pdf_theme: { title_page_logo_image: image_url }
       = Document Title

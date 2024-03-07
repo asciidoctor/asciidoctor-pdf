@@ -1036,7 +1036,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should use data URI specified by page-background-image attribute as page background', visual: true do
       image_data = File.binread fixture_file 'square.png'
-      encoded_image_data = Base64.strict_encode64 image_data
+      encoded_image_data = [image_data].pack 'm0'
       to_file = to_pdf_file <<~END, %(page-background-image-attr-data-uri.pdf)
       = Document Title
       :page-background-image: image:data:image/png;base64,#{encoded_image_data}[fit=fill]
@@ -1049,7 +1049,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
     it 'should use data URI specified in theme as page background', visual: true do
       image_data = File.binread fixture_file 'square.png'
-      encoded_image_data = Base64.strict_encode64 image_data
+      encoded_image_data = [image_data].pack 'm0'
       pdf_theme = { page_background_image: %(image:data:image/png;base64,#{encoded_image_data}[fit=fill]) }
       to_file = to_pdf_file <<~END, %(page-background-image-attr-data-uri.pdf), pdf_theme: pdf_theme
       = Document Title

@@ -43,7 +43,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
   it 'should not crash if doctitle contains inline image with data URI target' do
     image_data = File.binread fixture_file 'square.jpg'
-    encoded_image_data = Base64.strict_encode64 image_data
+    encoded_image_data = [image_data].pack 'm0'
     pdf = to_pdf <<~END, analyze: :image
     = Document Title image:data:image/jpg;base64,#{encoded_image_data}[]
 
@@ -1873,7 +1873,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
   context 'Data URI' do
     it 'should embed block image if target is a JPG data URI' do
       image_data = File.binread fixture_file 'square.jpg'
-      encoded_image_data = Base64.strict_encode64 image_data
+      encoded_image_data = [image_data].pack 'm0'
       pdf = to_pdf %(image::data:image/jpg;base64,#{encoded_image_data}[])
       images = get_images pdf, 1
       (expect images).to have_size 1
@@ -1884,14 +1884,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should embed block image if target is an SVG data URI' do
       image_data = File.read (fixture_file 'square.svg'), mode: 'r:UTF-8'
-      encoded_image_data = Base64.strict_encode64 image_data
+      encoded_image_data = [image_data].pack 'm0'
       pdf = to_pdf %(image::data:image/svg+xml;base64,#{encoded_image_data}[]), analyze: :rect
       (expect pdf.rectangles).to have_size 1
     end
 
     it 'should embed inline image if target is a JPG data URI' do
       image_data = File.binread fixture_file 'square.jpg'
-      encoded_image_data = Base64.strict_encode64 image_data
+      encoded_image_data = [image_data].pack 'm0'
       pdf = to_pdf %(image:data:image/jpg;base64,#{encoded_image_data}[] base64)
       images = get_images pdf, 1
       (expect images).to have_size 1
@@ -1902,7 +1902,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should embed inline image if target is an SVG data URI' do
       image_data = File.read (fixture_file 'square.svg'), mode: 'r:UTF-8'
-      encoded_image_data = Base64.strict_encode64 image_data
+      encoded_image_data = [image_data].pack 'm0'
       pdf = to_pdf %(image:data:image/svg+xml;base64,#{encoded_image_data}[]), analyze: :rect
       (expect pdf.rectangles).to have_size 1
     end

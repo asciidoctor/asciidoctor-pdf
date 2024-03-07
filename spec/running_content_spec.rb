@@ -3129,7 +3129,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
 
     it 'should support data URI image', visual: true do
       image_data = File.binread fixture_file 'tux.png'
-      encoded_image_data = Base64.strict_encode64 image_data
+      encoded_image_data = [image_data].pack 'm0'
       image_url = %(data:image/png;base64,#{encoded_image_data})
       pdf_theme = {
         footer_columns: '>50% <50%',
