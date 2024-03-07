@@ -15,7 +15,7 @@ jobs:
     - name: Install Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.2'
+        ruby-version: '3.3'
     - name: Configure Bundler
       run: |
         bundle config --local clean true
