@@ -1738,7 +1738,7 @@ module Asciidoctor
         if image_format == 'gif' && !(defined? ::GMagick::Image)
           log :warn, %(GIF image format not supported. Install the prawn-gmagick gem or convert #{target} to PNG.)
           image_path = nil
-        elsif ::Base64 === target
+        elsif ::Asciidoctor::Image::Base64Encoded === target
           image_path = target
         elsif (image_path = resolve_image_path node, target, image_format, (opts.fetch :relative_to_imagesdir, true))
           if image_format == 'pdf'
@@ -1807,8 +1807,8 @@ module Asciidoctor
           rendered_h = rendered_w = nil
           span_page_width_if align_to_page do
             if image_format == 'svg'
-              if ::Base64 === image_path
-                svg_data = ::Base64.decode64 image_path
+              if ::Asciidoctor::Image::Base64Encoded === image_path
+                svg_data = image_path.unpack1 'm'
                 file_request_root = false
               else
                 svg_data = ::File.read image_path, mode: 'r:UTF-8'
@@ -1858,8 +1858,8 @@ module Asciidoctor
             else
               # FIXME: this code really needs to be better organized!
               # NOTE: use low-level API to access intrinsic dimensions; build_image_object caches image data previously loaded
-              image_obj, image_info = ::Base64 === image_path ?
-                  ::StringIO.open((::Base64.decode64 image_path), 'rb') {|fd| build_image_object fd } :
+              image_obj, image_info = ::Asciidoctor::Image::Base64Encoded === image_path ?
+                  ::StringIO.open((image_path.unpack1 'm'), 'rb') {|fd| build_image_object fd } :
                   ::File.open(image_path, 'rb') {|fd| build_image_object fd }
               actual_w = to_pt image_info.width, :px
               width = actual_w * scale if scale
@@ -4344,11 +4344,11 @@ module Asciidoctor
           imagesdir = relative_to
         end
         # NOTE: base64 logic currently used for inline images
-        if ::Base64 === image_path
+        if ::Asciidoctor::Image::Base64Encoded === image_path
           return @tmp_files[image_path] if @tmp_files.key? image_path
           tmp_image = ::Tempfile.create %W(image- .#{image_format})
           tmp_image.binmode unless image_format == 'svg'
-          tmp_image.write ::Base64.decode64 image_path
+          tmp_image.write image_path.unpack1 'm'
           tmp_image.close
           @tmp_files[image_path] = tmp_image.path
         # NOTE: this will catch a classloader resource path on JRuby (e.g., uri:classloader:/path/to/image)
