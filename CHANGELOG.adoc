@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.3.14 (2024-03-08) - @mojavelinux
 
 Improvements::
 
@@ -20,6 +20,10 @@ Bug Fixes::
 Build / Infrastructure::
 
 * bump upper Ruby version to 3.3 in CI workflow
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.14[git tag] | {url-repo}/compare/v2.3.13\...v2.3.14[full diff]
 
 == 2.3.13 (2024-02-16) - @mojavelinux
 
