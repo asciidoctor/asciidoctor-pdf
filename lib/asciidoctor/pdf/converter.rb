@@ -3952,6 +3952,7 @@ module Asciidoctor
           entry_title = entry.context == :section ? entry.numbered_title : (entry.title? ? entry.title : (entry.xreftext 'basic'))
           next if entry_title.empty?
           theme_font :toc, level: entry_level do
+            entry_title = entry_title.gsub DropAnchorRx, '' if entry_title.include? '<a'
             entry_title = transform_text entry_title, @text_transform if @text_transform
             pgnum_label_placeholder_width = rendered_width_of_string '0' * @toc_max_pagenum_digits
             # NOTE: only write title (excluding dots and page number) if this is a dry run
