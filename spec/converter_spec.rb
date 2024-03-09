@@ -149,7 +149,7 @@ describe Asciidoctor::PDF::Converter do
       pdf_doc = doc.convert
       tmp_files = (converter = doc.converter).instance_variable_get :@tmp_files
       (expect tmp_files).to have_size 1
-      tmp_files.each {|_, path| converter.send :unlink_tmp_file, path }
+      tmp_files.each_value {|path| converter.send :unlink_tmp_file, path }
       doc.write pdf_doc, (pdf_io = StringIO.new)
       pdf = PDF::Reader.new pdf_io
       (expect get_images pdf).to have_size 1
@@ -193,7 +193,7 @@ describe Asciidoctor::PDF::Converter do
       pdf = PDF::Reader.new pdf_io
       (expect get_images pdf).to have_size 1
       (expect tmp_files).to have_size 1
-      tmp_files.each do |_, path|
+      tmp_files.each_value do |path|
         (expect Pathname.new path).to exist
         File.unlink path
       end

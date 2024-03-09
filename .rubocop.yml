@@ -6,6 +6,8 @@ AllCops:
   TargetRubyVersion: 2.7
 Capybara:
   Enabled: false
+FactoryBot:
+  Enabled: false
 Gemspec/DeprecatedAttributeAssignment:
   Enabled: true
 Gemspec/DevelopmentDependencies:
@@ -113,10 +115,16 @@ Lint/IdentityComparison:
   Enabled: true
 Lint/IncompatibleIoSelectWithFiberScheduler:
   Enabled: true
+Lint/ItWithoutArgumentsInBlock:
+  Enabled: true
 Lint/LambdaWithoutLiteralBlock:
   Enabled: true
+Lint/LiteralAssignmentInCondition:
+  Enabled: false # reason: we know what we're doing; sometimes it's necessary to assign a literal value
 Lint/MissingSuper:
   Enabled: false # FIXME consider enabling
+Lint/MixedCaseRange:
+  Enabled: true
 Lint/MixedRegexpCaptureTypes:
   Enabled: true
 Lint/NoReturnInBeginEndBlocks:
@@ -135,6 +143,8 @@ Lint/RaiseException:
   Enabled: true
 Lint/RedundantDirGlobSort:
   Enabled: true
+Lint/RedundantRegexpQuantifiers:
+  Enabled: true
 Lint/RefinementImportMethods:
   Enabled: true
 Lint/RequireRangeParentheses:
@@ -148,7 +158,7 @@ Lint/StructNewOverride:
 Lint/SuppressedException:
   Enabled: true
 Lint/SymbolConversion:
-  Enabled: true
+  Enabled: false # reason: requires use of :"static#{variable}" which is not the style we prefer
 Lint/ToEnumArguments:
   Enabled: true
 Lint/TopLevelReturnWithArgument:
@@ -219,7 +229,7 @@ RSpec/BeEmpty:
 RSpec/BeEq:
   Enabled: true
 RSpec/BeEql:
-  Enabled: false # NOTE can lead to cryptic error messages when comparing integers
+  Enabled: false # reason: can lead to cryptic error messages when comparing integers
 RSpec/BeNil:
   Enabled: true
 RSpec/BeforeAfterAll:
@@ -238,6 +248,10 @@ RSpec/DuplicatedMetadata:
   Enabled: true
 RSpec/EmptyExampleGroup:
   Enabled: true
+RSpec/EmptyMetadata:
+  Enabled: true
+RSpec/Eq:
+  Enabled: true
 RSpec/ExampleLength:
   Enabled: false
 RSpec/ExampleWording:
@@ -254,8 +268,13 @@ RSpec/IdenticalEqualityAssertion:
   Enabled: true
 RSpec/IndexedLet:
   Enabled: true
+RSpec/IsExpectedSpecify:
+  Enabled: true
 RSpec/MatchArray:
   Enabled: true
+RSpec/MetadataStyle:
+  Enabled: false # reason: this rule is just confused
+  EnforcedStyle: symbol
 RSpec/MultipleExpectations:
   Enabled: true
   Max: 25 # FIXME get this down to 15
@@ -264,16 +283,28 @@ RSpec/NamedSubject:
 RSpec/NoExpectationExample:
   Enabled: false
 RSpec/Pending:
-  Enabled: true
+  Enabled: false # reason: incorrectly detects spec as proc as pending
 RSpec/PendingWithoutReason:
-  Enabled: true
-RSpec/RedundantAround:
   Enabled: true
 RSpec/Rails:
   Enabled: false
+RSpec/ReceiveMessages:
+  Enabled: true
+RSpec/RedundantAround:
+  Enabled: true
+RSpec/RedundantPredicateMatcher:
+  Enabled: true
+RSpec/RemoveConst:
+  Enabled: false # reason: we need this capability
+RSpec/RepeatedSubjectCall:
+  Enabled: true
 RSpec/SkipBlockInsideExample:
   Enabled: true
 RSpec/SortMetadata:
+  Enabled: true
+RSpec/SpecFilePathFormat:
+  Enabled: false # reason: we prefer to name spec files the way we want to name them
+RSpec/SpecFilePathSuffix:
   Enabled: true
 RSpec/SubjectDeclaration:
   Enabled: true
@@ -302,7 +333,7 @@ Style/ArrayIntersect:
 Style/AsciiComments:
   Enabled: false # reason: this is just nitpicky
 Style/Attr:
-  Enabled: true
+  Enabled: false # reason: gets confused by Asciidoctor's attr method
 Style/BisectedAttrAccessor:
   Enabled: true
 Style/BlockComments:
@@ -358,6 +389,8 @@ Style/EmptyLiteral:
 Style/EndlessMethod:
   Enabled: true
 Style/EnvHome:
+  Enabled: true
+Style/ExactRegexpMatch:
   Enabled: true
 Style/ExplicitBlockArgument:
   Enabled: false # reason: yield is fine
@@ -481,11 +514,15 @@ Style/QuotedSymbols:
   Enabled: true
 Style/RedundantArgument:
   Enabled: true
+Style/RedundantArrayConstructor:
+  Enabled: true
 Style/RedundantAssignment:
   Enabled: true
 Style/RedundantBegin:
   Enabled: true
 Style/RedundantConstantBase:
+  Enabled: true
+Style/RedundantCurrentDirectoryInPath:
   Enabled: true
 Style/RedundantDoubleSplatHashBraces:
   Enabled: true
@@ -495,22 +532,34 @@ Style/RedundantFetchBlock:
   Enabled: true
 Style/RedundantFileExtensionInRequire:
   Enabled: true
+Style/RedundantFilterChain:
+  Enabled: true
 Style/RedundantHeredocDelimiterQuotes:
   Enabled: false # reason: we know what we are doing
 Style/RedundantInitialize:
   Enabled: true
 Style/RedundantLineContinuation:
   Enabled: true
+Style/RedundantParentheses:
+  Enabled: false # reason: sometimes the parentheses just make it clearer; this rule is too aggressive
 Style/RedundantPercentQ:
+  Enabled: true
+Style/RedundantRegexpArgument:
   Enabled: true
 Style/RedundantRegexpCharacterClass:
   Enabled: true
+Style/RedundantRegexpConstructor:
+  Enabled: true
 Style/RedundantRegexpEscape:
+  Enabled: true
+Style/ReturnNilInPredicateMethodDefinition:
   Enabled: true
 Style/RedundantSelfAssignment:
   Enabled: true
 Style/RedundantSelfAssignmentBranch:
   Enabled: false
+Style/SingleLineDoEndBlock:
+  Enabled: true
 Style/RedundantStringEscape:
   Enabled: false # reason: this rule crashes RuboCop
 Style/RegexpLiteral:
@@ -539,6 +588,8 @@ Style/StringChars:
   Enabled: true
 Style/StringConcatenation:
   Enabled: false # reason: string concatenation can be faster
+Style/SuperWithArgsParentheses:
+  Enabled: false # reason: hate it
 Style/SwapValues:
   Enabled: true
 Style/SymbolArray:
@@ -553,4 +604,6 @@ Style/TrailingCommaInArrayLiteral:
 Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: consistent_comma
 Style/WordArray:
+  Enabled: true
+Style/YAMLFileRead:
   Enabled: true

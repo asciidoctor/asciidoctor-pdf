@@ -1145,11 +1145,11 @@ describe 'Asciidoctor::PDF::Converter - List' do
         doc.convert
         dlist = doc.blocks[0]
         term, desc = (item = (items = dlist.items)[0])
-        (expect dlist).to be == original_dlist
-        (expect term).to be == original_term
-        (expect items).to be == original_items
-        (expect item).to be == original_item
-        (expect desc).to be == original_desc
+        (expect dlist).to eq original_dlist
+        (expect term).to eq original_term
+        (expect items).to eq original_items
+        (expect item).to eq original_item
+        (expect desc).to eq original_desc
       end
 
       it 'should arrange horizontal list in two columns' do
