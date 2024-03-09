@@ -381,7 +381,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect toc_entry[:dest][:label]).to eql '2'
     end
 
-    it 'should not toc at default location if document has no sections' do
+    it 'should not insert toc at default location if document has no sections' do
       pdf = to_pdf <<~'END', analyze: true
       = Document Title
       :toc:
