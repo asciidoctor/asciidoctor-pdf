@@ -1604,6 +1604,30 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
     (expect images[0][:width]).to eql images[1][:width]
   end
 
+  it 'should remove links from entries in toc but leave behind linked text' do
+    pdf = to_pdf <<~'EOS'
+    = Document Title
+    :doctype: book
+    :toc:
+
+    [#ch1]
+    == https://example.org[Once] Upon a https://example.com[Time]
+
+    [#ch2]
+    == Continuing What <<ch1>> Started
+    EOS
+
+    (expect pdf.pages).to have_size 4
+    toc_lines = ((pdf.page 2).text.split ?\n).reject(&:empty?)
+    (expect toc_lines).to have_size 3
+    (expect toc_lines[0]).to eql 'Table of Contents'
+    (expect toc_lines[1]).to start_with 'Once Upon a Time'
+    (expect toc_lines[2]).to start_with 'Continuing What Once Upon a Time Started'
+    annots = get_annotations pdf, 2
+    (expect annots).to have_size 4
+    (expect annots.map {|it| it[:Dest] }.sort).to eql %w(ch1 ch1 ch2 ch2)
+  end
+
   it 'should allow extended converter to insert extra page before toc' do
     backend = nil
     create_class (Asciidoctor::Converter.for 'pdf') do
