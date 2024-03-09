@@ -38,7 +38,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.find_text 'Introduction', page_number: 3).not_to be_empty
     end
 
-    it 'should space items in toc evently even if title is entirely monospace' do
+    it 'should space items in toc evenly even if title is entirely monospace' do
       pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
       = Document Title
       :toc:
@@ -381,7 +381,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect toc_entry[:dest][:label]).to eql '2'
     end
 
-    it 'should not toc at default location if document has no sections' do
+    it 'should not insert toc at default location if document has no sections' do
       pdf = to_pdf <<~'EOS', analyze: true
       = Document Title
       :toc:
