@@ -66,6 +66,7 @@ module Asciidoctor
       end
 
       def smallcaps string
+        string = string.unicode_normalize :nfd unless string.ascii_only?
         string.tr LowerAlphaChars, SmallCapsChars
       end
 

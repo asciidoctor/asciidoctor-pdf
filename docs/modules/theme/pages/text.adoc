@@ -144,44 +144,15 @@ It accepts the following keywords:
 capitalize:: Transforms the first letter of each word to a capital letter.
 lowercase:: Transforms all the text to lowercase letters.
 none:: Clears an inherited value and no case transformation is applied to the text.
-smallcaps:: Replaces lowercase ASCII letters (a-z) with their small capital variant.
-Lowercase letters outside the ASCII range are not transformed.
+smallcaps:: Normalizes text as NFD (decomposed normalized form) and replaces lowercase ASCII letters (a-z) with their small capital variant.
+The diacritic mark will be applied to the small capital letter using a combining character as a result of the text being normalized as NFD.
 uppercase:: Transforms all the text to capital letters.
 
 The `text-transform` key can't be set on the xref:base.adoc[base category].
 
-If you want the smallcaps transformation to support letters beyond the a-z range, you can do so by overridding the `smallcaps` method in an extended converter.
-
-[,ruby]
-----
-class MyPDFConverter < (Asciidoctor::Converter.for 'pdf')
-  register_for 'pdf'
-  
-  def smallcaps string
-    string = super
-    string = string.gsub 'é', %(\u1d07\u0301)
-    string
-  end
-end
-----
-
-This transformation can be automated using `String#unicode_normalize` with the `:nfd` form.
-This method will rewrite all characters with diacritical marks so that the diacritical mark is added using a combining character (i.e., a two graphene form).
-
-[,ruby]
-----
-class MyPDFConverter < (Asciidoctor::Converter.for 'pdf')
-  register_for 'pdf'
-  
-  def smallcaps string
-    string = string.unicode_normalize :nfd unless string.ascii_only?
-    super
-  end
-end
-----
-
-The smallcaps transformation for extended Latin characters (e.g., characters that include an accent) typically requires the addition of a combining character, such as the combining acute accent in the example above).
-Therefore, you must ensure that the font you're using supports these combining characters (meaning it provides the necessary glyphs).
+The smallcaps transformation for extended Latin characters (e.g., characters outside the a-z range that include an accent) require the use of a combining character, such as the combining acute accent.
+Therefore, if you want the smallcaps transformation to support letters beyond the a-z range, you need to ensure the font you're using provides the required https://en.wikipedia.org/wiki/Combining_character[combining characters^] to support diacritics (meaning it provides the necessary glyphs).
+Otherwise, these characters will appear as missing glyph boxes in the transformed text.
 
 [#superscript]
 == Superscript

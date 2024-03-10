@@ -1024,6 +1024,11 @@ describe Asciidoctor::PDF::FormattedText::Formatter do
       (expect pdf.lines).to eql ['HTML stands for HʏᴘᴇʀTᴇxᴛ Mᴀʀᴋᴜᴘ Lᴀɴɢᴜᴀɢᴇ']
     end
 
+    it 'should decompose non-ASCII characters when applying smallcaps text transform' do
+      pdf = to_pdf '== Références', pdf_theme: { heading_text_transform: 'smallcaps' }, analyze: true
+      (expect pdf.lines).to eql [%(R\u1d07\u0301ғ\u1d07\u0301ʀᴇɴᴄᴇs)]
+    end
+
     it 'should allow custom role to specify relative font size' do
       pdf_theme = {
         heading_h2_font_size: 24,
