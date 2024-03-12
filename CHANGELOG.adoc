@@ -39,8 +39,6 @@ Improvements::
 * drop support for the unmaintained payment font (`pf`) for use in font-based icons
 * refactor formatted text transform to simplify how inner space is collapsed; verify only inner hard breaks are preserved
 * allow relative font size for sub and sup to be set independently; support combined setting for backwards compatibility
-* upgrade prawn-svg to 0.34 to add support for SVG referenced by image tag (SVG in SVG)
-* drop links from entries in TOC (#2505)
 
 Bug Fixes::
 
@@ -55,9 +53,40 @@ Bug Fixes::
 * prevent special character substitution from interfering with callouts in plain verbatim block (#2390)
 * remove deprecated, undocumented `svg-font-family` theme key (the correct key is `svg-fallback-font-family`)
 * major improvement to OTF support following release of ttfunk 1.8.0 (automatic transitive dependency of prawn)
+
+== 2.3.15 (2024-03-12) - @mojavelinux
+
+Improvements::
+
+* drop links from entries in TOC (#2505)
+
+Compliance::
+
+* lock ttfunk to 1.7.x in the 2.3.x release line to avoid requiring Ruby headers (i.e., development libraries) to install gem (#2508)
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.15[git tag] | {url-repo}/compare/v2.3.14\...v2.3.15[full diff]
+
+== 2.3.14 (2024-03-08) - @mojavelinux
+
+Improvements::
+
+* upgrade prawn-svg to 0.34 to add support for SVG referenced by image tag (SVG in SVG)
+
+Bug Fixes::
+
 * propagate source location to table cell for description in horizontal dlist so it is included in truncation warning message (#2502)
 * eradicate use of the base64 library to fix warning about base64 gem when using Ruby >= 3.3
 * upgrade prawn-svg to 0.34 to fix warning about base64 gem when using Ruby >= 3.3; apply additional patch to fix bug in prawn-svg
+
+Build / Infrastructure::
+
+* bump upper Ruby version to 3.3 in CI workflow
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.14[git tag] | {url-repo}/compare/v2.3.13\...v2.3.14[full diff]
 
 == 2.3.13 (2024-02-16) - @mojavelinux
 
