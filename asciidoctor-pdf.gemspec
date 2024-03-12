@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'asciidoctor', '~> 2.0'
   s.add_runtime_dependency 'prawn', '~> 2.4.0'
+  s.add_runtime_dependency 'ttfunk', '~> 1.7.0' # pin ttfunk for compatiblity; prawn gem only pins it to major version
   s.add_runtime_dependency 'matrix', '~> 0.4' # required until prawn >= 2.5.0 is released
   s.add_runtime_dependency 'prawn-table', '~> 0.2.0'
   s.add_runtime_dependency 'prawn-templates', '~> 0.1.0'

@@ -11,6 +11,10 @@ Improvements::
 
 * drop links from entries in TOC (#2505)
 
+Compliance::
+
+* lock ttfunk to 1.7.x to avoid requiring Ruby headers (i.e., development libraries) to install gem (#2508)
+
 == 2.3.14 (2024-03-08) - @mojavelinux
 
 Improvements::
