@@ -135,4 +135,9 @@ Notice the `-a scripts=cjk` option.
 That's important.
 It tells the converter to insert break opportunities between CJK characters so that lines wrap properly when mixing English and a CJK language like Japanese.
 
+When using a CJK language, you probably don't want text justification either, which is the default behavior.
+You can overridde this setting using the `text-align` document attribute (or a custom theme).
+
+ $ asciidoctor-pdf -a scripts=cjk -a text-align=left --theme default-with-font-fallbacks document.adoc
+
 If the built-in theme with the fallback font doesn't go far enough, you'll need to create a xref:cjk.adoc[custom CJK theme].
