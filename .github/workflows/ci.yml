@@ -69,7 +69,7 @@ jobs:
         - os: windows-latest
           ruby: '3.3'
           asciidoctor-diagram-version: ~
-          asciidoctor-kroki-version: '0.8.0'
+          asciidoctor-kroki-version: '0.10.0'
         # NOTE: enable once Asciidoctor 2.1.0 is released
         #- os: ubuntu-latest
         #  ruby: '3.3'
