@@ -59,7 +59,7 @@ jobs:
         # test oldest Ruby 3 to ensure compatibility across full range of Ruby 3 versions
         - os: ubuntu-latest
           ruby: '3.0'
-        - os: macos-13
+        - os: macos-12
           ruby: '3.3'
         # test oldest permitted versions of dependencies
         - os: ubuntu-latest
@@ -110,7 +110,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install ghostscript poppler-utils
     - name: Install Ghostscript and Poppler (macOS)
-      if: matrix.os == 'macos-13'
+      if: matrix.os == 'macos-12'
       run: |
         brew unlink ghostscript
         # ghostscript 10.02.1
