@@ -15,6 +15,10 @@ describe 'Asciidoctor::PDF::Converter - Table' do
   end
 
   it 'should not crash if cols and table cells are mismatched' do
+    expected_messages = [severity: :WARN, message: 'no rows found in table']
+    if (Gem::Version.new Asciidoctor::VERSION) > (Gem::Version.new '2.0.22')
+      expected_messages.unshift severity: :ERROR, message: 'dropping cells from incomplete row detected end of table'
+    end
     (expect do
       pdf = to_pdf <<~'EOS', analyze: :line
       [cols="1,"]
@@ -24,7 +28,7 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       EOS
 
       (expect pdf.lines).to have_size 8
-    end).to not_raise_exception & (log_message severity: :WARN, message: 'no rows found in table')
+    end).to not_raise_exception & (log_messages expected_messages)
   end
 
   it 'should not crash when rows have cells with colspans of varying length' do
