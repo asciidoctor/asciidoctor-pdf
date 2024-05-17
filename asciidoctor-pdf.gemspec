@@ -42,6 +42,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'prawn-svg', '~> 0.34.0'
   s.add_runtime_dependency 'prawn-icon', '~> 3.0.0'
   s.add_runtime_dependency 'concurrent-ruby', '~> 1.1'
+  s.add_runtime_dependency 'rexml', '3.2.6' # lock rexml to 3.2.6 since 3.2.7 and up breaks Ruby
   s.add_runtime_dependency 'treetop', '~> 1.6.0'
 
   s.add_development_dependency 'rake', '~> 13.0.0'
