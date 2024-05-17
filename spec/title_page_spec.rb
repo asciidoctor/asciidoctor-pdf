@@ -673,13 +673,13 @@ describe 'Asciidoctor::PDF::Converter - Title Page' do
     end
 
     it 'should allow author name and email to be placed on separate lines' do
-      pdf = to_pdf <<~'EOS', pdf_theme: { title_page_authors_content_with_email: %({author} +\n{email}) }, analyze: true
+      pdf = to_pdf <<~'END', pdf_theme: { title_page_authors_content_with_email: %({author} +\n{email}) }, analyze: true
       = Document Title
       Doc Writer <doc@example.org>
       :doctype: book
 
       body
-      EOS
+      END
 
       title_page_lines = pdf.lines pdf.find_text page_number: 1
       (expect title_page_lines).to eql ['Document Title', 'Doc Writer', 'doc@example.org']
