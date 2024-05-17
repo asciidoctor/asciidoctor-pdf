@@ -206,3 +206,10 @@ table:
   caption:
     end: bottom
 ----
+
+[#table-cell-paragraphs]
+== Table cell paragraphs
+
+Except for AsciiDoc table cells, paragraphs in a table cell are always separated by the height of one line.
+This spacing cannot be controlled directly by the theme.
+If you require control over the spacing between paragraphs in a table cell, convert that table cell to an AsciiDoc table cell by adding the `a` style.
