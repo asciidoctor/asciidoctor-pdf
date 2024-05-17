@@ -54,6 +54,10 @@ Bug Fixes::
 * remove deprecated, undocumented `svg-font-family` theme key (the correct key is `svg-fallback-font-family`)
 * major improvement to OTF support following release of ttfunk 1.8.0 (automatic transitive dependency of prawn)
 
+Compliance::
+
+* lock version of rexml (pulled in by asciidoctor-diagram and prawn-svg) to fix incompatibility
+
 == 2.3.15 (2024-03-12) - @mojavelinux
 
 Improvements::
