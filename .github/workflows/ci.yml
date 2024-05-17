@@ -74,9 +74,9 @@ jobs:
         #- os: ubuntu-latest
         #  ruby: '3.3'
         #  asciidoctor-version: '~> 2.0.0'
-        #- os: ubuntu-latest
-        #  ruby: '3.3'
-        #  upstream: upstream
+        - os: ubuntu-latest
+          ruby: '3.3'
+          upstream: upstream
         - os: ubuntu-latest
           ruby: '3.3'
           rouge-version: '~> 4.0.0'
@@ -159,7 +159,7 @@ jobs:
       if: matrix.upstream
       run: |
         bundle exec ruby scripts/switch-to-asciidoctor-head.rb
-        bundle exec ruby scripts/switch-to-prawn-head.rb
+        #bundle exec ruby scripts/switch-to-prawn-head.rb
         rm -f Gemfile.lock
         bundle config --local clean true
         bundle --jobs 3 --retry 3
