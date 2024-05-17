@@ -6,7 +6,7 @@
 [#prose]
 == prose
 
-The keys in the `prose` category control the spacing below paragraphs, lists, and index categories.
+The keys in the `prose` category control the spacing below paragraphs (but not paragraphs in a normal table cell), lists, and index categories.
 The bottom margin is only added if the block is followed by an adjacent block within the same enclosure (e.g., a sidebar, a table cell, or the area outside a block).
 
 [cols="3,4,5a"]
@@ -53,4 +53,3 @@ It's useful when using indented paragraphs.
 
 The `text-indent-inner` key is only applied to inner paragraphs.
 Inner paragraphs are paragraphs that follow an adjacent paragraph.
-
