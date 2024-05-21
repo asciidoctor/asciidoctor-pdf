@@ -59,8 +59,8 @@ jobs:
         # test oldest Ruby 3 to ensure compatibility across full range of Ruby 3 versions
         - os: ubuntu-latest
           ruby: '3.0'
-        #- os: macos-latest
-        #  ruby: '3.3'
+        - os: macos-12
+          ruby: '3.3'
         # test oldest permitted versions of dependencies
         - os: ubuntu-latest
           ruby: '2.7'
@@ -69,7 +69,7 @@ jobs:
         - os: windows-latest
           ruby: '3.3'
           asciidoctor-diagram-version: ~
-          asciidoctor-kroki-version: '0.8.0'
+          asciidoctor-kroki-version: '0.10.0'
         # NOTE: enable once Asciidoctor 2.1.0 is released
         #- os: ubuntu-latest
         #  ruby: '3.3'
@@ -110,8 +110,14 @@ jobs:
         sudo apt-get update
         sudo apt-get install ghostscript poppler-utils
     - name: Install Ghostscript and Poppler (macOS)
-      if: matrix.os == 'macos-latest'
-      run: brew install ghostscript poppler
+      if: matrix.os == 'macos-12'
+      run: |
+        brew unlink ghostscript
+        # ghostscript 10.02.1
+        wget https://raw.githubusercontent.com/Homebrew/homebrew-core/0e594be417b7947dcf7d6eb63293fcf652b7e3ae/Formula/g/ghostscript.rb
+        brew install --formula ./ghostscript.rb
+        brew link ghostscript || true
+        brew install poppler
     - name: Install Ghostscript and Poppler and set GS env var (Windows)
       if: matrix.os == 'windows-latest'
       run: |
@@ -124,7 +130,7 @@ jobs:
         echo 'PRAWN_GMAGICK_VERSION=0.0.9' >> $GITHUB_ENV
         sudo apt-get install libgraphicsmagick1-dev
     #- name: Set Prawn Gmagick version / Install GraphicsMagick (macOS)
-    #  if: matrix.os == 'macos-latest'
+    #  if: matrix.os == 'macos-12'
     #  run: |
     #    echo 'PRAWN_GMAGICK_VERSION=0.0.9' >> $GITHUB_ENV
     #    brew install GraphicsMagick
