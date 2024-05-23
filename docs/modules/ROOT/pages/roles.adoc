@@ -14,7 +14,7 @@ If a built-in role is not listed in this section, then you can expect that it's 
 
 === On text
 
-The following built-in roles can be assigned to paragraphs and inline phrases.
+The following built-in roles can be assigned to paragraphs (except for nobreak, nowrap, and pre-wrap) and inline phrases.
 
 include::theme:page$role.adoc[tag=user-formatting]
 
