@@ -163,17 +163,6 @@ small:: The `small` role maps the font size to the `$base-font-size-small` value
 underline:: The `underline` role adds the underline decoration.
 line-through:: The `line-through` role adds the strikethrough decoration.
 subtitle:: The `subtitle` role is used to configure the font properties of the subtitle of a section title.
-nobreak:: The `nobreak` role prevents words within the span of text from being broken.
-This role does not otherwise modify the appearance of the text.
-If the fallback font is used for any character in the span, it will introduce a break opportunity at that character.
-This happens since the PDF generator creates a separate fragment to change fonts, and fragment boundaries are a break opportunity.
-nowrap:: The `nowrap` role prevents the span of text from wrapping unless the entire span does not fit on a whole line.
-This role does not otherwise modify the appearance of the text.
-If the fallback font is used for any character in the span, it will introduce a break opportunity at that character.
-This happens since the PDF generator creates a separate fragment to change fonts, and fragment boundaries are a break opportunity.
-pre-wrap:: The `pre-wrap` role prevents sequences of space and space-like characters from being collapsed (i.e., all spaces are preserved).
-This role does not otherwise modify the appearance of the text.
-Note that if the space characters fall at the boundary of a line wrap, those space characters will be dropped.
 // end::user-formatting[]
 // tag::para-roles[]
 text-justify:: Aligns the text to the left margin with justification.
