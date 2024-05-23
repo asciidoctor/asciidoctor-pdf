@@ -18,6 +18,13 @@ CAUTION: Using the fallback font slows down PDF generation slightly because it h
 Its use is not recommended for large documents.
 Instead, it's best to select primary fonts that have all the characters you need.
 
+WARNING: If the PDF generator (Prawn) makes use of the fallback font to render a character, that will introduce a break opportunity, regardless of what role is set on the span of text or what the adjacent characters are (e.g., `{nbsp}`).
+When Prawn uses a fallback font, it disrupts assumptions about line wrapping.
+In order to assign the fallback font to the character, Prawn must create a dedicated fragment for that character.
+In other words, using the fallback font to resolve the glyph for a character creates a fragment.
+A fragment boundary always creates an artificial break opportunity in the text.
+The best way to ensure that the no-break boundaries are honored is to ensure that the primary font contains glyphs for all the characters in the manuscript, as well as any required characters for using a custom font with Asciidoctor PDF.
+
 == Requirements
 
 When defining the fallback font, you *must specify all four variants* (`normal`, `bold`, `italic`, `bold_italic`), even if you use the same font file for each.
