@@ -215,6 +215,18 @@ describe 'Asciidoctor::PDF::Converter - Hyphens', if: (RSpec::ExampleGroupHelper
     (expect lines[1]).to eql 'graph'
   end
 
+  it 'should not hyphenate URL of autolink' do
+    pdf = to_pdf <<~'END', analyze: true
+    :hyphens:
+
+    https://pellentesqueullamcorperpellentesqueullamcorperconsecteturviverrascelerisque.example.com
+    END
+
+    lines = pdf.lines
+    (expect lines.size).to be > 1
+    (expect lines[0]).not_to end_with ?\u00ad
+  end
+
   it 'should show visible hyphen at locate where word is split across lines', visual: true do
     to_file = to_pdf_file <<~'END', 'hyphens-word-break.pdf'
     :hyphens:
