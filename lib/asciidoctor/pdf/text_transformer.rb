@@ -8,6 +8,7 @@ module Asciidoctor
       TagFilterRx = /(<[^>]+>)|([^<]+)/
       ContiguousCharsRx = /\p{Graph}+/
       WordRx = /\p{Word}+/
+      BareClassRx = / class="bare[" ]/
       Hyphen = '-'
       SoftHyphen = ?\u00ad
       LowerAlphaChars = 'a-z'
@@ -31,7 +32,15 @@ module Asciidoctor
 
       def hyphenate_words_pcdata string, hyphenator
         if XMLMarkupRx.match? string
-          string.gsub(PCDATAFilterRx) { $2 ? (hyphenate_words $2, hyphenator) : $1 }
+          skipping = false
+          string.gsub PCDATAFilterRx do
+            if $2
+              skipping ? $2 : (hyphenate_words $2, hyphenator)
+            else
+              skipping = skipping ? $1 != '</a>' : ($1.start_with? '<a ') && (BareClassRx.match? $1)
+              $1
+            end
+          end
         else
           hyphenate_words string, hyphenator
         end

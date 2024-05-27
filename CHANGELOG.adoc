@@ -7,6 +7,10 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
+Improvements::
+
+* don't hyphenate autolink when hyphenation is enabled (#2521) (*@meonkeys*)
+
 Compliance::
 
 * lock version of rexml (pulled in by asciidoctor-diagram and prawn-svg) to fix incompatibility
