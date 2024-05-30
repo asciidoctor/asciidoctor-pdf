@@ -11,6 +11,10 @@ Improvements::
 
 * don't hyphenate autolink when hyphenation is enabled (#2521) (*@meonkeys*)
 
+Bug Fixes::
+
+* duplicate attributes on table when wrapping table in breakable or unbreakable container (#2520)
+
 Compliance::
 
 * lock version of rexml (pulled in by asciidoctor-diagram and prawn-svg) to fix incompatibility

@@ -1989,6 +1989,8 @@ module Asciidoctor
         if !at_page_top? && ((unbreakable = node.option? 'unbreakable') || ((node.option? 'breakable') && (node.id || node.title?)))
           # NOTE: we use the current node as the parent so we can navigate back into the document model
           (table_container = Block.new node, :open) << (table_dup = node.dup)
+          # NOTE: we need to duplicate the attributes so that the unbreakable/breakable option is preserved on subsequent conversions
+          table_dup.instance_variable_set :@attributes, node.attributes.dup
           if unbreakable
             table_dup.remove_attr 'unbreakable-option'
             table_container.set_attr 'unbreakable-option'

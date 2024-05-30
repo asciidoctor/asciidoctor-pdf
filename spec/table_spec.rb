@@ -2950,6 +2950,80 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect caption_prefix_text[:x] - 5).to be > cell2_text[:x]
       (expect caption_wrap_text[:x]).to be > caption_prefix_text[:x]
     end
+
+    it 'should not keep caption with table without breakable option and heading-min-height-after is auto' do
+      pdf_theme = { heading_min_height_after: 'auto' }
+      filler = (['filler'] * 35).join %( +\n)
+      pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      :!table-caption:
+
+      == Section Title
+
+      #{filler}
+
+      === Subsection Title
+
+      .Table title
+      |===
+      |Col A |Col B |Col C
+
+      |A1
+      |B1
+      |C1
+
+      |A2
+      |B2
+      |C2
+      |===
+      EOS
+
+      subsection_title = pdf.find_unique_text 'Subsection Title'
+      (expect subsection_title).not_to be_nil
+      (expect subsection_title[:page_number]).to be 1
+      table_caption = pdf.find_unique_text 'Table title'
+      (expect table_caption).not_to be_nil
+      (expect table_caption[:page_number]).to be 1
+      col_a_text = pdf.find_unique_text 'Col A'
+      (expect col_a_text).not_to be_nil
+      (expect col_a_text[:page_number]).to be 2
+    end
+
+    it 'should keep caption with table with breakable option and heading-min-height-after is auto' do
+      pdf_theme = { heading_min_height_after: 'auto' }
+      filler = (['filler'] * 35).join %( +\n)
+      pdf = to_pdf <<~EOS, pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      :!table-caption:
+
+      == Section Title
+
+      #{filler}
+
+      === Subsection Title
+
+      .Table title
+      [%breakable]
+      |===
+      |A |B |C
+
+      |A1
+      |B1
+      |C1
+
+      |A2
+      |B2
+      |C2
+      |===
+      EOS
+
+      subsection_title = pdf.find_unique_text 'Subsection Title'
+      (expect subsection_title).not_to be_nil
+      (expect subsection_title[:page_number]).to be 2
+      table_caption = pdf.find_unique_text 'Table title'
+      (expect table_caption).not_to be_nil
+      (expect table_caption[:page_number]).to be 2
+    end
   end
 
   context 'Table alignment' do

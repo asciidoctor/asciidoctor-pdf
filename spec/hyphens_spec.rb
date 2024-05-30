@@ -216,11 +216,11 @@ describe 'Asciidoctor::PDF::Converter - Hyphens', if: (RSpec::ExampleGroupHelper
   end
 
   it 'should not hyphenate URL of autolink' do
-    pdf = to_pdf <<~'END', analyze: true
+    pdf = to_pdf <<~'EOS', analyze: true
     :hyphens:
 
     https://pellentesqueullamcorperpellentesqueullamcorperconsecteturviverrascelerisque.example.com
-    END
+    EOS
 
     lines = pdf.lines
     (expect lines.size).to be > 1
