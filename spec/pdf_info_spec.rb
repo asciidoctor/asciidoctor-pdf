@@ -18,20 +18,42 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
   end
 
   context 'attribution' do
-    it 'should include Asciidoctor PDF and Prawn versions in Creator field' do
+    it 'should set the Creator field to empty by default' do
       creator = (to_pdf 'hello').info[:Creator]
-      (expect creator).not_to be_nil
-      (expect creator).to include %(Asciidoctor PDF #{Asciidoctor::PDF::VERSION})
-      (expect creator).to include %(Prawn #{Prawn::VERSION})
+      (expect creator).to be_empty
     end
 
-    it 'should set Producer field to value of Creator field by default' do
-      pdf = to_pdf 'hello'
-      (expect pdf.info[:Producer]).not_to be_nil
-      (expect pdf.info[:Producer]).to eql pdf.info[:Creator]
+    it 'should set the Producer field to Asciidoctor PDF and Prawn by default' do
+      producer = (to_pdf 'hello').info[:Producer]
+      (expect producer).not_to be_nil
+      (expect producer).to include %(Asciidoctor PDF #{Asciidoctor::PDF::VERSION})
+      (expect producer).to include %(Prawn #{Prawn::VERSION})
     end
 
-    it 'should set Author and Producer field to value of author attribute if set' do
+    it 'should allow Producer field to be overridden using producer attribute' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      :producer: ACME
+
+      hello
+      EOS
+      producer = pdf.info[:Producer]
+      (expect producer).not_to be_nil
+      (expect producer).to eql 'ACME'
+    end
+
+    it 'should set the Creator field to the author if author is specified' do
+      pdf = to_pdf <<~'EOS'
+      = Document Title
+      Author Name
+
+      hello
+      EOS
+      creator = pdf.info[:Creator]
+      (expect creator).to eql 'Author Name'
+    end
+
+    it 'should set Author and Creator field to value of author attribute if set' do
       ['Author Name', ':author: Author Name'].each do |author_line|
         pdf = to_pdf <<~EOS
         = Document Title
@@ -39,12 +61,12 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
 
         content
         EOS
-        (expect pdf.info[:Producer]).to eql pdf.info[:Author]
         (expect pdf.info[:Author]).to eql 'Author Name'
+        (expect pdf.info[:Creator]).to eql pdf.info[:Author]
       end
     end
 
-    it 'should set Author and Producer field to value of author attribute if set to multiple authors' do
+    it 'should set Author and Creator field to value of author attribute if set to multiple authors' do
       ['Author Name; Assistant Name', ':authors: Author Name; Assistant Name'].each do |author_line|
         pdf = to_pdf <<~EOS
         = Document Title
@@ -55,14 +77,14 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
         Second Author: {author_2}
         EOS
         lines = ((pdf.page 1).text.split ?\n).map(&:strip)
-        (expect pdf.info[:Producer]).to eql pdf.info[:Author]
         (expect pdf.info[:Author]).to eql 'Author Name, Assistant Name'
+        (expect pdf.info[:Creator]).to eql pdf.info[:Author]
         (expect lines).to include 'First Author: Author Name'
         (expect lines).to include 'Second Author: Assistant Name'
       end
     end
 
-    it 'should set Author and Producer field using authors attribute with non-Latin characters' do
+    it 'should set Author and Creator field using authors attribute with non-Latin characters' do
       ['Doc Writer; Antonín Dvořák', ':authors: Doc Writer; Antonín Dvořák'].each do |author_line|
         pdf = to_pdf <<~EOS
         = Document Title
@@ -73,8 +95,8 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
         Second Author: {author_2}
         EOS
         lines = ((pdf.page 1).text.split ?\n).map(&:strip)
-        (expect pdf.info[:Producer]).to eql pdf.info[:Author]
         (expect pdf.info[:Author]).to eql 'Doc Writer, Antonín Dvořák'
+        (expect pdf.info[:Creator]).to eql pdf.info[:Author]
         (expect lines).to include 'First Author: Doc Writer'
         (expect lines).to include 'Second Author: Antonín Dvořák'
       end
@@ -132,7 +154,7 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       (expect pdf.info[:Author]).to eql 'Author Name'
     end
 
-    it 'should set Producer field to value of publisher attribute if set' do
+    it 'should set Creator field to value of publisher attribute if set' do
       pdf = to_pdf <<~'EOS'
       = Document Title
       Author Name
@@ -141,7 +163,7 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       content
       EOS
       (expect pdf.info[:Author]).to eql 'Author Name'
-      (expect pdf.info[:Producer]).to eql 'Big Cheese'
+      (expect pdf.info[:Creator]).to eql 'Big Cheese'
     end
 
     it 'should set Subject field to value of subject attribute if set' do
@@ -179,7 +201,7 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       (expect pdf_info[:Author]).to eql 'D_J Allen'
       (expect pdf_info[:Subject]).to eql 'Science & Math'
       (expect pdf_info[:Keywords]).to eql 'mass–energy equivalence'
-      (expect pdf_info[:Producer]).to eql 'Schrödinger’s Cat'
+      (expect pdf_info[:Creator]).to eql 'Schrödinger’s Cat'
     end
 
     it 'should parse date attributes as local date objects' do
@@ -239,7 +261,7 @@ describe 'Asciidoctor::PDF::Converter - PDF Info' do
       content
       EOS
 
-      (expect pdf.info[:Creator]).to eql 'Asciidoctor PDF, based on Prawn'
+      (expect pdf.info[:Producer]).to eql 'Asciidoctor PDF, based on Prawn'
     end
 
     it 'should set mod and creation dates to match SOURCE_DATE_EPOCH environment variable' do

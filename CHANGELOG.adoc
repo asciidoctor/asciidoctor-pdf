@@ -7,7 +7,11 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Improvements::
+
+* always use /Producer field in document info to credit Asciidoctor PDF and Prawn, even when author is set (#2510)
+* map `producer` attribute to /Producer field in document info to override or default value (#2510)
+* map `publisher` attribute to /Creator field instead of /Producer field in document info; use author as fallback (#2510)
 
 == 2.3.16 (2024-05-31) - @mojavelinux
 

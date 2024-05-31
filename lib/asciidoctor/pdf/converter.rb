@@ -525,13 +525,12 @@ module Asciidoctor
         end
         info[:Subject] = (sanitize doc.attr 'subject').as_pdf if doc.attr? 'subject'
         info[:Keywords] = (sanitize doc.attr 'keywords').as_pdf if doc.attr? 'keywords'
-        info[:Producer] = (sanitize doc.attr 'publisher').as_pdf if doc.attr? 'publisher'
+        info[:Creator] = (doc.attr? 'publisher') ? (sanitize doc.attr 'publisher').as_pdf : (info[:Author] || '')
+        info[:Producer] = (sanitize doc.attr 'producer').as_pdf if doc.attr? 'producer'
         if doc.attr? 'reproducible'
-          info[:Creator] = 'Asciidoctor PDF, based on Prawn'.as_pdf
-          info[:Producer] ||= (info[:Author] || info[:Creator])
+          info[:Producer] ||= 'Asciidoctor PDF, based on Prawn'.as_pdf
         else
-          info[:Creator] = %(Asciidoctor PDF #{::Asciidoctor::PDF::VERSION}, based on Prawn #{::Prawn::VERSION}).as_pdf
-          info[:Producer] ||= (info[:Author] || info[:Creator])
+          info[:Producer] ||= %(Asciidoctor PDF #{::Asciidoctor::PDF::VERSION}, based on Prawn #{::Prawn::VERSION}).as_pdf
           # NOTE: since we don't track the creation date of the input file, we map the ModDate header to the last modified
           # date of the input document and the CreationDate header to the date the PDF was produced by the converter.
           info[:ModDate] = (::Time.parse doc.attr 'docdatetime') rescue (now ||= ::Time.now)
