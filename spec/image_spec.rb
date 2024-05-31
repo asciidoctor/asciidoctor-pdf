@@ -1046,6 +1046,12 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-block-svg-with-image.pdf'
     end
 
+    it 'should embed SVG image from data-uri in SVG', visual: true do
+      pdf = to_pdf 'image::svg-with-data-uri-svg-image.svg[]', analyze: :rect
+      (expect pdf.rectangles).to have_size 1
+      (expect pdf.rectangles[0][:fill_color]).to eql 'FF0000'
+    end
+
     it 'should support non-standard image/jpg MIME type', visual: true do
       image_data = File.binread fixture_file 'square.jpg'
       pdf = to_pdf 'image::svg-with-data-uri-jpg-image.svg[pdfwidth=1.27cm]', analyze: :image
