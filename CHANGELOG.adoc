@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 Improvements::
 
 * don't hyphenate autolink when hyphenation is enabled (#2521) (*@meonkeys*)
+* add support for base64-encoded SVG image reference in SVG (#2512)
 
 Bug Fixes::
 
