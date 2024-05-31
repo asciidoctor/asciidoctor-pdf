@@ -41,6 +41,9 @@ Improvements::
 * allow relative font size for sub and sup to be set independently; support combined setting for backwards compatibility
 * don't hyphenate autolink when hyphenation is enabled (#2521) (*@meonkeys*)
 * add support for base64-encoded SVG image reference in SVG (#2512)
+* always use /Producer field in document info to credit Asciidoctor PDF and Prawn, even when author is set (#2510)
+* map `producer` attribute to /Producer field in document info to override or default value (#2510)
+* map `publisher` attribute to /Creator field instead of /Producer field in document info; use author as fallback (#2510)
 
 Bug Fixes::
 
