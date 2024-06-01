@@ -5,6 +5,10 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
+== Unreleased
+
+_No changes since previous release._
+
 == 2.3.17 (2024-06-01) - @mojavelinux
 
 Improvements::
