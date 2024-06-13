@@ -4,11 +4,13 @@
 You can add a background image to all content pages in your document by setting the `page-background-image` document attribute.
 You can also set the background images for recto and verso pages separately using the `page-background-image-recto` and `page-background-image-verso` document attributes.
 You can set (or override) the background image applied to the title page using the `title-page-background-image` document attribute.
+If you want to overlay a background image on top of the page content (i.e., a watermark), you can do so using the `page-foreground-image`.
 
-This page explains how these attributes are used.
+This page explains how these document attributes are used.
+It also covers how attributes on the image macro can be used to control the size, fit, and position of the image.
 All the document attributes covered on this page must be defined in the document header.
 
-As an alternative to using document attributes, you can define these background images xref:theme:images.adoc[in your theme].
+As an alternative to using document attributes, you can define these background images and the foreground image xref:theme:images.adoc[in your theme].
 
 [#page-background-image]
 == page-background-image attribute
@@ -16,6 +18,9 @@ As an alternative to using document attributes, you can define these background 
 Background images can be applied to all content pages using the `page-background-image` document attribute.
 A content page is defined as every page in the document except for cover and imported pages.
 The list of content pages includes the title page as well as non-facing pages in a prepress document.
+
+NOTE: As a counterpart, a foreground image can be added to all pages using the `page-foreground-image`.
+Unlike the background image, the foreground image cannot be added per side or page layout.
 
 The `page-background-image` attribute accepts an inline image macro.
 The target of the image macro can be xref:image-paths-and-formats.adoc#imagesdir[an absolute path or a path relative to imagesdir].
