@@ -1828,6 +1828,12 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       [.text-left]
       #{['lots of rambling'] * 150 * ?\n}
+
+      [page-layout=landscape]
+      <<<
+
+      [.text-left]
+      #{['lots of rambling'] * 150 * ?\n}
       END
 
       (expect to_file).to visually_match 'page-watermark.pdf'
