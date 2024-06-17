@@ -4397,14 +4397,17 @@ module Asciidoctor
         if (first_page = (has_front_cover ? (pages.slice 1, pages.size) : pages).find {|it| !it.imported_page? }) &&
             (first_page_num = (pages.index first_page) + 1) &&
             (fg_image = resolve_background_image doc, @theme, 'page-foreground-image') && fg_image[0]
-          go_to_page first_page_num
-          create_stamp 'foreground-image' do
-            canvas { image fg_image[0], ({ position: :center, vposition: :center }.merge fg_image[1]) }
-          end
-          stamp 'foreground-image'
-          (first_page_num.next..page_count).each do |num|
+          stamps = ::Set.new
+          (first_page_num..page_count).each do |num|
             go_to_page num
-            stamp 'foreground-image' unless page.imported_page?
+            next if page.imported_page?
+            unless stamps.include? (stamp_name = %(foreground-image-#{page.layout}))
+              create_stamp stamp_name do
+                canvas { image fg_image[0], ({ position: :center, vposition: :center }.merge fg_image[1]) }
+              end
+              stamps << stamp_name
+            end
+            stamp stamp_name
           end
         end
       end
