@@ -7,10 +7,6 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-Improvements::
-
-* upgrade prawn-svg to 0.35 to add support for quoted value in url reference
-
 Bug Fixes::
 
 * position foreground image correctly when page layout changes (#2528)
