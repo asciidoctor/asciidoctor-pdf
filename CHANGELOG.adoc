@@ -39,6 +39,7 @@ Improvements::
 * drop support for the unmaintained payment font (`pf`) for use in font-based icons
 * refactor formatted text transform to simplify how inner space is collapsed; verify only inner hard breaks are preserved
 * allow relative font size for sub and sup to be set independently; support combined setting for backwards compatibility
+* upgrade prawn-svg to 0.35 to add support for quoted value in url reference
 
 Bug Fixes::
 
