@@ -390,7 +390,7 @@ Next, run Antora on this playbook using the following command:
 
  $ npx antora local-antora-playbook.yml
 
-NOTE: You can safely ignore invalid xrefs that point outside of the asciidoctor-pdf component (such as to the asciidoctor compoent).
+NOTE: You can safely ignore invalid xrefs that point outside of the asciidoctor-pdf component (such as to the asciidoctor component).
 
 The command will print the location of the generated site that you can visit in your browser.
 
