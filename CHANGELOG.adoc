@@ -55,6 +55,10 @@ Bug Fixes::
 * major improvement to OTF support following release of ttfunk 1.8.0 (automatic transitive dependency of prawn)
 * position foreground image correctly when page layout changes (#2528)
 
+Compliance::
+
+* release lock on version of rexml (pulled in by asciidoctor-diagram and prawn-svg) now that incompatibility is resolved
+
 == 2.3.17 (2024-06-01) - @mojavelinux
 
 Improvements::
