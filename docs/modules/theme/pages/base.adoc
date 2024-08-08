@@ -138,10 +138,17 @@ It's used as an intermediate property for computing the `base-line-height` from 
 For instance, if you set `base-line-height-length`, you can use `$base-line-height-length / $base-font-size` to set the value of `base-line-height`.
 You don't have to go about it this way in your own theme.
 
+[#text-align]
+== text-align
+
+The default text alignment can be set globally using the `text-align` key on the `base` category.
+While the base theme applies the value `left`, the default theme applies the value `justify`.
+If you don't prefer text justification, you can change this behavior by setting this key to `left`.
+It's also possible to set the default text alignment using the `text-align` document attribute.
+
 [#transform]
 == text-transform
 
 The `text-transform` key can't be set globally.
 Therefore, this key shouldn't be used on the `base` category.
 The value of `none` is implicit and is only documented in the table above for completeness.
-
