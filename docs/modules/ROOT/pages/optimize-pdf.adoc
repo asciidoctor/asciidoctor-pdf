@@ -83,6 +83,11 @@ This setting may be useful if you're sending the document to a printer.
 Force all text to be converted to paths (linework) so it's not selectable (in exchange for a much larger document).
 -sOwnerPassword=xyx -sUserPassword=xyx::
 Require a password to open the document (owner for edit, user for view).
+-dColorImageResolution=<number>::
+Resamples images to the resolution specified by `<number>` (e.g., `-dColorImageResolution=96`).
+This setting can dramatically reduce the size of the generated PDF.
+This option only works if optimize quality is set to `screen` or `ebook` (e.g., `-a optimize=screen`).
+Otherwise, it is ignored.
 
 As a shorthand for using the `-sColorConversionStrategy=Gray` option, you can pass the `gray` color mode after the quality value:
 
