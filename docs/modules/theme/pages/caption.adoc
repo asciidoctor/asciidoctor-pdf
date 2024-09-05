@@ -128,9 +128,11 @@ caption:
 In addition to the global `caption` category, each of the keys listed in <<caption>>, except for the `text-decoration` keys, can be set on the caption key nested inside the following block categories:
 
 * `code`
+* `description-list`
 * `example`
 * `footnotes`
 * `image`
+* `list` (applies to ulist and olist)
 * `quote`
 * `table`
 * `verse`
