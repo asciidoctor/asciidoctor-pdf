@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'ostruct'
+require_relative 'theme_data'
 require_relative 'measurements'
 
 module Asciidoctor
@@ -70,7 +70,7 @@ module Asciidoctor
       # NOTE: base theme is loaded "as is" (no post-processing)
       def self.load_base_theme
         ::File.open BaseThemePath, mode: 'r:UTF-8' do |io|
-          (::OpenStruct.new ::YAML.safe_load io, filename: BaseThemePath).tap {|theme| theme.__dir__ = ThemesDir }
+          (ThemeData.new ::YAML.safe_load io, filename: BaseThemePath).tap {|theme| theme.__dir__ = ThemesDir }
         end
       end
 
@@ -79,7 +79,7 @@ module Asciidoctor
         if theme_path == BaseThemePath
           load_base_theme
         else
-          theme_data = load_file theme_path, (::OpenStruct.new base_font_size: 12), theme_dir
+          theme_data = load_file theme_path, (ThemeData.new base_font_size: 12), theme_dir
           unless (::File.dirname theme_path) == ThemesDir
             theme_data.base_text_align ||= 'left'
             theme_data.base_line_height ||= 1
@@ -103,12 +103,12 @@ module Asciidoctor
           line.sub(HexColorEntryRx) { %(#{(m = $~)[:k]}: #{m[:h] || (m[:k].end_with? 'color') ? "'#{m[:v]}'" : m[:v]}) }
         end.join unless (::File.dirname filename) == ThemesDir
         yaml_data = ::YAML.safe_load data, aliases: true, filename: filename
-        (loaded = (theme_data ||= ::OpenStruct.new).__loaded__ ||= ::Set.new).add filename
+        (loaded = (theme_data ||= ThemeData.new).__loaded__ ||= ::Set.new).add filename
         if ::Hash === yaml_data && (extends = yaml_data.delete 'extends')
           (Array extends).each do |extend_path|
             extend_path = extend_path.slice 0, extend_path.length - 11 if (force = extend_path.end_with? ' !important')
             if extend_path == 'base'
-              theme_data = ::OpenStruct.new theme_data.to_h.merge load_base_theme.to_h if (loaded.add? 'base') || force
+              theme_data = ThemeData.new theme_data.to_h.merge load_base_theme.to_h if (loaded.add? 'base') || force
               next
             elsif BundledThemeNames.include? extend_path
               extend_path, extend_theme_dir = resolve_theme_file extend_path, ThemesDir
@@ -124,7 +124,7 @@ module Asciidoctor
       end
 
       def load hash, theme_data = nil
-        ::Hash === hash ? hash.reduce(theme_data || ::OpenStruct.new) {|data, (key, val)| process_entry key, val, data, true } : (theme_data || ::OpenStruct.new)
+        ::Hash === hash ? hash.reduce(theme_data || ThemeData.new) {|data, (key, val)| process_entry key, val, data, true } : (theme_data || ThemeData.new)
       end
 
       private
