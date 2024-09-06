@@ -7,7 +7,9 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Improvements::
+
+* replace OpenStruct with internal ThemeData class for storing theme data (#2535)
 
 == 2.3.18 (2024-07-27) - @mojavelinux
 

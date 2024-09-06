@@ -9,26 +9,26 @@ describe Asciidoctor::PDF::ThemeLoader do
     it 'should not fail if theme data is empty' do
       theme = subject.new.load ''
       (expect theme).not_to be_nil
-      (expect theme).to be_an OpenStruct
+      (expect theme).to be_an Asciidoctor::PDF::ThemeData
       (expect theme.to_h).to be_empty
     end
 
     it 'should not fail if theme data is falsy' do
       theme = subject.new.load false
       (expect theme).not_to be_nil
-      (expect theme).to be_an OpenStruct
+      (expect theme).to be_an Asciidoctor::PDF::ThemeData
       (expect theme.to_h).to be_empty
     end
 
     # NOTE: this API is not used by the converter
     it 'should use specified theme data if raw theme data is nil' do
-      theme_data = OpenStruct.new
+      theme_data = Asciidoctor::PDF::ThemeData.new
       theme_data.base_font_color = '222222'
       theme = subject.new.load nil, theme_data
       (expect theme).to be theme_data
     end
 
-    it 'should store flattened keys in OpenStruct' do
+    it 'should store flattened keys in Asciidoctor::PDF::ThemeData' do
       theme_data = YAML.safe_load <<~'EOS'
       page:
         size: A4
@@ -41,7 +41,7 @@ describe Asciidoctor::PDF::ThemeLoader do
           font_style: bold
       EOS
       theme = subject.new.load theme_data
-      (expect theme).to be_an OpenStruct
+      (expect theme).to be_an Asciidoctor::PDF::ThemeData
       (expect theme).to respond_to :page_size
       (expect theme).to respond_to :base_font_family
       (expect theme).to respond_to :base_border_width
@@ -62,7 +62,7 @@ describe Asciidoctor::PDF::ThemeLoader do
             size: 24
       EOS
       theme = subject.new.load theme_data
-      (expect theme).to be_an OpenStruct
+      (expect theme).to be_an Asciidoctor::PDF::ThemeData
       (expect theme.admonition_icon_tip).to be_a Hash
       (expect theme.admonition_icon_tip).to eql name: 'far-lightbulb', stroke_color: 'FFFF00', size: 24
       (expect theme.admonition_icon_note).to be_a Hash
@@ -76,7 +76,7 @@ describe Asciidoctor::PDF::ThemeLoader do
           advice: ~
       EOS
       theme = subject.new.load theme_data
-      (expect theme).to be_an OpenStruct
+      (expect theme).to be_an Asciidoctor::PDF::ThemeData
       (expect theme.admonition_icon_advice).to be_nil
     end
 
@@ -93,7 +93,7 @@ describe Asciidoctor::PDF::ThemeLoader do
             stroke-color: FFFF00
       EOS
       theme = subject.new.load theme_data
-      (expect theme).to be_an OpenStruct
+      (expect theme).to be_an Asciidoctor::PDF::ThemeData
       (expect theme).to respond_to :page_size
       (expect theme).to respond_to :base_font_family
       (expect theme).to respond_to :abstract_title_font_size
@@ -112,7 +112,7 @@ describe Asciidoctor::PDF::ThemeLoader do
             color: 0000ff
       EOS
       theme = subject.new.load theme_data
-      (expect theme).to be_an OpenStruct
+      (expect theme).to be_an Asciidoctor::PDF::ThemeData
       (expect theme).to respond_to 'role_flaming-red_font_color'
       (expect theme['role_flaming-red_font_color']).to eql 'FF0000'
       (expect theme).to respond_to 'role_so-very-blue_font_color'
@@ -126,7 +126,7 @@ describe Asciidoctor::PDF::ThemeLoader do
           font-style: bold
       EOS
       theme = subject.new.load theme_data
-      (expect theme).to be_an OpenStruct
+      (expect theme).to be_an Asciidoctor::PDF::ThemeData
       (expect theme).to respond_to 'role_BOLD_font_style'
       (expect theme['role_BOLD_font_style']).to eql 'bold'
     end
@@ -148,7 +148,7 @@ describe Asciidoctor::PDF::ThemeLoader do
             content: 2 * 2
       EOS
       theme = subject.new.load theme_data
-      (expect theme).to be_an OpenStruct
+      (expect theme).to be_an Asciidoctor::PDF::ThemeData
       (expect theme.menu_caret_content).to eql '[">"]'
       (expect theme.ulist_marker_disc_content).to eql '0'
       (expect theme.footer_recto_left_content).to eql 'true'
@@ -172,7 +172,7 @@ describe Asciidoctor::PDF::ThemeLoader do
           text-align: $heading-align
         EOS
         theme = subject.new.load theme_data
-        (expect theme).to be_an OpenStruct
+        (expect theme).to be_an Asciidoctor::PDF::ThemeData
         (expect theme.base_align).to be_nil
         (expect theme.base_text_align).to eql 'center'
         (expect theme.heading_align).to be_nil
@@ -197,7 +197,7 @@ describe Asciidoctor::PDF::ThemeLoader do
             end: $table-caption-side
         EOS
         theme = subject.new.load theme_data
-        (expect theme).to be_an OpenStruct
+        (expect theme).to be_an Asciidoctor::PDF::ThemeData
         (expect theme.table_caption_side).to be_nil
         (expect theme.table_caption_end).to eql 'bottom'
         (expect theme.image_caption_end).to eql 'bottom'
@@ -214,7 +214,7 @@ describe Asciidoctor::PDF::ThemeLoader do
           item-spacing: $outline_list_item_spacing / 2
         EOS
         theme = subject.new.load theme_data
-        (expect theme).to be_an OpenStruct
+        (expect theme).to be_an Asciidoctor::PDF::ThemeData
         (expect theme.outline_list_item_spacing).to be_nil
         (expect theme.list_item_spacing).to eql 6
         (expect theme.footnotes_margin_top).to eql theme.list_item_spacing
@@ -232,7 +232,7 @@ describe Asciidoctor::PDF::ThemeLoader do
           font-color: $blockquote-font-color
         EOS
         theme = subject.new.load theme_data
-        (expect theme).to be_an OpenStruct
+        (expect theme).to be_an Asciidoctor::PDF::ThemeData
         (expect theme.blockquote_font_color).to be_nil
         (expect theme.quote_font_color).to eql '4A4A4A'
         (expect theme.quote_border_color).to eql theme.quote_font_color
@@ -249,7 +249,7 @@ describe Asciidoctor::PDF::ThemeLoader do
           font-color: $key-border-color
         EOS
         theme = subject.new.load theme_data
-        (expect theme).to be_an OpenStruct
+        (expect theme).to be_an Asciidoctor::PDF::ThemeData
         (expect theme.key_border_color).to be_nil
         (expect theme.kbd_border_color).to eql 'CCCCCC'
         (expect theme.kbd_font_color).to eql theme.kbd_border_color
@@ -265,7 +265,7 @@ describe Asciidoctor::PDF::ThemeLoader do
           font-family: $literal-font-family
         EOS
         theme = subject.new.load theme_data
-        (expect theme).to be_an OpenStruct
+        (expect theme).to be_an Asciidoctor::PDF::ThemeData
         (expect theme.literal_font_family).to be_nil
         (expect theme.codespan_font_family).to eql 'M+ 1mn'
         (expect theme.verse_font_family).to eql 'M+ 1mn'
@@ -284,7 +284,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         padding: [6, 12, -6, 14]
       EOS
       theme = subject.new.load theme_data
-      (expect theme).to be_an OpenStruct
+      (expect theme).to be_an Asciidoctor::PDF::ThemeData
       (expect theme.example_padding).to eql [12, 12, 12, 12]
       (expect theme.quote_padding).to eql [0, 12, 0, 14]
       (expect theme.sidebar_padding).to eql [12, 12, 12, 12]
@@ -297,7 +297,7 @@ describe Asciidoctor::PDF::ThemeLoader do
         padding: [-3, 12, -3, 14]
       EOS
       theme = subject.new.load theme_data
-      (expect theme).to be_an OpenStruct
+      (expect theme).to be_an Asciidoctor::PDF::ThemeData
       (expect theme.quote_padding).to eql [-3, 12, -3, 14]
     end
 
@@ -315,7 +315,7 @@ describe Asciidoctor::PDF::ThemeLoader do
             content: $page_size
       EOS
       theme = subject.new.load theme_data
-      (expect theme).to be_an OpenStruct
+      (expect theme).to be_an Asciidoctor::PDF::ThemeData
       (expect theme.footer_verso_left_content).to eql '2 * 12'
       (expect theme.footer_verso_right_content).to eql 'A4'
     end
@@ -477,16 +477,16 @@ describe Asciidoctor::PDF::ThemeLoader do
   describe '.load_file' do
     it 'should not fail if theme file is empty' do
       theme = subject.load_file fixture_file 'empty-theme.yml'
-      (expect theme).to be_an OpenStruct
+      (expect theme).to be_an Asciidoctor::PDF::ThemeData
       theme.delete_field :__loaded__
-      (expect theme).to eql OpenStruct.new
+      (expect theme).to eql Asciidoctor::PDF::ThemeData.new
     end
 
     it 'should not fail if theme file resolves to nil' do
       theme = subject.load_file fixture_file 'nil-theme.yml'
-      (expect theme).to be_an OpenStruct
+      (expect theme).to be_an Asciidoctor::PDF::ThemeData
       theme.delete_field :__loaded__
-      (expect theme).to eql OpenStruct.new
+      (expect theme).to eql Asciidoctor::PDF::ThemeData.new
     end
 
     it 'should throw error that includes filename and reason if theme is indented using tabs' do
@@ -726,7 +726,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     it 'should load base theme if theme name is base' do
       theme = subject.load_theme 'base'
       (expect theme).not_to be_nil
-      (expect theme).to be_an OpenStruct
+      (expect theme).to be_an Asciidoctor::PDF::ThemeData
       (expect theme.base_font_family).to eql 'Helvetica'
       (expect theme.codespan_font_family).to eql 'Courier'
       (expect theme).to eql subject.load_base_theme
@@ -735,7 +735,7 @@ describe Asciidoctor::PDF::ThemeLoader do
     it 'should load default theme if no arguments are given' do
       theme = subject.load_theme
       (expect theme).not_to be_nil
-      (expect theme).to be_an OpenStruct
+      (expect theme).to be_an Asciidoctor::PDF::ThemeData
       (expect theme.base_font_family).to eql 'Noto Serif'
       (expect theme.link_font_color).to eql '428BCA'
     end
