@@ -11,7 +11,7 @@ jobs:
       RGHOST_VERSION: '0.9.7'
       PRAWN_GMAGICK_VERSION: '0.0.9'
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install Ruby
       uses: ruby/setup-ruby@v1
       with:
