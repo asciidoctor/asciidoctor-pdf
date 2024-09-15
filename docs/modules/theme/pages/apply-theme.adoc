@@ -19,6 +19,9 @@ If the value of the `pdf-theme` attribute doesn't end with `.yml` (e.g., `base`)
 The value is then treated as a relative path (even if it's absolute) and resolved starting from the value of the `pdf-themesdir` attribute.
 If the `pdf-themesdir` is not specified, the built-in themes directory is used as the starting point instead (rather than the current working directory).
 +
+IMPORTANT: The theme file *must* end in .yml, not .yaml.
+When the theme path specified does not end in .yml, Asciidoctor PDF appends the suffix `-theme.yml` and looks for the resulting file.
++
 You can use the `+{docdir}+` token as the first path segment in the name to build an absolute path starting from the directory of the source document.
 +
 The theme name or file path can be specified using the `--theme` CLI option as a shorthand.

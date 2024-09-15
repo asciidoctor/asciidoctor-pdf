@@ -15,6 +15,10 @@ An Asciidoctor PDF theme is defined using a YAML data file that ends with `-them
 No keys are actually required.
 Each key you specify will customize the styling in some way that differs from the intrinsic defaults.
 
+IMPORTANT: The theme file *must* end in .yml, not .yaml.
+When the theme path specified does not end in .yml, Asciidoctor PDF appends the suffix `-theme.yml` and looks for the resulting file.
+Thus, the `-theme` segment is optional if you include the .yml file extension when specifying the theme path.
+
 For example, you can define a theme to set the page size to Letter (which differs from the default, which is A4).
 
 .my-theme.yml
