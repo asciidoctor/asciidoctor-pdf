@@ -11,6 +11,10 @@ Improvements::
 
 * replace OpenStruct with internal ThemeData class for storing theme data (#2535)
 
+Bug Fixes::
+
+* support horizontal alignment on AsciiDoc table cell that only contains paragraphs (#2358)
+
 == 2.3.18 (2024-07-27) - @mojavelinux
 
 Bug Fixes::

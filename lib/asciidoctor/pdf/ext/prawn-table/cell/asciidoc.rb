@@ -76,6 +76,7 @@ module Prawn
           padding_adjustment = content.context == :document ? padding_bottom : 0
           # NOTE: we've already reserved the space, so just let the box stretch to bottom of the content area
           pdf.bounds.instance_variable_set :@height, (pdf.y - pdf.page.margins[:bottom] - padding_adjustment)
+          pdf.bounds.instance_variable_set :@table_cell, true
           if @valign != :top && (excess_y = spanned_content_height - natural_content_height) > 0
             # QUESTION: could this cause a unexpected page overrun?
             pdf.move_down(@valign == :center ? (excess_y.fdiv 2) : excess_y)
@@ -92,6 +93,7 @@ module Prawn
           doc.catalog[:footnotes] = parent_doc.catalog[:footnotes]
           # TODO: apply horizontal alignment; currently it is necessary to specify alignment on content blocks
           apply_font_properties { pdf.traverse content }
+          pdf.bounds.remove_instance_variable :@table_cell
           if (extra_pages = pdf.page_number - start_page) > 0
             unless extra_pages == 1 && pdf.page.empty?
               logger.error message_with_context %(the table cell on page #{start_page} has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page), source_location: @source_location
@@ -116,11 +118,16 @@ module Prawn
             font_size = font_info[:size]
           end
           font_style ||= font_info[:style]
+          if (@align == :center || @align == :right) && content.blocks.map(&:context).uniq == [:paragraph]
+            prev_text_align = pdf.instance_variable_get :@base_text_align
+            pdf.instance_variable_set :@base_text_align, @align
+          end
           pdf.font font_family, size: font_size, style: font_style do
             yield
           ensure
             pdf.font_color = prev_font_color if prev_font_color
             pdf.font_scale = prev_font_scale if prev_font_scale
+            pdf.instance_variable_set :@base_text_align, prev_text_align if prev_text_align
           end
         end
       end

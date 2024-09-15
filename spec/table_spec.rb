@@ -1960,6 +1960,55 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect pdf.lines).to eql ['10. ten', '11. eleven', '12. twelve', 'buckle', 'my', 'shoe']
     end
 
+    it 'should honor horizontal alignment on AsciiDoc table cell' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [cols=1a]
+      |===
+      |left
+      |===
+
+      [cols=^1a]
+      |===
+      |center
+      |===
+
+      [cols=>1a]
+      |===
+      |right
+      |===
+      EOS
+
+      page_width = pdf.pages[0][:size][0]
+      midpoint = page_width * 0.5
+      left_text = pdf.find_unique_text 'left'
+      center_text = pdf.find_unique_text 'center'
+      right_text = pdf.find_unique_text 'right'
+      (expect left_text[:x]).to be < midpoint
+      (expect center_text[:x]).to be < midpoint
+      (expect center_text[:x] + center_text[:width]).to be > midpoint
+      (expect right_text[:x]).to be > midpoint
+    end
+
+    it 'should not honor horizontal alignment on AsciiDoc table cell that contains non-paragraph blocks' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      [cols=>1a]
+      |===
+      |
+      left
+
+      '''
+
+      left
+      |===
+      EOS
+
+      page_width = pdf.pages[0][:size][0]
+      midpoint = page_width * 0.5
+      left_texts = pdf.find_text 'left'
+      (expect left_texts[0][:x]).to be < midpoint
+      (expect left_texts[1][:x]).to be < midpoint
+    end
+
     it 'should convert nested table' do
       pdf = to_pdf <<~'EOS', analyze: true
       [cols="1,2a"]
