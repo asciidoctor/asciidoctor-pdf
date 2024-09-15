@@ -2749,6 +2749,65 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         end).to log_message severity: :ERROR, message: 'the table cell on page 1 has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page'
       end
     end
+
+    it 'should reserve remaining space on page once cell is determined to fit' do
+      pdf_theme = {
+        extends: 'default',
+        page_layout: 'landscape',
+        page_margin: 56,
+        base_font_size: 10.5,
+        base_line_height: 1.5,
+        list_item_spacing: 0,
+        prose_margin_bottom: 6,
+        table_cell_padding: [3, 5],
+      }
+
+      input = <<~END
+      :pdf-page-layout: landscape
+      :nofooter:
+
+      .Table 1
+      [cols=a]
+      |===
+      | Row 1
+      | * 1
+      * 2
+      * 3
+      * 4
+      |===
+
+      .Table 2
+      [cols=a]
+      |===
+      | Row 1
+      | * 1
+      * 2
+      * 3
+      * 4
+      |===
+
+      .Table 3
+      [cols=a]
+      |===
+      | Row 1
+      | * 1
+      * 2
+      * 3
+      * 4
+      * 5
+      * second to last line
+      * last line
+      |===
+      END
+
+      pdf = nil
+      (expect do
+        pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      end).not_to log_message
+      last_line_text = pdf.find_unique_text 'last line'
+      (expect last_line_text).not_to be_nil
+      (expect last_line_text[:page_number]).to eql 1
+    end
   end
 
   context 'Caption' do
