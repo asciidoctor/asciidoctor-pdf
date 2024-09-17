@@ -55,6 +55,9 @@ jobs:
         # remove 3.3 on ubuntu-latest to mark as primary
         - os: ubuntu-latest
           ruby: '3.3'
+        # remove 3.3 on windows-latest to lock version
+        - os: windows-latest
+          ruby: '3.3'
         include:
         # test oldest Ruby 3 to ensure compatibility across full range of Ruby 3 versions
         - os: ubuntu-latest
@@ -67,7 +70,7 @@ jobs:
           asciidoctor-version: '2.0.10'
           rouge-version: '~> 2.0.0'
         - os: windows-latest
-          ruby: '3.3'
+          ruby: '3.3.4' # lock version to work around warning about fiddle gem
           asciidoctor-diagram-version: ~
           asciidoctor-kroki-version: '0.10.0'
         # NOTE: enable once Asciidoctor 2.1.0 is released
