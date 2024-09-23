@@ -73,9 +73,8 @@ module Prawn
           end
           # NOTE: draw_bounded_content automatically adds FPTolerance to width and height
           pdf.bounds.instance_variable_set :@width, spanned_content_width
-          padding_adjustment = content.context == :document ? padding_bottom : 0
-          # NOTE: we've already reserved the space, so just let the box stretch to bottom of the content area
-          pdf.bounds.instance_variable_set :@height, (pdf.y - pdf.page.margins[:bottom] - padding_adjustment)
+          # NOTE: we've already reserved the space, so just let the box stretch to the maximum that could fit on a page
+          pdf.bounds.instance_variable_set :@height, (pdf.margin_box.height - padding_top - padding_bottom)
           if @valign != :top && (excess_y = spanned_content_height - natural_content_height) > 0
             # QUESTION: could this cause a unexpected page overrun?
             pdf.move_down(@valign == :center ? (excess_y.fdiv 2) : excess_y)
