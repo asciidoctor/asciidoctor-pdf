@@ -75,7 +75,6 @@ module Prawn
           pdf.bounds.instance_variable_set :@width, spanned_content_width
           # NOTE: we've already reserved the space, so just let the box stretch to the maximum that could fit on a page
           pdf.bounds.instance_variable_set :@height, (pdf.margin_box.height - padding_top - padding_bottom)
-          pdf.bounds.instance_variable_set :@table_cell, true
           if @valign != :top && (excess_y = spanned_content_height - natural_content_height) > 0
             # QUESTION: could this cause a unexpected page overrun?
             pdf.move_down(@valign == :center ? (excess_y.fdiv 2) : excess_y)
@@ -92,7 +91,6 @@ module Prawn
           doc.catalog[:footnotes] = parent_doc.catalog[:footnotes]
           # TODO: apply horizontal alignment; currently it is necessary to specify alignment on content blocks
           apply_font_properties { pdf.traverse content }
-          pdf.bounds.remove_instance_variable :@table_cell
           if (extra_pages = pdf.page_number - start_page) > 0
             unless extra_pages == 1 && pdf.page.empty?
               logger.error message_with_context %(the table cell on page #{start_page} has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page), source_location: @source_location

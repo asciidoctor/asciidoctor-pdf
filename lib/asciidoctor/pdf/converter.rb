@@ -4745,8 +4745,7 @@ module Asciidoctor
       end
 
       def allocate_space_for_list_item line_metrics
-        # need to check ancestors for table_cell as well; perhaps helper in_table_cell?
-        advance_page if !(bounds.instance_variable_get :@table_cell) && !at_page_top? && cursor < line_metrics.height + line_metrics.leading + line_metrics.padding_top
+        advance_page if !at_page_top? && cursor < line_metrics.height + line_metrics.leading + line_metrics.padding_top
       end
 
       def apply_text_decoration styles, category, level = nil
