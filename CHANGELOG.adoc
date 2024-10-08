@@ -55,6 +55,7 @@ Bug Fixes::
 * remove deprecated, undocumented `svg-font-family` theme key (the correct key is `svg-fallback-font-family`)
 * major improvement to OTF support following release of ttfunk 1.8.0 (automatic transitive dependency of prawn)
 * don't allow AsciiDoc table cell to overrun bottom of page on which it fits (#2538)
+* don't look for NULL glyph in fallback font as this can impact line height (#2541)
 
 == 2.3.18 (2024-07-27) - @mojavelinux
 
