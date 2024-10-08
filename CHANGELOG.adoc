@@ -15,6 +15,7 @@ Bug Fixes::
 
 * support horizontal alignment on AsciiDoc table cell that only contains paragraphs (#2358)
 * don't allow AsciiDoc table cell to overrun bottom of page on which it fits (#2538)
+* don't look for NULL glyph in fallback font as this can impact line height (#2541)
 
 == 2.3.18 (2024-07-27) - @mojavelinux
 

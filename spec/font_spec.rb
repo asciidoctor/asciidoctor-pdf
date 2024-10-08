@@ -88,6 +88,28 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect text[:font_name]).to eql 'NotoSerif-Bold'
     end
 
+    it 'should not look for NUL glyph in fallback font when missing from primary font' do
+      pdf_theme = {
+        extends: 'default',
+        font_catalog: {
+          'Noto Serif' => {
+            'normal' => 'notoserif-regular-subset.ttf',
+          },
+          'M+ 1p Fallback' => {
+            'normal' => 'mplus1p-regular-fallback.ttf',
+          },
+        },
+        base_font_family: 'M+ 1p Fallback',
+        font_fallbacks: ['Noto Serif'],
+      }
+      input = '. [[L1]]List item with anchor'
+      pdf = to_pdf input, analyze: true, pdf_theme: pdf_theme
+      marker, text = pdf.text
+      (expect marker[:font_name]).to eql 'mplus-1p-regular'
+      (expect text[:font_name]).to eql 'mplus-1p-regular'
+      (expect marker[:y]).to eql text[:y]
+    end
+
     it 'should include box drawing glyphs in bundled monospace font', visual: true do
       input_file = Pathname.new fixture_file 'box-drawing.adoc'
       to_file = to_pdf_file input_file, 'font-box-drawing.pdf'

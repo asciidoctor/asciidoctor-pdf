@@ -61,8 +61,8 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
     form_fragments_from_like_font_glyph_pairs font_glyph_pairs, fragment_hash
   end
 
-  # TODO: remove once Prawn 2.5 is released
   def find_font_for_this_glyph char, current_font, current_font_opts = {}, fallback_fonts_to_check = [], original_font = current_font
+    return current_font if char == ?\u0000 # never look for NUL character in fallback fonts as it's not rendered
     (doc = @document).font current_font, current_font_opts
     if doc.font.glyph_present? char
       current_font
