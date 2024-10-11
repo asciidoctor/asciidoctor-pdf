@@ -26,7 +26,6 @@ Enhancements::
 * upgrade to prawn-icon 3.1.x to add support for the Material Design Icons (`mdi`) as an available font-based icon set (PR #2334)
 * honor `GS_OPTIONS` environment variable for supplying additional parameters to command called by RGhost optimizer (#2337)
 * add support for passing a color mode to the default optimizer (#2347)
-* support horizontal alignment on AsciiDoc table cell that only contains paragraphs (#2358)
 * allow revision content to be customized by theme (#2362)
 * add symbols for shift, command, option, and return keys to the fallback font
 * add support for `nowrap` and `nobreak` roles on formatted text
@@ -39,7 +38,6 @@ Improvements::
 * drop support for the unmaintained payment font (`pf`) for use in font-based icons
 * refactor formatted text transform to simplify how inner space is collapsed; verify only inner hard breaks are preserved
 * allow relative font size for sub and sup to be set independently; support combined setting for backwards compatibility
-* replace OpenStruct with internal ThemeData class for storing theme data (#2535)
 
 Bug Fixes::
 
@@ -54,8 +52,22 @@ Bug Fixes::
 * prevent special character substitution from interfering with callouts in plain verbatim block (#2390)
 * remove deprecated, undocumented `svg-font-family` theme key (the correct key is `svg-fallback-font-family`)
 * major improvement to OTF support following release of ttfunk 1.8.0 (automatic transitive dependency of prawn)
+
+== 2.3.19 (2024-10-11) - @mojavelinux
+
+Improvements::
+
+* replace OpenStruct with internal ThemeData class for storing theme data (#2535)
+
+Bug Fixes::
+
+* support horizontal alignment on AsciiDoc table cell that only contains paragraphs (#2358)
 * don't allow AsciiDoc table cell to overrun bottom of page on which it fits (#2538)
 * don't look for NULL glyph in fallback font as this can impact line height (#2541)
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.19[git tag] | {url-repo}/compare/v2.3.18\...v2.3.19[full diff]
 
 == 2.3.18 (2024-07-27) - @mojavelinux
 
