@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.3.19 (2024-10-11) - @mojavelinux
 
 Improvements::
 
@@ -16,6 +16,10 @@ Bug Fixes::
 * support horizontal alignment on AsciiDoc table cell that only contains paragraphs (#2358)
 * don't allow AsciiDoc table cell to overrun bottom of page on which it fits (#2538)
 * don't look for NULL glyph in fallback font as this can impact line height (#2541)
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.19[git tag] | {url-repo}/compare/v2.3.18\...v2.3.19[full diff]
 
 == 2.3.18 (2024-07-27) - @mojavelinux
 
