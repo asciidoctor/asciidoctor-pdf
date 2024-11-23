@@ -34,6 +34,32 @@ include::example$pdf-converter-custom-thematic-break.rb[tags=**]
 The return value of the convert handler method for a block node is ignored, which is why there's no clear return value in this override.
 If this were a convert handler method for an inline node, a return value would be required, which becomes the text to render.
 
+
+
+=== Page border in margin
+
+* This script author's description: https://shumpei-tanaka.github.io/en/posts/2024-11-23-asciidoc-page-border-in-margin/
+
+There is a feature: `Page Border` and `Surround header` in Word of Microsoft's Office.
+
+This converter was made for substitution of their.
+
+.Extended converter with border hole page
+[,ruby]
+----
+include::example$/pdf-converter-border-hole-page.rb[tags=**]
+----
+
+`write_header_border` is function to write border surround header.
+It takes values below from style setting.
+
+* header margin
+* herder column ratios
+
+`write_mergin_border` is function to write page border in mergin.
+It takes margin values from style setting.
+
+
 == Custom title page
 
 Every title page is as unique as the work itself.
