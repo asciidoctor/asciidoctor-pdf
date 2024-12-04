@@ -62,8 +62,8 @@ jobs:
         # test oldest Ruby 3 to ensure compatibility across full range of Ruby 3 versions
         - os: ubuntu-latest
           ruby: '3.0'
-        - os: macos-12
-          ruby: '3.3'
+        #- os: macos-12
+        #  ruby: '3.3'
         # test oldest permitted versions of dependencies
         - os: ubuntu-latest
           ruby: '2.7'
@@ -112,15 +112,15 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install ghostscript poppler-utils
-    - name: Install Ghostscript and Poppler (macOS)
-      if: matrix.os == 'macos-12'
-      run: |
-        brew unlink ghostscript
-        # ghostscript 10.02.1
-        wget https://raw.githubusercontent.com/Homebrew/homebrew-core/0e594be417b7947dcf7d6eb63293fcf652b7e3ae/Formula/g/ghostscript.rb
-        brew install --formula ./ghostscript.rb
-        brew link ghostscript || true
-        brew install poppler
+    #- name: Install Ghostscript and Poppler (macOS)
+    #  if: matrix.os == 'macos-12'
+    #  run: |
+    #    brew unlink ghostscript
+    #    # ghostscript 10.02.1
+    #    wget https://raw.githubusercontent.com/Homebrew/homebrew-core/0e594be417b7947dcf7d6eb63293fcf652b7e3ae/Formula/g/ghostscript.rb
+    #    brew install --formula ./ghostscript.rb
+    #    brew link ghostscript || true
+    #    brew install poppler
     - name: Install Ghostscript and Poppler and set GS env var (Windows)
       if: matrix.os == 'windows-latest'
       run: |
