@@ -4836,11 +4836,24 @@ module Asciidoctor
         padding = expand_padding_value @theme[%(#{category}_padding)]
         if actual_width > (available_width = bounds.width - padding[3].to_f - padding[1].to_f)
           adjusted_font_size = ((available_width * font_size).to_f / actual_width).truncate 4
-          if (min = @theme[%(#{category}_font_size_min)] || @theme.base_font_size_min) && adjusted_font_size < min
+          if (min = @theme[%(#{category}_font_size_min)] || @theme.base_font_size_min) && adjusted_font_size < (min = resolve_font_size min)
             min
           else
             adjusted_font_size
           end
+        end
+      end
+
+      def resolve_font_size value
+        return value unless ::String === value
+        if value.end_with? 'rem'
+          @root_font_size * value.to_f
+        elsif value.end_with? 'em'
+          font_size * value.to_f
+        elsif value.end_with? '%'
+          font_size * (value.to_f / 100)
+        else
+          value.to_f
         end
       end
 
