@@ -341,6 +341,30 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     end
   end
 
+  it 'should allow base minimum font size to be specified relative to base font size' do
+    pdf = to_pdf <<~'END', pdf_theme: { base_font_size: 12, base_font_size_min: '0.5rem' }, analyze: true
+    [%autofit]
+    ----
+    play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
+    ----
+    END
+
+    (expect pdf.text).to have_size 1
+    (expect pdf.text[0][:font_size].floor).to be 7
+  end
+
+  it 'should allow base minimum font size to be specified relative to current font size' do
+    pdf = to_pdf <<~'END', pdf_theme: { base_font_size: 15, code_font_size: 12, base_font_size_min: '0.5em' }, analyze: true
+    [%autofit]
+    ----
+    play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
+    ----
+    END
+
+    (expect pdf.text).to have_size 1
+    (expect pdf.text[0][:font_size].floor).to be 7
+  end
+
   it 'should use base font color if font color is not specified' do
     pdf = to_pdf <<~'END', pdf_theme: { base_font_color: 'AA0000', code_font_color: nil }, analyze: true
     before
