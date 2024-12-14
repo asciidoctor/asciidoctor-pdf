@@ -955,7 +955,8 @@ module Asciidoctor
                       valign: label_valign,
                       align: label_text_align,
                       color: (icon_data[:stroke_color] || font_color),
-                      size: icon_size
+                      size: icon_size,
+                      size_mode: :icon_height
                   elsif icons
                     if (::Asciidoctor::Image.format icon_path) == 'svg'
                       begin
