@@ -302,7 +302,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         (expect pdf.lines).to eql [%(\uf192 bullseye!)]
         marker_text = pdf.find_unique_text ?\uf192
         (expect marker_text).not_to be_nil
-        (expect marker_text[:font_name]).to eql 'FontAwesome5Free-Regular'
+        (expect marker_text[:font_name]).to eql 'FontAwesome6Free-Regular'
       end
     end
 
@@ -541,10 +541,10 @@ describe 'Asciidoctor::PDF::Converter - List' do
         (expect pdf.lines).to eql [%(\uf096 todo), %(\uf046 done)]
         unchecked_marker_text = pdf.find_unique_text ?\uf096
         (expect unchecked_marker_text).not_to be_nil
-        (expect unchecked_marker_text[:font_name]).to eql 'FontAwesome5Free-Solid'
+        (expect unchecked_marker_text[:font_name]).to eql 'FontAwesome6Free-Solid'
         checked_marker_text = pdf.find_unique_text ?\uf046
         (expect checked_marker_text).not_to be_nil
-        (expect checked_marker_text[:font_name]).to eql 'FontAwesome5Free-Solid'
+        (expect checked_marker_text[:font_name]).to eql 'FontAwesome6Free-Solid'
       end
     end
   end
