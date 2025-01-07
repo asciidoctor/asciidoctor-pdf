@@ -1733,7 +1733,7 @@ describe 'Asciidoctor::PDF::Converter - Page' do
         content
         END
         (expect pdf.images).to be_empty
-      end).to log_message severity: :WARN, message: %(~Missing end tag for 'rect')
+      end).to log_message severity: :WARN, message: %(~The data supplied is not a valid SVG document.)
     end
 
     it 'should only warn once if background image cannot be loaded' do

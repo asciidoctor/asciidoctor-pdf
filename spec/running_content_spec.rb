@@ -3046,7 +3046,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         pdf = to_pdf 'body', analyze: true, pdf_theme: pdf_theme, enable_footer: true
         footer_text = pdf.find_unique_text font_color: '0000FF'
         (expect footer_text[:string]).to eql '[no worky]'
-      end).to log_message severity: :WARN, message: %(~could not embed image in running content: #{fixture_file 'broken.svg'}; Missing end tag for 'rect')
+      end).to log_message severity: :WARN, message: %(~could not embed image in running content: #{fixture_file 'broken.svg'}; The data supplied is not a valid SVG document.)
     end
 
     it 'should resolve attribute references in target of inline image' do
