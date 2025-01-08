@@ -4,7 +4,7 @@ permissions: read-all
 jobs:
   build:
     name: ${{ github.event.client_payload.message }}
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       ASCIIDOCTOR_DIAGRAM_VERSION: '~> 2.1'
       PYGMENTS_VERSION: '~> 2.0'

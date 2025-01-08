@@ -18,13 +18,13 @@ jobs:
       (github.event_name == 'schedule' && github.repository_owner == 'asciidoctor') ||
       github.event_name == 'push' || github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' && !startsWith(github.head_ref, 'docs/'))
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - name: Proceed
       run: echo ok go
   lint:
     needs: activate
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -44,7 +44,7 @@ jobs:
     needs: lint
     strategy:
       matrix:
-        os: [ubuntu-22.04, windows-latest]
+        os: [ubuntu-24.04, windows-latest]
         ruby: [jruby-9.2.21.0, jruby-9.4.2.0, '2.7', '3.3']
         asciidoctor-version: [~]
         asciidoctor-diagram-version: ['~> 2.2']
@@ -52,20 +52,20 @@ jobs:
         rouge-version: [~]
         upstream: [~]
         exclude:
-        # remove 3.3 on ubuntu-22.04 to mark as primary
-        - os: ubuntu-22.04
+        # remove 3.3 on ubuntu-24.04 to mark as primary
+        - os: ubuntu-24.04
           ruby: '3.3'
         # remove 3.3 on windows-latest to lock version
         - os: windows-latest
           ruby: '3.3'
         include:
         # test oldest Ruby 3 to ensure compatibility across full range of Ruby 3 versions
-        - os: ubuntu-22.04
+        - os: ubuntu-24.04
           ruby: '3.0'
         #- os: macos-12
         #  ruby: '3.3'
         # test oldest permitted versions of dependencies
-        - os: ubuntu-22.04
+        - os: ubuntu-24.04
           ruby: '2.7'
           asciidoctor-version: '2.0.10'
           rouge-version: '~> 2.0.0'
@@ -74,13 +74,13 @@ jobs:
           asciidoctor-diagram-version: ~
           asciidoctor-kroki-version: '0.10.0'
         # NOTE: enable once Asciidoctor 2.1.0 is released
-        #- os: ubuntu-22.04
+        #- os: ubuntu-24.04
         #  ruby: '3.3'
         #  asciidoctor-version: '~> 2.0.0'
-        - os: ubuntu-22.04
+        - os: ubuntu-24.04
           ruby: '3.3'
           upstream: upstream
-        - os: ubuntu-22.04
+        - os: ubuntu-24.04
           ruby: '3.3'
           rouge-version: '~> 4.0.0'
           primary: primary
@@ -108,7 +108,7 @@ jobs:
         bundle config --local without docs lint
         echo 'COVERAGE=deep' >> $GITHUB_ENV
     - name: Install Ghostscript and Poppler (Linux)
-      if: matrix.os == 'ubuntu-22.04'
+      if: matrix.os == 'ubuntu-24.04'
       run: |
         sudo apt-get update
         sudo apt-get install ghostscript poppler-utils
