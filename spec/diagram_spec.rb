@@ -41,7 +41,7 @@ describe 'Asciidoctor Diagram Integration', if: (RSpec::ExampleGroupHelpers.gem_
     (expect Pathname.new output_file 'images/pdfwidth-test.png').to exist
     images = pdf.images
     (expect images).to have_size 1
-    image_data = JSON.load (Pathname.new output_file '.asciidoctor/diagram/pdfwidth-test.png.cache').read
+    image_data = JSON.parse (Pathname.new output_file '.asciidoctor/diagram/pdfwidth-test.png.cache').read
     (expect images[0][:intrinsic_width].to_f).to eql image_data['width'].to_f
     (expect images[0][:width].to_f).to eql 72.0
   end
