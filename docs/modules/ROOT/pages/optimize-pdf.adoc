@@ -5,7 +5,7 @@ By default, Asciidoctor PDF does not optimize the PDF it generates and it does n
 This page covers several approaches you can take to optimize and compress the PDF output.
 
 IMPORTANT: If you're creating a PDF for Amazon's Kindle Direct Publishing (KDP), GitLab repository preview, or other online publishers, you'll likely need to optimize the file before uploading.
-In their words, you must tidy up the reference tree and https://kdp.amazon.com/en_US/help/topic/G201953020#check[flatten all transparencies^] (mostly likely referring to images).
+In their words, you must tidy up the reference tree and https://kdp.amazon.com/en_US/help/topic/G201953020#check[flatten all transparencies^] (most likely referring to images).
 If you don't do this step, the platform may reject your upload or fail to display it properly.
 (For KDP, `-a optimize` works best.
 For GitLab repository preview, either `-a optimize` or `hexapdf optimize` will do the trick.)
