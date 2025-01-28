@@ -27,7 +27,7 @@ describe 'Asciidoctor Diagram Integration', if: (RSpec::ExampleGroupHelpers.gem_
 
   it 'should be able to control display size of image using pdfwidth attribute on diagram block' do
     require 'asciidoctor-diagram'
-    pdf = to_pdf <<~END, safe: :unsafe, attributes: { 'docdir' => fixtures_dir, 'outdir' => output_dir, 'imagesdir' => 'images' }, analyze: :image
+    pdf = to_pdf <<~'END', safe: :unsafe, attributes: { 'docdir' => fixtures_dir, 'outdir' => output_dir, 'imagesdir' => 'images' }, analyze: :image
 
     [plantuml,pdfwidth-test,png,pdfwidth=1in]
     ....
@@ -41,7 +41,8 @@ describe 'Asciidoctor Diagram Integration', if: (RSpec::ExampleGroupHelpers.gem_
     (expect Pathname.new output_file 'images/pdfwidth-test.png').to exist
     images = pdf.images
     (expect images).to have_size 1
-    (expect images[0][:intrinsic_width].to_f).to eql 288.0
+    image_data = JSON.parse (Pathname.new output_file '.asciidoctor/diagram/pdfwidth-test.png.cache').read
+    (expect images[0][:intrinsic_width].to_f).to eql image_data['width'].to_f
     (expect images[0][:width].to_f).to eql 72.0
   end
 

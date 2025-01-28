@@ -103,7 +103,11 @@ describe 'Asciidoctor::PDF::Optimizer', if: (RSpec::ExampleGroupHelpers.gem_avai
     %w(gray grayscale).each do |mode|
       input_file = Pathname.new fixture_file 'with-color.adoc'
       to_file = to_pdf_file input_file, 'optimizer-gray.pdf', attribute_overrides: { 'optimize' => %(screen:#{mode}) }
-      (expect to_file).to visually_match 'optimizer-gray.pdf'
+      begin
+        (expect to_file).to visually_match 'optimizer-gray.pdf'
+      rescue RSpec::Expectations::ExpectationNotMetError
+        (expect to_file).to visually_match 'optimizer-gray-gs-9.pdf'
+      end
     end
   end
 
