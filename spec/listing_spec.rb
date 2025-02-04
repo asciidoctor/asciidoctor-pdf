@@ -50,6 +50,23 @@ describe 'Asciidoctor::PDF::Converter - Listing' do
     (expect listing_page_numbers).to eql [2]
   end
 
+  it 'should move unbreakable block with autofit that is shorter than page to next page to avoid splitting it' do
+    pdf = to_pdf <<~END, analyze: true
+    #{(['paragraph'] * 20).join (?\n * 2)}
+
+    [%unbreakable%autofit]
+    ----
+    #{(['foo bar fizz buzz yin yang'] * 4).join ' '}
+
+    #{(['listing'] * 19).join ?\n}
+    ----
+    END
+
+    listing_page_numbers = (pdf.find_text 'listing').map {|it| it[:page_number] }.uniq
+    (expect listing_page_numbers).to eql [2]
+    (expect (pdf.find_text 'listing')[0][:font_size]).to be < 9
+  end
+
   it 'should not split block that has less lines than breakable_min_lines value' do
     pdf = with_content_spacer 10, 700 do |spacer_path|
       to_pdf <<~END, pdf_theme: { code_border_color: 'FF0000', code_breakable_min_lines: 3 }, analyze: :line
