@@ -167,4 +167,4 @@ jobs:
         bundle config --local clean true
         bundle --jobs 3 --retry 3
     - name: Run tests
-      run: bundle exec ruby -w -W:no-experimental $(bundle exec ruby -e 'print File.join Gem.bindir, %q(rake)') spec
+      run: bundle exec ruby -w $(bundle exec ruby -e 'print File.join Gem.bindir, %q(rake)') spec
