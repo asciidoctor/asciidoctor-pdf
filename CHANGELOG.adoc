@@ -54,6 +54,10 @@ Bug Fixes::
 * remove deprecated, undocumented `svg-font-family` theme key (the correct key is `svg-fallback-font-family`)
 * major improvement to OTF support following release of ttfunk 1.8.0 (automatic transitive dependency of prawn)
 
+Compliance::
+
+* drop support for JRuby 9.2 (require at least Ruby 2.7 compliance)
+
 == 2.3.19 (2024-10-11) - @mojavelinux
 
 Improvements::
