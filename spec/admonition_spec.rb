@@ -709,7 +709,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         label_text = pdf.find_unique_text 'TIP'
         (expect label_text).not_to be_nil
         (expect label_text[:font_name]).to include 'Bold'
-      end).to log_message severity: :WARN, message: %(~could not embed admonition icon image: #{fixture_file 'broken.svg'}; Missing end tag for 'rect')
+      end).to log_message severity: :WARN, message: %(~could not embed admonition icon image: #{fixture_file 'broken.svg'}; The data supplied is not a valid SVG document.\nMissing end tag for 'rect')
     end
 
     it 'should resize fallback admonition label to fit in available space if icon fails to embed' do
@@ -726,7 +726,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         label_text = pdf.find_unique_text 'WARNING'
         (expect label_text).not_to be_nil
         (expect label_text[:font_size]).to be < 10.5
-      end).to log_message severity: :WARN, message: %(~could not embed admonition icon image: #{fixture_file 'broken.svg'}; Missing end tag for 'rect')
+      end).to log_message severity: :WARN, message: %(~could not embed admonition icon image: #{fixture_file 'broken.svg'}; The data supplied is not a valid SVG document.\nMissing end tag for 'rect')
     end
 
     # NOTE: this test also verifies the text transform is applied as requested by theme
