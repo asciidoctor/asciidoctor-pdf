@@ -20,8 +20,6 @@ require_relative 'spec_helper/inspectors'
 require_relative 'spec_helper/matchers'
 
 RSpec.configure do |config|
-  Warning[:experimental] = false if (Gem::Version.new RUBY_VERSION) < (Gem::Version.new '3.0.0')
-
   config.extend RSpec::ExampleGroupHelpers
   config.include RSpec::ExampleHelpers
 
