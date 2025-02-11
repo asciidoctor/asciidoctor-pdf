@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
-require 'prawn-svg'
+if Warning[:experimental] && (RUBY_VERSION.start_with? '2.')
+  Warning[:experimental] = false
+  require 'prawn-svg'
+  Warning[:experimental] = true
+else
+  require 'prawn-svg'
+end
 require_relative 'prawn-svg/calculators/document_sizing'
 require_relative 'prawn-svg/elements/image'
 require_relative 'prawn-svg/elements/use'
