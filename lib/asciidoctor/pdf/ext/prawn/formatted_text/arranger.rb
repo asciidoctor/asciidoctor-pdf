@@ -9,7 +9,7 @@ Prawn::Text::Formatted::Arranger.prepend (Module.new do
     super
     @dummy_text = ?\u0000
     @normalize_line_height = false
-    @sub_and_sup_relative_size = 0.583
+    @sub_relative_size = @sup_relative_size = 0.583
   end
 
   def format_array= array
@@ -38,13 +38,18 @@ Prawn::Text::Formatted::Arranger.prepend (Module.new do
   end
 
   def apply_font_size size, styles
-    if (subscript? styles) || (superscript? styles)
+    if (sub = subscript? styles) || (superscript? styles)
       size ||= @document.font_size
+      if instance_variable_defined? :@sub_and_sup_relative_size
+        relative_size = @sub_and_sup_relative_size
+      else
+        relative_size = sub ? @sub_relative_size : @sup_relative_size
+      end
       if String === size
         units = (size.end_with? 'em', '%') ? ((size.end_with? '%') ? '%' : 'em') : ''
-        size = %(#{size.to_f * @sub_and_sup_relative_size}#{units})
+        size = %(#{size.to_f * relative_size}#{units})
       else
-        size *= @sub_and_sup_relative_size
+        size *= relative_size
       end
       @document.font_size(size) { yield }
     elsif size
