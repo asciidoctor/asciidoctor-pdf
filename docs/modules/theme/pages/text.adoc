@@ -43,6 +43,9 @@ The font size may be specified either as a fixed value (e.g., `12`) or a relativ
 Font sizes are most often specified as a fixed value, though there are important cases when a relative value is more suitable.
 The font size always resolves to a point value when text is written to the PDF.
 
+IMPORTANT: The `base-font-size` must always be a number.
+That's because the value of this key is the reference value on which relative font values (e.g., `0.75rem`) are based.
+
 If the font size is specified as a number, or a number with a fixed unit of measurement (e.g., `px`), that value is converted to points.
 The conversion to points is done when the theme is loaded.
 The `font-size` key on the `base` category, as well as min, large, and small font size keys, must always be specified as a fixed value.
