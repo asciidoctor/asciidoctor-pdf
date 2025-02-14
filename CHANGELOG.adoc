@@ -7,7 +7,9 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Improvements::
+
+* allow value of `base-font-size-min` and `<category>-font-size-min` theme keys to be relative (e.g., 0.75em) (#2547)
 
 == 2.3.19 (2024-10-11) - @mojavelinux
 

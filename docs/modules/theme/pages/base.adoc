@@ -59,11 +59,11 @@ base:
   font-size: 10.5
 
 |font-size-min
-|xref:language.adoc#values[Number] +
+|xref:text.adoc#font-size[Font size] +
 (default: `6`)
 |[source]
 base:
-  font-size-min: $base-font-size * 0.75
+  font-size-min: 0.75rem
 
 |font-style
 |xref:text.adoc#font-style[Font style] +
