@@ -17,7 +17,6 @@ class OptimizerHexaPDF < Asciidoctor::PDF::Optimizer::Base
 
   def optimize_file path
     @optimize.execute path, path
-    @optimize.out_options[:compress_pages] = false
     nil
   rescue
     # retry without page compression, which can sometimes fail
