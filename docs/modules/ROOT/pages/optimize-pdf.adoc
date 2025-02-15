@@ -156,15 +156,15 @@ class Asciidoctor::PDF::Optimizer
 
   def optimize_file path
     options = @optimize.instance_variable_get :@out_options
-    options.compress_pages = true
-    #options.object_streams = :preserve
-    #options.xref_streams = :preserve
-    #options.streams = :preserve # or :uncompress
+    options[:compress_pages] = true
+    #options[:object_streams] = :preserve
+    #options[:xref_streams] = :preserve
+    #options[:streams] = :preserve # or :uncompress
     @optimize.execute path, path
     nil
   rescue
     # retry without page compression, which can sometimes fail
-    options.compress_pages = false
+    options[:compress_pages] = false
     @optimize.execute path, path
     nil
   end
@@ -181,8 +181,8 @@ To see more options that `hexapdf optimize` offers, run:
 
  $ hexapdf help optimize
 
-For example, to make the source of the PDF a bit more readable (though less optimized), set the stream-related options to `preserve` (e.g., `--streams preserve` from the CLI or `options.streams = :preserve` from the API).
-You can also disable page compression (e.g., `--no-compress-pages` from the CLI or `options.compress_pages = false` from the API).
+For example, to make the source of the PDF a bit more readable (though less optimized), set the stream-related options to `preserve` (e.g., `--streams preserve` from the CLI or `options[:streams] = :preserve` from the API).
+You can also disable page compression (e.g., `--no-compress-pages` from the CLI or `options[:compress_pages] = false` from the API).
 
 hexapdf also allows you to add password protection to your PDF, if that's something you're interested in doing.
 
