@@ -112,14 +112,14 @@ The fonts used by the default theme in Asciidoctor PDF provide all of these glyp
 If the .notdef glyph is non-empty (i.e., contains splines), it will be used as the default glyph when the document requests a character that's missing from the font.
 Unlike other glyphs, the .notdef glyph is referenced by name only, meaning it does not have a designated Unicode code point.
 
-Although Asciidoctor PDF uses the \u0000 character as a placeholder for inline anchors, the font is not required to provide this character.
-Asciidoctor PDF assumes that the primary font provides this character and uses the font metrics from that font as though it were there.
+The font will also need to provide glyphs for all characters used in the document content, such as substituted arrows (e.g., =>) and emoji (e.g., 👍).
 
 If you're preparing a font for use in verbatim blocks (e.g., a listing block), you'll also need this range of characters:
 
 * \u2460 to \u2468 - circled numbers
 
-The font will also need to provide glyphs for all characters used in the document content, such as emoji.
+Although Asciidoctor PDF uses the \u0000 character as a placeholder for inline anchors, the font is not required to provide this character.
+Asciidoctor PDF assumes that the primary font provides this character and uses the font metrics from that font as though it were there.
 
 If you don't want to add additional glyphs to the font you're preparing, you can configure a fallback font instead.
 A symbol font, such as Symbola, is a good choice as a fallback font since it's focus is on filling in these glyphs for other fonts.
