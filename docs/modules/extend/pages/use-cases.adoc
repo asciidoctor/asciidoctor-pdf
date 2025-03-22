@@ -16,6 +16,11 @@ For example, to register and use the extended converter that allows you to theme
 
  $ asciidoctor-pdf -r pdf-converter-admonition-theme-per-type.rb doc.adoc
 
+If you're using Asciidoctor PDF via the `asciidoctorj` command provided by AsciidoctorJ, you'll need to first require the `asciidoctor-pdf` gem.
+This step is necessary since the extended converter assumes that Asciidoctor PDF has already been required by the time it's required itself.
+
+ $ asciidoctorj -b pdf -r asciidoctor-pdf -r pdf-converter-admonition-theme-per-type.rb doc.adoc
+
 Refer to the sections below for details about how to use each extended converter.
 
 == Custom thematic break
