@@ -9,6 +9,11 @@ To use an extended converter, require it by passing the path to the `-r` flag wh
 
 The converter will self-register with the `pdf` backend and thus get used as the Asciidoctor PDF converter.
 
+If you're using Asciidoctor PDF via the `asciidoctorj` command provided by AsciidoctorJ, you'll need to first require the `asciidoctor-pdf` gem.
+This step is necessary since the extended converter assumes that Asciidoctor PDF has already been required by the time it's required itself.
+
+ $ asciidoctorj -b pdf -r asciidoctor-pdf -r ./extended-pdf-converter.rb doc.adoc
+
 That's all there is to it!
 
 == Go further
