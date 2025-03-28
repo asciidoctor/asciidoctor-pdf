@@ -46,7 +46,7 @@ The following image types (and corresponding file extensions) are supported:
 * JPEG (.jpg)
 * SVG (.svg)
 
-CAUTION: The GIF (.gif), TIFF (.tiff), WebP (.webp), BMP (.bmp), and interlaced PNG formats are not supported unless you install prawn-gmagick.
+CAUTION: The GIF (.gif), WebP (.webp), TIFF (.tiff), BMP (.bmp), and interlaced PNG formats are not supported unless you install prawn-gmagick.
 See <<other-image-formats>> for details.
 
 NOTE: The SVG must declare the `viewBox` attribute on the root `<svg>` element.

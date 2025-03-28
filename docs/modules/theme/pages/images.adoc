@@ -14,7 +14,7 @@ The theme supports the following image formats:
 
 When specified, the filename of the image must use the file extension that matches its format.
 
-CAUTION: CAUTION: The GIF (.gif), TIFF (.tiff), BMP (.bmp), and interlaced PNG formats are not supported unless you install prawn-gmagick.
+CAUTION: CAUTION: The GIF (.gif), WebP (.webp), TIFF (.tiff), BMP (.bmp), and interlaced PNG formats are not supported unless you install prawn-gmagick.
 See xref:ROOT:image-paths-and-formats.adoc#other-image-formats[Supporting additional image file formats] for details.
 
 [#paths]
