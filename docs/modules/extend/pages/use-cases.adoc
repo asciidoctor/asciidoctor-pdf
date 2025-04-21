@@ -352,7 +352,8 @@ This use case employs a tree processor rather than an extended PDF converter, th
 include::example$breakable-tables-tree-processor.rb[]
 ----
 
-This same technique can be used to add the `breakable` or `unbreakable` option at runtime to any blocks of your choosing.
+This same technique can be used to add the `breakable` or `unbreakable` option at runtime to any blocks that support `breakable` or `unbreakable`.
+See xref:ROOT:breakable-and-unbreakable.adoc[].
 
 == Narrow TOC
 
