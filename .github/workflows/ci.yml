@@ -62,6 +62,9 @@ jobs:
         # test oldest Ruby 3 to ensure compatibility across full range of Ruby 3 versions
         - os: ubuntu-22.04
           ruby: '3.0'
+        # test latest Ruby 3 to ensure compatibility across full range of Ruby 3 versions
+        - os: ubuntu-22.04
+          ruby: '3.4'
         #- os: macos-12
         #  ruby: '3.3'
         # test oldest permitted versions of dependencies
