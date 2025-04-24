@@ -500,7 +500,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         (expect (pdf.find_unique_text 'does not fit')[:page_number]).to be 2
         (expect (pdf.find_unique_text 'paragraph')[:page_number]).to be 2
         (expect calls).to have_size 1
-        (expect (calls.join ?\n).scan '`dry_run\'').to have_size 2
+        (expect (calls.join ?\n).scan %r/[`# ]dry_run'/).to have_size 3
       end
 
       it 'should restart dry run at current position once content exceeds height of first page' do
