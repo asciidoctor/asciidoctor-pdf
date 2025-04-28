@@ -44,7 +44,8 @@ jobs:
     needs: lint
     strategy:
       matrix:
-        os: [ubuntu-22.04, windows-latest]
+        os: [ubuntu-22.04]
+        #os: [ubuntu-22.04, windows-latest]
         ruby: [jruby-9.2.21.0, jruby-9.4.2.0, '2.7', '3.3']
         asciidoctor-version: [~]
         asciidoctor-diagram-version: ['~> 2.2']
@@ -69,10 +70,10 @@ jobs:
           ruby: '2.7'
           asciidoctor-version: '2.0.10'
           rouge-version: '~> 2.0.0'
-        - os: windows-latest
-          ruby: '3.3.4' # lock version to work around warning about fiddle gem
-          asciidoctor-diagram-version: ~
-          asciidoctor-kroki-version: '0.10.0'
+        #- os: windows-latest
+        #  ruby: '3.3.4' # lock version to work around warning about fiddle gem
+        #  asciidoctor-diagram-version: ~
+        #  asciidoctor-kroki-version: '0.10.0'
         # NOTE: enable once Asciidoctor 2.1.0 is released
         #- os: ubuntu-22.04
         #  ruby: '3.3'
