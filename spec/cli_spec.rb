@@ -104,7 +104,7 @@ describe 'asciidoctor-pdf' do
       (expect res.exitstatus).to be 0
       (expect out).to be_empty
       (expect err).to be_empty
-      skip_pages = [10, 11, 14] if Gem.loaded_specs['rouge'].version < (Gem::Version.new '2.1.0')
+      skip_pages = [10, 11, 14] if Gem.loaded_specs['rouge'].version < (Gem::Version.new '4.5.2')
       reference_file = File.absolute_path example_file 'chronicles-example.pdf'
       (expect output_file 'chronicles-example.pdf').to visually_match reference_file, skip_pages: skip_pages
     end)
