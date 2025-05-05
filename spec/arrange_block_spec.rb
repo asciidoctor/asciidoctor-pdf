@@ -2052,34 +2052,34 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
   describe 'acceptance', if: ENV['COVERAGE'], visual: true do
     it 'at top, fits' do
       to_file = to_pdf_file (Pathname.new (fixture_file 'arrange-block-at-top-fits.adoc')),
-        'arrange-block-at-top-fits.pdf', attribute_overrides: { 'source-highlighter' => 'rouge' }
+        'arrange-block-at-top-fits.pdf'
       (expect to_file).to visually_match 'arrange-block-at-top-fits.pdf'
     end
 
     it 'at top, does not fit' do
       (expect do
         to_file = to_pdf_file (Pathname.new (fixture_file 'arrange-block-at-top-does-not-fit.adoc')),
-          'arrange-block-at-top-does-not-fit.pdf', attribute_overrides: { 'source-highlighter' => 'rouge' }
+          'arrange-block-at-top-does-not-fit.pdf'
         (expect to_file).to visually_match 'arrange-block-at-top-does-not-fit.pdf'
       end).to log_message severity: :ERROR, message: /the table cell on page \d+ has been truncated/
     end
 
     it 'below top, fits' do
       to_file = to_pdf_file (Pathname.new (fixture_file 'arrange-block-below-top-fits.adoc')),
-        'arrange-block-below-top-fits.pdf', attribute_overrides: { 'source-highlighter' => 'rouge' }
+        'arrange-block-below-top-fits.pdf'
       (expect to_file).to visually_match 'arrange-block-below-top-fits.pdf'
     end
 
     it 'below top, does not fit' do
       to_file = to_pdf_file (Pathname.new (fixture_file 'arrange-block-below-top-does-not-fit.adoc')),
-        'arrange-block-below-top-does-not-fit.pdf', attribute_overrides: { 'source-highlighter' => 'rouge' }
+        'arrange-block-below-top-does-not-fit.pdf'
       (expect to_file).to visually_match 'arrange-block-below-top-does-not-fit.pdf'
     end
 
     it 'below top, does not fit, media=prepress' do
       to_file = to_pdf_file (Pathname.new (fixture_file 'arrange-block-below-top-does-not-fit.adoc')),
-        'arrange-block-below-top-does-not-fit.pdf',
-        attribute_overrides: { 'source-highlighter' => 'rouge', 'media' => 'prepress', 'pdf-theme' => 'default', 'doctype' => 'book' }
+        'arrange-block-below-top-does-not-fit-prepress.pdf',
+        attribute_overrides: { 'media' => 'prepress', 'pdf-theme' => 'default', 'doctype' => 'book' }
       (expect to_file).to visually_match 'arrange-block-below-top-does-not-fit-prepress.pdf'
     end
   end
