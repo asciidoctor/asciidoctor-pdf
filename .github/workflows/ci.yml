@@ -5,8 +5,8 @@ on:
     paths-ignore: ['*.adoc', 'docs/**']
   pull_request:
     paths-ignore: ['*.adoc', 'docs/**']
-  schedule:
-  - cron: '0 2 * * *'
+  #schedule:
+  #- cron: '0 2 * * *'
   workflow_dispatch:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
