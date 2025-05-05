@@ -438,7 +438,7 @@ describe 'Asciidoctor::PDF::Converter - Source' do
       ----
       EOS
 
-      (expect to_file).to visually_match 'source-rouge-bg.pdf' if (Gem::Version.new Rouge.version) >= (Gem::Version.new '2.1.0')
+      (expect to_file).to visually_match 'source-rouge-bg.pdf' if (Gem::Version.new Rouge.version) >= (Gem::Version.new '4.5.2')
     end
 
     it 'should draw background color across whole line for line-oriented tokens', visual: true do
