@@ -356,7 +356,7 @@ title-page:
 |[source]
 title-page:
   authors:
-    delimiter: '; '
+    delimiter: '<br>'
 
 |display
 |`none` +
