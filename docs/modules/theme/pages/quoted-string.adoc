@@ -8,10 +8,11 @@ A content key accepts a string value.
 It's usually best to quote the string or use the {url-yaml-strings}[YAML multi-line string syntax^].
 
 Text content may be formatted using a subset of inline HTML.
-You can use the well-known elements such as `<strong>`, `<em>`, `<code>`, `<a>`, `<sub>`, `<sup>`, `<del>`, and `<span>`.
+You can use the well-known elements such as `<strong>`, `<em>`, `<code>`, `<a>`, `<sub>`, `<sup>`, `<del>`, `<span>`, and `<br>`.
 The `<span>` element supports the `style` attribute, which you can use to specify the `color`, `font-weight`, and `font-style` CSS properties.
 You can also use the `rgb` attribute on the `<color>` element to change the color or the `name` and `size` attributes on the `<font>` element to change the font properties.
 If you need to add an underline or strikethrough decoration to the text, you can assign the `underline` or `line-through` to the `class` attribute on any aforementioned element.
+You can create a hard line break using `<br>`.
 
 Here's an example of using formatting in the content of the menu caret:
 
