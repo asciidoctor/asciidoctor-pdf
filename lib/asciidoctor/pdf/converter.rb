@@ -104,7 +104,7 @@ module Asciidoctor
       }
       TypographicQuotes = %w(&#8220; &#8221; &#8216; &#8217;)
       InlineFormatSniffRx = /[<&]/
-      SimpleAttributeRefRx = /(?<!\\)\{\w+(?:-\w+)*\}/
+      SimpleAttributeRefRx = /(?<!\\)\{(\w+(?:-\w+)*)\}/
       MeasurementRxt = '\\d+(?:\\.\\d+)?(?:in|cm|mm|p[txc])?'
       MeasurementPartsRx = /^(\d+(?:\.\d+)?)(in|mm|cm|p[txc])?$/
       PageSizeRx = /^(?:\[(#{MeasurementRxt}), ?(#{MeasurementRxt})\]|(#{MeasurementRxt})(?: x |x)(#{MeasurementRxt})|\S+)$/
@@ -2831,8 +2831,11 @@ module Asciidoctor
         # FIXME: get sub_attributes to handle drop-line w/o a warning
         doc.set_attr 'attribute-missing', 'skip' unless (attribute_missing = doc.attr 'attribute-missing') == 'skip'
         value = value.gsub '\{', '\\\\\\{' if (escaped_attr_ref = value.include? '\{')
+        value_before_subs = value
         value = (subs = opts[:subs]) ? (doc.apply_subs value, subs) : (doc.apply_subs value)
-        value = (value.split LF).delete_if {|line| SimpleAttributeRefRx.match? line }.join LF if opts[:drop_lines_with_unresolved_attributes] && (value.include? '{')
+        if opts[:drop_lines_with_unresolved_attributes] && (value.include? '{')
+          value = (value.split LF).delete_if {|line| SimpleAttributeRefRx =~ line && (value_before_subs.include? '{' + $1 + '}') }.join LF
+        end
         value = value.gsub '\{', '{' if escaped_attr_ref
         doc.set_attr 'attribute-missing', attribute_missing unless attribute_missing == 'skip'
         page_layout_to_restore ? (doc.set_attr 'page-layout', page_layout_to_restore) : (doc.remove_attr 'page-layout') if page_layout

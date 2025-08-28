@@ -13,6 +13,10 @@ Improvements::
 * allow relative font size for sub and sup to be set independently; support combined setting for backwards compatibility
 * allow value of `base-font-size-min` and `<category>-font-size-min` theme keys to be relative (e.g., 0.75em) (#2547)
 
+Bug Fixes::
+
+* don't drop line in running content if attribute reference resolves to text that contains attribute reference (not originally present)
+
 == 2.3.19 (2024-10-11) - @mojavelinux
 
 Improvements::
