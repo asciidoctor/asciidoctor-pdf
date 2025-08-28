@@ -1585,6 +1585,18 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect running_text).to have_size 1
     end
 
+    it 'should not drop line in content if attribute reference resolves to unresolved attribute reference' do
+      pdf_theme = {
+        footer_recto_right_content: %(keep\n{replace}),
+        footer_verso_left_content: %(keep\n{replace}),
+      }
+
+      pdf = to_pdf 'body', attribute_overrides: { 'replace' => '{me}' }, enable_footer: true, pdf_theme: pdf_theme, analyze: true
+
+      running_text = pdf.find_text %(keep {me})
+      (expect running_text).to have_size 1
+    end
+
     it 'should not warn if attribute is missing in running content' do
       (expect do
         pdf_theme = {
