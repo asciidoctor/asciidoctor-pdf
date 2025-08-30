@@ -16,6 +16,7 @@ Improvements::
 Bug Fixes::
 
 * don't drop line in running content if attribute reference resolves to text that contains attribute reference (not originally present)
+* ignore failure if bigdecimal gem cannot be eagerly loaded
 
 == 2.3.19 (2024-10-11) - @mojavelinux
 

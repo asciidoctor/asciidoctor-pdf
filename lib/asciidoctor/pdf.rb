@@ -2,7 +2,10 @@
 
 proc do
   old_verbose, $VERBOSE = $VERBOSE, nil
-  require 'bigdecimal' # eagerly require bigdecimal without warnings to avoid warning caused by ttfunk 1.7.0
+  begin
+    require 'bigdecimal' # try to eagerly require bigdecimal with warnings off to avoid warning caused by ttfunk 1.7.0
+  rescue Exception
+  end
   $VERBOSE = old_verbose
 end.call
 
