@@ -8,6 +8,7 @@ gemspec
 gem 'asciidoctor', ENV['ASCIIDOCTOR_VERSION'], require: false if ENV.key? 'ASCIIDOCTOR_VERSION'
 gem 'asciidoctor-diagram', ENV['ASCIIDOCTOR_DIAGRAM_VERSION'], require: false if ENV.key? 'ASCIIDOCTOR_DIAGRAM_VERSION'
 gem 'asciidoctor-kroki', ENV['ASCIIDOCTOR_KROKI_VERSION'], require: false if ENV.key? 'ASCIIDOCTOR_KROKI_VERSION'
+gem 'bigdecimal', require: false if (Gem::Version.new RUBY_VERSION) >= (Gem::Version.new '3.4.0')
 gem 'coderay', '~> 1.1.0', require: false
 gem 'ffi-icu', ENV['FFI_ICU_VERSION'], require: false if ENV.key? 'FFI_ICU_VERSION'
 gem 'open-uri-cached', '~> 1.0.0', require: false
