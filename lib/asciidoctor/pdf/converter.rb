@@ -2478,6 +2478,7 @@ module Asciidoctor
             %(#{anchor}<a href="#{target}"#{class_attr}>#{text}</a>)
           # NOTE: @media may not be initialized if method is called before convert phase
           elsif (doc.attr? 'show-link-uri') || (@media != 'screen' && (doc.attr_unspecified? 'show-link-uri'))
+            bare_target = (bare_target.split UriSchemeBoundaryRx, 2)[1] || bare_target if doc.attr? 'hide-uri-scheme'
             # QUESTION: should we insert breakable chars into URI when building fragment instead?
             # TODO: allow style of printed link to be controlled by theme
             %(#{anchor}<a href="#{target}"#{class_attr}>#{text}</a> [<font size="0.85em">#{breakable_uri bare_target}</font>&#93;)
