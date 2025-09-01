@@ -14,7 +14,11 @@ autoload :StringIO, 'stringio'
 autoload :Tempfile, 'tempfile'
 require 'time' unless defined? Time.parse
 require_relative 'pdf/version'
-require 'asciidoctor'
+proc do
+  old_verbose, $VERBOSE = $VERBOSE, nil
+  require 'asciidoctor' # avoid warning in Ruby 3.4 caused by use of logger
+  $VERBOSE = old_verbose
+end.call
 require 'prawn'
 require 'prawn/templates'
 require_relative 'pdf/measurements'

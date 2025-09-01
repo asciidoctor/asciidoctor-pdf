@@ -48,7 +48,7 @@ jobs:
         #os: [ubuntu-22.04, windows-2022]
         ruby: [jruby-9.2.21.0, jruby-9.4.2.0, '2.7', '3.3']
         asciidoctor-version: [~]
-        asciidoctor-diagram-version: ['~> 2.2']
+        asciidoctor-diagram-version: ['~> 3.0']
         asciidoctor-kroki-version: [~]
         rouge-version: [~]
         upstream: [~]
