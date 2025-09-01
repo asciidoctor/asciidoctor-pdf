@@ -37,18 +37,18 @@ describe 'asciidoctor-pdf' do
 
   context 'Require' do
     it 'should load converter if backend is pdf and require is asciidoctor-pdf', cli: true do
-      out, err, res = run_command asciidoctor_bin, '-r', 'asciidoctor-pdf', '-b', 'pdf', '-D', output_dir, (fixture_file 'hello.adoc'), use_bundler: true
-      (expect res.exitstatus).to be 0
+      out, err, res = run_command asciidoctor_bin, '-r', 'asciidoctor-pdf', '-b', 'pdf', '-D', output_dir, (fixture_file 'hello.adoc'), use_bundler: true, env: { 'RUBYOPT' => %(-r#{File.join spec_dir, 'ignore-gem-warnings.rb'}) }
       (expect out).to be_empty
       (expect err).to be_empty
+      (expect res.exitstatus).to be 0
       (expect Pathname.new output_file 'hello.pdf').to exist
     end
 
     it 'should load converter if backend is pdf and require is asciidoctor/pdf', cli: true do
-      out, err, res = run_command asciidoctor_bin, '-r', 'asciidoctor/pdf', '-b', 'pdf', '-D', output_dir, (fixture_file 'hello.adoc'), use_bundler: true
-      (expect res.exitstatus).to be 0
+      out, err, res = run_command asciidoctor_bin, '-r', 'asciidoctor/pdf', '-b', 'pdf', '-D', output_dir, (fixture_file 'hello.adoc'), use_bundler: true, env: { 'RUBYOPT' => %(-r#{File.join spec_dir, 'ignore-gem-warnings.rb'}) }
       (expect out).to be_empty
       (expect err).to be_empty
+      (expect res.exitstatus).to be 0
       (expect Pathname.new output_file 'hello.pdf').to exist
     end
   end if defined? Bundler

@@ -6,7 +6,10 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'asciidoctor', ENV['ASCIIDOCTOR_VERSION'], require: false if ENV.key? 'ASCIIDOCTOR_VERSION'
-gem 'asciidoctor-diagram', ENV['ASCIIDOCTOR_DIAGRAM_VERSION'], require: false if ENV.key? 'ASCIIDOCTOR_DIAGRAM_VERSION'
+if ENV.key? 'ASCIIDOCTOR_DIAGRAM_VERSION'
+  gem 'asciidoctor-diagram', ENV['ASCIIDOCTOR_DIAGRAM_VERSION'], require: false
+  gem 'asciidoctor-diagram-plantuml', '1.2025.3', require: false
+end
 gem 'asciidoctor-kroki', ENV['ASCIIDOCTOR_KROKI_VERSION'], require: false if ENV.key? 'ASCIIDOCTOR_KROKI_VERSION'
 gem 'bigdecimal', require: false if (Gem::Version.new RUBY_VERSION) >= (Gem::Version.new '3.4.0')
 gem 'coderay', '~> 1.1.0', require: false
