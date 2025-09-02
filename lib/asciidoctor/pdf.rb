@@ -4,7 +4,7 @@ proc do
   old_verbose, $VERBOSE = $VERBOSE, nil
   begin
     require 'bigdecimal' # try to eagerly require bigdecimal with warnings off to avoid warning caused by ttfunk 1.7.0
-  rescue Exception
+  rescue Exception # rubocop:disable Lint/SuppressedException,Lint/RescueException
   end
   $VERBOSE = old_verbose
 end.call
