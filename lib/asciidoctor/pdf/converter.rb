@@ -1441,6 +1441,9 @@ module Asciidoctor
           table_data = []
           term_padding = term_padding_no_blocks = term_font_color = term_transform = desc_padding = term_line_metrics = term_inline_format = term_kerning = nil
           max_term_width = 0
+          term_font_size = @theme.description_list_term_font_size
+          term_font_family = @theme.description_list_term_font_family
+          term_font_style = @theme.description_list_term_font_style
           theme_font :description_list_term do
             term_font_color = @font_color
             term_transform = @text_transform
@@ -1484,6 +1487,7 @@ module Asciidoctor
           term_column_width = [max_term_width, bounds.width * 0.5].min
           table table_data, position: :left, column_widths: [term_column_width] do
             cells.style border_width: 0
+            column(0).style size: term_font_size, font: term_font_family, style: term_font_style
             @pdf.ink_table_caption node if node.title?
           end
           theme_margin :prose, :bottom, (next_enclosed_block actual_node) #unless actual_node.nested?
