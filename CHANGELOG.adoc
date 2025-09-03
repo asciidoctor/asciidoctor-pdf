@@ -16,7 +16,11 @@ Improvements::
 Bug Fixes::
 
 * don't drop line in running content if attribute reference resolves to text that contains attribute reference (not originally present)
-* ignore failure if bigdecimal gem cannot be eagerly loaded
+* respect hide-uri-scheme when appending URL to link text when media is print or prepress (#2583)
+
+Compliance::
+
+* drop support for JRuby 9.2 (require at least Ruby 2.7 compliance)
 
 == 2.3.19 (2024-10-11) - @mojavelinux
 
