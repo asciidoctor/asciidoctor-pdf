@@ -55,6 +55,7 @@ Bug Fixes::
 * remove deprecated, undocumented `svg-font-family` theme key (the correct key is `svg-fallback-font-family`)
 * major improvement to OTF support following release of ttfunk 1.8.0 (automatic transitive dependency of prawn)
 * don't drop line in running content if attribute reference resolves to text that contains attribute reference (not originally present)
+* respect hide-uri-scheme when appending URL to link text when media is print or prepress (#2583)
 
 Compliance::
 

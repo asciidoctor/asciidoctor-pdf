@@ -29,6 +29,19 @@ describe 'Asciidoctor::PDF::Converter - Link' do
       (expect link[:A][:URI]).to eql input
     end
 
+    it 'should only show address of link with text when media=print and hide-uri-scheme is set' do
+      input = 'Just ask https://chatgpt.com[ChatGPT].'
+      pdf = to_pdf input, attribute_overrides: { 'media' => 'print', 'hide-uri-scheme' => '' }
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      link_annotation = annotations[0]
+      (expect link_annotation[:Subtype]).to be :Link
+      (expect link_annotation[:A][:URI]).to eql 'https://chatgpt.com'
+
+      pdf = to_pdf input, attribute_overrides: { 'media' => 'print', 'hide-uri-scheme' => '' }, analyze: true
+      (expect pdf.lines[0]).to eql 'Just ask ChatGPT [chatgpt.com].'
+    end
+
     it 'should convert link surrounded in double smart quotes' do
       pdf = to_pdf '"`https://asciidoctor.org[Asciidoctor]`"'
       text = (pdf.page 1).text
