@@ -1,4 +1,5 @@
 = Theme Keys Reference
+:navtitle: Theme Keys
 
 == Category keys
 
