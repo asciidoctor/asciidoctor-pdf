@@ -1,4 +1,5 @@
-= Keys, Properties and Values
+= Theme Keys, Properties and Values
+:navtitle: Theme Language
 
 The Asciidoctor PDF theme language is described using the http://en.wikipedia.org/wiki/YAML[YAML^] data format.
 YAML is a human-friendly data format that resembles CSS.
