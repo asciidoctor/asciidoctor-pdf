@@ -37,7 +37,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     EOS
 
     (expect pdf.lines).to eql %w(text reference)
-    (expect pdf.text[0][:x]).to equal pdf.text[1][:x]
+    (expect pdf.text[0][:x]).to eql pdf.text[1][:x]
   end
 
   it 'should not indent paragraph preceded by index terms when using font without NULL character' do
@@ -61,7 +61,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     EOS
 
     (expect pdf.lines).to eql %w(text reference)
-    (expect pdf.text[0][:x]).to equal pdf.text[1][:x]
+    (expect pdf.text[0][:x]).to eql pdf.text[1][:x]
   end
 
   it 'should normalize space in term in body and index section' do
