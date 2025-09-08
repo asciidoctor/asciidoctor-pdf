@@ -31,6 +31,7 @@ Enhancements::
 * add support for `nowrap` and `nobreak` roles on formatted text
 * do not insert break opportunities into bare URL with `nobreak` role
 * convert string with non-ASCII characters to NFD when applying smallcaps transformation to support diacritics (#2485)
+* add single up and down arrow to built-in fonts (fonts used by default themes) (#2586)
 
 Improvements::
 
