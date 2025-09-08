@@ -26,6 +26,44 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect pdf.lines).to eql ['before after', 'foo baz']
   end
 
+  it 'should not indent paragraph preceded by index terms' do
+    pdf = to_pdf <<~'EOS', analyze: true
+    (((zen)))
+    (((yin)))
+    (((yang)))
+    text
+
+    reference
+    EOS
+
+    (expect pdf.lines).to eql %w(text reference)
+    (expect pdf.text[0][:x]).to equal pdf.text[1][:x]
+  end
+
+  it 'should not indent paragraph preceded by index terms when using font without NULL character' do
+    pdf_theme = {
+      extends: 'default',
+      font_catalog: {
+        'Missing Null' => {
+          'normal' => (fixture_file 'mplus1mn-regular-ascii.ttf'),
+          'bold' => (fixture_file 'mplus1mn-regular-ascii.ttf'),
+        },
+      },
+      base_font_family: 'Missing Null',
+    }
+    pdf = to_pdf <<~'EOS', pdf_theme: pdf_theme, analyze: true
+    (((zen)))
+    (((yin)))
+    (((yang)))
+    text
+
+    reference
+    EOS
+
+    (expect pdf.lines).to eql %w(text reference)
+    (expect pdf.text[0][:x]).to equal pdf.text[1][:x]
+  end
+
   it 'should normalize space in term in body and index section' do
     pdf = to_pdf <<~'EOS', analyze: true
     ((foo

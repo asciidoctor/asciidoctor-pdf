@@ -15,6 +15,7 @@ Improvements::
 
 Bug Fixes::
 
+* always force NULL character to have 0 width, even if missing from font (#2585)
 * don't drop line in running content if attribute reference resolves to text that contains attribute reference (not originally present)
 * respect hide-uri-scheme when appending URL to link text when media is print or prepress (#2583)
 
