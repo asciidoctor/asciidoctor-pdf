@@ -8,7 +8,7 @@
 # Additionally, you may prefix the script with IMAGE=<name-of-image> to use a different image.
 
 # NOTE only update when fonts are being changed
-export SOURCE_DATE_EPOCH=$(date -d 2020-06-10T00:00:00 +%s)
+export SOURCE_DATE_EPOCH=$(date -d 2025-09-08T00:00:00 +%s)
 
 MPLUS_VERSION=TESTFLIGHT-063a
 NOTO_VERSION=86b2e553c3e3e4d6614dadd1fa0a7a6dafd74552
