@@ -1134,7 +1134,11 @@ module Asciidoctor
           bounds_copy.instance_variable_set :@parent, saved_bounds
           bounds_copy.single_file if ColumnBox === bounds_copy
         end
-        scratch_pdf.move_cursor_to cursor unless (scratch_start_at_top = keep_together || pages_advanced > 0 || at_page_top?)
+        if !(scratch_start_at_top = keep_together || pages_advanced > 0 || at_page_top?)
+          scratch_pdf.move_cursor_to cursor
+        elsif ColumnBox === bounds
+          scratch_pdf.move_cursor_to scratch_pdf.bounds.top
+        end
         scratch_start_cursor = scratch_pdf.cursor
         scratch_start_page = scratch_pdf.page_number
         inhibit_new_page = state.on_page_create_callback == InhibitNewPageProc
