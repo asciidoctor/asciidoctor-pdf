@@ -1294,6 +1294,37 @@ describe 'Asciidoctor::PDF::Converter - List' do
         (expect foo_text[:y]).to eql desc_text[:y]
       end
 
+      it 'should start next entry after terms when terms occupy more lines than desc' do
+        pdf = to_pdf <<~'END', analyze: true
+        [horizontal]
+        foo::
+        bar::
+        baz::
+        desc
+
+        fizz:: buzz
+        END
+
+        (expect (pdf.find_unique_text 'fizz')[:y]).to be < (pdf.find_unique_text 'desc')[:y]
+        (expect (pdf.find_unique_text 'fizz')[:y]).to be < (pdf.find_unique_text 'baz')[:y]
+      end
+
+      it 'should keep multiple terms together when entry starts near page boundary' do
+        pdf = with_content_spacer 10, 700 do |spacer_path|
+          to_pdf <<~END, analyze: true
+          image::#{spacer_path}[]
+
+          [horizontal]
+          foo::
+          bar::
+          baz::
+          desc
+          END
+        end
+
+        (expect (pdf.find_unique_text 'foo')[:page_number]).to eql 2
+      end
+
       it 'should align term to top when description spans multiple lines' do
         pdf = to_pdf <<~'END', analyze: true
         [horizontal]
@@ -1501,7 +1532,7 @@ describe 'Asciidoctor::PDF::Converter - List' do
         end
       end
 
-      it 'should report source location of truncated item description in dlist' do
+      it 'should not truncate description of dlist item that spans more than one page' do
         (expect do
           pdf = to_pdf <<~END, sourcemap: true, attribute_overrides: { 'docfile' => 'test.adoc' }, analyze: true
           [horizontal]
@@ -1509,9 +1540,10 @@ describe 'Asciidoctor::PDF::Converter - List' do
           #{['* task'] * 50 * ?\n}
           END
 
-          (expect pdf.pages.size).to eql 1
+          (expect pdf.pages.size).to eql 2
           (expect (pdf.find_unique_text 'step 1')).not_to be_nil
-        end).to log_message severity: :ERROR, message: 'the table cell on page 1 has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page', file: 'test.adoc', lineno: 3
+          (expect (pdf.find_text 'task').size).to eql 50
+        end).not_to log_message
       end
     end
 
