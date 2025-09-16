@@ -39,6 +39,19 @@ include::example$pdf-converter-custom-thematic-break.rb[tags=**]
 The return value of the convert handler method for a block node is ignored, which is why there's no clear return value in this override.
 If this were a convert handler method for an inline node, a return value would be required, which becomes the text to render.
 
+
+
+=== Page border in margin
+
+There is a feature: `Page Border` and `Surround header` in Word of Microsoft's Office.
+
+Custom converter is able to substitute it.
+
+There are custom converter script, its result, and description in blog post below link.
+
+https://shumpei-tanaka.github.io/en/posts/2024-11-23-asciidoc-page-border-in-margin/
+
+
 == Custom title page
 
 Every title page is as unique as the work itself.
