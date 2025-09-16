@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 Improvements::
 
+* render horizontal dlist without using prawn-table, allowing the description to exceed the height of one page (#2591)
 * add symbols for shift, command, option, and return keys to the fallback font
 * allow relative font size for sub and sup to be set independently; support combined setting for backwards compatibility
 * allow value of `base-font-size-min` and `<category>-font-size-min` theme keys to be relative (e.g., 0.75em) (#2547)

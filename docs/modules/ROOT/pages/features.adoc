@@ -43,7 +43,7 @@ This is primarily a limitation of the PDF format, in which text is broken into f
 * Footnotes are always displayed as endnotes (at the bottom of the last page of a chapter for books; at the bottom of the last page of the document for all other doctypes).
 *Footnotes cannot be displayed at the current bottom of the page because the PDF generator does not support content reflows* (see {url-project-issues}/85#issuecomment-577412975[#85^] for reasoning).
 * Table cells that exceed the height of a single page are truncated with a warning (see https://github.com/prawnpdf/prawn-table/issues/41[prawn-table#41^]).
- ** This limitation also applies to description blocks in a horizontal dlist.
+ ** This limitation does not apply to description in a horizontal dlist.
 * A rowspan in a table that exceeds the height of a single page will be orphaned and the remaining columns will be truncated (see {url-project-issues}/403#issuecomment-1133840210[#403^]).
 * A column can't be assigned a `width` of `0%` or a `width` less than the width of a single character.
 The converter will skip the table and emit a warning if such a case occurs.
