@@ -2042,6 +2042,41 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         (expect column_rules[1][:from][:y]).to eql expected_y
       end
     end
+
+    it 'should correctly compute extent of advanced block when column_box starts below top' do
+      pdf_theme.update page_columns: 2, page_column_gap: 12, code_border_color: 'AA0000', code_background_color: 'transparent', code_border_radius: 0
+
+      pdf = with_content_spacer 10, 550 do |spacer_path|
+        input = <<~END
+        = An Excessively Long Document Title That Wraps To A Second Line
+
+        start of body
+
+        image::#{spacer_path}[]
+
+        [,ruby]
+        ----
+        lyrics = "fizzbuzzfizzbuzzfizzbuzzfizzbuzzfizzbuzzfizzbuzzfizzbuzzfizzbuzzfizzbuzzfizzbuzz"
+        ----
+        END
+
+        pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+        pages = pdf.pages
+        (expect pages).to have_size 1
+        lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+        (expect (pdf.find_unique_text 'start of body')[:y].round).to eql 646
+        code_lines = lines.select {|it| it[:color] == 'AA0000' }
+        (expect code_lines).to have_size 4
+        (expect code_lines[0][:from][:x]).to eql 312.0
+        (expect code_lines[0][:to][:x]).to eql 562.0
+        (expect code_lines[0][:from][:y]).to eql 657.76
+        (expect code_lines[0][:to][:y]).to eql 657.76
+        (expect code_lines[1][:from][:x]).to eql 562.0
+        (expect code_lines[1][:to][:x]).to eql 562.0
+        (expect code_lines[1][:from][:y]).to eql 657.76
+        (expect code_lines[1][:to][:y]).to eql 591.54
+      end
+    end
   end
 
   # NOTE: generate reference files using ./scripts/generate-arrange-block-reference-files.sh
