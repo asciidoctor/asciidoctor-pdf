@@ -2640,7 +2640,11 @@ module Asciidoctor
             img = %([#{node.attr 'alt'}&#93;)
           end
         end
-        (node.attr? 'link') ? %(<a href="#{node.attr 'link'}">#{img}</a>) : img
+        if (node.attr? 'link') && (link = node.attr 'link')
+          link.chr == '#' ? %(<a anchor="#{link.slice 1}">#{img}</a>) : %(<a href="#{link}">#{img}</a>)
+        else
+          img
+        end
       end
 
       def convert_inline_indexterm node
@@ -4728,7 +4732,12 @@ module Asciidoctor
           image_y = y - image_opts[:vposition]
         end unless (image_y = image_opts[:y])
 
-        link_annotation [image_x, (image_y - image_height), (image_x + image_width), image_y], Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: uri.as_pdf }
+        loc = [image_x, (image_y - image_height), (image_x + image_width), image_y]
+        if uri.chr == '#'
+          link_annotation loc, Border: [0, 0, 0], Dest: (uri.slice 1)
+        else
+          link_annotation loc, Border: [0, 0, 0], A: { Type: :Action, S: :URI, URI: uri.as_pdf }
+        end
       end
 
       def admonition_icon_data key

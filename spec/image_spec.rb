@@ -2417,6 +2417,24 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       end).to log_message severity: :WARN, message: '~image to embed not found or not readable'
     end
 
+    it 'should link to internal destination if link value on block image is a fragment' do
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'imagesdir' => examples_dir }
+      [#a]
+      == Section A
+
+      [link=#b]
+      image::sample-logo.jpg[B]
+
+      [#b]
+      == Section B
+      EOS
+
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      link_annotation = annotations[0]
+      (expect link_annotation[:Dest]).to eql 'b'
+    end
+
     it 'should add link around inline image if link attribute is set' do
       pdf = to_pdf <<~'EOS', attribute_overrides: { 'imagesdir' => examples_dir }
       image:sample-logo.jpg[ACME,pdfwidth=1pc,link=https://example.org] is a sign of quality!
@@ -2470,6 +2488,23 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect (link_rect[2] - link_rect[0]).round 1).to eql 12.0
       (expect (link_rect[3] - link_rect[1]).round 1).to eql 14.3
       (expect link_rect[0]).to eql 48.24
+    end
+
+    it 'should link to internal destination if link value on inline image is a fragment' do
+      pdf = to_pdf <<~'EOS', attribute_overrides: { 'imagesdir' => examples_dir }
+      [#a]
+      == Section A
+
+      Jump to image:sample-logo.jpg[B,link=#b]
+
+      [#b]
+      == Section B
+      EOS
+
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      link_annotation = annotations[0]
+      (expect link_annotation[:Dest]).to eql 'b'
     end
   end
 

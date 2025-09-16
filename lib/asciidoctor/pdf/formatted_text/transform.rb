@@ -212,8 +212,12 @@ module Asciidoctor
                       fragment[:callback] = [TextBackgroundAndBorderRenderer] | fragment[:callback]
                     end
                   end if attributes.key? :class
-                  if inherited && (link = inherited[:link])
-                    fragment[:link] = link
+                  if inherited
+                    if (link = inherited[:link])
+                      fragment[:link] = link
+                    elsif (anchor = inherited[:anchor])
+                      fragment[:anchor] = anchor
+                    end
                   end
                   if (img_w = attributes[:width])
                     fragment[:image_width] = img_w
