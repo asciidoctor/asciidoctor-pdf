@@ -2047,7 +2047,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
       pdf_theme.update page_columns: 2, page_column_gap: 12, code_border_color: 'AA0000', code_background_color: 'transparent', code_border_radius: 0
 
       pdf = with_content_spacer 10, 550 do |spacer_path|
-        input = <<~END
+        input = <<~EOS
         = An Excessively Long Document Title That Wraps To A Second Line
 
         start of body
@@ -2058,7 +2058,7 @@ describe 'Asciidoctor::PDF::Converter#arrange_block' do
         ----
         lyrics = "fizzbuzzfizzbuzzfizzbuzzfizzbuzzfizzbuzzfizzbuzzfizzbuzzfizzbuzzfizzbuzzfizzbuzz"
         ----
-        END
+        EOS
 
         pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
         pages = pdf.pages
