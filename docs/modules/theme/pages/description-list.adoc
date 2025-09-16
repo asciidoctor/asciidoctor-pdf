@@ -7,8 +7,8 @@
 == description-list
 
 The keys in the `description-list` category control the arrangement and style of description list terms and descriptions.
-The indent key does not apply for horizontal description lists.
-Additionally, for horizontal description lists, the term-font-family, term-font-size, term-line-height, and term-padding keys are not honored (as these keys introduce layout problems).
+The indent key does not apply to horizontal description lists.
+Additionally, the term-padding key is not honored on horizontal description lists as it introduces layout problems.
 
 [cols="4,4,5a"]
 |===

@@ -1438,55 +1438,62 @@ module Asciidoctor
           convert_list list
           markers.pop
         when 'horizontal'
-          table_data = []
-          term_padding = term_padding_no_blocks = term_font_color = term_transform = desc_padding = term_line_metrics = term_inline_format = term_kerning = nil
+          ink_caption node, category: :description_list, labeled: false if node.title?
           max_term_width = 0
+          term_height = term_padding = term_font_styles = term_transform = desc_padding = term_line_metrics = term_inline_format = term_kerning = nil
           theme_font :description_list_term do
-            term_font_color = @font_color
+            term_height = height_of_typeset_text 'A'
             term_transform = @text_transform
             term_inline_format = (term_font_styles = font_styles).empty? ? true : [inherited: { styles: term_font_styles }]
             term_line_metrics = calc_line_metrics @base_line_height
-            term_padding_no_blocks = [term_line_metrics.padding_top, 10, term_line_metrics.padding_bottom, 10]
-            (term_padding = (term_padding_no_blocks.drop 0))[2] += @theme.prose_margin_bottom * 0.5
+            term_padding = [term_line_metrics.padding_top, 10, term_line_metrics.padding_bottom, 10]
             desc_padding = [0, 10, 0, 10]
             term_kerning = default_kerning?
           end
-          actual_node, node = node, node.dup
-          (node.instance_variable_set :@blocks, node.items.map(&:dup)).each do |item|
+          prose_height = height_of_typeset_text 'A'
+          items = node.items.map do |item|
             terms, desc = item
-            term_text = terms.map(&:text).join ?\n
-            term_text = transform_text term_text, term_transform if term_transform
-            if (term_width = width_of term_text, inline_format: term_inline_format, kerning: term_kerning) > max_term_width
-              max_term_width = term_width
+            terms_as_text = terms.map do |term|
+              term_text = term_transform ? (transform_text term.text, term_transform) : term.text
+              if (term_width = width_of term_text, inline_format: term_inline_format, kerning: term_kerning) > max_term_width
+                max_term_width = term_width
+              end
+              term_text
             end
-            row_data = [{
-              text_color: term_font_color,
-              kerning: term_kerning,
-              content: term_text,
-              inline_format: term_inline_format,
-              padding: desc&.blocks? ? term_padding : term_padding_no_blocks,
-              leading: term_line_metrics.leading,
-              # FIXME: prawn-table doesn't have support for final_gap option
-              #final_gap: term_line_metrics.final_gap,
-              valign: :top,
-            }]
-            if desc
-              desc_container = Block.new node, :open
-              desc_container << (Block.new desc_container, :paragraph, source: (desc.instance_variable_get :@text), subs: :default) if desc.text?
-              desc.blocks.each {|b| desc_container << b.dup } if desc.blocks?
-              row_data << { content: (::Prawn::Table::Cell::AsciiDoc.new self, content: (item[1] = desc_container), text_color: @font_color, padding: desc_padding, valign: :top, source_location: desc.source_location) }
-            else
-              row_data << {}
+            [terms_as_text, desc]
+          end
+          term_side_padding = term_padding[1] + (term_left = term_padding[3])
+          max_term_width += term_side_padding
+          term_column_width = [max_term_width, bounds.width * 0.5 - term_side_padding].min
+          term_spacing = @theme.description_list_term_spacing
+          items.each do |terms_as_text, desc|
+            advance_page if !at_page_top? && cursor < [((term_spacing + term_height) * terms_as_text.size) - term_spacing, desc ? prose_height : 0].max
+            initial_y = y
+            initial_page_number = page_number
+            indent term_left, (bounds.width - term_column_width) do
+              theme_font :description_list_term do
+                terms_as_text.each_with_index do |term_text, idx|
+                  ink_prose term_text, margin_top: (idx > 0 ? term_spacing : 0), margin_bottom: 0, align: :left, normalize_line_height: true, styles: term_font_styles
+                end
+              end
             end
-            table_data << row_data
+            if desc # rubocop:disable Style/Next
+              after_term_y = y
+              after_term_page_number = page_number
+              go_to_page initial_page_number if page_number > initial_page_number
+              @y = initial_y
+              indent term_column_width + desc_padding[3], desc_padding[1] do
+                traverse_list_item desc, :dlist_desc, normalize_line_height: true, margin_bottom: ((next_enclosed_block desc, descend: true) ? nil : 0)
+              end
+              if page_number < after_term_page_number
+                go_to_page after_term_page_number
+                @y = after_term_y
+              elsif y > after_term_y
+                @y = after_term_y
+              end
+            end
           end
-          max_term_width += (term_padding[1] + term_padding[3])
-          term_column_width = [max_term_width, bounds.width * 0.5].min
-          table table_data, position: :left, column_widths: [term_column_width] do
-            cells.style border_width: 0
-            @pdf.ink_table_caption node if node.title?
-          end
-          theme_margin :prose, :bottom, (next_enclosed_block actual_node) #unless actual_node.nested?
+          theme_margin :prose, :bottom, (next_enclosed_block node) unless node.nested?
         when 'qanda'
           @list_numerals << 1
           convert_list node
