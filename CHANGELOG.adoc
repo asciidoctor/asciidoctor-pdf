@@ -25,6 +25,7 @@ Bug Fixes::
 Compliance::
 
 * drop support for JRuby 9.2 (require at least Ruby 2.7 compliance)
+* ignore error if bigdecimal gem cannot be eagerly required
 
 == 2.3.19 (2024-10-11) - @mojavelinux
 
