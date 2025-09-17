@@ -42,7 +42,7 @@ describe 'Asciidoctor::PDF::Converter - Audio' do
 
     icon_text = (pdf.find_text ?\uf04b)[0]
     (expect icon_text).not_to be_nil
-    (expect icon_text[:font_name]).to eql 'FontAwesome5Free-Solid'
+    (expect icon_text[:font_name]).to eql 'FontAwesome6Free-Solid'
   end
 
   it 'should show caption for audio if title is specified' do
