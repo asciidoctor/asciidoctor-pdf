@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-22.04
     environment: releases
     env:
-      ASCIIDOCTOR_DIAGRAM_VERSION: '~> 2.2'
+      ASCIIDOCTOR_DIAGRAM_VERSION: '~> 3.0'
       PRAWN_GMAGICK_VERSION: '0.0.9'
       PYGMENTS_VERSION: '~> 2.0'
       RGHOST_VERSION: '0.9.7'
