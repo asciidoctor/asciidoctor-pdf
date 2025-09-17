@@ -24,7 +24,6 @@ Bug Fixes::
 
 Compliance::
 
-* drop support for JRuby 9.2 (require at least Ruby 2.7 compliance)
 * suppress warning about the use of Ruby's logger gem when loading Asciidoctor
 * ignore error if bigdecimal gem cannot be eagerly required
 
