@@ -472,6 +472,8 @@ To make the background color, background image, and border span the width of the
 [#columns]
 == columns
 
+Use to define columns in the running content - up to three sections. Column width is specified using percent symbol which describes how much place between left and right margin will be used. Widths must sum up to 100%. Use `<`, `=` and `>` to define horizontal alignment of content, where `<` is aligning to the left (default behavior), `=` is centering and `>` is aligning to the right.
+
 The `columns` key can also be defined one level up (on `header` or `footer`), in which case the setting will be inherited.
 Where the page sides fall in relation to the physical or printed page number is controlled using the `pdf-folio-placement` attribute (except when `media=prepress`, which implies `physical`).
 The column rules between columns are only added if the `columns` key is specified.
