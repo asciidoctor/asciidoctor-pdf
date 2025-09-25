@@ -1859,5 +1859,19 @@ describe 'Asciidoctor::PDF::Converter - Page' do
 
       (expect to_file).to visually_match 'page-watermark-content-only.pdf'
     end
+
+    it 'should support PNG transparency when applying watermark image to all pages', visual: true do
+      to_file = to_pdf_file <<~END, 'page-watermark.pdf'
+      = Document Title
+      :doctype: book
+      :notitle:
+      :page-foreground-image: image:watermark.png[]
+
+      [.text-left]
+      #{['lots of rambling'] * 250 * ?\n}
+      END
+
+      (expect to_file).to visually_match 'page-watermark-png-transparency.pdf'
+    end
   end
 end
