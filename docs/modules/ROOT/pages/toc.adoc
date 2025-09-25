@@ -66,6 +66,50 @@ The block attribute temporarily changes the value of the document attribute and 
 Therefore, it must take into account the depth of the section on which it is set.
 The value `0` always removes the current section from the TOC.
 
+== Remove section from TOC
+
+You can exclude a section (and all its descendants) from the TOC by setting the `toclevels` block attribute on the section to `0`.
+In this case, the section excludes itself.
+For example:
+
+[,asciidoc]
+----
+= Document Title
+:toc:
+
+[dedication,toclevels=0]
+== Dedication
+
+The dedication will not be included in the TOC.
+
+== First Section in TOC
+
+...
+----
+
+If you only want to exclude the descendants of a section from the TOC, you can set the `toclevels` block attribute to the level of the section.
+In this case, the section excludes its own descendants, but not itself.
+For example:
+
+[,asciidoc]
+----
+= Document Title
+:toc:
+:toclevels: 3
+
+[toclevels=1]
+= Section Title
+
+== Subsection Title
+
+This subsection will not be included in the TOC.
+
+...
+----
+
+Thus, by using the `toclevels` block attributes on sections, you can pick and choose which sections get excluded from the TOC.
+However, you cannot include a section in the TOC once its parent has already been excluded.
+
 == Insert TOC entries
 
 You can add TOC entries for a preface, preamble, or imported PDF pages using the `notitle` option.
