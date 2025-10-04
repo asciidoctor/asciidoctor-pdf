@@ -11,6 +11,7 @@ module Asciidoctor
         FormattingSnifferPattern = /[<&]/
         WHITESPACE = %( \t\n)
         NORMALIZE_TO_SPACE = %(\t\n)
+        SHY = ::Prawn::Text::SHY
 
         def initialize options = {}
           @parser = MarkupParser.new
@@ -27,7 +28,7 @@ module Asciidoctor
               return @transform.apply parsed.content, [], inherited, normalize_space: normalize_space
             end
             reason = @parser.failure_reason.sub %r/ at line \d+, column \d+ \(byte (\d+)\)(.*)/, '\2 at byte \1'
-            logger.error %(failed to parse formatted text: #{string} (reason: #{reason})) unless @scratch
+            logger.error %(failed to parse formatted text: #{string.tr SHY, ''} (reason: #{reason.tr SHY, ''})) unless @scratch
           elsif options[:normalize]
             string = string.tr_s WHITESPACE, ' '
           end
