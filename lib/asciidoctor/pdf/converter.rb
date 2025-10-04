@@ -872,13 +872,13 @@ module Asciidoctor
 
         if (float_box = (@float_box ||= nil))
           ink_paragraph_in_float_box node, float_box, prose_opts, role_keys, block_next, insert_margin_bottom
-        else
-          # TODO: check if we're within one line of the bottom of the page
-          # and advance to the next page if so (similar to logic for section titles)
-          ink_caption node, labeled: false if node.title?
-          role_keys ? theme_font_cascade(role_keys) { ink_prose node.content, prose_opts } : (ink_prose node.content, prose_opts)
-          insert_margin_bottom.call
+          return
         end
+        # TODO: check if we're within one line of the bottom of the page
+        # and advance to the next page if so (similar to logic for section titles)
+        ink_caption node, labeled: false if node.title?
+        role_keys ? theme_font_cascade(role_keys) { ink_prose node.content, prose_opts } : (ink_prose node.content, prose_opts)
+        insert_margin_bottom.call
       end
 
       def convert_admonition node
