@@ -43,6 +43,7 @@ Improvements::
 * allow value of `base-font-size-min` and `<category>-font-size-min` theme keys to be relative (e.g., 0.75em) (#2547)
 * upgrade prawn-svg to 0.36 to fix dependencies, improve gradient support, and support additional properties; disable experimental warnings when requiring prawn-svg on Ruby 2.7 (#2551)
 * remove shy hyphens from text in log message when formatted text cannot be parsed (#2599)
+* clear float box if next block falls outside of flaot group (#2596)
 
 Bug Fixes::
 
