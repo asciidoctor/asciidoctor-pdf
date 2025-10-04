@@ -472,6 +472,16 @@ To make the background color, background image, and border span the width of the
 [#columns]
 == columns
 
+The `columns` key is used to define the number of columns, the named position of those columns, as well as each column's width and alignment.
+The columns are defined using space-seprated (or comma-seperated) colspecs.
+The maximum number of columns is 3.
+The column's name is infered by the position of the colspec in the list (center for 1 column, left and right for 2 columns, and left, center, and right for 3 columns).
+
+A colspec defines the width of the column and an optional alignment.
+The width is represented in percentage of available space (the space from the left margin to the right margin).
+The alignment is represented as a symbol, `<`, `=`, `>` to represent left, center, and right, respectively.
+If the alignment isn't specfied, it defaults to `<`.
+
 The `columns` key can also be defined one level up (on `header` or `footer`), in which case the setting will be inherited.
 Where the page sides fall in relation to the physical or printed page number is controlled using the `pdf-folio-placement` attribute (except when `media=prepress`, which implies `physical`).
 The column rules between columns are only added if the `columns` key is specified.
