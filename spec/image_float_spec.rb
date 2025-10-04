@@ -939,4 +939,47 @@ describe 'Asciidoctor::PDF::Converter - Image Float' do
     (expect lorem_text[1][:x]).to eql lorem_text[0][:x]
     (expect (pdf.find_unique_text 'code')[:x]).to be > text_left_boundary
   end
+
+  it 'should end float box and advance cursor to bottom if next paragraph is outside float group' do
+    input = <<~EOS
+    [.float-group]
+    --
+    image::rect.png[pdfwidth=110.6pt,float=left]
+
+    #{lorem_ipsum '1-sentence'}
+    --
+
+    outside
+    EOS
+
+    image = (to_pdf input, analyze: :image).images[0]
+    image_bottom = image[:y] - image[:height]
+    pdf = to_pdf input, analyze: true
+    text_inside = pdf.text[0]
+    text_outside = pdf.find_unique_text 'outside'
+    (expect text_outside[:x]).to eql image[:x]
+    (expect text_inside[:x]).to be > text_outside[:x]
+    (expect text_outside[:y]).to be < image_bottom
+  end
+
+  it 'should end float box and advance cursor to bottom if next paragraph is outside open block' do
+    input = <<~EOS
+    --
+    image::rect.png[pdfwidth=110.6pt,float=left]
+
+    #{lorem_ipsum '1-sentence'}
+    --
+
+    outside
+    EOS
+
+    image = (to_pdf input, analyze: :image).images[0]
+    image_bottom = image[:y] - image[:height]
+    pdf = to_pdf input, analyze: true
+    text_inside = pdf.text[0]
+    text_outside = pdf.find_unique_text 'outside'
+    (expect text_outside[:x]).to eql text_inside[:x]
+    (expect image[:x]).to be < text_outside[:x]
+    (expect text_outside[:y]).to be > image_bottom
+  end
 end

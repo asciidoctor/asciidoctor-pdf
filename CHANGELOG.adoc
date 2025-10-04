@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 Improvements::
 
 * remove shy hyphens from text in log message when formatted text cannot be parsed (#2599)
+* clear float box if next block falls outside of flaot group (#2596)
 
 == 2.3.20 (2025-09-17) - @mojavelinux
 

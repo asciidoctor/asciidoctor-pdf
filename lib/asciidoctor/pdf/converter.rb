@@ -871,8 +871,13 @@ module Asciidoctor
         end
 
         if (float_box = (@float_box ||= nil))
-          ink_paragraph_in_float_box node, float_box, prose_opts, role_keys, block_next, insert_margin_bottom
-          return
+          if (prev_sibling = node.previous_sibling)&.context == :open && (prev_sibling.role? 'float-group')
+            move_cursor_to float_box[:bottom]
+            @float_box = nil
+          else
+            ink_paragraph_in_float_box node, float_box, prose_opts, role_keys, block_next, insert_margin_bottom
+            return
+          end
         end
         # TODO: check if we're within one line of the bottom of the page
         # and advance to the next page if so (similar to logic for section titles)
