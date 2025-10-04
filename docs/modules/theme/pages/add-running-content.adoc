@@ -19,6 +19,74 @@ To avoid this problem, reduce the height of the running content periphery or mak
 
 See xref:running-content.adoc[] for the complete list of keys you can use to customize your running content.
 
+[#columns]
+== Columns
+
+By default, the header and footer running content is partitioned into three columns that all span the full content width of the running content box.
+These columns are mapped to the keys `left`, `center`, and `right` in the theme.
+The content is aligned within the column based on its position (e.g., content in the right column is aligned to the right).
+In order for there to be content in the column, that content must be defined in the theme.
+
+You can control the number and width of columns in the running content using the `columns` key on the respective running content periphery (`header` or `footer`), which can be overridden by the `columns` key on the side for that periphery (`recto` or `verso`).
+
+The running content supports maximum of 3 columns.
+The columns are defined using colspecs.
+A colspec defines the width of each column with an optional alignment.
+
+The width is represented in percentage of available space (the space from the left margin to the right margin).
+The widths do not have to add up to 100%, meaning each column can use whatever portion of available space it wants (absolute lateral positioning), though a total of 100% is recommended.
+
+The alignment is expressed as a symbol, `<`, `=`, `>` to represent left, center, and right, respectively.
+The alignment must precede the width.
+If the alignment isn't specfied, it defaults to `<`.
+
+Let's look at an example of a colspec:
+
+[,yaml]
+----
+footer:
+  columns: =100%
+----
+
+This colspec defines a single column which uses all available space and centers its content.
+The column is mapped to the `center` key for defining content and other properties.
+Using this column value causes the `left` and `right` keys to be ignored.
+
+The colspecs are separated using a comma or space.
+The position (and thus name) of the column is inferred by its position in the list.
+The positions per number of columns are mapped as follows:
+
+1:: center
+2:: left and right
+3:: left, center, and right
+
+Let's look at example of a 3-column configuration:
+
+[,yaml]
+....
+footer:
+  columns: <25% =50% >25%
+....
+
+This colspec defines three columns.
+The content is aligned to the left for the left column, to the center for the center column, and to the right for the right column.
+The left and right columns occupy 25% of the available space and flank the center column that occupies 50%.
+To align the right column to the left, replace the colspec with <25%.
+
+Now let's look at example of a 2-column configuration.
+
+[,yaml]
+....
+footer:
+  columns: <25% >25%
+....
+
+This colspec defines two columns.
+The left column is aligned to the left and the right column is aligned to the right.
+Each column uses 25% of the available space.
+
+To configure 0 columns, assign and empty string to the `columns` key.
+
 [#start-at]
 == Start page
 
