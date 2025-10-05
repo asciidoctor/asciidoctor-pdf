@@ -403,7 +403,7 @@ module Asciidoctor
         @page_bg_image = {}
         @page_bg_color = resolve_theme_color :page_background_color, 'FFFFFF'
         # QUESTION: should ThemeLoader handle registering fonts instead?
-        register_fonts theme.font_catalog, ((doc.attr 'pdf-fontsdir')&.sub '{docdir}', (doc.attr 'docdir')) || 'GEM_FONTS_DIR'
+        register_fonts theme.font_catalog, ((doc.attr 'pdf-fontsdir')&.sub '{docdir}', (doc.attr 'docdir')) || (theme.__dir__ == ThemeLoader::ThemesDir ? 'GEM_FONTS_DIR' : %(#{theme.__dir__};GEM_FONTS_DIR))
         default_kerning theme.base_font_kerning != 'none'
         @fallback_fonts = Array theme.font_fallbacks
         @root_font_size = theme.base_font_size
