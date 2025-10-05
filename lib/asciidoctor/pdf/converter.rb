@@ -367,7 +367,7 @@ module Asciidoctor
         # QUESTION: should page options be preserved? (otherwise, not readily available)
         #@page_opts = { size: pdf_opts[:page_size], layout: pdf_opts[:page_layout] }
         ((::Prawn::Document.instance_method :initialize).bind self).call pdf_opts
-        register_fonts theme.font_catalog, ((doc.attr 'pdf-fontsdir')&.sub '{docdir}', (doc.attr 'docdir')) || 'GEM_FONTS_DIR'
+        register_fonts theme.font_catalog, ((doc.attr 'pdf-fontsdir')&.sub '{docdir}', (doc.attr 'docdir')) || (theme.__dir__ == ThemeLoader::ThemesDir ? 'GEM_FONTS_DIR' : %(#{theme.__dir__};GEM_FONTS_DIR))
         renderer.min_version (@pdf_version = PDFVersions[doc.attr 'pdf-version'])
         @allow_uri_read = doc.attr? 'allow-uri-read'
         @cache_uri = doc.attr? 'cache-uri'

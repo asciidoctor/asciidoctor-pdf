@@ -201,6 +201,13 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect fonts[0][:BaseFont]).to end_with '+NotoSerif'
     end
 
+    it 'should resolve fonts in gem fonts dir by default' do
+      pdf = to_pdf 'content', attribute_overrides: { 'pdf-theme' => (fixture_file 'bundled-fonts-theme.yml') }
+      fonts = pdf.objects.values.select {|it| Hash === it && it[:Type] == :Font }
+      (expect fonts).to have_size 1
+      (expect fonts[0][:BaseFont]).to end_with '+NotoSerif'
+    end
+
     it 'should look for font file in all specified font dirs' do
       %w(; ,).each do |separator|
         pdf = to_pdf 'content', attribute_overrides: { 'pdf-theme' => (fixture_file 'bundled-fonts-theme.yml'), 'pdf-fontsdir' => ([fixtures_dir, Asciidoctor::PDF::ThemeLoader::FontsDir].join separator) }
@@ -208,6 +215,13 @@ describe 'Asciidoctor::PDF::Converter - Font' do
         (expect fonts).to have_size 1
         (expect fonts[0][:BaseFont]).to end_with '+NotoSerif'
       end
+    end
+
+    it 'should resolve fonts in theme dir before gem fonts dir by default' do
+      pdf = to_pdf 'content', attribute_overrides: { 'pdf-theme' => (fixture_file 'otf-theme.yml') }
+      fonts = pdf.objects.values.select {|it| Hash === it && it[:Type] == :Font }
+      (expect fonts).to have_size 1
+      (expect fonts[0][:BaseFont]).to end_with '+Quicksand-Regular'
     end
 
     it 'should look for font file in pwd if path entry is .' do
