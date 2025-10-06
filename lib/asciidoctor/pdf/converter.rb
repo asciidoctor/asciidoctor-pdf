@@ -747,19 +747,19 @@ module Asciidoctor
       def convert_index_term term, pagenum_sequence_style = nil
         term_fragments = term.name.fragments
         unless term.container?
-          pagenum_fragment = (parse_text %(<a>#{DummyText}</a>), inline_format: true)[0]
+          link_fragment = (parse_text %(<a>#{DummyText}</a>), inline_format: true)[0]
           if @media == 'screen'
             case pagenum_sequence_style
             when 'page'
-              pagenums = term.dests.uniq {|dest| dest[:page] }.map {|dest| pagenum_fragment.merge anchor: dest[:anchor], text: dest[:page] }
+              pagenums = term.dests.uniq {|dest| dest[:page] }.map {|dest| link_fragment.merge anchor: dest[:anchor], text: dest[:page] }
             when 'range'
               first_anchor_per_page = {}.tap {|accum| term.dests.each {|dest| accum[dest[:page]] ||= dest[:anchor] } }
               pagenums = (consolidate_ranges first_anchor_per_page.keys).map do |range|
                 anchor = first_anchor_per_page[(range.include? '-') ? (range.partition '-')[0] : range]
-                pagenum_fragment.merge text: range, anchor: anchor
+                link_fragment.merge text: range, anchor: anchor
               end
             else # term
-              pagenums = term.dests.map {|dest| pagenum_fragment.merge text: dest[:page], anchor: dest[:anchor] }
+              pagenums = term.dests.map {|dest| link_fragment.merge text: dest[:page], anchor: dest[:anchor] }
             end
           else
             pagenums = consolidate_ranges term.dests.map {|dest| dest[:page] }.uniq
