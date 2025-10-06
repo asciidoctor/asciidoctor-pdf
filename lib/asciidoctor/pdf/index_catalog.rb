@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'formatted_string'
+
 module Asciidoctor
   module PDF
     class IndexCatalog
@@ -21,12 +23,12 @@ module Asciidoctor
       end
 
       def store_term names, dest
-        if (num_terms = names.size) > 2
-          store_tertiary_term names[0], names[1], names[2], dest
+        if (num_terms = (names = names.map {|name| FormattedString.new name }).size) == 1
+          store_primary_term names[0], dest
         elsif num_terms == 2
           store_secondary_term names[0], names[1], dest
-        elsif num_terms == 1
-          store_primary_term names[0], dest
+        elsif num_terms > 2
+          store_tertiary_term names[0], names[1], names[2], dest
         end
       end
 
