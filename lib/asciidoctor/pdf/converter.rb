@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'formatted_string'
 require_relative 'formatted_text'
 require_relative 'index_catalog'
 require_relative 'optimizer'
@@ -2693,10 +2692,10 @@ module Asciidoctor
           anchor = %(<a id="#{anchor_name}" type="indexterm"#{visible ? ' visible="true"' : ''}>#{DummyText}</a>)
           if visible
             visible_term = node.text
-            @index.store_primary_term (FormattedString.new parse_text visible_term, inline_format: [normalize: true]), dest
+            @index.store_term [(parse_text visible_term, inline_format: [normalize: true])], dest
             %(#{anchor}#{visible_term})
           else
-            @index.store_term (node.attr 'terms').map {|term| FormattedString.new parse_text term, inline_format: [normalize: true] }, dest
+            @index.store_term (node.attr 'terms').map {|term| parse_text term, inline_format: [normalize: true] }, dest
             anchor
           end
         end
