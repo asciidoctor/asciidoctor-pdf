@@ -624,33 +624,36 @@ describe 'Asciidoctor::PDF::Converter - Index' do
 
   it 'should sort arabic page numbers in index term numerically' do
     index = Asciidoctor::PDF::IndexCatalog.new
+    term_name = FormattedString.new [{ text: 'monkey' }]
     [11, 10, 100].each do |pgnum|
-      index.store_primary_term 'monkey', { anchor: (anchor_name = index.next_anchor_name) }
+      index.store_primary_term term_name, { anchor: (anchor_name = index.next_anchor_name) }
       index.link_dest_to_page anchor_name, pgnum
     end
-    monkey_term = index.categories[0].terms[0]
+    monkey_term = index.find_primary_term 'monkey'
     (expect monkey_term.dests.map {|it| it[:page] }).to eql %w(10 11 100)
   end
 
   it 'should sort roman page numbers in index term numerically' do
     index = Asciidoctor::PDF::IndexCatalog.new
     index.start_page_number = 101
+    term_name = FormattedString.new [{ text: 'monkey' }]
     [11, 10, 100].each do |pgnum|
-      index.store_primary_term 'monkey', { anchor: (anchor_name = index.next_anchor_name) }
+      index.store_primary_term term_name, { anchor: (anchor_name = index.next_anchor_name) }
       index.link_dest_to_page anchor_name, pgnum
     end
-    monkey_term = index.categories[0].terms[0]
+    monkey_term = index.find_primary_term 'monkey'
     (expect monkey_term.dests.map {|it| it[:page] }).to eql %w(x xi c)
   end
 
   it 'should sort mixed page numbers in index term numerically' do
     index = Asciidoctor::PDF::IndexCatalog.new
     index.start_page_number = 101
+    term_name = FormattedString.new [{ text: 'monkey' }]
     [11, 10, 100, 101].each do |pgnum|
-      index.store_primary_term 'monkey', { anchor: (anchor_name = index.next_anchor_name) }
+      index.store_primary_term term_name, { anchor: (anchor_name = index.next_anchor_name) }
       index.link_dest_to_page anchor_name, pgnum
     end
-    monkey_term = index.categories[0].terms[0]
+    monkey_term = index.find_primary_term 'monkey'
     (expect monkey_term.dests.map {|it| it[:page] }).to eql %w(x xi c 1)
   end
 
@@ -1222,5 +1225,197 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     section_after_index_text = pdf.find_unique_text 'Section After Index'
     (expect section_after_index_text[:page_number]).to eql 2
     (expect section_after_index_text[:y]).to be < category_z_text[:y]
+  end
+
+  context 'associations' do
+    it 'should label term with see assocation with link to alternate term in index and no page number' do
+      input = <<~'EOS'
+      ((Flash >> HTML 5)) has been supplanted by HTML 5.
+
+      ((HTML 5)) is THE language of the web.
+
+      <<<
+
+      [index]
+      == Index
+      EOS
+
+      pdf = to_pdf input, analyze: true
+      index_lines = pdf.lines pdf.find_text page_number: 2
+      (expect index_lines).to include 'Flash (see HTML 5)'
+      html5_term_text = pdf.find_unique_text 'HTML 5, ', page_number: 2, font_color: '333333'
+      pdf = to_pdf input
+      annotations = (get_annotations pdf, 2).select {|it| it[:Dest].start_with? '__indextermdef-' }
+      (expect annotations).to have_size 1
+      html5_term_id = %(__indextermdef-#{(Digest::MD5.new << 'HTML 5').hexdigest})
+      (expect annotations[0][:Dest]).to eql html5_term_id
+      html5_term_ref = pdf.objects[(get_names pdf)[html5_term_id]]
+      (expect html5_term_ref[2]).to eql html5_term_text[:x]
+      (expect html5_term_ref[3].round).to eql (html5_term_text[:y] + 11).round
+    end
+
+    it 'should not link to alternate term specified by see if media is not screen' do
+      input = <<~'EOS'
+      ((Flash >> HTML 5)) has been supplanted by HTML 5.
+
+      ((HTML 5)) is THE language of the web.
+
+      <<<
+
+      [index]
+      == Index
+      EOS
+
+      pdf = to_pdf input, attribute_overrides: { 'media' => 'print' }, analyze: true
+      index_lines = pdf.lines pdf.find_text page_number: 2
+      (expect index_lines).to include 'Flash (see HTML 5)'
+      pdf = to_pdf input, attribute_overrides: { 'media' => 'print' }
+      annotations = get_annotations pdf, 2
+      (expect annotations).to be_empty
+    end
+
+    it 'should append see also association directly after term and aligned with subterms' do
+      input = <<~'EOS'
+      ((Desserts &> Cookies)) are essential.
+
+      (((Desserts, Cakes)))Cakes are for special occasions.
+
+      ((Cookies)) are quick and easy to make.
+
+      <<<
+
+      [index]
+      == Index
+      EOS
+
+      pdf = to_pdf input, analyze: true
+      index_lines = pdf.lines pdf.find_text page_number: 2
+      (expect index_lines).to include '(see also Cookies)'
+      desserts_term_text = pdf.find_unique_text 'Desserts, ', page_number: 2
+      cakes_term_text = pdf.find_unique_text 'Cakes, ', page_number: 2
+      cookies_see_also_text = pdf.find_unique_text 'Cookies', page_number: 2, font_color: '428BCA'
+      see_also_text = pdf.find_unique_text '(see also ', page_number: 2
+      (expect cookies_see_also_text[:y]).to be < desserts_term_text[:y]
+      (expect cookies_see_also_text[:y]).to be > cakes_term_text[:y]
+      (expect see_also_text[:x]).to eql cakes_term_text[:x]
+      pdf = to_pdf input
+      annotations = (get_annotations pdf, 2).select {|it| it[:Dest].start_with? '__indextermdef-' }
+      (expect annotations).to have_size 1
+      cookies_term_id = %(__indextermdef-#{(Digest::MD5.new << 'Cookies').hexdigest})
+      (expect annotations[0][:Dest]).to eql cookies_term_id
+    end
+
+    it 'should append all see also associations directly after term indented with subterms' do
+      input = <<~'EOS'
+      ((Desserts &> Cookies &> Candies)) are essential.
+
+      (((Desserts, Cakes)))Cakes are for special occasions.
+
+      ((Cookies)) are quick and easy to make.
+      ((Candies)), on the other hand, not so much.
+
+      <<<
+
+      [index]
+      == Index
+      EOS
+
+      pdf = to_pdf input, analyze: true
+      index_lines = pdf.lines pdf.find_text page_number: 2
+      (expect index_lines).to include '(see also Candies)'
+      (expect index_lines).to include '(see also Cookies)'
+      desserts_term_text = pdf.find_unique_text 'Desserts, ', page_number: 2
+      cakes_term_text = pdf.find_unique_text 'Cakes, ', page_number: 2
+      candies_see_also_text = pdf.find_unique_text 'Candies', page_number: 2, font_color: '428BCA'
+      cookies_see_also_text = pdf.find_unique_text 'Cookies', page_number: 2, font_color: '428BCA'
+      (expect candies_see_also_text[:y]).to be < desserts_term_text[:y]
+      (expect cookies_see_also_text[:y]).to be < candies_see_also_text[:y]
+      (expect cakes_term_text[:y]).to be < cookies_see_also_text[:y]
+    end
+
+    it 'should not link to see also term specified by see-also if media is not screen' do
+      input = <<~'EOS'
+      ((Desserts &> Cookies)) are essential.
+
+      (((Desserts, Cakes)))Cakes are for special occasions.
+
+      ((Cookies)) are quick and easy to make.
+
+      <<<
+
+      [index]
+      == Index
+      EOS
+
+      pdf = to_pdf input, attribute_overrides: { 'media' => 'print' }, analyze: true
+      index_lines = pdf.lines pdf.find_text page_number: 2
+      (expect index_lines).to include '(see also Cookies)'
+      pdf = to_pdf input, attribute_overrides: { 'media' => 'print' }
+      annotations = get_annotations pdf, 2
+      (expect annotations).to be_empty
+    end
+
+    it 'should support see also on secondary term' do
+      input = <<~'EOS'
+      (((Big Cats, Cougars &> Puma)))Cougars, oh my!
+
+      ((Puma)) is another name for cougar.
+
+      <<<
+
+      [index]
+      == Index
+      EOS
+
+      pdf = to_pdf input, analyze: true
+      index_lines = pdf.lines pdf.find_text page_number: 2
+      (expect index_lines).to include '(see also Puma)'
+      cougars_term_text = pdf.find_unique_text 'Cougars, ', page_number: 2
+      puma_see_also_text = pdf.find_unique_text 'Puma', page_number: 2, font_color: '428BCA'
+      see_also_text = pdf.find_unique_text '(see also ', page_number: 2
+      (expect puma_see_also_text[:y]).to be < cougars_term_text[:y]
+      (expect see_also_text[:y]).to eql puma_see_also_text[:y]
+      (expect see_also_text[:x]).to be > cougars_term_text[:x]
+    end
+
+    it 'should not create link to alternate term if not in index' do
+      input = <<~'EOS'
+      (((Desserts >> Cookies)))Cookies are the best type of dessert.
+
+      <<<
+
+      [index]
+      == Index
+      EOS
+
+      pdf = to_pdf input, analyze: true
+      index_lines = pdf.lines pdf.find_text page_number: 2
+      (expect index_lines).to include 'Desserts (see Cookies)'
+      see_cookies_text = pdf.find_unique_text 'Desserts (see Cookies)'
+      (expect see_cookies_text).not_to be_nil
+      pdf = to_pdf input
+      annotations = (get_annotations pdf, 2).select {|it| it[:Dest].start_with? '__indextermdef-' }
+      (expect annotations).to be_empty
+    end
+
+    it 'should not create link to associated term if not in index' do
+      input = <<~'EOS'
+      ((Desserts &> Cookies)) are essential.
+
+      <<<
+
+      [index]
+      == Index
+      EOS
+
+      pdf = to_pdf input, analyze: true
+      index_lines = pdf.lines pdf.find_text page_number: 2
+      (expect index_lines).to include '(see also Cookies)'
+      see_also_cookies_text = pdf.find_unique_text '(see also Cookies)'
+      (expect see_also_cookies_text).not_to be_nil
+      pdf = to_pdf input
+      annotations = (get_annotations pdf, 2).select {|it| it[:Dest].start_with? '__indextermdef-' }
+      (expect annotations).to be_empty
+    end
   end
 end

@@ -709,6 +709,7 @@ module Asciidoctor
       end
 
       def convert_index_section node
+        @index.link_associations
         if ColumnBox === bounds || (columns = @theme.index_columns || 1) < 2
           convert_index_categories @index.categories, (node.document.attr 'index-pagenum-sequence-style')
         else
@@ -738,41 +739,73 @@ module Asciidoctor
       end
 
       def convert_index_term term, pagenum_sequence_style = nil
-        term_fragments = term.name.fragments
+        # NOTE: dup fragment list and all fragments to avoid any modification
+        term_fragments = term.name.fragments.map(&:dup)
         unless term.container?
-          link_fragment = (parse_text %(<a>#{DummyText}</a>), inline_format: true)[0]
           if @media == 'screen'
-            case pagenum_sequence_style
-            when 'page'
-              pagenums = term.dests.uniq {|dest| dest[:page] }.map {|dest| link_fragment.merge anchor: dest[:anchor], text: dest[:page] }
-            when 'range'
-              first_anchor_per_page = {}.tap {|accum| term.dests.each {|dest| accum[dest[:page]] ||= dest[:anchor] } }
-              pagenums = (consolidate_ranges first_anchor_per_page.keys).map do |range|
-                anchor = first_anchor_per_page[(range.include? '-') ? (range.partition '-')[0] : range]
-                link_fragment.merge text: range, anchor: anchor
-              end
-            else # term
-              pagenums = term.dests.map {|dest| link_fragment.merge text: dest[:page], anchor: dest[:anchor] }
-            end
-          else
-            pagenums = consolidate_ranges term.dests.map {|dest| dest[:page] }.uniq
+            link_fragment = (parse_text %(<a>#{DummyText}</a>), inline_format: true)[0]
+            term_fragments.unshift name: term.anchor, callback: [FormattedText::InlineDestinationMarker], text: DummyText
           end
-          pagenums.each do |pagenum|
-            if ::String === pagenum
-              term_fragments << ({ text: %(, #{pagenum}) })
+          if (see = term.see)
+            term_fragments << { text: ' (see ' }
+            if link_fragment && IndexTerm === see
+              link_fragment_ = link_fragment.merge anchor: see.anchor
+              see.name.fragments.each {|it| term_fragments << (link_fragment_.merge it) }
             else
-              term_fragments << { text: ', ' }
-              term_fragments << pagenum
+              term_fragments.concat see.name.fragments
+            end
+            term_fragments << { text: ')' }
+          else
+            if @media == 'screen'
+              case pagenum_sequence_style
+              when 'page'
+                pagenums = term.dests.uniq {|dest| dest[:page] }.map {|dest| link_fragment.merge anchor: dest[:anchor], text: dest[:page] }
+              when 'range'
+                first_anchor_per_page = {}.tap {|accum| term.dests.each {|dest| accum[dest[:page]] ||= dest[:anchor] } }
+                pagenums = (consolidate_ranges first_anchor_per_page.keys).map do |range|
+                  anchor = first_anchor_per_page[(range.include? '-') ? (range.partition '-')[0] : range]
+                  link_fragment.merge text: range, anchor: anchor
+                end
+              else # term
+                pagenums = term.dests.map {|dest| link_fragment.merge text: dest[:page], anchor: dest[:anchor] }
+              end
+            else
+              pagenums = consolidate_ranges term.dests.map {|dest| dest[:page] }.uniq
+            end
+            pagenums.each do |pagenum|
+              if ::String === pagenum
+                term_fragments << ({ text: %(, #{pagenum}) })
+              else
+                term_fragments << { text: ', ' }
+                term_fragments << pagenum
+              end
+            end
+            if (see_also = term.see_also)
+              see_also_items = []
+              see_also.each do |also_term|
+                see_also_fragments = [{ text: '(see also ' }]
+                if link_fragment && IndexTerm === also_term
+                  link_fragment_ = link_fragment.merge anchor: also_term.anchor
+                  also_term.name.fragments.map {|it| see_also_fragments << (link_fragment_.merge it) }
+                else
+                  see_also_fragments.concat also_term.name.fragments
+                end
+                see_also_fragments << { text: ')' }
+                see_also_items << see_also_fragments
+              end
             end
           end
         end
         subterm_indent = @theme.description_list_description_indent
         typeset_formatted_text term_fragments, (calc_line_metrics @base_line_height), align: :left, color: @font_color, hanging_indent: subterm_indent * 2, consolidate: true
         indent subterm_indent do
+          see_also_items&.each do |see_also_fragments|
+            typeset_formatted_text see_also_fragments, (calc_line_metrics @base_line_height), align: :left, color: @font_color, hanging_indent: subterm_indent * 2, consolidate: true
+          end
           term.subterms.each do |subterm|
             convert_index_term subterm, pagenum_sequence_style
-          end
-        end unless term.leaf?
+          end unless term.leaf?
+        end if see_also_items || !term.leaf?
       end
 
       def convert_preamble node
@@ -2671,12 +2704,19 @@ module Asciidoctor
           # NOTE: page number (:page key) is added by InlineDestinationMarker
           dest = { anchor: (anchor_name = @index.next_anchor_name) }
           anchor = %(<a id="#{anchor_name}" type="indexterm"#{visible ? ' visible="true"' : ''}>#{DummyText}</a>)
+          assoc = {}
+          if (see = node.attr 'see')
+            assoc[:see] = parse_text see, inline_format: [normalize: true]
+          end
+          if (see_also = node.attr 'see-also')
+            assoc[:see_also] = see_also.map {|term| parse_text term, inline_format: [normalize: true] }
+          end
           if visible
             visible_term = node.text
-            @index.store_term [(parse_text visible_term, inline_format: [normalize: true])], dest
+            @index.store_term [(parse_text visible_term, inline_format: [normalize: true])], dest, assoc
             %(#{anchor}#{visible_term})
           else
-            @index.store_term (node.attr 'terms').map {|term| parse_text term, inline_format: [normalize: true] }, dest
+            @index.store_term (node.attr 'terms').map {|term| parse_text term, inline_format: [normalize: true] }, dest, assoc
             anchor
           end
         end
