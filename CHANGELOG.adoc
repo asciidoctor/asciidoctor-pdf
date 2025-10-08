@@ -14,7 +14,7 @@ _No changes since previous release._
 Improvements::
 
 * remove shy hyphens from text in log message when formatted text cannot be parsed (#2599)
-* clear float box if next block falls outside of flaot group (#2596)
+* clear float box if next block falls outside of float group (#2596)
 * resolve fonts relative to theme dir before GEM_FONTS_DIR if `pdf-fontsdir` not specified (#2349)
 * add see and see-also associations on index terms to index (#2527)
 
