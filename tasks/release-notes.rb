@@ -55,7 +55,7 @@ Released on: #{release_date}
 Released by: @#{release_user}
 Release beer: #{release_beer}
 
-Logs: [resolved issues](#{issues_url}?q=is%3Aissue+label%3A#{release_tag}+is%3Aclosed)#{previous_tag ? %( | [source diff](#{repo_url}/compare/#{previous_tag}...#{release_tag}) | [gem diff](https://my.diffend.io/gems/#{gem_name}/#{previous_tag}/#{release_tag})) : ''}
+Logs: [resolved issues](#{issues_url}?q=is%3Aissue+label%3A#{release_tag}+is%3Aclosed)#{previous_tag ? %( | [source diff](#{repo_url}/compare/#{previous_tag}...#{release_tag}) | [gem diff](https://my.diffend.io/gems/#{gem_name}/#{previous_tag.delete_prefix 'v'}/#{release_tag.delete_prefix 'v'})) : ''}
 
 ## Credits
 
