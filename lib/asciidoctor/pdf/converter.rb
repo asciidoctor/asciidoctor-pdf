@@ -2291,6 +2291,31 @@ module Asciidoctor
           border_width[:top] = border_width[:right] = border_width[:bottom] = border_width[:left] = 0
         end
 
+        table_left_padding = 0
+        table_right_padding = 0
+        unless node.document.nested?
+          section_indent_left_idx = 0
+          section_indent_right_idx = 1
+          section_indent_left = @section_indent&.[](section_indent_left_idx) || 0
+          section_indent_right = @section_indent&.[](section_indent_right_idx) || 0
+          extend_key_name = 'extend'
+          extend_value = (node.attr? extend_key_name) ? (node.attr extend_key_name) : ''
+          case extend_value
+          when 'page'
+            table_left_padding = section_indent_left
+            table_right_padding = section_indent_right
+          when 'canvas'
+            table_left_padding = page_margin_left + section_indent_left
+            table_right_padding = page_margin_right + section_indent_right
+          else # extend is not specified or its value is neither page or canvas
+            table_left_padding = 0
+            table_right_padding = 0
+          end
+        end
+
+        bounds.subtract_left_padding table_left_padding
+        bounds.subtract_right_padding table_right_padding
+
         if node.option? 'autowidth'
           table_width = (node.attr? 'width') ? bounds.width * ((node.attr 'tablepcwidth') / 100.0) :
               (((node.has_role? 'stretch')) ? bounds.width : nil)
@@ -2413,6 +2438,8 @@ module Asciidoctor
           bounds.subtract_right_padding right_padding if right_padding
         end
         ink_table_caption node, alignment, table_width, caption_max_width, caption_end if caption_end == :bottom && node.title?
+        bounds.add_left_padding table_left_padding
+        bounds.add_right_padding table_right_padding
         theme_margin :block, :bottom, (next_enclosed_block node)
       rescue ::Prawn::Errors::CannotFit
         log :error, (message_with_context 'cannot fit contents of table cell into specified column width', source_location: node.source_location)
