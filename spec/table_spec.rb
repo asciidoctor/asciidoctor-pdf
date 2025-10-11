@@ -3609,4 +3609,182 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect title_text[:x]).to be > before_text[:x]
     end
   end
+
+  context 'Width' do
+    it 'has width equal to container size when extend is not specified' do
+      input = <<~END
+        [cols="1,1,1",grid=none,frame=sides]
+        |===
+        |A |B |C
+        |1 |2 |3
+        |===
+      END
+
+      page_margin_left = 26.0
+      page_margin_right = 36.0
+
+      section_indent_left = 10.0
+      section_indent_right = 15.0
+
+      pdf_theme = { page_margin: [0.0, page_margin_right, 0.0, page_margin_left], section_indent: [section_indent_left, section_indent_right] }
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+      page_width = pdf.pages[0][:size][0]
+
+      left_border_x = lines.min_by {|l| l[:from][:x] }[:from][:x]
+      right_border_x = lines.max_by {|l| l[:from][:x] }[:from][:x]
+
+      left_margin_x = page_margin_left + section_indent_left
+      right_margin_x = page_width - (page_margin_right + section_indent_right)
+
+      expect(left_border_x).to eql left_margin_x
+      expect(right_border_x).to eql right_margin_x
+    end
+
+    it 'has width equal to container size when extend is set to neither page nor canvas' do
+      input = <<~END
+        [cols="1,1,1",grid=none,frame=sides, extend=invalid]
+        |===
+        |A |B |C
+        |1 |2 |3
+        |===
+      END
+
+      page_margin_left = 26.0
+      page_margin_right = 36.0
+
+      section_indent_left = 10.0
+      section_indent_right = 15.0
+
+      pdf_theme = { page_margin: [0.0, page_margin_right, 0.0, page_margin_left], section_indent: [section_indent_left, section_indent_right] }
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+      page_width = pdf.pages[0][:size][0]
+      left_border_x = lines.min_by {|l| l[:from][:x] }[:from][:x]
+      right_border_x = lines.max_by {|l| l[:from][:x] }[:from][:x]
+      puts
+
+      left_margin_x = page_margin_left + section_indent_left
+      right_margin_x = page_width - (page_margin_right + section_indent_right)
+
+      expect(left_border_x).to eql left_margin_x
+      expect(right_border_x).to eql right_margin_x
+    end
+
+    it 'has width equal to pdf size minus margins when extend=page' do
+      input = <<~END
+        [cols="1,1,1",grid=none,frame=sides,extend=page]
+        |===
+        |A |B |C
+        |1 |2 |3
+        |===
+      END
+
+      page_margin_left = 26.0
+      page_margin_right = 36.0
+
+      section_indent_left = 10.0
+      section_indent_right = 15.0
+
+      pdf_theme = { page_margin: [0.0, page_margin_right, 0.0, page_margin_left], section_indent: [section_indent_left, section_indent_right] }
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+      page_width = pdf.pages[0][:size][0]
+      left_border_x = lines.min_by {|l| l[:from][:x] }[:from][:x]
+      right_border_x = lines.max_by {|l| l[:from][:x] }[:from][:x]
+
+      left_margin_x = page_margin_left
+      right_margin_x = page_width - page_margin_right
+
+      expect(left_border_x).to eql left_margin_x
+      expect(right_border_x).to eql right_margin_x
+    end
+
+    it 'has width equal to pdf size when extend=canvas' do
+      input = <<~END
+        [cols="1,1,1",grid=none,frame=sides,extend=canvas]
+        |===
+        |A |B |C
+        |1 |2 |3
+        |===
+      END
+
+      pdf_theme = { page_margin: [0.0, 36.0, 0.0, 26.0], section_indent: [10.0, 15.0] }
+      pdf = to_pdf input, pdf_theme: pdf_theme, analyze: true
+      lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+      page_width = pdf.pages[0][:size][0]
+      left_border_x = lines.min_by {|l| l[:from][:x] }[:from][:x]
+      right_border_x = lines.max_by {|l| l[:from][:x] }[:from][:x]
+
+      left_margin_x = 0.0
+      right_margin_x = page_width
+
+      expect(left_border_x).to eql left_margin_x
+      expect(right_border_x).to eql right_margin_x
+    end
+
+    it 'should not apply the extend=page option to nested tables' do
+      input = <<~END
+      [cols="1,2a,1", grid=cols, frame=none]
+      |===
+      |Normal cell1
+      |Cell with nested table
+      [cols="2,1", grid=none, frame=sides, extend=page]
+      !===
+      !Nested table cell 1 !Nested table cell 2
+      !===
+      |Normal cell2
+      |===
+      END
+
+      parent_table_width = 2.0
+      nested_table_width = 1.0
+
+      pdf_theme = { table_border_width: nested_table_width, table_grid_width: parent_table_width, page_margin: [0.0, 36.0, 0.0, 26.0], section_indent: [10.0, 15.0] }
+      lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+
+      parent_lines = lines.select {|l| l[:width] == parent_table_width }
+      parent_left = parent_lines.min_by {|l| l[:from][:x] }[:from][:x]
+      parent_right = parent_lines.max_by {|l| l[:from][:x] }[:from][:x]
+
+      nested_lines = lines.select {|l| l[:width] == nested_table_width }
+      nested_left = nested_lines.min_by {|l| l[:from][:x] }[:from][:x]
+      nested_right = nested_lines.max_by {|l| l[:from][:x] }[:from][:x]
+
+      expect(nested_left).to be > parent_left
+      expect(nested_right).to be < parent_right
+    end
+
+    it 'should not apply the extend=canvas option to nested tables' do
+      input = <<~END
+      [cols="1,2a,1", grid=cols, frame=none]
+      |===
+      |Normal cell1
+      |Cell with nested table
+      [cols="2,1", grid=none, frame=sides, extend=canvas]
+      !===
+      !Nested table cell 1 !Nested table cell 2
+      !===
+      |Normal cell2
+      |===
+      END
+
+      parent_table_width = 2.0
+      nested_table_width = 1.0
+
+      pdf_theme = { table_border_width: nested_table_width, table_grid_width: parent_table_width, page_margin: [0.0, 36.0, 0.0, 26.0], section_indent: [10.0, 15.0] }
+      lines = (to_pdf input, pdf_theme: pdf_theme, analyze: :line).lines
+
+      parent_lines = lines.select {|l| l[:width] == parent_table_width }
+      parent_left = parent_lines.min_by {|l| l[:from][:x] }[:from][:x]
+      parent_right = parent_lines.max_by {|l| l[:from][:x] }[:from][:x]
+
+      nested_lines = lines.select {|l| l[:width] == nested_table_width }
+      nested_left = nested_lines.min_by {|l| l[:from][:x] }[:from][:x]
+      nested_right = nested_lines.max_by {|l| l[:from][:x] }[:from][:x]
+
+      expect(nested_left).to be > parent_left
+      expect(nested_right).to be < parent_right
+    end
+  end
 end
