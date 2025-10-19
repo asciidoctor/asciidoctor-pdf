@@ -208,3 +208,4 @@ Free use of this software is granted under the terms of the MIT License.
 
 For the full text of the license, see the link:LICENSE[] file.
 Refer to the <<NOTICE.adoc#,NOTICE>> file for information about third-party Open Source software in use.
+endif::[]
