@@ -94,7 +94,7 @@ The fonts used by the default theme in Asciidoctor PDF provide all of these glyp
 
 //* \ufeff - zero width no-break space
 * \u00a0 - no-break space (used by converter to preserve indentation in code blocks)
-* \u200b - zero width space (used for line break hints)
+* \u200b - zero width space (used as line placeholder and to normalize line height)
 * \u000a - line feed character (used to indicate the location of a hard line break; has zero width)
 * \u2009 - thin space (used for space in the button UI element)
 * \u202f - narrow no-break space (used in the keybinding UI element)
@@ -111,6 +111,8 @@ The fonts used by the default theme in Asciidoctor PDF provide all of these glyp
 +
 If the .notdef glyph is non-empty (i.e., contains splines), it will be used as the default glyph when the document requests a character that's missing from the font.
 Unlike other glyphs, the .notdef glyph is referenced by name only, meaning it does not have a designated Unicode code point.
+
+The zero-width space is especially important as it ensures the line height remains intact even if the line starts with monospaced text.
 
 The font will also need to provide glyphs for all characters used in the document content, such as substituted arrows (e.g., =>) and emoji (e.g., 👍).
 
