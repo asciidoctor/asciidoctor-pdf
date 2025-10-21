@@ -65,6 +65,7 @@ Bug Fixes::
 * respect hide-uri-scheme when appending URL to link text when media is print or prepress (#2583)
 * correctly calculate extent for block in columns that starts below doctitle (#2579)
 * support internal link on image (value of link attribute starts with #) (#2572)
+* don't orphan section with unbreakable option that spans page boundary (#2608)
 
 Compliance::
 
