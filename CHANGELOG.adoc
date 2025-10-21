@@ -7,7 +7,9 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Bug Fixes::
+
+* don't orphan section with unbreakable option that spans page boundary (#2608)
 
 == 2.3.21 (2025-10-08) - @mojavelinux
 
