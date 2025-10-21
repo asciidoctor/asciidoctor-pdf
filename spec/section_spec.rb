@@ -1266,8 +1266,35 @@ describe 'Asciidoctor::PDF::Converter - Section' do
     end
   end
 
-  it 'should keep section with first block of content if breakable option is set on section' do
+  it 'should keep section with first unbreakable block of content if breakable option is set on section' do
     with_content_spacer 200, 600 do |spacer_path|
+      pdf = to_pdf <<~END, pdf_theme: { heading_min_height_after: nil }, analyze: true
+      == Section A
+
+      image::#{spacer_path}[pdfwidth=70mm]
+
+      [%breakable]
+      == Section B
+
+      [%unbreakable]
+      --
+      keep
+
+      this
+
+      together
+      --
+      END
+
+      section_b_text = pdf.find_unique_text 'Section B'
+      (expect section_b_text[:page_number]).to be 2
+      content_text = pdf.find_unique_text 'keep'
+      (expect content_text[:page_number]).to be 2
+    end
+  end
+
+  it 'should keep section that spans pages with first block of unbreakable content if breakable option is set on section' do
+    with_content_spacer 200, 675 do |spacer_path|
       pdf = to_pdf <<~END, pdf_theme: { heading_min_height_after: nil }, analyze: true
       == Section A
 

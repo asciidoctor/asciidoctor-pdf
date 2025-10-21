@@ -2946,6 +2946,8 @@ module Asciidoctor
             if page == start_page
               page.tare_content_stream
               orphaned = stop_if_first_page_empty { node.context == :section ? (traverse node) : (convert node.next_sibling) }
+            else
+              orphaned = true
             end
           ensure
             pop_scratch doc
