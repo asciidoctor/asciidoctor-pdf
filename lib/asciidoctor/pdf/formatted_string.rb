@@ -4,7 +4,7 @@ class FormattedString < String
   attr_reader :fragments
 
   def initialize fragments
-    super [].tap {|accum| (@fragments = fragments).each {|it| accum << it[:text] } }.join
+    super [].tap {|accum| (@fragments = fragments).each {|it| accum << it[:text] } }.join # rubocop:disable Style/MapIntoArray
   end
 
   def eql? other

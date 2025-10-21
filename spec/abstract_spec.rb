@@ -149,9 +149,8 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     END
 
     texts = pdf.text
-    margins = []
-    (1.upto texts.size - 2).each do |idx|
-      margins << ((texts[idx][:y] - (texts[idx + 1].yield_self {|it| it[:y] + it[:font_size] })).round 2)
+    margins = (1.upto texts.size - 2).map do |idx|
+      (texts[idx][:y] - (texts[idx + 1].yield_self {|it| it[:y] + it[:font_size] })).round 2
     end
     (expect margins).to have_size 3
     (expect margins.uniq).to have_size 1
@@ -646,9 +645,8 @@ describe 'Asciidoctor::PDF::Converter - Abstract' do
     END
 
     texts = pdf.text
-    margins = []
-    (1.upto texts.size - 2).each do |idx|
-      margins << ((texts[idx][:y] - (texts[idx + 1].yield_self {|it| it[:y] + it[:font_size] })).round 2)
+    margins = (1.upto texts.size - 2).map do |idx|
+      (texts[idx][:y] - (texts[idx + 1].yield_self {|it| it[:y] + it[:font_size] })).round 2
     end
     (expect margins).to have_size 3
     (expect margins.uniq).to have_size 1

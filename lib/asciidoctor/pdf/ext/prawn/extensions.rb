@@ -368,7 +368,7 @@ module Asciidoctor
             super points.to_f
           end
         else
-          super points
+          super
         end
       end
 

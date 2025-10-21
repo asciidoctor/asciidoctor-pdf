@@ -1481,7 +1481,7 @@ module Asciidoctor
           theme_font :description_list_term do
             term_height = height_of_typeset_text 'A'
             term_transform = @text_transform
-            term_inline_format = (term_font_styles = font_styles).empty? ? true : [inherited: { styles: term_font_styles }]
+            term_inline_format = (term_font_styles = font_styles).empty? || [inherited: { styles: term_font_styles }]
             term_line_metrics = calc_line_metrics @base_line_height
             term_padding = [term_line_metrics.padding_top, 10, term_line_metrics.padding_bottom, 10]
             desc_padding = [0, 10, 0, 10]
@@ -3907,7 +3907,7 @@ module Asciidoctor
               delimiters = [', ', ': ']
               if (delimiter_overrides = @theme.title_page_revision_delimiter)
                 delimiter_overrides = [delimiter_overrides] unless Array === delimiter_overrides
-                delimiters[0..delimiter_overrides.size - 1] = delimiter_overrides
+                delimiters[0..(delimiter_overrides.size - 1)] = delimiter_overrides
               end
               revision_content = (doc.attr? 'revnumber') ? [([(doc.attr 'version-label'), (doc.attr 'revnumber')].compact.join ' ')] : []
               if doc.attr? 'revdate'
