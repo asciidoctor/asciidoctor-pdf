@@ -66,6 +66,7 @@ Bug Fixes::
 * correctly calculate extent for block in columns that starts below doctitle (#2579)
 * support internal link on image (value of link attribute starts with #) (#2572)
 * don't orphan section with unbreakable option that spans page boundary (#2608)
+* correctly track start page number of section title that self-advances when section is breakable (#2609)
 
 Compliance::
 
