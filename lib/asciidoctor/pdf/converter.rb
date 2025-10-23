@@ -2912,9 +2912,10 @@ module Asciidoctor
         if (min_height_after = @theme.heading_min_height_after) == 'auto' || (node.option? 'breakable')
           orphaned = nil
           doc = node.document
+          start_page_number = nil
           dry_run single_page: true do
             push_scratch doc
-            start_page = page
+            start_page_number ||= page_number # block will be restarted if first attempt fails
             theme_font :heading, level: opts[:level] do
               if opts[:part]
                 ink_part_title node, title, opts
@@ -2924,7 +2925,7 @@ module Asciidoctor
                 ink_general_heading node, title, opts
               end
             end
-            if page == start_page
+            if page_number == start_page_number
               page.tare_content_stream
               orphaned = stop_if_first_page_empty { node.context == :section ? (traverse node) : (convert node.next_sibling) }
             else

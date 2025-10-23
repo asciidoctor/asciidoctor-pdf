@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 Bug Fixes::
 
 * don't orphan section with unbreakable option that spans page boundary (#2608)
+* correctly track start page number of section title that self-advances when section is breakable (#2609)
 
 == 2.3.21 (2025-10-08) - @mojavelinux
 
