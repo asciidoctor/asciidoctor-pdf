@@ -67,6 +67,7 @@ Bug Fixes::
 * support internal link on image (value of link attribute starts with #) (#2572)
 * don't orphan section with unbreakable option that spans page boundary (#2608)
 * correctly track start page number of section title that self-advances when section is breakable (#2609)
+* patch prawn-svg to support generic font family override (#2604)
 
 Compliance::
 
