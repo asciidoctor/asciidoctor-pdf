@@ -1522,10 +1522,11 @@ module Asciidoctor
               indent term_column_width + desc_padding[3], desc_padding[1] do
                 traverse_list_item desc, :dlist_desc, normalize_line_height: true, margin_bottom: ((next_enclosed_block desc, descend: true) ? nil : 0)
               end
+              # ensure cursor is below last term
               if page_number < after_term_page_number
                 go_to_page after_term_page_number
                 @y = after_term_y
-              elsif y > after_term_y
+              elsif page_number == after_term_page_number && y > after_term_y
                 @y = after_term_y
               end
             end
