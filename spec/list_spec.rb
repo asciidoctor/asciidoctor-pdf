@@ -1545,6 +1545,29 @@ describe 'Asciidoctor::PDF::Converter - List' do
           (expect (pdf.find_text 'task').size).to eql 50
         end).not_to log_message
       end
+
+      it 'should start next entry after desc when desc spans boundary of page' do
+        pdf = to_pdf <<~END, analyze: true
+        #{['filler'] * 20 * %(\n\n)}
+
+        [horizontal]
+        term::
+        +
+        --
+        #{['* desc'] * 14 * ?\n}
+        --
+        +
+        desc end
+
+        next term::
+        END
+
+        desc_end_text = pdf.find_unique_text 'desc end'
+        next_term_text = pdf.find_unique_text 'next term'
+        (expect next_term_text[:page_number]).to eql desc_end_text[:page_number]
+        (expect next_term_text[:y]).to be < desc_end_text[:y]
+        (expect desc_end_text[:y] - next_term_text[:y]).to (be_within 1).of 28
+      end
     end
 
     context 'Unordered' do
