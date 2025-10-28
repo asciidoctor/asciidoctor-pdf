@@ -47,6 +47,7 @@ Improvements::
 * resolve fonts relative to theme dir before GEM_FONTS_DIR if `pdf-fontsdir` not specified (#2349)
 * add see and see-also associations on index terms to index (#2527)
 * upgrade prawn-svg to 0.38.x (#2604)
+* bypass any dry run logic if remaining height on page is less than heading font size
 
 Bug Fixes::
 

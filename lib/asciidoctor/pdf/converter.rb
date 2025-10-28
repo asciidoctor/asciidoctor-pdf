@@ -2929,6 +2929,11 @@ module Asciidoctor
       # the next page. This method is not called if the cursor is already at the top of the page or
       # whether this node has no node that follows it in document order.
       def arrange_heading node, title, opts
+        # quick optimization if font size itself won't fit in remaining space
+        unless theme_font(:heading, level: (hlevel = opts[:level])) { font_size <= cursor }
+          advance_page
+          return
+        end
         if (min_height_after = @theme.heading_min_height_after) == 'auto' || (node.option? 'breakable')
           orphaned = nil
           doc = node.document
@@ -2936,7 +2941,7 @@ module Asciidoctor
           dry_run single_page: true do
             push_scratch doc
             start_page_number ||= page_number # block will be restarted if first attempt fails
-            theme_font :heading, level: opts[:level] do
+            theme_font :heading, level: hlevel do
               if opts[:part]
                 ink_part_title node, title, opts
               elsif opts[:chapterlike]
@@ -2956,7 +2961,7 @@ module Asciidoctor
           end
           advance_page if orphaned
         else
-          theme_font :heading, level: (hlevel = opts[:level]) do
+          theme_font :heading, level: hlevel do
             if (space_below = ::Numeric === min_height_after ? min_height_after : 0) > 0 && (node.context == :section ? node.blocks? : !node.last_child?)
               space_below += @theme[%(heading_h#{hlevel}_margin_bottom)] || @theme.heading_margin_bottom
             else
