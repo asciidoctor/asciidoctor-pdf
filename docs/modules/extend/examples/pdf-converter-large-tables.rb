@@ -24,11 +24,7 @@ class PDFConverterLargeTables < (Asciidoctor::Converter.for 'pdf')
     pgnum = 0
     delete_current_page if page.empty?
     while (pgnum += 1)
-      imported = nil
-      import_page table_pdf, page: pgnum, advance: false, advance_if_missing: false do
-        imported = true
-      end
-      break unless imported
+      break unless import_page table_pdf, page: pgnum, advance: false, advance_if_missing: false
     end
     start_new_page layout: prev_page_layout, margin: prev_page_margin, size: prev_page_size
     nil
