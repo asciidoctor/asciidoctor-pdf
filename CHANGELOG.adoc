@@ -48,6 +48,7 @@ Improvements::
 * add see and see-also associations on index terms to index (#2527)
 * upgrade prawn-svg to 0.38.x (#2604)
 * bypass any dry run logic if remaining height on page is less than heading font size
+* update import_page method on converter to return true if page was imported (nil otherwise), on par with the functionality of method it replaces
 
 Bug Fixes::
 

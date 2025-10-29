@@ -879,6 +879,8 @@ module Asciidoctor
       # However, due to how page creation works in Prawn, understand that advancing
       # to the next page is necessary to prevent the size & layout of the imported
       # page from affecting a newly created page.
+      #
+      # Returns a Boolean indicating whether the page to import exists and was imported.
       def import_page file, options = {}
         prev_page_layout = page.layout
         prev_page_size = page.size
@@ -900,6 +902,7 @@ module Asciidoctor
             advance_page layout: prev_page_layout, margin: prev_page_margin, size: prev_page_size
             (@bounding_box = prev_bounds).reset_top if ColumnBox === prev_bounds
           end
+          imported = true
         elsif options.fetch :advance_if_missing, true
           delete_current_page
           # NOTE: see previous comment
@@ -908,7 +911,7 @@ module Asciidoctor
         else
           delete_current_page
         end
-        nil
+        imported
       end
 
       # Create a new page for the specified image.
