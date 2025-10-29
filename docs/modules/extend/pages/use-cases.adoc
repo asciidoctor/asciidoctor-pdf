@@ -507,6 +507,23 @@ We mark that document as `:scratch` to avoid processing the same table again.
 Next, we grab the pages from the resulting PDF and import them back into the current PDF.
 Some additional work must be done with attributes to ensure the scratch document has access to the same environment as the main document.
 
+Here's how you would mark up a table to activate this functionality.
+
+[,asciidoc]
+----
+\ifdef::backend-pdf[]
+[%autowidth,cols=8,page-size=A2,page-layout=landscape]
+|===
+// table cells here
+|===
+\endif::[]
+----
+
+The page size can be any value accepted by the `pdf-page-size` document attribute.
+The page layout can be landscape or portrait.
+Note that we're allowing the converter to set the column widths automatically.
+You still have the option to set explicit width ratios, though the numbers must be greater than 0.
+
 == Theme table using roles
 
 The converter only supports custom roles on paragraphs and phrases.
