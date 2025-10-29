@@ -481,6 +481,31 @@ image:
   float-gap: [12, 6]
 ----
 
+== Making room for large tables
+
+Large tables may require extra space to layout out.
+Unlike HTML, PDF is a fixed-size canvas.
+That means large tables have to be squeezed to fit, which can sometimes cause them to overflow to other pages (and possibly even get cut off).
+Fortunately, PDF does not (practically) restrict the size of the canvas.
+That means we can allocate a larger page in order to get the table to fit.
+
+The PDF converter does not support changing the page size mid document.
+However, what it does allow you to do is import pages with any page size from another PDF.
+That means we can extend the converter in order to render the table in another document with a custom page size (and orientation), then import those pages back into the main PDF.
+That's what the extended converter below does.
+
+.Extended converter that supports large tables
+[,ruby]
+----
+include::example$pdf-converter-large-tables.rb[]
+----
+
+In the overridden `convert_table` method, we first detect whether the table has either the `page-size` or `page-layout` attributes set, which effectively flags it as a large table.
+Then, we use the Asciidoctor API to convert the table in a separate document with that page size and/or layout.
+We mark that document as `:scratch` to avoid processing the same table again.
+Next, we grab the pages from the resulting PDF and import them back into the current PDF.
+Some additional work has to be done with attributes to ensure that the scratch document has access to the same context as the main document.
+
 == Theme table using roles
 
 The converter only supports custom roles on paragraphs and phrases.
