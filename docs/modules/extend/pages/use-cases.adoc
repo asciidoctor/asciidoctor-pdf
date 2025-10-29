@@ -481,7 +481,7 @@ image:
   float-gap: [12, 6]
 ----
 
-== Making room for large tables
+== Make room for large tables
 
 Large tables may require extra space to layout out.
 Unlike HTML, PDF is a fixed-size canvas.
