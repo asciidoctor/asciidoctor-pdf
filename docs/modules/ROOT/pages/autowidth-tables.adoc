@@ -38,7 +38,7 @@ You can observe this behavior by trying the following example:
 ----
 
 The table is only wide as necessary to ensure that the text in each cell only occupies a single line.
-The width of each column is effectively controlled by the cell in header row, which has the widest content in the column.
+The width of each column is effectively controlled by the cell in the header row, which has the widest content in the column in this case.
 
 == Non-compliant range
 
@@ -78,11 +78,19 @@ To protect against insufficient width errors, prawn-table forces text to be wrap
 That's why the words can be broken even when there's a possible way to arrange the table so that they don't.
 (There's a small amount of tolerance built in to prawn-table to address some edge cases, but it's not sufficient to handle all of them).
 
+If you want to give a table more space, you may be interested in the custom converter that xref:extend:use-cases.adoc#make-room-for-large-tables[makes room for large tables].
+
 == Fixed-width columns
 
 The wrap by character also comes into play when a column has a fixed width.
 If the width of a single word exceeds the width of the column, prawn-table has no choice but to break the word.
-If there's no break opportunity in the word, it will do so at the last possible opportunity.
+If there's no break opportunity in the word, it will break at the last possible opportunity.
 Again, that's why the last letter in the word can end up getting wrapped.
-You can avoid this arbitrary break by providing a semantic break opportunity.
-You can do so either by enabling hyphens on the document or by introducing either a shy (\&#173;) or nbsp (\{nbsp}) somewhere in the word (e.g., `+sub&#173;processor+`)
+
+CAUTION: *Never set the width of a column with content to 0.*
+The column value is treat strictly.
+As a result, no content will be able to fit in the cells of that column.
+This differs from HTML, where column widths are a mere suggestion and can be reflowed by the rendering engine.
+
+You can avoid an arbitrary break in a word by providing a semantic break opportunity as an alternative.
+You can do so either by enabling hyphens on the document or by inserting either a shy (\&#173;) or nbsp (\{nbsp}) somewhere in the word (e.g., `+sub&#173;processor+`)
