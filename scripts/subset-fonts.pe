@@ -86,19 +86,20 @@ while (fi < num_copy_fonts)
     if (is_noto)
       Print("Stealing glyphs from other fonts...")
       if (new_basename == "notoserif-regular" || new_basename == "notosans-regular")
-        Print("Stealing ballot boxes from FontAwesome...")
-        # Grab ballot boxes from FontAwesome
+        Print("Stealing checkmark and ballot boxes from FontAwesome...")
         Open(fa_src_filepath)
         # relocate 0uf046 -> 0u2611
         Select(0uf046); Copy(); Select(0u2611); Paste()
         # relocate 0uf096 -> 0u2610
         Select(0uf096); Copy(); Select(0u2610); Paste()
-        # select and copy ballot boxes
-        Select(0u2610,0u2611)
+        # relocate 0uf00c -> 0u2713
+        Select(0uf00c); Copy(); Select(0u2713); Paste()
+        # select and copy glyphs
+        SelectSingletons(0u2610,0u2611,0u2713)
         Copy()
         Close()
         Open(src_filepath)
-        Select(0u2610,0u2611)
+        SelectSingletons(0u2610,0u2611,0u2713)
         Paste()
         SetWidth(1664)
         SelectNone()
@@ -175,11 +176,9 @@ while (fi < num_copy_fonts)
       # Single arrows (present in Noto Serif, but misaligned) and double arrows (imported from M+ 1p)
       SelectMoreSingletons(0u2190,0u2191,0u2192,0u2193,0u21d0,0u21d2)
       if (new_basename == "notoserif-regular" || new_basename == "notosans-regular")
-        # Ballot boxes (imported from FontAwesome)
-        SelectMore(0u2610,0u2611)
+        # Checkmark and ballot boxes (imported from FontAwesome)
+        SelectMoreSingletons(0u2610,0u2611,0u2713)
       endif
-      # Check mark (missing from Noto Serif)
-      #SelectMore(0u2713)
     endif
     if (is_mplus)
       # Single arrows
