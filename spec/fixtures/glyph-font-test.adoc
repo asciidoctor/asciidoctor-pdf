@@ -37,11 +37,11 @@ in&#x2060;divisible
 almost&#x200a;touching
 // no-break hyphen
 fast&#x2011;approaching
-ifeval::["{pdf-theme}"=="default-with-font-fallbacks"]
-// check mark
+// checkmark
 &#x2713; done
 // bold ballot boxes
 *&#x2610; &#x2611;*
+ifeval::["{pdf-theme}"=="default-with-font-fallbacks"]
 // upside down e
 upsid&#x0259; down
 // extended monospace punctuation

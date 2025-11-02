@@ -12,6 +12,7 @@ Improvements::
 * bypass any dry run logic if remaining height on page is less than heading font size
 * update import_page method on converter to return true if page was imported (nil otherwise), on par with the functionality of method it replaces
 * limit min toclevels value so it does not cause TOC to be empty (#2619)
+* add checkmark glyph (U+2713) to prose fonts (Noto Serif and Noto Sans) to avoid need for fallback font (#2617)
 
 == 2.3.23 (2025-10-26) - @mojavelinux
 
