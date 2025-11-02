@@ -32,15 +32,16 @@ Both the `toclevels` and `outlinelevels` attributes can be set as a block attrib
 
 == TOC depth
 
-You can adjust the depth of section levels that are displayed in the TOC using the `toclevels` document attribute.
+You can adjust the depth of section levels displayed in the TOC using the `toclevels` document attribute.
 
 [,asciidoc]
 ----
 = Document Title
 :toclevels: 3 <.>
 ----
-<.> Set `toclevels` in the document header.
-Accepted values are the numbers 1 through 5.
+<.> Set the `toclevels` document attribute in the document header.
+
+Accepted values for the `toclevels` document attribute are 1 through 5, as well as 0 for multipart books.
 
 You can override the `toclevels` document attribute for a specific section and its children by setting the `toclevels` block attribute on the respective section.
 
@@ -64,12 +65,12 @@ Content.
 
 The block attribute temporarily changes the value of the document attribute and thus refers to the absolute depth.
 Therefore, it must take into account the depth of the section on which it is set.
-The value `0` always removes the current section from the TOC.
 
 == Remove section from TOC
 
-You can exclude a section (and all its descendants) from the TOC by setting the `toclevels` block attribute on the section to `0`.
+You can exclude a section (and all its descendants) from the TOC by setting the `toclevels` block attribute on the section to a value less than itself.
 In this case, the section excludes itself.
+When set on a section is the only time the toclevels value can only be less than the level of the top-level sections in the document.
 For example:
 
 [,asciidoc]
