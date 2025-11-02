@@ -133,7 +133,7 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.pages[1][:strings]).not_to include 'Chapter B'
     end
 
-    it 'should not show any section titles when toclevels is less than 0' do
+    it 'should coerce toclevels to minimum section level so TOC is not empty' do
       pdf = to_pdf <<~'EOS', doctype: :book, analyze: true
       = Document Title
       :toc:
@@ -149,7 +149,10 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       EOS
       (expect pdf.pages).to have_size 6
       toc_lines = pdf.lines pdf.find_text page_number: 2
-      (expect toc_lines).to eql ['Table of Contents']
+      (expect toc_lines).to have_size 3
+      (expect toc_lines[0]).to eql 'Table of Contents'
+      (expect toc_lines[1]).to start_with 'Part One'
+      (expect toc_lines[2]).to start_with 'Part Two'
     end
 
     it 'should allow section to override toclevels for descendant sections' do

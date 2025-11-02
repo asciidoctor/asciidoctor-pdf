@@ -195,10 +195,10 @@ module Asciidoctor
           end if doc.header? && !doc.notitle
         end
 
-        num_front_matter_pages = toc_page_nums = toc_num_levels = nil
+        num_front_matter_pages = toc_page_nums = nil
 
+        toc_num_levels = resolve_toclevels doc
         indent_section do
-          toc_num_levels = (doc.attr 'toclevels', 2).to_i
           if (toc_at_top = (doc.attr? 'toc') && !((toc_placement = doc.attr 'toc-placement') == 'macro' || toc_placement == 'preamble') && !(get_entries_for_toc doc).empty?)
             start_new_page if @ppbook && verso_page?
             add_dest_for_block doc, id: 'toc', y: (at_page_top? ? page_height : nil)
@@ -2423,7 +2423,7 @@ module Asciidoctor
         if ((doc = node.document).attr? 'toc-placement', placement) && (doc.attr? 'toc') && !(get_entries_for_toc doc).empty?
           start_toc_page node, placement if (is_book = doc.doctype == 'book')
           add_dest_for_block node, id: (node.id || 'toc') if is_macro
-          toc_extent = @toc_extent = allocate_toc doc, (doc.attr 'toclevels', 2).to_i, cursor, (title_as_page = is_book || (doc.attr? 'title-page'))
+          toc_extent = @toc_extent = allocate_toc doc, (resolve_toclevels doc), cursor, (title_as_page = is_book || (doc.attr? 'title-page'))
           if title_as_page
             if @theme.page_numbering_start_at == 'toc'
               @index.start_page_number = toc_extent.from.page
@@ -2815,7 +2815,7 @@ module Asciidoctor
         if ::String === num_levels
           if num_levels.include? ':'
             num_levels, expand_levels = num_levels.split ':', 2
-            num_levels = num_levels.empty? ? (doc.attr 'toclevels', 2).to_i : num_levels.to_i
+            num_levels = num_levels.empty? ? (resolve_toclevels doc) : num_levels.to_i
             expand_levels = expand_levels.to_i
           else
             num_levels = expand_levels = num_levels.to_i
@@ -3931,6 +3931,13 @@ module Asciidoctor
 
       def get_entries_for_toc node
         node.sections
+      end
+
+      def resolve_toclevels doc
+        if (toc_num_levels = (doc.attr 'toclevels', 2).to_i) < 1
+          toc_num_levels = doc.doctype == 'book' && doc.sections.find {|s| s.sectname == 'part' } ? 0 : 1
+        end
+        toc_num_levels
       end
 
       # NOTE: num_front_matter_pages not used during a dry run
