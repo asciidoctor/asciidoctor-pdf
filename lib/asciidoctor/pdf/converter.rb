@@ -2292,15 +2292,6 @@ module Asciidoctor
           border_width[:top] = border_width[:right] = border_width[:bottom] = border_width[:left] = 0
         end
 
-        if node.option? 'autowidth'
-          table_width = (node.attr? 'width') ? bounds.width * ((node.attr 'tablepcwidth') / 100.0) :
-              (((node.has_role? 'stretch')) ? bounds.width : nil)
-          column_widths = []
-        else
-          table_width = bounds.width * ((node.attr 'tablepcwidth') / 100.0)
-          column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * table_width) / 100.0 }
-        end
-
         if ((alignment = node.attr 'align') && (BlockAlignmentNames.include? alignment)) ||
             (alignment = (node.roles & BlockAlignmentNames)[-1])
           alignment = alignment.to_sym
@@ -2310,13 +2301,11 @@ module Asciidoctor
 
         caption_max_width = theme.table_caption_max_width || 'fit-content'
 
+        # NOTE: the border color, style, and width of the outer frame is set in the table callback block
         table_settings = {
           header: table_header_size,
           # NOTE: position is handled by this method
           position: :left,
-          # NOTE: the border color, style, and width of the outer frame is set in the table callback block
-          width: table_width,
-          column_widths: column_widths,
         }
         cell_style = { border_color: grid_color.values, border_lines: grid_style.values, border_width: grid_width.values }
 
@@ -2331,6 +2320,18 @@ module Asciidoctor
         else # none
           table_settings[:row_colors] = [body_bg_color]
         end
+
+        if node.option? 'autowidth'
+          table_width = (node.attr? 'width') ? bounds.width * ((node.attr 'tablepcwidth') / 100.0) :
+              (((node.has_role? 'stretch')) ? bounds.width : nil)
+          column_widths = []
+        else
+          table_width = bounds.width * ((node.attr 'tablepcwidth') / 100.0)
+          column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * table_width) / 100.0 }
+        end
+
+        table_settings[:table_width] = table_width
+        table_settings[:column_widths] = column_widths
 
         left_padding = right_padding = nil
         table table_data, table_settings do
