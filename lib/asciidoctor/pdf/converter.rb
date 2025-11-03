@@ -2330,7 +2330,7 @@ module Asciidoctor
           column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * table_width) / 100.0 }
         end
 
-        table_settings[:table_width] = table_width
+        table_settings[:width] = table_width
         table_settings[:column_widths] = column_widths
 
         left_padding = right_padding = nil
