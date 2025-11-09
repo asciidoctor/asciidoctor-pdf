@@ -46,29 +46,32 @@ Interdocument cross references (i.e., xrefs) will only successfully make that tr
 
 Those rules are as follows:
 
-. The path segment of the interdocument xref must match the project-relative path of the included document
-. The reference must include the ID of the target element
+. The path segment of the interdocument xref must match the project-relative path of the included document.
+. The target document must be included entirely without the use of any filters (tags or lines).
+. The reference must include the ID of the target element.
 
-For instance, if your primary document contains the following include:
+For instance, let's assume your primary document contains the following include:
 
 [,asciidoc]
 ----
 \include::chapters/chapter-1.adoc[]
 ----
 
-Then an interdocument xref to an anchor in that chapter must be expressed as:
+IMPORTANT: Notice that the file is included entirely, not filtered using tags or lines.
+
+An interdocument xref to an anchor in that chapter can be expressed as:
 
 [source,asciidoc]
 ----
 <<chapters/chapter-1.adoc#_anchor_name,Destination in Chapter 1>>
 ----
 
-This rule holds regardless of which document the xref is located in.
+The resolution of this xref holds regardless of which document the xref is located in.
 
 To resolve the interdocument xref, the converter first checks if the target matches the `docname` attribute.
-It then looks to see if the target matches one of the included files.
-(In both cases, it ignores the file extension).
-If Asciidoctor cannot resolve the target of an interdocument xref, it simply makes a link (like the HTML converter).
+If not, it then looks to see if the target matches one of the (fully) included files.
+(The file extension is not considered in either case).
+If Asciidoctor cannot resolve the target of an interdocument xref, it simply makes a link, just like the HTML converter.
 
 Let's consider a complete example.
 Assume you are converting the following book document at the root of the project:
