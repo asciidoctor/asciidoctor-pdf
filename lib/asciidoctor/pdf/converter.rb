@@ -639,6 +639,22 @@ module Asciidoctor
         end
       end
 
+      def with_extent extent = nil
+        if extent && extent != 'container'
+          outdent_section do
+            if extent == 'page'
+              indent(-bounds_margin_left, -bounds_margin_right) do
+                yield
+              end
+            else # margin
+              yield
+            end
+          end
+        else
+          yield
+        end
+      end
+
       def convert_section sect, _opts = nil
         if (sectname = sect.sectname) == 'abstract'
           # HACK: cheat a bit to hide this section from TOC; TOC should filter these sections
@@ -2321,100 +2337,106 @@ module Asciidoctor
           table_settings[:row_colors] = [body_bg_color]
         end
 
-        if node.option? 'autowidth'
-          table_width = (node.attr? 'width') ? bounds.width * ((node.attr 'tablepcwidth') / 100.0) :
-              (((node.has_role? 'stretch')) ? bounds.width : nil)
-          column_widths = []
-        else
-          table_width = bounds.width * ((node.attr 'tablepcwidth') / 100.0)
-          column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * table_width) / 100.0 }
+        if (extent = node.attr 'extent') && (!([:section, :document].include? node.parent.context) || node.document.nested?)
+          extent = nil
         end
 
-        table_settings[:width] = table_width
-        table_settings[:column_widths] = column_widths
-
-        left_padding = right_padding = nil
-        table table_data, table_settings do
-          instance_variable_set :@node, node
-          # NOTE: cell_style must be applied manually to be compatible with both prawn-table 0.2.2 and prawn-table 0.2.3
-          cells.style cell_style
-          @column_widths = column_widths unless column_widths.empty?
-          # NOTE: call width to capture resolved table width
-          table_width = width
-          @pdf.ink_table_caption node, alignment, table_width, caption_max_width if caption_end == :top && node.title?
-          # NOTE: align using padding instead of bounding_box as prawn-table does
-          # using a bounding_box across pages mangles the margin box of subsequent pages
-          if alignment != :left && table_width != (this_bounds = @pdf.bounds).width
-            if alignment == :center
-              left_padding = right_padding = (this_bounds.width - width) * 0.5
-              this_bounds.add_left_padding left_padding
-              this_bounds.add_right_padding right_padding
-            else # :right
-              left_padding = this_bounds.width - width
-              this_bounds.add_left_padding left_padding
-            end
-          end
-          if grid == 'none' && frame == 'none'
-            (rows table_header_size - 1).tap do |r|
-              r.border_bottom_color = head_border_bottom_color
-              r.border_bottom_line = head_border_bottom_style
-              r.border_bottom_width = head_border_bottom_width
-            end if table_header_size
+        with_extent extent do
+          if node.option? 'autowidth'
+            table_width = (node.attr? 'width') ? bounds.width * ((node.attr 'tablepcwidth') / 100.0) :
+                (((node.has_role? 'stretch')) ? bounds.width : nil)
+            column_widths = []
           else
-            # apply the grid setting first across all cells
-            cells.border_width = [grid_width[:rows], grid_width[:cols], grid_width[:rows], grid_width[:cols]]
+            table_width = bounds.width * ((node.attr 'tablepcwidth') / 100.0)
+            column_widths = node.columns.map {|col| ((col.attr 'colpcwidth') * table_width) / 100.0 }
+          end
 
-            if table_header_size
+          table_settings[:width] = table_width
+          table_settings[:column_widths] = column_widths
+
+          left_padding = right_padding = nil
+          table table_data, table_settings do
+            instance_variable_set :@node, node
+            # NOTE: cell_style must be applied manually to be compatible with both prawn-table 0.2.2 and prawn-table 0.2.3
+            cells.style cell_style
+            @column_widths = column_widths unless column_widths.empty?
+            # NOTE: call width to capture resolved table width
+            table_width = width
+            @pdf.ink_table_caption node, alignment, table_width, caption_max_width if caption_end == :top && node.title?
+            # NOTE: align using padding instead of bounding_box as prawn-table does
+            # using a bounding_box across pages mangles the margin box of subsequent pages
+            if alignment != :left && table_width != (this_bounds = @pdf.bounds).width
+              if alignment == :center
+                left_padding = right_padding = (this_bounds.width - width) * 0.5
+                this_bounds.add_left_padding left_padding
+                this_bounds.add_right_padding right_padding
+              else # :right
+                left_padding = this_bounds.width - width
+                this_bounds.add_left_padding left_padding
+              end
+            end
+            if grid == 'none' && frame == 'none'
               (rows table_header_size - 1).tap do |r|
                 r.border_bottom_color = head_border_bottom_color
                 r.border_bottom_line = head_border_bottom_style
                 r.border_bottom_width = head_border_bottom_width
+              end if table_header_size
+            else
+              # apply the grid setting first across all cells
+              cells.border_width = [grid_width[:rows], grid_width[:cols], grid_width[:rows], grid_width[:cols]]
+
+              if table_header_size
+                (rows table_header_size - 1).tap do |r|
+                  r.border_bottom_color = head_border_bottom_color
+                  r.border_bottom_line = head_border_bottom_style
+                  r.border_bottom_width = head_border_bottom_width
+                end
+                (rows table_header_size).tap do |r|
+                  r.border_top_color = head_border_bottom_color
+                  r.border_top_line = head_border_bottom_style
+                  r.border_top_width = head_border_bottom_width
+                end if num_rows > table_header_size
               end
-              (rows table_header_size).tap do |r|
-                r.border_top_color = head_border_bottom_color
-                r.border_top_line = head_border_bottom_style
-                r.border_top_width = head_border_bottom_width
-              end if num_rows > table_header_size
+
+              # top edge of table
+              (rows 0).tap do |r|
+                r.border_top_color, r.border_top_line, r.border_top_width = border_color[:top], border_style[:top], border_width[:top]
+              end
+              # right edge of table
+              (columns num_cols - 1).tap do |r|
+                r.border_right_color, r.border_right_line, r.border_right_width = border_color[:right], border_style[:right], border_width[:right]
+              end
+              # bottom edge of table
+              (rows num_rows - 1).tap do |r|
+                r.border_bottom_color, r.border_bottom_line, r.border_bottom_width = border_color[:bottom], border_style[:bottom], border_width[:bottom]
+              end
+              # left edge of table
+              (columns 0).tap do |r|
+                r.border_left_color, r.border_left_line, r.border_left_width = border_color[:left], border_style[:left], border_width[:left]
+              end
             end
 
-            # top edge of table
-            (rows 0).tap do |r|
-              r.border_top_color, r.border_top_line, r.border_top_width = border_color[:top], border_style[:top], border_width[:top]
-            end
-            # right edge of table
-            (columns num_cols - 1).tap do |r|
-              r.border_right_color, r.border_right_line, r.border_right_width = border_color[:right], border_style[:right], border_width[:right]
-            end
-            # bottom edge of table
-            (rows num_rows - 1).tap do |r|
-              r.border_bottom_color, r.border_bottom_line, r.border_bottom_width = border_color[:bottom], border_style[:bottom], border_width[:bottom]
-            end
-            # left edge of table
-            (columns 0).tap do |r|
-              r.border_left_color, r.border_left_line, r.border_left_width = border_color[:left], border_style[:left], border_width[:left]
+            # QUESTION: should cell padding be configurable for foot row cells?
+            unless node.rows[:foot].empty?
+              foot_row = row num_rows.pred
+              foot_row.background_color = foot_bg_color
+              # FIXME: find a way to do this when defining the cells
+              foot_row.text_color = theme.table_foot_font_color if theme.table_foot_font_color
+              foot_row.size = theme.table_foot_font_size if theme.table_foot_font_size
+              foot_row.font = theme.table_foot_font_family if theme.table_foot_font_family
+              foot_row.font_style = theme.table_foot_font_style.to_sym if theme.table_foot_font_style
+              # HACK: we should do this transformation when creating the cell
+              #if (foot_transform = resolve_text_transform :table_foot_text_transform, nil)
+              #  foot_row.each {|c| c.content = (transform_text c.content, foot_transform) if c.content }
+              #end
             end
           end
-
-          # QUESTION: should cell padding be configurable for foot row cells?
-          unless node.rows[:foot].empty?
-            foot_row = row num_rows.pred
-            foot_row.background_color = foot_bg_color
-            # FIXME: find a way to do this when defining the cells
-            foot_row.text_color = theme.table_foot_font_color if theme.table_foot_font_color
-            foot_row.size = theme.table_foot_font_size if theme.table_foot_font_size
-            foot_row.font = theme.table_foot_font_family if theme.table_foot_font_family
-            foot_row.font_style = theme.table_foot_font_style.to_sym if theme.table_foot_font_style
-            # HACK: we should do this transformation when creating the cell
-            #if (foot_transform = resolve_text_transform :table_foot_text_transform, nil)
-            #  foot_row.each {|c| c.content = (transform_text c.content, foot_transform) if c.content }
-            #end
+          if left_padding
+            bounds.subtract_left_padding left_padding
+            bounds.subtract_right_padding right_padding if right_padding
           end
+          ink_table_caption node, alignment, table_width, caption_max_width, caption_end if caption_end == :bottom && node.title?
         end
-        if left_padding
-          bounds.subtract_left_padding left_padding
-          bounds.subtract_right_padding right_padding if right_padding
-        end
-        ink_table_caption node, alignment, table_width, caption_max_width, caption_end if caption_end == :bottom && node.title?
         theme_margin :block, :bottom, (next_enclosed_block node)
       rescue ::Prawn::Errors::CannotFit
         log :error, (message_with_context 'cannot fit contents of table cell into specified column width', source_location: node.source_location)

@@ -17,7 +17,9 @@
 * xref:autofit-text.adoc[]
 * xref:stem.adoc[]
 * xref:passthrough-content.adoc[]
-* xref:autowidth-tables.adoc[]
+* Tables
+** xref:autowidth-tables.adoc[]
+** xref:table-extent.adoc[]
 * xref:notitle.adoc[]
 * xref:title-page.adoc[]
 * xref:toc.adoc[]

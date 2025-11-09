@@ -1,0 +1,29 @@
+= Table Extent
+
+By default, the maximum width of a table is the width of the current container.
+In an article with a single column, this is typically the space between the side margins.
+If you want the table to extend beyond this boundary, you can use the extent attribute.
+
+The extent attribute accepts three values:
+
+* container
+* margin
+* page
+
+== container
+
+If the value of the extent attribute is `conntainer`, or not set, the maximum width of the table is the width of the current container.
+In a document with a single column, this is typically the space between the side margins.
+In a document with multiple columns, this is typically the boundaries of the column.
+If the section body is intended (using the `section-indent` theme key), the container is defined by that indented column.
+
+== margin
+
+If the value of the extent attribute is `margin`, the maximum width of the table is the width between the side margins of the page (i.e., the margin box), regardless of whether the section body is indented.
+In other words, this value causes the table to break out of the indentation applied to the current container, the section body.
+
+== page
+
+If the value of the extent attribute is `page`, the maximum width of the table is the width of the page.
+In other words, this value allows the table to extend from edge to edge of the page.
+If the width of the table is < 100%, it will only touch the left edge.
