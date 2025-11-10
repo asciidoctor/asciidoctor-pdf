@@ -148,7 +148,10 @@ ulist:
 == ulist-marker-<type>
 
 The keys in the `ulist-marker-<type>` category control the arrangement and style of a type of unordered list marker.
-Type can be `disc`, `square`, `circle`, `checked`, or `unchecked`.
+Type can be `disc`, `square`, `circle`, `checked`, `unchecked`, or `biblio` (for the bibliography lists).
+
+When the marker is `biblio`, the `content` key is required.
+If the value of the `content` key is empty, it acts like the `unstyled` marker.
 
 [cols="3,4,6a"]
 |===

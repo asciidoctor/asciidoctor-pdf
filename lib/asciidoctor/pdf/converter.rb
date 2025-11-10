@@ -1625,7 +1625,11 @@ module Asciidoctor
           if (style = node.style)
             case style
             when 'bibliography'
-              bullet_type = :square
+              if (bullet_content = @theme.ulist_marker_biblio_content)
+                bullet_type = bullet_content.empty? ? nil : :biblio
+              else
+                bullet_type = :square
+              end
             when 'unstyled', 'no-bullet'
               bullet_type = nil
             else
@@ -1672,7 +1676,7 @@ module Asciidoctor
         # ...or if we want to give all items in the list the same treatment
         #complex = node.items.any(&:compound?)
         if (node.context == :ulist && !@list_bullets[-1]) || (node.context == :olist && !@list_numerals[-1])
-          if node.style == 'unstyled'
+          if node.style == 'unstyled' || (node.style === 'bibliography' && @theme.ulist_marker_biblio_content == '')
             # unstyled takes away all indentation
             list_indent = 0
           elsif (list_indent = @theme.list_indent) > 0

@@ -2284,5 +2284,36 @@ describe 'Asciidoctor::PDF::Converter - List' do
       (expect back_refs).to have_size 1
       (expect back_refs[0][:Dest]).to eql '_bibref_ref_bar'
     end
+
+    it 'should allow bibliography marker to be customized if ulist_marker_biblio_content theme key is set' do
+      pdf_theme = {
+        ulist_marker_biblio_content: '-',
+        ulist_marker_biblio_font_color: 'aa0000',
+      }
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
+      [bibliography]
+      == Bibliography
+
+      * [[[bar]]] Bar, Foo. All The Things. 2010.
+      END
+
+      (expect pdf.lines).to include '- [bar] Bar, Foo. All The Things. 2010.'
+      (expect (pdf.find_unique_text '-')[:font_color]).to eql 'AA0000'
+    end
+
+    it 'should remove indentation if ulist_marker_biblio_content theme key is empty' do
+      pdf_theme = { ulist_marker_biblio_content: '' }
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
+      reference
+
+      [bibliography]
+      == Bibliography
+
+      * [[[bar]]] Bar, Foo. All The Things. 2010.
+      END
+
+      (expect pdf.lines).to include '[bar] Bar, Foo. All The Things. 2010.'
+      (expect (pdf.find_unique_text %r/^\[bar\]/)[:x]).to eql (pdf.find_unique_text 'reference')[:x]
+    end
   end
 end
