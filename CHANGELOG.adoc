@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.3.24 (2025-11-15) - @mojavelinux
 
 Improvements::
 
@@ -13,6 +13,10 @@ Improvements::
 * update import_page method on converter to return true if page was imported (nil otherwise), on par with the functionality of method it replaces
 * limit min toclevels value so it does not cause TOC to be empty (#2619)
 * add checkmark glyph (U+2713) to prose fonts (Noto Serif and Noto Sans) to avoid need for fallback font (#2617)
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.24[git tag] | {url-repo}/compare/v2.3.23\...v2.3.24[full diff]
 
 == 2.3.23 (2025-10-26) - @mojavelinux
 
