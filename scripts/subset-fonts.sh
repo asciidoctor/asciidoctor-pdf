@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+
+set -e
 # READ ME FIRST!
 # To run this script, you must first build the podman/docker image using the command found at top of Dockerfile.fontforge.
 # This script will use that image to execute the subset-fonts.pe script with fontforge in a container.
@@ -24,7 +26,7 @@ mkdir -p $BUILD_DIR
 cd $SOURCE_DIR
 
 if [ ! -d mplus-$MPLUS_VERSION ]; then
-  curl -LOs https://osdn.net/dl/mplus-fonts/mplus-$MPLUS_VERSION.tar.xz
+  curl -LOs https://github.com/coz-m/MPLUS_FONTS/raw/c47fd4ff0a604d1517625a0f3d67e6d64e12d585/obsolete/mplus-$MPLUS_VERSION.tar.xz
   tar xf mplus-$MPLUS_VERSION.tar.xz
 fi
 
