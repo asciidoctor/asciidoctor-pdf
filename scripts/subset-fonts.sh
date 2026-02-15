@@ -66,7 +66,7 @@ cd ..
 
 if [ "$CONTAINERIZER" == "docker" ]; then
   IMAGE=${IMAGE:=fontforge:latest}
-  RUN="docker run --rm -t -u $(id -u)"
+  RUN="docker run --rm -t -u 0:0"
 else
   IMAGE=${IMAGE:=localhost/fontforge:latest}
   RUN='podman run --rm -t -u 0:0'
