@@ -77,7 +77,7 @@ $RUN \
   -v `pwd`:/home/fontforge/scripts:Z \
   -v `pwd`/$BUILD_DIR:/home/fontforge/scripts/build:Z \
   -w /home/fontforge/scripts \
-  $IMAGE -script subset-fonts.pe $SOURCE_DIR build > /tmp/subset-fonts.log 2>&1
+  $IMAGE -script subset-fonts.pe $SOURCE_DIR build
 
 exitcode=$?
 
