@@ -235,6 +235,7 @@ toc:
 == toc-dot-leader
 
 The keys in the `toc-dot-leader` category control the arrangement and style of the dot leader in the table of contents.
+Any inherited values inherit from the `toc` category, not the `toc_h2` category.
 
 [cols="3,4,5a"]
 |===
