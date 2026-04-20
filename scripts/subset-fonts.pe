@@ -189,6 +189,8 @@ while (fi < num_copy_fonts)
       SelectMore(0u2610,0u2611)
       # Check marks
       SelectMore(0u2713,0u2714)
+      # Ballot X
+      SelectMore(0u2717,0u2718)
     endif
     if (script == "latin-ext" || script == "latin-ext-cyrillic" || script == "fallback")
       # Latin Extended-B
