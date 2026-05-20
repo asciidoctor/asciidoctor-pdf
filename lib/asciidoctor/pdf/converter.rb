@@ -2908,7 +2908,7 @@ module Asciidoctor
         sections.each do |sect|
           next if (num_levels_for_sect = (sect.attr 'outlinelevels', num_levels).to_i) < (level = sect.level) ||
             ((sect.option? 'notitle') && sect == sect.document.last_child && sect.empty?)
-          sect_title = sanitize sect.numbered_title formal: true
+          sect_title = sanitize sect.numbered_title formal: true, toc: true
           next if sect_title.empty?
           sect_destination = sect.attr 'pdf-destination'
           if level < num_levels_for_sect && sect.sections?
@@ -4052,7 +4052,7 @@ module Asciidoctor
         entries.each do |entry|
           next if (num_levels_for_entry = (entry.attr 'toclevels', num_levels).to_i) < (entry_level = entry.level + 1).pred ||
             ((entry.option? 'notitle') && entry == entry.document.last_child && entry.empty?)
-          entry_title = entry.context == :section ? entry.numbered_title : (entry.title? ? entry.title : (entry.xreftext 'basic'))
+          entry_title = entry.context == :section ? entry.numbered_title(toc: true) : (entry.title? ? entry.title : (entry.xreftext 'basic'))
           next if entry_title.empty?
           theme_font :toc, level: entry_level do
             entry_title = entry_title.gsub DropAnchorRx, '' if entry_title.include? '<a'
@@ -5049,7 +5049,7 @@ module Asciidoctor
 
       def generate_manname_section node
         title = node.attr 'manname-title', 'Name'
-        if (next_section_title = node.sections[0]&.title) && next_section_title.upcase == next_section_title
+        if (next_section_title = node.sections[0]&.toc_title) && next_section_title.upcase == next_section_title
           title = title.upcase
         end
         sect = Section.new node, 1
