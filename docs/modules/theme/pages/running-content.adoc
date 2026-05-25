@@ -473,7 +473,7 @@ To make the background color, background image, and border span the width of the
 == columns
 
 The `columns` key is used to define the number of columns, the named position of those columns, as well as each column's width and alignment.
-The columns are defined using space-seprated (or comma-seperated) colspecs.
+The columns are defined using space-seprated (or comma-separated) colspecs.
 The maximum number of columns is 3.
 The column's name is infered by the position of the colspec in the list (center for 1 column, left and right for 2 columns, and left, center, and right for 3 columns).
 
