@@ -10,7 +10,7 @@ body:
     value: >-
       Before reporting a bug, please verify that you're using the latest patch release (refer to the CHANGELOG) and have fulfilled the prerequisites as stated in the README.
       If not, please upgrade and retest your scenario first.
-      Usage questions should be directed to the \#asciidoctor-pdf channel in the [project chat](https://chat.asciidoctor.org) and are not considered bugs.
+      Usage questions are not considered bugs and should instead be directed to the \#asciidoctor-pdf channel in the [project chat](https://chat.asciidoctor.org).
 - type: input
   id: version
   attributes:
