@@ -2530,7 +2530,7 @@ module Asciidoctor
         target = node.target
         case node.type
         when :link
-          anchor = node.id ? %(<a id="#{node.id}">#{DummyText}</a>) : ''
+          anchor = node.id ? %(<a id="#{derive_anchor_from_id node.id}">#{DummyText}</a>) : ''
           class_attr = ''
           if (role = node.role)
             class_attr = %( class="#{role}")
@@ -2578,14 +2578,14 @@ module Asciidoctor
           end
         when :ref
           # NOTE: destination is created inside callback registered by FormattedTextTransform#build_fragment
-          %(<a id="#{node.id}">#{DummyText}</a>)
+          %(<a id="#{derive_anchor_from_id node.id}">#{DummyText}</a>)
         when :bibref
           id = node.id
           # NOTE: technically node.text should be node.reftext, but subs have already been applied to text
           reftext = (reftext = node.reftext) ? %([#{reftext}]) : %([#{id}])
           reftext = %(<a anchor="_bibref_ref_#{id}">#{reftext}</a>) if @bibref_refs.include? id
           # NOTE: destination is created inside callback registered by FormattedTextTransform#build_fragment
-          %(<a id="#{id}">#{DummyText}</a>#{reftext})
+          %(<a id="#{derive_anchor_from_id id}">#{DummyText}</a>#{reftext})
         else
           log :warn, %(unknown anchor type: #{node.type.inspect})
           nil
@@ -2827,7 +2827,7 @@ module Asciidoctor
         end
 
         # NOTE: destination is created inside callback registered by FormattedTextTransform#build_fragment
-        node.id ? %(<a id="#{node.id}">#{DummyText}</a>#{quoted_text}) : quoted_text
+        node.id ? %(<a id="#{derive_anchor_from_id node.id}">#{DummyText}</a>#{quoted_text}) : quoted_text
       end
 
       # If an id is provided or the node passed as the first argument has an id,
@@ -2851,7 +2851,8 @@ module Asciidoctor
           end
           # TODO: find a way to store only the ref of the destination; look it up when we need it
           node.set_attr 'pdf-destination', (node_dest = (dest_xyz dest_x, dest_y))
-          add_dest id, node_dest
+          # NOTE: derive the destination name the same way references do so non-ASCII IDs match (see #308)
+          add_dest (derive_anchor_from_id id), node_dest
         end
         nil
       end

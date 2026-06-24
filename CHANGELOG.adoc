@@ -55,6 +55,7 @@ Bug Fixes::
 * prevent special character substitution from interfering with callouts in plain verbatim block (#2390)
 * remove deprecated, undocumented `svg-font-family` theme key (the correct key is `svg-fallback-font-family`)
 * major improvement to OTF support following release of ttfunk 1.8.0 (automatic transitive dependency of prawn)
+* fix dead cross-reference to discrete heading or inline anchor with ID that contains non-ASCII characters by registering destination name using same hex encoding used by reference (#2646)
 
 Compliance::
 
