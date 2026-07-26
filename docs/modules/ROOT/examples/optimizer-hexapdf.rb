@@ -16,12 +16,20 @@ class OptimizerHexaPDF < Asciidoctor::PDF::Optimizer::Base
   end
 
   def optimize_file path
-    @optimize.execute path, path
+    execute_optimize path
     nil
   rescue
     # retry without page compression, which can sometimes fail
     @optimize.out_options[:compress_pages] = false
-    @optimize.execute path, path
+    execute_optimize path
+    nil
+  end
+
+  private
+
+  def execute_optimize path
+    @optimize.execute path, (opath = (Pathname.new path).sub_ext '-o.pdf').to_path
+    opath.size < (File.size path) ? (opath.rename path) : opath.unlink
     nil
   end
 end
