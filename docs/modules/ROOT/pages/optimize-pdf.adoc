@@ -157,15 +157,19 @@ class Asciidoctor::PDF::Optimizer
   def optimize_file path
     options = @optimize.instance_variable_get :@out_options
     options[:compress_pages] = true
-    #options[:object_streams] = :preserve
-    #options[:xref_streams] = :preserve
-    #options[:streams] = :preserve # or :uncompress
-    @optimize.execute path, path
+    execute_optimize path
     nil
   rescue
-    # retry without page compression, which can sometimes fail
     options[:compress_pages] = false
-    @optimize.execute path, path
+    execute_optimize path
+    nil
+  end
+
+  private
+
+  def execute_optimize path
+    @optimize.execute path, (opath = (Pathname.new path).sub_ext '-o.pdf').to_path
+    opath.size < (File.size path) ? (opath.rename path) : opath.unlink
     nil
   end
 end
