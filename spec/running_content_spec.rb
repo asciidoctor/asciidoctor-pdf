@@ -2740,7 +2740,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
         footer_recto_right_content: '[{chapter-title}]',
         footer_verso_left_content: '[{chapter-title}]',
       }
-      pdf = to_pdf <<~'END', enable_footer: true, attribute_overrides: { 'preface-title' => nil }, pdf_theme: pdf_theme, analyze: true
+      pdf = to_pdf <<~'EOS', enable_footer: true, attribute_overrides: { 'preface-title' => nil }, pdf_theme: pdf_theme, analyze: true
       = Document Title
       :doctype: book
 
@@ -2751,7 +2751,7 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       Second page of preface.
 
       == First Chapter
-      END
+      EOS
 
       footer_texts = pdf.find_text font_color: 'AA0000'
       (expect footer_texts).to have_size 3
