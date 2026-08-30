@@ -1136,6 +1136,20 @@ describe 'Asciidoctor::PDF::Converter - TOC' do
       (expect pdf.find_text 'Table of Contents').to be_empty
     end
 
+    it 'should not generate toc if article only contains abstract section' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      :toc:
+
+      [abstract]
+      == Abstract
+
+      About this article.
+      EOS
+      (expect pdf.pages).to have_size 1
+      (expect pdf.find_text 'Table of Contents').to be_empty
+    end
+
     it 'should insert toc between document title and content when toc is set' do
       lorem = ['lorem ipsum'] * 10 * %(\n\n)
       input = <<~EOS

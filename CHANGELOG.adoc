@@ -7,7 +7,9 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Bug Fixes::
+
+* don't crash when creating toc for article with only an abstract section (#2649)
 
 == 2.3.24 (2025-11-15) - @mojavelinux
 
