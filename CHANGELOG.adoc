@@ -33,6 +33,7 @@ Enhancements::
 * add single up and down arrow to built-in fonts (fonts used by default themes) (#2586)
 * implement support for extent attribute (container|margin|page) on tables (#1415)
 * allow list marker on bibliography list to be customized using ulist_marker_biblio theme category (#2407)
+* add the ballot X glyphs (U+2717 and U+2718) to the code and fallback fonts (#2652)
 
 Improvements::
 
