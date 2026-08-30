@@ -2734,6 +2734,35 @@ describe 'Asciidoctor::PDF::Converter - Running Content' do
       (expect footer_texts[2][:string]).to eql 'First Chapter'
     end
 
+    it 'should set chapter-title to empty value if preface-title attribute is explicitly unset' do
+      pdf_theme = {
+        footer_font_color: 'AA0000',
+        footer_recto_right_content: '[{chapter-title}]',
+        footer_verso_left_content: '[{chapter-title}]',
+      }
+      pdf = to_pdf <<~'END', enable_footer: true, attribute_overrides: { 'preface-title' => nil }, pdf_theme: pdf_theme, analyze: true
+      = Document Title
+      :doctype: book
+
+      First page of preface.
+
+      <<<
+
+      Second page of preface.
+
+      == First Chapter
+      END
+
+      footer_texts = pdf.find_text font_color: 'AA0000'
+      (expect footer_texts).to have_size 3
+      (expect footer_texts[0][:page_number]).to be 2
+      (expect footer_texts[0][:string]).to eql '[]'
+      (expect footer_texts[1][:page_number]).to be 3
+      (expect footer_texts[1][:string]).to eql '[]'
+      (expect footer_texts[2][:page_number]).to be 4
+      (expect footer_texts[2][:string]).to eql '[First Chapter]'
+    end
+
     it 'should set chapter-title attribute correctly on pages in preface when title page is disabled' do
       pdf_theme = {
         footer_font_color: 'AA0000',
