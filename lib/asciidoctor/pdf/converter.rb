@@ -183,6 +183,12 @@ module Asciidoctor
           font @theme.base_font_family, size: @root_font_size, style: @theme.base_font_style
         end
 
+        # HACK: demote abstract section to styled open block to hide from TOC
+        if doctype == 'article' && (first_section = doc.sections[0]) && first_section.sectname === 'abstract'
+          first_section.context = :open
+          first_section.style = 'abstract'
+        end
+
         unless title_as_page
           body_start_page_number = page_number
           theme_font :heading, level: 1 do
@@ -656,11 +662,8 @@ module Asciidoctor
       end
 
       def convert_section sect, _opts = nil
-        if (sectname = sect.sectname) == 'abstract'
-          # HACK: cheat a bit to hide this section from TOC; TOC should filter these sections
-          sect.context = :open
-          return convert_abstract sect
-        elsif (index_section = sectname == 'index') && @index.empty?
+        sectname = sect.sectname
+        if (index_section = sectname == 'index') && @index.empty?
           # override numbered_title to hide entry from TOC
           sect.define_singleton_method :numbered_title, ->(*) { '' }
           return
@@ -2880,7 +2883,7 @@ module Asciidoctor
           pagenum_labels[n] = { P: (::PDF::Core::LiteralString.new (i + 1).to_s) }
         end
 
-        unless toc_page_nums.none? || (toc_title = doc.attr 'toc-title').nil_or_empty?
+        unless toc_page_nums.none? || (toc_title = doc.attr 'toc-title').nil_or_empty? || doc.sections.empty?
           toc_section = insert_toc_section doc, toc_title, toc_page_nums
         end
 
