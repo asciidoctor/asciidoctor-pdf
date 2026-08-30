@@ -7,6 +7,9 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
+Enhancements::
+* add the ballot X glyphs (U+2717 and U+2718) to the code and fallback fonts (#2652)
+
 Bug Fixes::
 
 * properly encode all non-ASCII IDs when creating and referencing destinations in PDF (#2646) (*@sandraLbdvTW*)
