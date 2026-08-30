@@ -104,6 +104,37 @@ describe 'Asciidoctor::PDF::Converter - Xref' do
       (expect (pdf.page 1).text).to include 'See Über Étudier.'
     end
 
+    it 'should reference discrete heading with ID that contains non-ASCII characters' do
+      pdf = to_pdf <<~'EOS'
+      See <<disc_дискрет>>.
+
+      [discrete#disc_дискрет]
+      == Дискретный заголовок
+      EOS
+
+      hex_encoded_id = %(0x#{('disc_дискрет'.unpack 'H*')[0]})
+      (expect get_names pdf).to have_key hex_encoded_id
+      annotations = get_annotations pdf, 1
+      (expect annotations).to have_size 1
+      (expect annotations[0][:Dest]).to eql hex_encoded_id
+    end
+
+    it 'should reference inline anchor with ID that contains non-ASCII characters' do
+      ['[[ref_ссылка]]Text target', 'https://example.org[id=ref_ссылка,Link target]'].each do |target|
+        pdf = to_pdf <<~EOS
+        See <<ref_ссылка>>.
+
+        #{target}
+        EOS
+
+        hex_encoded_id = %(0x#{('ref_ссылка'.unpack 'H*')[0]})
+        (expect get_names pdf).to have_key hex_encoded_id
+        annotations = get_annotations pdf, 1
+        (expect annotations).not_to be_empty
+        (expect annotations[0][:Dest]).to eql hex_encoded_id
+      end
+    end
+
     it 'should create reference to a block by explicit ID' do
       pdf = to_pdf <<~'EOS'
       = Document Title

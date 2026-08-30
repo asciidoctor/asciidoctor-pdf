@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 Bug Fixes::
 
+* properly encode all non-ASCII IDs when creating and referencing destinations in PDF (#2646) (*@sandraLbdvTW*)
 * don't crash when creating toc for article with only an abstract section (#2649)
 * use empty value for preface in running content if `preface-title` attribute is explicitly unset (#2644)
 
