@@ -26,6 +26,20 @@ Asciidoctor::Document.prepend (Module.new do
 
   # Internal: Returns whether the specified attribute has never been set and is not locked.
   def attr_unspecified? name
-    !((attribute_locked? name) || (@attributes_modified.include? name))
+    if (attribute_locked? name) || (@attributes_modified.include? name)
+      false
+    else
+      @options[:attributes].each_pair.none? do |k, v|
+        if k == name
+          true
+        elsif v == '@'
+          k == %(!#{name}) || k == %(#{name}!)
+        elsif k.end_with? '@'
+          (k = k.chop) == name || k == %(!#{name}) || k == %(#{name}!)
+        else
+          false
+        end
+      end
+    end
   end
 end)

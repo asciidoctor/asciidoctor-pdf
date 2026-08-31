@@ -60,6 +60,7 @@ Bug Fixes::
 * major improvement to OTF support following release of ttfunk 1.8.0 (automatic transitive dependency of prawn)
 * don't crash when creating toc for article with only an abstract section (#2649)
 * use empty value for preface in running content if `preface-title` attribute is explicitly unset (#2644)
+* when checking whether an attribute is unspecified, consider attributes that are soft set/unset from API/CLI (#2654)
 
 Compliance::
 
