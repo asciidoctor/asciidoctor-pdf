@@ -67,7 +67,7 @@ Prawn::Text::Formatted::Box.prepend (Module.new do
     if doc.font.glyph_present? char
       current_font
     elsif fallback_fonts_to_check.empty?
-      if logger.info? && !doc.scratch?
+      if logger.info? && !doc.scratch? && char != ?\u000a
         fonts_checked = [original_font].concat @fallback_fonts
         missing_chars = (doc.instance_variable_defined? :@missing_chars) ?
             (doc.instance_variable_get :@missing_chars) : (doc.instance_variable_set :@missing_chars, {})

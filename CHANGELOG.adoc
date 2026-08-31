@@ -41,6 +41,7 @@ Improvements::
 * drop support for the unmaintained payment font (`pf`) for use in font-based icons
 * refactor formatted text transform to simplify how inner space is collapsed; verify only inner hard breaks are preserved
 * upgrade prawn-svg to 0.36 to fix dependencies, improve gradient support, and support additional properties; disable experimental warnings when requiring prawn-svg on Ruby 2.7 (#2551)
+* suppress warning if glyph for LF cannot be found in fallback font as it's unlike to impact rendering
 * upgrade prawn-svg to 0.38.x (#2604)
 
 Bug Fixes::
