@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.3.25 (2026-08-31) - @mojavelinux
 
 Enhancements::
 
@@ -26,6 +26,10 @@ Bug Fixes::
 * don't include children of section with empty title in outline
 * when checking whether an attribute is unspecified, consider attributes that are soft set/unset from API/CLI (#2654)
 * restore original require after loading treetop
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.25[git tag] | {url-repo}/compare/v2.3.24\...v2.3.25[full diff]
 
 == 2.3.24 (2025-11-15) - @mojavelinux
 
