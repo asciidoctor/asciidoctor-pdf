@@ -22,6 +22,7 @@ Bug Fixes::
 * use empty value for preface in running content if `preface-title` attribute is explicitly unset (#2644)
 * don't allow `admonition-label-min-width` key to be less than required space to fit admonition icon
 * don't include children of section with empty title in TOC
+* don't include children of section with empty title in outline
 
 == 2.3.24 (2025-11-15) - @mojavelinux
 

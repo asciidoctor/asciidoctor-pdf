@@ -696,6 +696,25 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       outline = extract_outline pdf
       (expect outline[-1][:title]).to eql 'Section Present'
     end
+
+    it 'should not add entry for section with empty title' do
+      pdf = to_pdf <<~'EOS', debug: true
+      = Document Title
+      :outlinelevels: 3
+
+      == Section
+
+      content
+
+      === {empty}
+
+      ==== Grandchild Section
+      EOS
+
+      outline = extract_outline pdf
+      (expect outline[-1][:title]).to eql 'Section'
+      (expect outline[-1][:children]).to be_empty
+    end
   end
 
   context 'Labels' do
