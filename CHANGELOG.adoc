@@ -23,6 +23,7 @@ Bug Fixes::
 * don't allow `admonition-label-min-width` key to be less than required space to fit admonition icon
 * don't include children of section with empty title in TOC
 * don't include children of section with empty title in outline
+* when checking whether an attribute is unspecified, consider attributes that are soft set/unset from API/CLI (#2654)
 
 == 2.3.24 (2025-11-15) - @mojavelinux
 

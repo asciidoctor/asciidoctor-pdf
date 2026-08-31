@@ -49,7 +49,7 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
       (expect outline).to be_empty
     end
 
-    it 'should not create outline if the outline document attribute is unset via API' do
+    it 'should not create outline if the outline document attribute is hard unset via API' do
       pdf = to_pdf <<~'EOS', attribute_overrides: { 'outline' => nil }
       = Document Title
       :doctype: book
@@ -65,6 +65,32 @@ describe 'Asciidoctor::PDF::Converter - Outline' do
 
       outline = extract_outline pdf
       (expect outline).to be_empty
+    end
+
+    it 'should not create outline if the outline document attribute is soft unset via API' do
+      [
+        { 'outline' => false },
+        { 'outline!' => '@' },
+        { '!outline' => '@' },
+        { 'outline!@' => '' },
+        { '!outline@' => '' },
+      ].each do |attributes|
+        pdf = to_pdf <<~'EOS', attribute_overrides: attributes
+        = Document Title
+        :doctype: book
+
+        == First Chapter
+
+        === Chapter Section
+
+        == Middle Chapter
+
+        == Last Chapter
+        EOS
+
+        outline = extract_outline pdf
+        (expect outline).to be_empty
+      end
     end
 
     it 'should create an outline to navigate the document structure' do
