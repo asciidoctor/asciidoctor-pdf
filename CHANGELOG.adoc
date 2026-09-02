@@ -5,11 +5,15 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.3.27 (2026-09-02) - @mojavelinux
 
 Bug Fixes::
 
 * honor attribute unset in AsciiDoc table cell when determining if attribute is unspecified
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.27[git tag] | {url-repo}/compare/v2.3.26\...v2.3.27[full diff]
 
 == 2.3.26 (2026-09-02) - @mojavelinux
 
