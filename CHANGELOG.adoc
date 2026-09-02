@@ -51,12 +51,30 @@ Bug Fixes::
 * prevent special character substitution from interfering with callouts in plain verbatim block (#2390)
 * remove deprecated, undocumented `svg-font-family` theme key (the correct key is `svg-fallback-font-family`)
 * major improvement to OTF support following release of ttfunk 1.8.0 (automatic transitive dependency of prawn)
-* scope Document#attr_unspecified? to parent document; don't crash if `:attributes` option not set (#2656)
-* honor attribute unset in AsciiDoc table cell when determining if attribute is unspecified
 
 Compliance::
 
 * drop support for JRuby 9.2 (require at least Ruby 2.7 compliance)
+
+== 2.3.27 (2026-09-02) - @mojavelinux
+
+Bug Fixes::
+
+* honor attribute unset in AsciiDoc table cell when determining if attribute is unspecified
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.27[git tag] | {url-repo}/compare/v2.3.26\...v2.3.27[full diff]
+
+== 2.3.26 (2026-09-02) - @mojavelinux
+
+Bug Fixes::
+
+* scope Document#attr_unspecified? to parent document; don't crash if `:attributes` option not set (#2656)
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.26[git tag] | {url-repo}/compare/v2.3.25\...v2.3.26[full diff]
 
 == 2.3.25 (2026-08-31) - @mojavelinux
 
