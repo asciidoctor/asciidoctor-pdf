@@ -193,6 +193,34 @@ describe 'Asciidoctor::PDF::Converter - Link' do
         end
       end
     end
+
+    it 'should not crash when looking for show-link-uri attribute in options from inside AsciiDoc table cell' do
+      %w(print prepress).each do |media|
+        pdf = to_pdf <<~'END', attribute_overrides: { 'media' => media, 'show-link-uri!@' => '' }, analyze: true
+        |===
+        a|
+        == https://asciidoctor.org[Asciidoctor]
+        |===
+        END
+
+        (expect pdf.lines).to eql ['Asciidoctor']
+      end
+    end
+
+    it 'should not crash when looking for show-link-uri attribute in options when no attributes set' do
+      %w(print prepress).each do |media|
+        doc = Asciidoctor::Document.new <<~END, backend: 'pdf', safe: :safe, standalone: true
+        :media: #{media}
+        :nofooter:
+
+        == https://asciidoctor.org[Asciidoctor]
+        END
+
+        pdf = PDF::Reader.new StringIO.new doc.convert.render
+        page = pdf.page 1
+        (expect page.text).to include 'https://asciidoctor.org'
+      end
+    end
   end
 
   context 'Email' do
