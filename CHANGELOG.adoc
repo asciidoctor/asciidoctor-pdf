@@ -7,7 +7,9 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Bug Fixes::
+
+* scope Document#attr_unspecified? to parent document; don't crash if `:attributes` option not set (#2656)
 
 == 2.3.25 (2026-08-31) - @mojavelinux
 
