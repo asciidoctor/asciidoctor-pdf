@@ -26,10 +26,10 @@ Asciidoctor::Document.prepend (Module.new do
 
   # Internal: Returns whether the specified attribute has never been set and is not locked.
   def attr_unspecified? name
-    if nested?
-      @parent_document.attr_unspecified? name
-    elsif (attribute_locked? name) || (@attributes_modified.include? name)
+    if (attribute_locked? name) || (@attributes_modified.include? name)
       false
+    elsif nested?
+      @parent_document.attr_unspecified? name
     else
       (@options[:attributes] || {}).each_pair.none? do |k, v|
         if k == name

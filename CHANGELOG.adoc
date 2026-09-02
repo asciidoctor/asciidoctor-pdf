@@ -52,6 +52,7 @@ Bug Fixes::
 * remove deprecated, undocumented `svg-font-family` theme key (the correct key is `svg-fallback-font-family`)
 * major improvement to OTF support following release of ttfunk 1.8.0 (automatic transitive dependency of prawn)
 * scope Document#attr_unspecified? to parent document; don't crash if `:attributes` option not set (#2656)
+* honor attribute unset in AsciiDoc table cell when determining if attribute is unspecified
 
 Compliance::
 

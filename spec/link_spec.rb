@@ -194,6 +194,21 @@ describe 'Asciidoctor::PDF::Converter - Link' do
       end
     end
 
+    it 'should honor show-link-uri when unset in AsciiDoc table cell' do
+      %w(print prepress).each do |media|
+        pdf = to_pdf <<~'END', attribute_overrides: { 'media' => media }, analyze: true
+        |===
+        a|
+        :!show-link-uri:
+
+        == https://asciidoctor.org[Asciidoctor]
+        |===
+        END
+
+        (expect pdf.lines).to eql ['Asciidoctor']
+      end
+    end
+
     it 'should not crash when looking for show-link-uri attribute in options from inside AsciiDoc table cell' do
       %w(print prepress).each do |media|
         pdf = to_pdf <<~'END', attribute_overrides: { 'media' => media, 'show-link-uri!@' => '' }, analyze: true
