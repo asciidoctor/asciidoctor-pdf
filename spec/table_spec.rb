@@ -1987,6 +1987,21 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       (expect pdf.lines).to eql ['10. ten', '11. eleven', '12. twelve', 'buckle', 'my', 'shoe']
     end
 
+    it 'should stretch autowidth table to width of bounds if it contains an AsciiDoc table cell' do
+      pdf = to_pdf <<~'EOS', analyze: :line
+      [%autowidth,grid=cols,frame=sides]
+      |===
+      |A a|B
+      |===
+      EOS
+
+      lines = pdf.lines
+      (expect lines).to have_size 4
+      (expect lines[0][:from][:x]).to eql 48.24
+      (expect lines[1][:from][:x]).to eql 61.6425
+      (expect lines[3][:from][:x]).to be > 500
+    end
+
     it 'should honor horizontal alignment on AsciiDoc table cell' do
       pdf = to_pdf <<~'EOS', analyze: true
       [cols=1a]
