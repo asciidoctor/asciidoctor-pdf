@@ -1,10 +1,15 @@
 = Autowidth Tables
 
-Asciidoctor PDF supports autowidth tables.
+Asciidoctor PDF has partial support for autowidth tables.
 However, the behavior differs from HTML when the content of a cell forces the width of the table to the page boundary.
 The behavior in this scenario, handled by the prawn-table library, is explained on this page.
 
 WARNING: For reasons explained on this page, you should use autowidth tables and fixed width columns in Asciidoctor PDF carefully, especially when the natural content of the cells forces the table to the page boundary.
+
+CAUTION: The natural width of a table cell is always assumed to be the width of the bounds (i.e., the available width of the page).
+In other words, an AsciiDoc table cell will always expand to use the remaining width allocated to the table (or the page width if no width is specified).
+For that reason, an AsciiDoc table cell is fundamentally incompatible with autowidth tables and columns.
+The use of autowidth tables should thus be confined to tables that do not contain AsciiDoc table cells.
 
 == Compliant scenario
 
