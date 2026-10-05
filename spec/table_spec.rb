@@ -1693,6 +1693,33 @@ describe 'Asciidoctor::PDF::Converter - Table' do
         (expect (pdf.find_unique_text 'last cell')[:page_number]).to eql 3
       end).to log_message severity: :ERROR, message: 'the table cell on page 2 has been truncated; Asciidoctor PDF does not support table cell content that exceeds the height of a single page', file: 'test.adoc', lineno: 3
     end
+
+    it 'should center content in body cell vertically when vertical alignment is middle' do
+      pdf = to_pdf <<~'END', analyze: true
+      [%autowidth]
+      |===
+      .<| Ay<
+
+      Ay< .^| Ay^
+      |===
+      END
+
+      expected = pdf.text[0][:y] - (pdf.text[0][:y] - pdf.text[1][:y]) * 0.5
+      (expect expected - pdf.text[2][:y]).to be_between 0, 0.5
+    end
+
+    it 'should center content in head cell vertically when vertical alignment is middle' do
+      pdf = to_pdf <<~'END', analyze: true
+      [%header,width=50%]
+      |===
+      ^.^| Short ^.^| Something Rather Long ^.^| Last
+      |===
+      END
+
+      long_text = pdf.find_unique_text 'Something'
+      short_text = pdf.find_unique_text 'Short'
+      (expect long_text[:y]).to be > short_text[:y]
+    end
   end
 
   context 'Strong table cell' do
@@ -2402,33 +2429,6 @@ describe 'Asciidoctor::PDF::Converter - Table' do
       bottom_y = (pdf.find_text 'bottom')[0][:y]
       (expect middle_y).to eql ref_middle
       (expect bottom_y).to eql ref_bottom
-    end
-
-    it 'should align middle vertical alignment on cell to center' do
-      pdf = to_pdf <<~'END', analyze: true
-      [%autowidth]
-      |===
-      .<| Ay<
-
-      Ay< .^| Ay^
-      |===
-      END
-
-      expected = pdf.text[0][:y] - (pdf.text[0][:y] - pdf.text[1][:y]) * 0.5
-      (expect expected - pdf.text[2][:y]).to be_between 0, 0.5
-    end
-
-    it 'should coerce middle vertical alignment on head cell to center' do
-      pdf = to_pdf <<~'END', analyze: true
-      [%header,width=50%]
-      |===
-      ^.^| Short ^.^| Something Rather Long ^.^| Last
-      |===
-      END
-
-      long_text = pdf.find_unique_text 'Something'
-      short_text = pdf.find_unique_text 'Short'
-      (expect long_text[:y]).to be > short_text[:y]
     end
 
     it 'should apply cell padding to AsciiDoc table cell' do
