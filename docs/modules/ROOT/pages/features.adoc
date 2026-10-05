@@ -51,8 +51,10 @@ The converter will skip the table and emit a warning if such a case occurs.
 The converter will skip the table and emit a warning if such a case occurs.
 * An inline image in a table cell will shrink to fit (rather than force the column wider) if the width of the image exceeds the width of the column; you can increase the width of the column using `cols` or convert the cell to an AsciiDoc table cell and, preferably, use a block image (see {url-project-issues}/830[#830^]).
 * An inline image with a percentage `width` value in an `autowidth` table cell is resized relative to its intrinsic width.
-The space reserved for the image matches its intrinsic width.
+The space reserved for the image matches its *intrinsic width*.
+This can cause the cell to exceed the required width to fit the rendered image.
 This matches the behavior of HTML.
+To workaround this problem, assign an explicit width to the image.
 * Prawn does not support double-wide box drawing glyphs correctly, so box drawings aren't aligned properly in verbatim blocks (see https://github.com/prawnpdf/prawn/issues/1002[prawn#1002^]).
 * Orphan and widow support is limited to delimited blocks, block images, and admonitions; therefore, a page break may occur between a section title and its first block of content
  ** to avoid an orphaned section title, you can add the xref:breakable-and-unbreakable.adoc[breakable option] to the section
