@@ -1048,8 +1048,10 @@ describe 'Asciidoctor::PDF::Converter - Image' do
 
     it 'should embed SVG image from data-uri in SVG', visual: true do
       pdf = to_pdf 'image::svg-with-data-uri-svg-image.svg[]', analyze: :rect
-      (expect pdf.rectangles).to have_size 1
-      (expect pdf.rectangles[0][:fill_color]).to eql 'FF0000'
+      # NOTE: exclude the outer SVG's border, which prawn-svg renders using separate fill and stroke operations
+      rectangles = pdf.rectangles.select {|it| it[:width] == 200.0 && it[:height] == 200.0 }
+      (expect rectangles).to have_size 1
+      (expect rectangles[0][:fill_color]).to eql 'FF0000'
     end
 
     it 'should support non-standard image/jpg MIME type', visual: true do
