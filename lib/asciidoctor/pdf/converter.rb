@@ -4943,7 +4943,7 @@ module Asciidoctor
       end
 
       def conum_glyph number
-        @conum_glyphs[number - 1]
+        @conum_glyphs[number - 1] || %((#{number}))
       end
 
       # Derive a PDF-safe, ASCII-only anchor name from the given value.

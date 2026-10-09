@@ -7,7 +7,9 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
-_No changes since previous release._
+Bug Fixes::
+
+* fall back to conum ordinal in braces if conum glpyh cannot be resolved (#2662)
 
 == 2.3.27 (2026-09-02) - @mojavelinux
 
