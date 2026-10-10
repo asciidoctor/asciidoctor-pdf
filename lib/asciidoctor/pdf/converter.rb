@@ -4077,7 +4077,7 @@ module Asciidoctor
       def intrinsic_image_dimensions path, format
         if format == 'svg'
           # NOTE: prawn-svg automatically converts intrinsic width and height to pt
-          img_obj = ::Prawn::SVG::Interface.new (::File.read path, mode: 'r:UTF-8'), self, {}
+          img_obj = ::Prawn::SVG::Interface.new (::File.read path, mode: 'r:UTF-8'), self, enable_web_requests: false
           img_size = img_obj.document.sizing
           { width: img_size.output_width, height: img_size.output_height }
         else

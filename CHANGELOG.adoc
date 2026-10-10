@@ -7,6 +7,10 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 
 == Unreleased
 
+Improvements::
+
+* explicitly turn off web requests when computing image dimensions of SVG
+
 Bug Fixes::
 
 * fall back to conum ordinal in braces if conum glpyh cannot be resolved (#2662)
