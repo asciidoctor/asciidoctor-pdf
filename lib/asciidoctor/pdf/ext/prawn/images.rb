@@ -8,10 +8,7 @@ module Asciidoctor
         # FIXME: handle case when SVG is an IO object
         if ::String === file
           if ((opts = opts.merge).delete :format) == 'svg' || (file.downcase.end_with? '.svg')
-            #opts[:enable_file_requests_with_root] = (::File.dirname file) unless opts.key? :enable_file_requests_with_root
-            #opts[:enable_web_requests] = allow_uri_read if !(opts.key? :enable_web_requests) && (respond_to? :allow_uri_read)
-            #opts[:cache_images] = cache_uri if !(opts.key? :cache_images) && (respond_to? :cache_uri)
-            #opts[:fallback_font_name] = fallback_svg_font_name if !(opts.key? :fallback_font_name) && (respond_to? :fallback_svg_font_name)
+            opts[:enable_web_requests] = (respond_to? :allow_uri_read) ? allow_uri_read : false unless opts.key? :enable_web_requests
             if (fit = opts.delete :fit) && !(opts[:width] || opts[:height])
               image_info = svg (::File.read file, mode: 'r:UTF-8'), opts do |svg_doc|
                 # NOTE: fit to specified width, then reduce size if height exceeds bounds
