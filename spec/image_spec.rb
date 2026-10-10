@@ -410,7 +410,7 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-pdfwidth-percentage.pdf'
     end
 
-    it 'should scale raster image as percentage of intrinsic size', visual: true do
+    it 'should scale raster image as percentage of intrinsic size' do
       ['scale=75', 'pdfwidth=75iw'].each do |width_attr|
         pdf = to_pdf <<~END, attribute_overrides: { 'imagesdir' => examples_dir }, analyze: :image
         image::wolpertinger.jpg[,144,#{width_attr}]
@@ -1047,12 +1047,14 @@ describe 'Asciidoctor::PDF::Converter - Image' do
     end
 
     it 'should embed SVG image from data-uri in SVG', visual: true do
-      pdf = to_pdf 'image::svg-with-data-uri-svg-image.svg[]', analyze: :rect
-      (expect pdf.rectangles).to have_size 1
-      (expect pdf.rectangles[0][:fill_color]).to eql 'FF0000'
+      to_file = to_pdf_file <<~'END', 'image-block-svg-with-data-uri-svg-image.pdf'
+      image::svg-with-data-uri-svg-image.svg[]
+      END
+
+      (expect to_file).to visually_match 'image-block-svg-with-svg-image.pdf'
     end
 
-    it 'should support non-standard image/jpg MIME type', visual: true do
+    it 'should support non-standard image/jpg MIME type' do
       image_data = File.binread fixture_file 'square.jpg'
       pdf = to_pdf 'image::svg-with-data-uri-jpg-image.svg[pdfwidth=1.27cm]', analyze: :image
       images = pdf.images
