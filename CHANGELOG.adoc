@@ -10,6 +10,7 @@ For a detailed view of what has changed, refer to the {url-repo}/commits/main[co
 Improvements::
 
 * explicitly turn off web requests when computing image dimensions of SVG
+* set enable_web_requests option on SVG interface when using image helper method
 
 Bug Fixes::
 
