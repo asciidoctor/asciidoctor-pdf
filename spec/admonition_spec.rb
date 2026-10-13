@@ -1107,6 +1107,35 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       icon_text = pdf.find_unique_text ?\uf05a
       (expect icon_text[:font_color]).to eql '333333'
     end
+
+    it 'should honor custom icon set loaded in font catalog' do
+      icon_font_file = fixture_file 'notoemoji.ttf'
+      FileUtils.cp (File.join project_dir, 'data/fonts/notoemoji-subset.ttf'), icon_font_file
+      pdf_theme = {
+        extends: 'default',
+        font_catalog: {
+          'Noto Serif' => {
+            'normal' => 'notoserif-regular-subset.ttf',
+          },
+          'ne' => {
+            'normal' => icon_font_file,
+          },
+        },
+        admonition_label_vertical_align: 'top',
+        admonition_icon_tip: { name: 'ne-star', size: 26 },
+      }
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
+      :icons: font
+
+      TIP: Press the option button to see more options.
+      END
+
+      lines = pdf.lines
+      (expect lines).to have_size 1
+      (expect lines[0]).to eql %(\u2b50 Press the option button to see more options.)
+    ensure
+      File.unlink icon_font_file
+    end
   end
 
   context 'Background & Lines' do
