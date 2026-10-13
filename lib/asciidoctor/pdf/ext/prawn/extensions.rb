@@ -13,7 +13,6 @@ module Asciidoctor
 
       FontAwesomeIconSets = %w(fab far fas)
       IconSets = %w(fab far fas fi mdi).to_set
-      IconSetPrefixes = IconSets.map {|it| it + '-' }
       InitialPageContent = %(q\n)
       (FontStyleToSet = {
         bold: [:bold].to_set,
