@@ -1121,8 +1121,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
             'normal' => icon_font_file,
           },
         },
-        admonition_label_vertical_align: 'top',
-        admonition_icon_tip: { name: 'ne-star', size: 26 },
+        admonition_icon_tip: { name: 'ne-star', size: 50 },
       }
       pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
       :icons: font

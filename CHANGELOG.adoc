@@ -55,6 +55,7 @@ Bug Fixes::
 * remove deprecated, undocumented `svg-font-family` theme key (the correct key is `svg-fallback-font-family`)
 * major improvement to OTF support following release of ttfunk 1.8.0 (automatic transitive dependency of prawn)
 * fall back to conum ordinal in braces if conum glpyh cannot be resolved (#2662)
+* use correct calcuation to fit admonition icon into allotted space
 
 Compliance::
 
