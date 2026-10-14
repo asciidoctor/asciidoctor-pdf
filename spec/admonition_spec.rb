@@ -18,7 +18,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
   end
 
   it 'should place anchor directly at top of block' do
-    input = <<~EOS
+    input = <<~'EOS'
     paragraph
 
     [NOTE#admon-1]
@@ -36,7 +36,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
   it 'should offset anchor from top of block by amount of block_anchor_top' do
     pdf_theme = { block_anchor_top: -12 }
 
-    input = <<~EOS
+    input = <<~'EOS'
     paragraph
 
     [NOTE#admon-1]
