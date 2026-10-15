@@ -24,6 +24,7 @@ Enhancements::
 * sort using collation (asciibetical sorting) if ffi-icu gem is available on load path (#928)
 * restrict categories to ASCII letters (using transliteration) if ffi-icu gem is available on load path (#928)
 * upgrade to prawn-icon 3.1.x to add support for the Material Design Icons (`mdi`) as an available font-based icon set (PR #2334)
+* upgrade to prawn-icon 4.1.x to switch to FontAwesome 6 (PR #2550)
 * honor `GS_OPTIONS` environment variable for supplying additional parameters to command called by RGhost optimizer (#2337)
 * add support for passing a color mode to the default optimizer (#2347)
 * allow revision content to be customized by theme (#2362)
