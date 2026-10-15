@@ -24,6 +24,7 @@ Enhancements::
 * sort using collation (asciibetical sorting) if ffi-icu gem is available on load path (#928)
 * restrict categories to ASCII letters (using transliteration) if ffi-icu gem is available on load path (#928)
 * upgrade to prawn-icon 3.1.x to add support for the Material Design Icons (`mdi`) as an available font-based icon set (PR #2334)
+* upgrade to prawn-icon 4.1.x to switch to FontAwesome 6 (PR #2550)
 * honor `GS_OPTIONS` environment variable for supplying additional parameters to command called by RGhost optimizer (#2337)
 * add support for passing a color mode to the default optimizer (#2347)
 * allow revision content to be customized by theme (#2362)
@@ -44,6 +45,7 @@ Improvements::
 * explicitly turn off web requests when computing image dimensions of SVG
 * set enable_web_requests option on SVG interface when using image helper method
 * upgrade prawn-svg to 0.40.4 as css_parser < 3.0.0 are vulnerable to CVE-2026-53727 (#2648)
+* honor icon prefix if already registered in font catalog
 
 Bug Fixes::
 
@@ -55,6 +57,7 @@ Bug Fixes::
 * remove deprecated, undocumented `svg-font-family` theme key (the correct key is `svg-fallback-font-family`)
 * major improvement to OTF support following release of ttfunk 1.8.0 (automatic transitive dependency of prawn)
 * fall back to conum ordinal in braces if conum glpyh cannot be resolved (#2662)
+* use correct calcuation to fit admonition icon into allotted space
 
 Compliance::
 

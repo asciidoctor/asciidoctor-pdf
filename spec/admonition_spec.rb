@@ -18,7 +18,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
   end
 
   it 'should place anchor directly at top of block' do
-    input = <<~END
+    input = <<~'END'
     paragraph
 
     [NOTE#admon-1]
@@ -36,7 +36,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
   it 'should offset anchor from top of block by amount of block_anchor_top' do
     pdf_theme = { block_anchor_top: -12 }
 
-    input = <<~END
+    input = <<~'END'
     paragraph
 
     [NOTE#admon-1]
@@ -428,7 +428,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect text).to have_size 2
       label_text = text[0]
       (expect label_text[:string]).to eql ?\uf0eb
-      (expect label_text[:font_name]).to eql 'FontAwesome5Free-Regular'
+      (expect label_text[:font_name]).to eql 'FontAwesome6Free-Regular'
       # NOTE: font size is reduced to fit within available space
       (expect label_text[:font_size]).to be < 24
       content_text = text[1]
@@ -448,7 +448,8 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       END
 
       label_text = pdf.find_unique_text ?\uf06a
-      (expect label_text[:font_size]).to eql 50
+      # NOTE: font size is reduced so rendered height matches requested height
+      (expect label_text[:font_size].round).to eql 48
     end
 
     it 'should allow the theme to specify a minimum width for the font-based icon label' do
@@ -509,7 +510,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       END
 
       icon_text = pdf.text[0]
-      (expect icon_text[:font_name]).to eql 'FontAwesome5Free-Solid'
+      (expect icon_text[:font_name]).to eql 'FontAwesome6Free-Solid'
       (expect icon_text[:string]).to eql ?\uf4da
     end
 
@@ -522,7 +523,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
         END
 
         icon_text = pdf.text[0]
-        (expect icon_text[:font_name]).to eql 'FontAwesome5Free-Solid'
+        (expect icon_text[:font_name]).to eql 'FontAwesome6Free-Solid'
         (expect icon_text[:string]).to eql ?\uf4da
       end).to log_message severity: :INFO, message: 'tip admonition in theme uses icon from deprecated fa icon set; use fas, far, or fab instead', using_log_level: :INFO
     end
@@ -547,7 +548,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       END
 
       icon_text = pdf.text[0]
-      (expect icon_text[:font_name]).to eql 'FontAwesome5Free-Solid'
+      (expect icon_text[:font_name]).to eql 'FontAwesome6Free-Solid'
       (expect icon_text[:string]).to eql ?\uf05a
     end
 
@@ -576,7 +577,7 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect text).to have_size 2
       label_text = text[0]
       (expect label_text[:string]).to eql ?\uf3d1
-      (expect label_text[:font_name]).to eql 'FontAwesome5Free-Regular'
+      (expect label_text[:font_name]).to eql 'FontAwesome6Free-Regular'
       content_text = text[1]
       (expect content_text[:string]).to eql 'Look for the warp zone under the bridge.'
     end
@@ -1074,8 +1075,9 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
 
       icon_text = pdf.find_unique_text ?\uf059
       (expect icon_text).not_to be_nil
-      (expect icon_text[:font_name]).to eql 'FontAwesome5Free-Solid'
-      (expect icon_text[:font_size]).to be 24
+      (expect icon_text[:font_name]).to eql 'FontAwesome6Free-Solid'
+      # NOTE: font size is reduced so rendered height matches requested height
+      (expect icon_text[:font_size].round).to be 23
       (expect pdf.find_unique_text 'Are you following along?').not_to be_nil
       (expect pdf.find_unique_text 'Just checking ;)').not_to be_nil
     end
@@ -1106,6 +1108,34 @@ describe 'Asciidoctor::PDF::Converter - Admonition' do
       (expect pdf.lines).to eql [%(\uf05a Like all planetary bodies, the Earth is spherical.)]
       icon_text = pdf.find_unique_text ?\uf05a
       (expect icon_text[:font_color]).to eql '333333'
+    end
+
+    it 'should honor custom icon set loaded in font catalog' do
+      icon_font_file = fixture_file 'notoemoji.ttf'
+      FileUtils.cp (File.join project_dir, 'data/fonts/notoemoji-subset.ttf'), icon_font_file
+      pdf_theme = {
+        extends: 'default',
+        font_catalog: {
+          'Noto Serif' => {
+            'normal' => 'notoserif-regular-subset.ttf',
+          },
+          'ne' => {
+            'normal' => icon_font_file,
+          },
+        },
+        admonition_icon_tip: { name: 'ne-star', size: 50 },
+      }
+      pdf = to_pdf <<~'END', pdf_theme: pdf_theme, analyze: true
+      :icons: font
+
+      TIP: Press the option button to see more options.
+      END
+
+      lines = pdf.lines
+      (expect lines).to have_size 1
+      (expect lines[0]).to eql %(\u2b50 Press the option button to see more options.)
+    ensure
+      File.unlink icon_font_file
     end
   end
 
