@@ -126,6 +126,17 @@ describe 'Asciidoctor::PDF::Converter - Font' do
       (expect to_file).to visually_match 'font-emoji.pdf'
     end
 
+    it 'should select option glyph from fallback font', visual: true do
+      to_file = to_pdf_file <<~EOS, 'macos-option-glyph.pdf', attribute_overrides: { 'pdf-theme' => 'default-with-font-fallbacks' }
+      :experimental:
+
+      Press kbd:[\u2318,C] to copy the selected text.
+      \u2318 is the option key on a macOS keyboard.
+      EOS
+
+      (expect to_file).to visually_match 'macos-option-glyph.pdf'
+    end
+
     it 'should use sans base font when using sans theme with fallback font', visual: true do
       to_file = to_pdf_file <<~'EOS', 'font-sans-emoji.pdf', attribute_overrides: { 'pdf-theme' => 'default-sans-with-font-fallbacks' }
       == Lessons
