@@ -54,15 +54,15 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     END
     wink_text = pdf.find_text ?\uf0ad
     (expect wink_text).to have_size 1
-    (expect wink_text[0][:font_name]).to eql 'FontAwesome5Free-Solid'
+    (expect wink_text[0][:font_name]).to eql 'FontAwesome6Free-Solid'
   end
 
   it 'should support all available font-based icon sets' do
     supports_mdi = true unless (Gem::Version.new Prawn::Icon::VERSION) < (Gem::Version.new '3.1.0')
     [
-      %W(fab twitter \uf099 FontAwesome5Brands-Regular),
-      %W(far bell \uf0f3 FontAwesome5Free-Regular),
-      %W(fas lock \uf023 FontAwesome5Free-Solid),
+      %W(fab twitter \uf099 FontAwesome6Brands-Regular),
+      %W(far bell \uf0f3 FontAwesome6Free-Regular),
+      %W(fas lock \uf023 FontAwesome6Free-Solid),
       %W(fi lock \uf16a fontcustom),
       %W(mdi alien \u{0f089a} MaterialDesignIcons),
     ].each do |icon_set, icon_name, char_code, font_name|
@@ -94,7 +94,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     END
     wink_text = pdf.find_text ?\uf0ad
     (expect wink_text).to have_size 1
-    (expect wink_text[0][:font_name]).to eql 'FontAwesome5Free-Solid'
+    (expect wink_text[0][:font_name]).to eql 'FontAwesome6Free-Solid'
   end
 
   it 'should support icon set as prefix on icon name' do
@@ -105,7 +105,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     END
     wink_text = pdf.find_text ?\uf0ad
     (expect wink_text).to have_size 1
-    (expect wink_text[0][:font_name]).to eql 'FontAwesome5Free-Solid'
+    (expect wink_text[0][:font_name]).to eql 'FontAwesome6Free-Solid'
   end
 
   it 'should support icon set as prefix on icon name even if icon set is configured globally' do
@@ -117,7 +117,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     END
     wink_text = pdf.find_text ?\uf0ad
     (expect wink_text).to have_size 1
-    (expect wink_text[0][:font_name]).to eql 'FontAwesome5Free-Solid'
+    (expect wink_text[0][:font_name]).to eql 'FontAwesome6Free-Solid'
   end
 
   it 'should not support icon set as prefix on icon name if explicit icon set is specified' do
@@ -220,7 +220,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
       END
       hdd_text = pdf.find_text ?\uf111
       (expect hdd_text).to have_size 1
-      (expect hdd_text[0][:font_name]).to eql 'FontAwesome5Free-Solid'
+      (expect hdd_text[0][:font_name]).to eql 'FontAwesome6Free-Solid'
     end).to log_message severity: :INFO, message: 'circle icon found in deprecated fa icon set; using circle from fas icon set instead', using_log_level: :INFO
   end
 
@@ -233,7 +233,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
       END
       hdd_text = pdf.find_text ?\uf0a0
       (expect hdd_text).to have_size 1
-      (expect hdd_text[0][:font_name]).to eql 'FontAwesome5Free-Regular'
+      (expect hdd_text[0][:font_name]).to eql 'FontAwesome6Free-Regular'
     end).to log_message severity: :INFO, message: 'hdd-o icon found in deprecated fa icon set; using hdd from far icon set instead', using_log_level: :INFO
   end
 
@@ -246,7 +246,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
       END
       wink_text = pdf.find_text ?\uf4da
       (expect wink_text).to have_size 1
-      (expect wink_text[0][:font_name]).to eql 'FontAwesome5Free-Regular'
+      (expect wink_text[0][:font_name]).to eql 'FontAwesome6Free-Regular'
     end).to log_message severity: :INFO, message: 'smile-wink icon not found in deprecated fa icon set; using match found in far icon set instead', using_log_level: :INFO
   end
 
@@ -267,7 +267,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     pdf = to_pdf input, analyze: true
     link_text = (pdf.find_text ?\uf019)[0]
     (expect link_text).not_to be_nil
-    (expect link_text[:font_name]).to eql 'FontAwesome5Free-Solid'
+    (expect link_text[:font_name]).to eql 'FontAwesome6Free-Solid'
     (expect link_text[:font_color]).to eql '428BCA'
     link_text[:font_size] -= 1.5 # box appox is a little off
     (expect link_annotation).to annotate link_text
@@ -301,7 +301,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
 
     heart_text = pdf.text[0]
     (expect heart_text[:string]).to eql ?\uf004
-    (expect heart_text[:font_name]).to eql 'FontAwesome5Free-Solid'
+    (expect heart_text[:font_name]).to eql 'FontAwesome6Free-Solid'
     (expect heart_text[:font_color]).to eql 'FF0000'
   end
 
@@ -320,6 +320,6 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     (expect keyseq_text[0][:font_name]).to eql 'mplus1mn-regular'
     (expect keyseq_text[1][:string]).to eql %(\u202f+\u202f)
     (expect keyseq_text[2][:string]).to eql ?\uf062
-    (expect keyseq_text[2][:font_name]).to eql 'FontAwesome5Free-Solid'
+    (expect keyseq_text[2][:font_name]).to eql 'FontAwesome6Free-Solid'
   end
 end
