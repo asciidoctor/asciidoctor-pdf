@@ -115,7 +115,7 @@ module Asciidoctor
       end
 
       def categories
-        @categories.values.sort
+        @categories.empty? ? [] : @categories.values.sort
       end
     end
 
@@ -129,7 +129,7 @@ module Asciidoctor
         @locale = locale || 'en'
       end
 
-      def store_term name, dest, assoc = {}
+      def store_term name, dest = nil, assoc = {}
         term = (@terms[name] ||= (IndexTerm.new name))
         term.add_dest dest if dest
         term.associations ||= {}
