@@ -322,4 +322,17 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     (expect keyseq_text[2][:string]).to eql ?\uf062
     (expect keyseq_text[2][:font_name]).to eql 'FontAwesome6Free-Solid'
   end
+
+  it 'should resolve font-based icon in section title' do
+    pdf = to_pdf <<~'END', analyze: true
+    :icons: font
+
+    == icon:bell[]
+
+    content
+    END
+    bell_text = pdf.find_text ?\uf0f3
+    (expect bell_text).to have_size 1
+    (expect bell_text[0][:font_name]).to eql 'FontAwesome6Free-Solid'
+  end
 end

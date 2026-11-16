@@ -14,6 +14,7 @@ module Asciidoctor
       include ::Asciidoctor::Logging
       include ::Asciidoctor::Writer
       include ::Asciidoctor::Prawn::Extensions
+      include ::Prawn::Icon::Interface
 
       register_for 'pdf'
 
