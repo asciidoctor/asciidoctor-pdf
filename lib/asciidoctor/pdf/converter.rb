@@ -2650,19 +2650,18 @@ module Asciidoctor
               log(:info) { %(#{requested_icon_name} icon found in deprecated fa icon set; using #{icon_name} from #{icon_set} icon set instead) }
             # new name in Font Awesome >= 5 (but document is configured to use fa icon set)
             else
-              font_data = nil
-              if (resolved_icon_set = FontAwesomeIconSets.find {|candidate| (font_data = icon_font_data candidate).unicode icon_name rescue nil })
+              glyph = nil
+              if (resolved_icon_set = FontAwesomeIconSets.find {|candidate| glyph = resolve_icon_glyph candidate, icon_name })
                 icon_set = resolved_icon_set
-                glyph = font_data.unicode icon_name
                 log(:info) { %(#{icon_name} icon not found in deprecated fa icon set; using match found in #{resolved_icon_set} icon set instead) }
               end
             end
           else
-            glyph = (icon_font_data icon_set).unicode icon_name rescue nil
+            glyph = resolve_icon_glyph icon_set, icon_name
           end
           unless glyph || explicit_icon_set || !(valid_icon_set_prefix? icon_name)
             icon_set, icon_name = icon_name.split '-', 2
-            glyph = (icon_font_data icon_set).unicode icon_name rescue nil
+            glyph = resolve_icon_glyph icon_set, icon_name
           end
           if glyph
             if node.attr? 'size'
@@ -5360,6 +5359,12 @@ module Asciidoctor
         icon_set
       rescue
         false
+      end
+
+      def resolve_icon_glyph icon_set, icon_name
+        (icon_font_data icon_set).unicode icon_name
+      rescue ::Prawn::Icon::Errors::IconNotFound
+        nil
       end
 
       # Calculate the width that is needed to print all the
