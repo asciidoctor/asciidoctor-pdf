@@ -398,6 +398,11 @@ module Asciidoctor
         ::Prawn::Icon::FontData.load self, family
       end
 
+      def icon_font_glyph family, key
+        (icon_font_data family).unicode key
+      rescue ::Prawn::Icon::Errors::IconNotFound # rubocop:disable Lint/SuppressedException
+      end
+
       def resolve_legacy_icon_name name
         ::Prawn::Icon::Legacy.mapping[%(fa-#{name})]
       end
