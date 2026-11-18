@@ -132,6 +132,19 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     end).to log_message severity: :WARN, message: 'fas-wrench is not a valid icon name in the fab icon set'
   end
 
+  it 'should resolve font-based icon in section title' do
+    pdf = to_pdf <<~'END', analyze: true
+    :icons: font
+
+    == icon:bell[] Notifications
+
+    content
+    END
+    bell_text = pdf.find_text ?\uf0f3
+    (expect bell_text).to have_size 1
+    (expect bell_text[0][:font_name]).to eql 'FontAwesome6Free-Solid'
+  end
+
   it 'should apply larger font size to icon if size is lg' do
     pdf = to_pdf <<~'END', analyze: true
     :icons: font

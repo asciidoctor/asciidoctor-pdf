@@ -58,6 +58,7 @@ Bug Fixes::
 * major improvement to OTF support following release of ttfunk 1.8.0 (automatic transitive dependency of prawn)
 * fall back to conum ordinal in braces if conum glpyh cannot be resolved (#2662)
 * use correct calcuation to fit admonition icon into allotted space
+* fix crash when icon-based font is used in section title (#2668)
 
 Compliance::
 

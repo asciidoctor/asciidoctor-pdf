@@ -17,4 +17,3 @@ Prawn::Icon::FontData.prepend (Module.new do
   end
 end)
 require_relative 'prawn-icon/legacy'
-require_relative 'prawn-icon/interface'
