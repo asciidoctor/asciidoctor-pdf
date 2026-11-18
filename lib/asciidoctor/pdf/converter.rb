@@ -663,7 +663,7 @@ module Asciidoctor
 
       def convert_section sect, _opts = nil
         sectname = sect.sectname
-        if (index_section = sectname == 'index') && @index.empty?
+        if sect.special && (index_section = sectname == 'index') && @index.empty?
           # override numbered_title to hide entry from TOC
           sect.define_singleton_method :numbered_title, ->(*) { '' }
           return
