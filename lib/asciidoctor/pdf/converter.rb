@@ -437,7 +437,7 @@ module Asciidoctor
         @section_indent = (val = @theme.section_indent) && (expand_indent_value val)
         @toc_max_pagenum_digits = (doc.attr 'toc-max-pagenum-digits', 3).to_i
         @disable_running_content = { header: ::Set.new, footer: ::Set.new }
-        @index ||= IndexCatalog.new
+        @index ||= IndexCatalog.new doc.attr 'lang'
         # NOTE: we have to init Pdfmark class here while we have reference to the doc
         @pdfmark = (doc.attr? 'pdfmark') ? (Pdfmark.new doc) : nil
         # NOTE: defer instantiating optimizer until we know min pdf version
@@ -2748,7 +2748,7 @@ module Asciidoctor
         else
           unless defined? @index
             # NOTE: initialize index and text formatter in case converter is called before PDF is initialized
-            @index = IndexCatalog.new
+            @index = IndexCatalog.new node.document.attr 'lang'
             @text_formatter = FormattedText::Formatter.new theme: (load_theme node.document)
           end
           # NOTE: page number (:page key) is added by InlineDestinationMarker

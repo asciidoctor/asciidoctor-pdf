@@ -59,6 +59,7 @@ Bug Fixes::
 * fall back to conum ordinal in braces if conum glpyh cannot be resolved (#2662)
 * use correct calcuation to fit admonition icon into allotted space
 * fix crash when icon-based font is used in section title (#2668)
+* honor locale (from lang attribute) when sorting entries in index
 
 Compliance::
 

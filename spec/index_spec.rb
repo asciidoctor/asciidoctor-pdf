@@ -563,6 +563,60 @@ describe 'Asciidoctor::PDF::Converter - Index' do
     (expect terms).to eql %w(anchor AsciiDoc Asciidoctor authoring)
   end
 
+  it 'should honor locale when sorting entries in index' do
+    pdf = to_pdf <<~'END', analyze: true
+    = Document Title
+    :doctype: book
+    :lang: nb
+
+    == Unicode Party
+
+    ((étudier)) means to study.
+    ((être)) means to be.
+    ((abc)) vs ((ab©))
+    ((æ)) ((bå)) ((bæ)) ((bø))
+
+    [index]
+    == Index
+    END
+
+    if gem_available? 'ffi-icu'
+      expected = <<~'END'.chomp
+      Index
+      A
+      ab©, 1
+      abc, 1
+      AE
+      æ, 1
+      B
+      bæ, 1
+      bø, 1
+      bå, 1
+      E
+      être, 1
+      étudier, 1
+      END
+    else
+      expected = <<~'END'.chomp
+      Index
+      A
+      abc, 1
+      ab©, 1
+      B
+      bå, 1
+      bæ, 1
+      bø, 1
+      Æ
+      æ, 1
+      É
+      étudier, 1
+      Ê
+      être, 1
+      END
+    end
+    (expect (pdf.lines pdf.find_text page_number: 3).join ?\n).to eql expected
+  end
+
   it 'should adjust start page number for prepress book when page numbering starts at toc and toc macro is used' do
     pdf = to_pdf <<~'END', pdf_theme: { page_numbering_start_at: 'toc' }, analyze: true
     = Book Title

@@ -130,7 +130,7 @@ module Asciidoctor
       end
 
       def store_term name, dest = nil, assoc = {}
-        term = (@terms[name] ||= (IndexTerm.new name))
+        term = (@terms[name] ||= (IndexTerm.new name, @locale))
         term.add_dest dest if dest
         term.associations ||= {}
         unless assoc.empty?
@@ -174,7 +174,7 @@ module Asciidoctor
 
       attr_writer :see_also
 
-      def initialize name
+      def initialize name, locale = nil
         super
         @dests = ::Set.new
         @anchor = %(__indextermdef-#{(::Digest::MD5.new << name.to_s).hexdigest})
