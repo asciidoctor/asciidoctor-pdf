@@ -34,9 +34,10 @@ toc::[]
 
 == Guidelines
 
-To contribute code, fork the project on GitHub, hack away, and send a pull request with your proposed changes.
-*All pull requests must include a) tests that verify the code change and b) an entry in the CHANGELOG.adoc file to document what changed.*
-If a pull request is missing tests or a CHANGELOG entry, *it will not be merged* and may be closed.
+To contribute code, you should first create an issue in the issue tracker.
+Once you do so, fork the project on GitHub, hack away, and send a pull request with your proposed changes.
+*All pull requests must a) cite the issue it resolves (e.g., `resolves #999`), b) include a test or tests that verify the code change, and c) include an entry in the CHANGELOG.adoc file to document what changed.*
+If a pull request is missing an associated issue, a test or tests, or a CHANGELOG entry, *it will not be merged* and may be closed.
 
 Feel free to share ideas in the *#users/asciidoctor-pdf* stream of the {url-project-chat}[project chat] or report issues in the {url-project-issues}[issue tracker].
 
