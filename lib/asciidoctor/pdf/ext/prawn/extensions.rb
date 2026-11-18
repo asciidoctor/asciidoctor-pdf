@@ -399,7 +399,7 @@ module Asciidoctor
 
       def icon_font_glyph family, key
         (icon_font_data family).unicode key
-      rescue ::Prawn::Icon::Errors::IconNotFound
+      rescue ::Prawn::Icon::Errors::IconNotFound # rubocop:disable Lint/SuppressedException
       end
 
       def resolve_legacy_icon_name name
