@@ -59,8 +59,9 @@ module Asciidoctor
 
       def find_primary_term name
         @categories.each_value do |category|
-          term = category.terms.find {|candidate| candidate.name == name }
-          return term if term
+          if (term = category.terms.find {|candidate| candidate.name == name })
+            return term
+          end
         end
         nil
       end
@@ -68,8 +69,7 @@ module Asciidoctor
       def link_associations group = nil
         if group
           group.terms.each do |term|
-            associations = term.associations
-            if (see_name = associations[:see])
+            if (see_name = (associations = term.associations)[:see])
               see_name = FormattedString.new see_name
               term.see = (find_primary_term see_name) || (UnresolvedIndexTerm.new see_name)
             elsif (see_also_names = associations[:see_also])
@@ -119,11 +119,10 @@ module Asciidoctor
         term.add_dest dest if dest
         term.associations ||= {}
         unless assoc.empty?
-          if !term.associations[:see] && (see = assoc[:see])
-            term.associations[:see] = see
-          end
-          if (see_also = assoc[:see_also])
-            (term.associations[:see_also] ||= []).concat see_also
+          if (see = assoc[:see])
+            term.associations[:see] ||= see
+          elsif (see_also = assoc[:see_also])
+            (term.associations[:see_also] ||= ::Set.new).merge see_also
           end
         end
         term

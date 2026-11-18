@@ -1333,6 +1333,35 @@ describe 'Asciidoctor::PDF::Converter - Index' do
       (expect cakes_term_text[:y]).to be < cookies_see_also_text[:y]
     end
 
+    it 'should not include duplicate see also terms' do
+      pdf = to_pdf <<~'EOS', analyze: true
+      = Document Title
+      :doctype: book
+      :media: print
+
+      == Animals
+
+      (((Big cats)))
+      The tiger (Panthera tigris) is the largest ((cat &> Big cats)) species.
+
+      The cougar is the big ((cat &> Big cats &> Big cats)) of the Americas.
+
+      [index]
+      == Index
+      EOS
+
+      expected = <<~'EOS'.chomp
+      Index
+      B
+      Big cats, 1
+      C
+      cat, 1
+      (see also Big cats)
+      EOS
+
+      (expect (pdf.lines pdf.find_text page_number: 3).join ?\n).to eql expected
+    end
+
     it 'should not link to see also term specified by see-also if media is not screen' do
       input = <<~'EOS'
       ((Desserts &> Cookies)) are essential.
