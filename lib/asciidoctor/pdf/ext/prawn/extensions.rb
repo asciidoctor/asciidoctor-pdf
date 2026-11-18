@@ -393,6 +393,14 @@ module Asciidoctor
         FontStyleToSet[style].dup
       end
 
+      def icon_font_data family
+        ::Prawn::Icon::FontData.load self, family
+      end
+
+      def resolve_legacy_icon_name name
+        ::Prawn::Icon::Legacy.mapping[%(fa-#{name})]
+      end
+
       # Override width of string to check for placeholder char, which uses character spacing to control width
       #
       def width_of_string string, options
