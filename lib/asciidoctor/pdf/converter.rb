@@ -1979,7 +1979,7 @@ module Asciidoctor
       def convert_audio node
         add_dest_for_block node if node.id
         audio_path = node.media_uri node.attr 'target'
-        play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
+        play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{icon_font_glyph 'fas', 'play'}</font>) : RightPointer
         ink_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{audio_path}">#{audio_path}</a> <em>(audio)</em>), normalize: false, margin: 0
         ink_caption node, labeled: false, end: :bottom if node.title?
         theme_margin :block, :bottom, (next_enclosed_block node)
@@ -2007,7 +2007,7 @@ module Asciidoctor
 
         if poster.nil_or_empty?
           add_dest_for_block node if node.id
-          play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{(icon_font_data 'fas').unicode 'play'}</font>) : RightPointer
+          play_symbol = (node.document.attr? 'icons', 'font') ? %(<font name="fas">#{icon_font_glyph 'fas', 'play'}</font>) : RightPointer
           ink_prose %(#{play_symbol}#{NoBreakSpace}<a href="#{video_path}">#{video_path}</a> <em>(#{type})</em>), normalize: false, margin: 0
           ink_caption node, labeled: false, end: :bottom if node.title?
           theme_margin :block, :bottom, (next_enclosed_block node)
@@ -2646,22 +2646,22 @@ module Asciidoctor
             if (remapped_icon_name = resolve_legacy_icon_name icon_name)
               requested_icon_name = icon_name
               icon_set, icon_name = remapped_icon_name.split '-', 2
-              glyph = (icon_font_data icon_set).unicode icon_name
+              glyph = icon_font_glyph icon_set, icon_name
               log(:info) { %(#{requested_icon_name} icon found in deprecated fa icon set; using #{icon_name} from #{icon_set} icon set instead) }
             # new name in Font Awesome >= 5 (but document is configured to use fa icon set)
             else
               glyph = nil
-              if (resolved_icon_set = FontAwesomeIconSets.find {|candidate| glyph = (icon_font_data candidate).unicode icon_name rescue nil })
+              if (resolved_icon_set = FontAwesomeIconSets.find {|candidate| glyph = icon_font_glyph candidate, icon_name })
                 icon_set = resolved_icon_set
                 log(:info) { %(#{icon_name} icon not found in deprecated fa icon set; using match found in #{resolved_icon_set} icon set instead) }
               end
             end
           else
-            glyph = (icon_font_data icon_set).unicode icon_name rescue nil
+            glyph = icon_font_glyph icon_set, icon_name
           end
           unless glyph || explicit_icon_set || !(valid_icon_set_prefix? icon_name)
             icon_set, icon_name = icon_name.split '-', 2
-            glyph = (icon_font_data icon_set).unicode icon_name rescue nil
+            glyph = icon_font_glyph icon_set, icon_name
           end
           if glyph
             if node.attr? 'size'
