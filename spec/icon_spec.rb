@@ -113,7 +113,7 @@ describe 'Asciidoctor::PDF::Converter - Icon' do
     EOS
     bell_text = pdf.find_text ?\uf0f3
     (expect bell_text).to have_size 1
-    (expect bell_text[0][:font_name]).to eql 'FontAwesome6Free-Solid'
+    (expect bell_text[0][:font_name]).to eql 'FontAwesome5Free-Solid'
   end
 
   it 'should apply larger font size to icon if size is lg' do
