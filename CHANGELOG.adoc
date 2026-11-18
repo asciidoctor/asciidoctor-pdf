@@ -15,6 +15,7 @@ Improvements::
 Bug Fixes::
 
 * fall back to conum ordinal in braces if conum glpyh cannot be resolved (#2662)
+* fix crash when icon-based font is used in section title (#2668)
 
 == 2.3.27 (2026-09-02) - @mojavelinux
 
