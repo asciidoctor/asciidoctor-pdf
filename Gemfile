@@ -27,6 +27,7 @@ group :docs do
 end
 
 group :lint do
+  gem 'prism', '~> 1.9.0', require: false
   gem 'rubocop', '~> 1.81.0', require: false
   gem 'rubocop-rake', '~> 0.7.0', require: false
   gem 'rubocop-rspec', '~> 3.7.0', require: false
@@ -35,6 +36,5 @@ end
 group :coverage do
   gem 'deep-cover-core', '~> 1.1.0', require: false
   gem 'json', '~> 2.7', require: false if (Gem::Version.new RUBY_VERSION) > (Gem::Version.new '3.3.4')
-  gem 'prism', '~> 1.9.0', require: false
   gem 'simplecov', '~> 0.22.0', require: false
 end
