@@ -430,6 +430,7 @@ Enhancements::
 * use default-for-print theme by default if media is `print` or `prepress` (#2306)
 * support text alignment roles on all styled paragraphs
 * support text alignment roles on verse block
+* prevent a line break in front of formatted text with `wj` role when preceded by a non-space character (#2297)
 
 Bug Fixes::
 
