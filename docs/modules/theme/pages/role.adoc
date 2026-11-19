@@ -174,6 +174,7 @@ This happens since the PDF generator creates a separate fragment to change fonts
 pre-wrap:: The `pre-wrap` role prevents sequences of space and space-like characters from being collapsed (i.e., all spaces are preserved).
 This role does not otherwise modify the appearance of the text.
 Note that if the space characters fall at the boundary of a line wrap, those space characters will be dropped.
+wj:: The `wj` role prevents a line break in front of formatted text with `wj` role when preceded by a non-space character.
 // end::user-formatting[]
 // tag::para-roles[]
 text-justify:: Aligns the text to the left margin with justification.
