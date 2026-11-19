@@ -2603,7 +2603,7 @@ module Asciidoctor
               log(:info) { %(#{requested_icon_name} icon found in deprecated fa icon set; using #{icon_name} from #{icon_set} icon set instead) }
             # new name in Font Awesome >= 5 (but document is configured to use fa icon set)
             else
-              glpyh = nil
+              glyph = nil
               if (resolved_icon_set = FontAwesomeIconSets.find {|candidate| glyph = icon_font_glyph candidate, icon_name })
                 icon_set = resolved_icon_set
                 log(:info) { %(#{icon_name} icon not found in deprecated fa icon set; using match found in #{resolved_icon_set} icon set instead) }
