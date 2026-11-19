@@ -1,0 +1,235 @@
+%PDF-1.4
+%ÿÿÿÿ
+1 0 obj
+<< /Title (Untitled)
+/Creator <feff>
+/Producer (Asciidoctor PDF 3.0.0.alpha.0, based on Prawn 2.4.0)
+/ModDate (D:20261119130255-07'00')
+/CreationDate (D:20261119130255-07'00')
+>>
+endobj
+2 0 obj
+<< /Type /Catalog
+/Pages 3 0 R
+/Outlines 12 0 R
+/PageLabels 14 0 R
+/PageMode /UseOutlines
+/OpenAction [7 0 R /FitH 841.89]
+/ViewerPreferences << /DisplayDocTitle true
+>>
+/Names 16 0 R
+>>
+endobj
+3 0 obj
+<< /Type /Pages
+/Count 1
+/Kids [7 0 R]
+>>
+endobj
+4 0 obj
+<< /Length 2
+>>
+stream
+q
+
+endstream
+endobj
+5 0 obj
+<< /Type /Page
+/Parent 3 0 R
+/MediaBox [0 0 595.28 841.89]
+/CropBox [0 0 595.28 841.89]
+/BleedBox [0 0 595.28 841.89]
+/TrimBox [0 0 595.28 841.89]
+/ArtBox [0 0 595.28 841.89]
+/Contents 4 0 R
+/Resources << /ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+>>
+>>
+endobj
+6 0 obj
+<< /Length 668
+>>
+stream
+q
+q
+48.24 765.89 m
+88.24 765.89 l
+88.24 805.89 l
+48.24 805.89 l
+h
+W n
+/DeviceRGB cs
+0.0 0.0 0.0 scn
+1.0 0.0 0.0 1.0 0.0 0.0 cm
+1.0 0.0 0.0 1.0 0.0 0.0 cm
+q
+Q
+q
+q
+/Pattern cs
+/PSVG-Pattern-1 scn
+48.24 765.89 40.0 40.0 re
+f
+Q
+Q
+Q
+q
+48.24 653.89 m
+148.24 653.89 l
+148.24 753.89 l
+48.24 753.89 l
+h
+W n
+/DeviceRGB cs
+0.0 0.0 0.0 scn
+0.5 0.0 0.0 0.5 24.12 376.945 cm
+1.0 0.0 0.0 1.0 0.0 0.0 cm
+q
+1.0 0.0 0.0 scn
+48.24 553.89 200.0 200.0 re
+f
+Q
+Q
+q
+48.24 601.89 m
+88.24 601.89 l
+88.24 641.89 l
+48.24 641.89 l
+h
+W n
+/DeviceRGB cs
+0.0 0.0 0.0 scn
+1.0 0.0 0.0 1.0 0.0 0.0 cm
+1.0 0.0 0.0 1.0 0.0 0.0 cm
+q
+Q
+q
+q
+/Pattern cs
+/PSVG-Pattern-2 scn
+48.24 601.89 40.0 40.0 re
+f
+Q
+Q
+Q
+Q
+
+endstream
+endobj
+7 0 obj
+<< /Type /Page
+/Parent 3 0 R
+/MediaBox [0 0 595.28 841.89]
+/CropBox [0 0 595.28 841.89]
+/BleedBox [0 0 595.28 841.89]
+/TrimBox [0 0 595.28 841.89]
+/ArtBox [0 0 595.28 841.89]
+/Contents 6 0 R
+/Resources << /ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+/Font << >>
+/Pattern << /PSVG-Pattern-1 9 0 R
+/PSVG-Pattern-2 11 0 R
+>>
+>>
+>>
+endobj
+8 0 obj
+<< /FunctionType 2
+/Domain [0 1]
+/C0 [1 1 1]
+/C1 [0.39216 0.31765 0.62745]
+/N 1
+>>
+endobj
+9 0 obj
+<< /PatternType 2
+/Matrix [1 0 0 -1 48.24 805.89]
+/Shading << /ShadingType 2
+/ColorSpace /DeviceRGB
+/Coords [0 0 40 40]
+/Domain [0 1]
+/Function 8 0 R
+/Extend [true true]
+>>
+>>
+endobj
+10 0 obj
+<< /FunctionType 2
+/Domain [0 1]
+/C0 [1 1 1]
+/C1 [0.39216 0.31765 0.62745]
+/N 1
+>>
+endobj
+11 0 obj
+<< /PatternType 2
+/Matrix [1 0 0 -1 48.24 641.89]
+/Shading << /ShadingType 2
+/ColorSpace /DeviceRGB
+/Coords [0 0 40 40]
+/Domain [0 1]
+/Function 10 0 R
+/Extend [true true]
+>>
+>>
+endobj
+12 0 obj
+<< /Type /Outlines
+/Count 1
+/First 13 0 R
+/Last 13 0 R
+>>
+endobj
+13 0 obj
+<< /Title <feff0055006e007400690074006c00650064>
+/Parent 12 0 R
+/Count 0
+/Dest [7 0 R /XYZ 0 841.89 null]
+>>
+endobj
+14 0 obj
+<< /Nums [0 << /P (1)
+>>]
+>>
+endobj
+15 0 obj
+[7 0 R /XYZ 0 841.89 null]
+endobj
+16 0 obj
+<< /Type /Names
+/Dests 17 0 R
+>>
+endobj
+17 0 obj
+<< /Names [(__anchor-top) 15 0 R]
+>>
+endobj
+xref
+0 18
+0000000000 65535 f 
+0000000015 00000 n 
+0000000209 00000 n 
+0000000411 00000 n 
+0000000468 00000 n 
+0000000519 00000 n 
+0000000791 00000 n 
+0000001510 00000 n 
+0000001854 00000 n 
+0000001952 00000 n 
+0000002143 00000 n 
+0000002242 00000 n 
+0000002435 00000 n 
+0000002509 00000 n 
+0000002634 00000 n 
+0000002679 00000 n 
+0000002722 00000 n 
+0000002771 00000 n 
+trailer
+<< /Size 18
+/Root 2 0 R
+/Info 1 0 R
+>>
+startxref
+2824
+%%EOF

@@ -1191,6 +1191,17 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect to_file).to visually_match 'image-svg-with-gradient.pdf'
     end
 
+    it 'should render linear gradient in SVG that follows SVG with different transformation matrix', visual: true do
+      to_file = to_pdf_file <<~'END', 'image-multiple-svgs-with-gradient.pdf'
+      image::gradient.svg[]
+
+      image::square.svg[pdfwidth=100]
+
+      image::gradient.svg[]
+      END
+      (expect to_file).to visually_match 'image-multiple-svgs-with-gradient.pdf'
+    end
+
     it 'should set graphic state for running content when image occupies whole page' do
       pdf_theme = {
         footer_recto_right_content: %(image:#{fixture_file 'svg-with-text.svg'}[]),

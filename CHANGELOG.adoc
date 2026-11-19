@@ -61,6 +61,7 @@ Bug Fixes::
 * fix crash when icon-based font is used in section title (#2668)
 * honor locale (from lang attribute) when sorting entries in index
 * don't include duplicate see also terms in index
+* restore the transformation stack when rendering SVG images; fixes interactions between SVGs with gradients (#2671)
 
 Compliance::
 
