@@ -34,6 +34,7 @@ group :lint do
     gem 'rubocop', '~> 1.50.0', require: false
     gem 'rubocop-rake', '~> 0.6.0', require: false
     gem 'rubocop-rspec', '~> 2.20.0', require: false
+    gem 'prism', '~> 1.9.0', require: false
   end
 end
 
