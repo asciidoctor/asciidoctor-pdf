@@ -17,6 +17,7 @@ Bug Fixes::
 * fall back to conum ordinal in braces if conum glpyh cannot be resolved (#2662)
 * fix crash when icon-based font is used in section title (#2668)
 * don't include duplicate see also terms in index
+* restore the transformation stack when rendering SVG images; fixes interactions between SVGs with gradients (#2671)
 
 == 2.3.27 (2026-09-02) - @mojavelinux
 

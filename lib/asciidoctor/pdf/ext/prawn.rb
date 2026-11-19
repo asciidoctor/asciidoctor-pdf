@@ -6,6 +6,7 @@ Prawn::FLOAT_PRECISION = 1e-3
 
 # the following are organized under the Asciidoctor::Prawn namespace
 require_relative 'prawn/document/column_box'
+require_relative 'prawn/document/internals'
 require_relative 'prawn/font_metric_cache'
 require_relative 'prawn/font/afm'
 require_relative 'prawn/font/ttf'
