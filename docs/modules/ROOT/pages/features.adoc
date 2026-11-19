@@ -59,7 +59,7 @@ To workaround this problem, assign an explicit width to the image.
 * Orphan and widow support is limited to delimited blocks, block images, and admonitions; therefore, a page break may occur between a section title and its first block of content
  ** to avoid an orphaned section title, you can add the xref:breakable-and-unbreakable.adoc[breakable option] to the section
  ** to avoid an orphaned caption on a table, add the xref:breakable-and-unbreakable.adoc[breakable option] to the table
-* Formatted text creates a line break opportunity, even if the span of text is configured to not break or wrap
+* Formatted text creates a line break opportunity (unless it has the `wj` role), even if inside a span of text configured to not break or wrap
  ** If a no-break hyphen is surrounded by formatted text on both sides (or is formatted individually), it will not prevent a line break.
 * The `float` attribute on an image (i.e., an image float) is only supported for block images, not inline images.
 The converter will clear the float at the next non-paragraph or when the paragraph content clears the bottom of the image.
