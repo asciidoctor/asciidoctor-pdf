@@ -588,6 +588,29 @@ describe 'Asciidoctor::PDF::Converter - Image' do
       (expect text[0][:y]).to eql 276.036
     end
 
+    it 'should scale viewBox to match width specified on SVG' do
+      input = <<~'EOS'
+      :pdf-page-size: 200x400
+      :pdf-page-margin: 0
+
+      image::square-scaled-viewbox.svg[]
+
+      after
+      EOS
+
+      pdf = to_pdf input, analyze: :rect
+      (expect pdf.rectangles).to have_size 1
+      (expect pdf.rectangles[0][:point]).to eql [0.0, 200.0]
+      (expect pdf.rectangles[0][:width]).to eql 200.0
+      (expect pdf.rectangles[0][:height]).to eql 200.0
+
+      pdf = to_pdf input, analyze: true, debug: true
+      text = pdf.text
+      (expect text).to have_size 1
+      (expect text[0][:string]).to eql 'after'
+      (expect text[0][:y]).to eql 176.036
+    end
+
     it 'should compute width correctly when SVG defines width in px units', visual: true do
       [true, false].each do |from_theme|
         to_file = with_content_spacer 200, 200, 'px' do |spacer_path|
