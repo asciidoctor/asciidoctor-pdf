@@ -5,7 +5,7 @@
 This document provides a high-level view of the changes to the {project-name} by release.
 For a detailed view of what has changed, refer to the {url-repo}/commits/main[commit history] on GitHub.
 
-== Unreleased
+== 2.3.28 (2026-11-20) - @mojavelinux
 
 Improvements::
 
@@ -18,6 +18,10 @@ Bug Fixes::
 * fix crash when icon-based font is used in section title (#2668)
 * don't include duplicate see also terms in index
 * restore the transformation stack when rendering SVG images; fixes interactions between SVGs with gradients (#2671)
+
+=== Details
+
+{url-repo}/releases/tag/v2.3.28[git tag] | {url-repo}/compare/v2.3.27\...v2.3.28[full diff]
 
 == 2.3.27 (2026-09-02) - @mojavelinux
 
