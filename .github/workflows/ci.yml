@@ -59,8 +59,6 @@ jobs:
         # test oldest Ruby 3 to ensure compatibility across full range of Ruby 3 versions
         - os: ubuntu-22.04
           ruby: '3.0'
-        #- os: macos-12
-        #  ruby: '3.4'
         # test oldest permitted versions of dependencies
         - os: ubuntu-22.04
           ruby: '2.7'
@@ -108,25 +106,11 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install ghostscript poppler-utils
-    #- name: Install Ghostscript and Poppler (macOS)
-    #  if: matrix.os == 'macos-12'
-    #  run: |
-    #    brew unlink ghostscript
-    #    # ghostscript 10.02.1
-    #    wget https://raw.githubusercontent.com/Homebrew/homebrew-core/0e594be417b7947dcf7d6eb63293fcf652b7e3ae/Formula/g/ghostscript.rb
-    #    brew install --formula ./ghostscript.rb
-    #    brew link ghostscript || true
-    #    brew install poppler
     - name: Set Prawn Gmagick version / Install GraphicsMagick (Linux)
       if: matrix.primary
       run: |
         echo 'PRAWN_GMAGICK_VERSION=0.0.9' >> $GITHUB_ENV
         sudo apt-get install libgraphicsmagick1-dev
-    #- name: Set Prawn Gmagick version / Install GraphicsMagick (macOS)
-    #  if: matrix.os == 'macos-12'
-    #  run: |
-    #    echo 'PRAWN_GMAGICK_VERSION=0.0.9' >> $GITHUB_ENV
-    #    brew install GraphicsMagick
     - name: Set Asciidoctor version
       if: matrix.asciidoctor-version
       run: |
