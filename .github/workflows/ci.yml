@@ -41,7 +41,7 @@ jobs:
     - name: Run linter
       run: bundle exec rake lint
   build:
-    #needs: lint
+    needs: lint
     strategy:
       matrix:
         os: [ubuntu-22.04]
