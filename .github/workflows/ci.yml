@@ -71,11 +71,14 @@ jobs:
         #  ruby: '3.3'
         #  asciidoctor-version: '~> 2.0.0'
         - os: ubuntu-22.04
+          ruby: '4.0'
+          rouge-version: '~> 5.1.0'
+        - os: ubuntu-22.04
           ruby: '3.4'
           upstream: upstream
         - os: ubuntu-22.04
           ruby: '3.4'
-          rouge-version: '~> 4.5.0'
+          rouge-version: '~> 4.7.0'
           primary: primary
     runs-on: ${{ matrix.os }}
     env:
