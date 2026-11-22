@@ -45,44 +45,36 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-22.04]
-        #os: [ubuntu-22.04, windows-2022]
-        ruby: [jruby-9.2.21.0, jruby-9.4.2.0, '2.7', '3.3']
+        ruby: [jruby-9.2.21.0, jruby-9.4.2.0, '2.7', '3.4']
         asciidoctor-version: [~]
         asciidoctor-diagram-version: ['~> 3.0']
         asciidoctor-kroki-version: [~]
         rouge-version: [~]
         upstream: [~]
         exclude:
-        # remove 3.3 on ubuntu-22.04 to mark as primary
+        # remove 3.4 on ubuntu-22.04 to mark as primary
         - os: ubuntu-22.04
-          ruby: '3.3'
-        # remove 3.3 on windows-2022 to lock version
-        - os: windows-2022
-          ruby: '3.3'
+          ruby: '3.4'
         include:
         # test oldest Ruby 3 to ensure compatibility across full range of Ruby 3 versions
         - os: ubuntu-22.04
           ruby: '3.0'
         #- os: macos-12
-        #  ruby: '3.3'
+        #  ruby: '3.4'
         # test oldest permitted versions of dependencies
         - os: ubuntu-22.04
           ruby: '2.7'
           asciidoctor-version: '2.0.10'
           rouge-version: '~> 2.0.0'
-        #- os: windows-2022
-        #  ruby: '3.3.4' # lock version to work around warning about fiddle gem
-        #  asciidoctor-diagram-version: ~
-        #  asciidoctor-kroki-version: '0.10.0'
         # NOTE: enable once Asciidoctor 2.1.0 is released
         #- os: ubuntu-22.04
         #  ruby: '3.3'
         #  asciidoctor-version: '~> 2.0.0'
         - os: ubuntu-22.04
-          ruby: '3.3'
+          ruby: '3.4'
           upstream: upstream
         - os: ubuntu-22.04
-          ruby: '3.3'
+          ruby: '3.4'
           rouge-version: '~> 4.5.0'
           primary: primary
     runs-on: ${{ matrix.os }}
@@ -122,12 +114,6 @@ jobs:
     #    brew install --formula ./ghostscript.rb
     #    brew link ghostscript || true
     #    brew install poppler
-    - name: Install Ghostscript and Poppler and set GS env var (Windows)
-      if: matrix.os == 'windows-2022'
-      run: |
-        choco install --no-progress poppler --version=0.89.0
-        choco install --no-progress ghostscript --version=10.0.0.20230317
-        echo "GS=$(& where.exe /R 'C:\Program Files\gs' gswin64c.exe)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Set Prawn Gmagick version / Install GraphicsMagick (Linux)
       if: matrix.primary
       run: |
