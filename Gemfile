@@ -14,6 +14,8 @@ gem 'asciidoctor-kroki', ENV['ASCIIDOCTOR_KROKI_VERSION'], require: false if ENV
 gem 'bigdecimal', require: false if (Gem::Version.new RUBY_VERSION) >= (Gem::Version.new '3.4.0')
 gem 'coderay', '~> 1.1.0', require: false
 gem 'ffi-icu', ENV['FFI_ICU_VERSION'], require: false if ENV.key? 'FFI_ICU_VERSION'
+# Remove logger gem once Asciidoctor 2.0.27 is released
+gem 'logger', require: false if (Gem::Version.new RUBY_VERSION) >= (Gem::Version.new '3.4.0')
 gem 'open-uri-cached', '~> 1.0.0', require: false
 gem 'prawn-gmagick', ENV['PRAWN_GMAGICK_VERSION'], require: false if (ENV.key? 'PRAWN_GMAGICK_VERSION') && RUBY_ENGINE == 'ruby'
 gem 'pygments.rb', ENV['PYGMENTS_VERSION'], require: false if ENV.key? 'PYGMENTS_VERSION'

@@ -45,23 +45,20 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-22.04]
-        ruby: [jruby-9.4.2.0, '2.7', '3.3']
+        ruby: [jruby-9.4.2.0, '2.7', '3.4']
         asciidoctor-version: [~]
         asciidoctor-diagram-version: ['~> 3.0']
         asciidoctor-kroki-version: [~]
         rouge-version: [~]
         upstream: [~]
         exclude:
-        # remove 3.3 on ubuntu-22.04 to mark as primary
+        # remove 3.4 on ubuntu-22.04 to mark as primary
         - os: ubuntu-22.04
-          ruby: '3.3'
+          ruby: '3.4'
         include:
         # test oldest Ruby 3 to ensure compatibility across full range of Ruby 3 versions
         - os: ubuntu-22.04
           ruby: '3.0'
-        # test latest Ruby 3 to ensure compatibility across full range of Ruby 3 versions
-        - os: ubuntu-22.04
-          ruby: '3.4'
         # test oldest permitted versions of dependencies
         - os: ubuntu-22.04
           ruby: '2.7'
@@ -72,11 +69,11 @@ jobs:
         #  ruby: '3.3'
         #  asciidoctor-version: '~> 2.0.0'
         - os: ubuntu-22.04
-          ruby: '3.3'
+          ruby: '3.4'
           upstream: upstream
         - os: ubuntu-22.04
-          ruby: '3.3'
-          rouge-version: '~> 4.5.0'
+          ruby: '3.4'
+          rouge-version: '~> 4.7.0'
           primary: primary
     runs-on: ${{ matrix.os }}
     env:
