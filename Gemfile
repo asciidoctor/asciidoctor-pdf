@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 # Look in asciidoctor-pdf.gemspec for runtime and development dependencies
 gemspec
 
+gem 'addressable', '~> 2.9.0', require: false if (Gem::Version.new RUBY_VERSION).approximate_recommendation == '~> 3.0'
 gem 'asciidoctor', ENV['ASCIIDOCTOR_VERSION'], require: false if ENV.key? 'ASCIIDOCTOR_VERSION'
 if ENV.key? 'ASCIIDOCTOR_DIAGRAM_VERSION'
   gem 'asciidoctor-diagram', ENV['ASCIIDOCTOR_DIAGRAM_VERSION'], require: false
