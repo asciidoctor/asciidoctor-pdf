@@ -1467,6 +1467,7 @@ describe 'Asciidoctor::PDF::Converter - Index' do
       C
       Cougar, 1
       END
+
       pdf = to_pdf input, analyze: true
       index_lines = pdf.lines pdf.find_text page_number: 2
       (expect index_lines).to eql expected_lines
