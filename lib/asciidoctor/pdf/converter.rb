@@ -2757,8 +2757,7 @@ module Asciidoctor
           assoc = {}
           if (see = node.attr 'see')
             assoc[:see] = parse_text see, inline_format: [normalize: true]
-          end
-          if (see_also = node.attr 'see-also')
+          elsif (see_also = node.attr 'see-also')
             assoc[:see_also] = see_also.map {|term| parse_text term, inline_format: [normalize: true] }
           end
           if visible
