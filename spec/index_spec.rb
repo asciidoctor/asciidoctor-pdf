@@ -1449,7 +1449,33 @@ describe 'Asciidoctor::PDF::Converter - Index' do
       (expect annotations).to be_empty
     end
 
-    it 'should support see also on secondary term' do
+    it 'should support see on most specific term' do
+      input = <<~'END'
+      (((Big Cats, Puma >> Cougar)))((Cougar))s, oh my!
+
+      <<<
+
+      [index]
+      == Index
+      END
+
+      expected_lines = <<~'END'.lines.map(&:chomp)
+      Index
+      B
+      Big Cats
+      Puma (see Cougar)
+      C
+      Cougar, 1
+      END
+      pdf = to_pdf input, analyze: true
+      index_lines = pdf.lines pdf.find_text page_number: 2
+      (expect index_lines).to eql expected_lines
+      cougar_term_text = pdf.find_unique_text 'Cougar, ', page_number: 2
+      puma_see_text = pdf.find_unique_text 'Puma (see ', page_number: 2
+      (expect puma_see_text[:y]).to be > cougar_term_text[:y]
+    end
+
+    it 'should support see also on most specific term' do
       input = <<~'END'
       (((Big Cats, Cougars &> Puma)))Cougars, oh my!
 
